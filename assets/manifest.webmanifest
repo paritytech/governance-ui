@@ -1,0 +1,5 @@
+{
+  "name": "Swipealot",
+  "start_url": "./?utm_source=web_app_manifest",
+  "display": "standalone"
+}

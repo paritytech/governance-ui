@@ -1,0 +1,40 @@
+@font-face {
+    font-family: Unbounded;
+    src: url(/assets/Unbounded-Regular-707bbfc.woff2) format("woff2");
+    font-weight: 400;
+    font-style: normal;
+    font-display: block
+}
+
+@font-face {
+    font-family: Unbounded;
+    src: url(/assets/Unbounded-Medium-707bbfc.woff2) format("woff2");
+    font-weight: 600;
+    font-style: normal;
+    font-display: block
+}
+
+html {
+    font-family: Unbounded,Helvetica Neue,Helvetica,Arial,sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    height: 100%;
+}
+
+.swipe {
+    position: absolute;
+}
+
+@media (orientation: landscape) {
+  .card {
+    aspect-ratio: 4 / 3;
+    max-height: 80vh;
+  }
+}
+
+@media (orientation: portrait) {
+    .card {
+      aspect-ratio: 3 / 4;
+      max-width: 80vw;
+    }
+  }

@@ -1,0 +1,39 @@
+{
+  "name": "Swipealot",
+  "version": "1.0.0",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "clean": "rm -rf .parcel-cache dist node_modules yarn.lock",
+    "dev": "parcel serve ./src/index.html",
+    "build": "parcel build ./src/index.html"
+  },
+  "app": "dist/index.html",
+  "targets": {
+    "app": {}
+  },
+  "source": "src/index.tsx",
+  "browserslist": [
+    "last 2 versions"
+  ],
+  "dependencies": {
+    "@nextui-org/react": "1.0.0-beta.10",
+    "@polkadot/api": "9.7.1",
+    "@react-spring/web": "9.5.5",
+    "framer-motion": "7.6.7",
+    "graphql": "16.6.0",
+    "graphql-request": "5.0.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-markdown": "^8.0.3",
+    "wouter": "2.8.0-alpha.2"
+  },
+  "devDependencies": {
+    "@parcel/packager-raw-url": "2.8.0",
+    "@parcel/transformer-webmanifest": "2.8.0",
+    "@types/react-dom": "18.0.6",
+    "buffer": "5.5.0",
+    "parcel": "2.8.0",
+    "process": "0.11.10"
+  }
+}
