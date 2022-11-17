@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as ReactDOMClient from 'react-dom/client';
-import ReactMarkdown from 'react-markdown'
-import { Route } from "wouter";
-import { Card, createTheme, Loading, Navbar, NextUIProvider, Spacer, Text } from "@nextui-org/react";
+import ReactMarkdown from 'react-markdown';
+import { Card, createTheme, Loading, NextUIProvider, Spacer, Text } from "@nextui-org/react";
 import { ApiPromise, WsProvider } from "@polkadot/api";
 import type { DeriveReferendumExt } from '@polkadot/api-derive/types';
 import { pop } from "./utils";
@@ -134,9 +133,7 @@ if (container) {
     <React.StrictMode>
       <NextUIProvider theme={theme}>
         <main style={{display: "flex", flexDirection: "column", height: "100vh", alignItems: "center"}}>
-          <Route path="/">
-            <App />
-          </Route>
+          <App />
         </main>
       </NextUIProvider>
     </React.StrictMode>
