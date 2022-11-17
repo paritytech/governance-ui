@@ -33,8 +33,16 @@ html {
 }
 
 @media (orientation: portrait) {
-    .card {
-      aspect-ratio: 3 / 4;
-      max-width: 80vw;
-    }
+  .card {
+    aspect-ratio: 3 / 4;
+    max-width: 80vw;
   }
+}
+
+.block-ellipsis {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
