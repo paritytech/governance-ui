@@ -28,7 +28,7 @@ function CardElement({ index, title, details }: { index: number, title: string, 
   return (
     <Card className="card">
       <Card.Header>
-        <Text h3 color="#e6007a" className="block-ellipsis" css={{ p: "$8" }}>#{index} {title}</Text>
+        <Text h3 color="#e6007a" className="block-ellipsis" css={{ m: "$8" }}>#{index} {title}</Text>
       </Card.Header>
       <Card.Divider />
       <Card.Body css={{ p: "$12", overflowX: "clip" }}>
