@@ -16,7 +16,7 @@ jobs:
       uses: actions/setup-node@v3
 
     - name: Build
-      run: cd website; yarn clean && yarn install && yarn build
+      run: yarn clean && yarn install && yarn build
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
