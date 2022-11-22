@@ -37,7 +37,7 @@ export type Referendum = {
 };
 
 const referendum_posts_query = gql`
-query getProposal($id: Int) {
+query getReferendum($id: Int) {
     posts(where: {onchain_link: {onchain_referendum_id: {_eq: $id}}}) {
       title
       content
