@@ -82,7 +82,6 @@ export const SwipeableCard = ({ children, onVote, ...props }) => {
           drag={"x"}
           onDrag={getTrajectory}
           onDragEnd={() => flyAway(500)}
-          whileTap={{ scale: 1.1 }}
           {...props}
         >
           {children}

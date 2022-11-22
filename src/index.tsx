@@ -48,7 +48,7 @@ export default function VotesTable({ votes }: { votes: Vote[] }) {
       const color = vote.vote ? "success" : "warning";
       return (
         <>
-          <Card isHoverable variant="bordered" css={{ mw: "400px" }}>
+          <Card variant="bordered" css={{ mw: "400px" }}>
             <Card.Body style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
               <Text h3 b >#{vote.referendum.index.toHuman()}</Text>
               <Spacer y={2} />
