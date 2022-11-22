@@ -1,6 +1,7 @@
 {
   "id": "swipealot",
   "name": "Swipealot",
+  "description": "Shows random fox pictures. Hey, at least it isn't cats.",
   "start_url": "./?utm_source=web_app_manifest",
   "display": "minimal-ui",
   "display_override": ["minimal-ui", "browser"],
@@ -11,5 +12,9 @@
         "type": "image/png"
     }
   ],
-  "theme_color": "#e6007a"
+  "theme_color": "#e6007a",
+  "related_applications": [{
+    "platform": "webapp",
+    "url": "https://jeluard.github.io/swipealot/manifest.webmanifest"
+  }]
 }

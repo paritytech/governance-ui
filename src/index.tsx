@@ -197,3 +197,8 @@ navigator.serviceWorker.addEventListener('beforeinstallprompt', () => {
   // the new active worker.
   console.log("About to be installed");
 });
+
+window.addEventListener('appinstalled', () => {
+  // This fires when the app has been installed
+  console.log("App installed");
+});
