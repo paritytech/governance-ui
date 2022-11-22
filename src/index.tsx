@@ -74,6 +74,8 @@ function App() {
 
   useEffect(() => {
     async function fetchData() {
+      // TODO add timeout / error handling
+      // allow to see at older block?
       const wsProvider = new WsProvider("wss://polkadot.api.onfinality.io/public-ws");
       const api = await ApiPromise.create({ provider: wsProvider });
       const referendums = await getAllReferendums(api);
@@ -139,3 +141,52 @@ if (container) {
     </React.StrictMode>
   );
 }
+
+navigator.permissions.query({ name: "periodic-background-sync" }).then((status)=>{ console.log(status)})
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register(
+    new URL('service-worker.js', import.meta.url),
+    {type: 'module'}
+  )
+  .then(_reg => navigator.serviceWorker.ready)
+  .then(async reg => {
+    //await Notification.requestPermission();
+
+/*   if (reg.periodicSync) {
+      await reg.periodicSync.register('sync-chain', {
+        minInterval: 10 * 1000,
+      });
+    }
+*/
+//    reg.showNotification("Markdowns synced to server");
+      reg.addEventListener('updatefound', () => {
+      // A wild service worker has appeared in reg.installing!
+      const newWorker = reg.installing;
+
+      if (newWorker) {
+        newWorker.state;
+        // "installing" - the install event has fired, but not yet complete
+        // "installed"  - install complete
+        // "activating" - the activate event has fired, but not yet complete
+        // "activated"  - fully active
+        // "redundant"  - discarded. Either failed install, or it's been
+        //                replaced by a newer version
+    
+        newWorker.addEventListener('statechange', () => {
+          // newWorker.state has changed
+        });
+      }
+    });
+  })
+  .catch(err => {
+    console.log(`ServiceWorker registration failed: ${err}`);
+  });;
+}
+
+navigator.serviceWorker.addEventListener('controllerchange', () => {
+  // This fires when the service worker controlling this page
+  // changes, eg a new worker has skipped waiting and become
+  // the new active worker.
+  console.log("New ServiceWorker has been activated");
+});
