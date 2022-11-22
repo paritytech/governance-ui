@@ -190,3 +190,10 @@ navigator.serviceWorker.addEventListener('controllerchange', () => {
   // the new active worker.
   console.log("New ServiceWorker has been activated");
 });
+
+navigator.serviceWorker.addEventListener('beforeinstallprompt', () => {
+  // This fires when the service worker controlling this page
+  // changes, eg a new worker has skipped waiting and become
+  // the new active worker.
+  console.log("About to be installed");
+});
