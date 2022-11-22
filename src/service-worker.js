@@ -21,7 +21,7 @@ async function activate() {
   // Delete older caches
   const keys = await caches.keys();
   await Promise.all(
-    keys.map(key => ALL_CACHES.includes(key) && caches.delete(key))
+    keys.map(key => !ALL_CACHES.includes(key) && caches.delete(key))
   );
 }
 
