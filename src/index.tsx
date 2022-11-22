@@ -24,7 +24,7 @@ function ReferendumCard({ referendum }: { referendum: DeriveReferendumExt }): JS
 }
 
 function CardElement({ index, title, details }: { index: number, title: string, details: string }): JSX.Element {
-  const isHTML = details.startsWith("<p>"); // A bug in polkascan made some posts in HTML. They should always be markdown.
+  const isHTML = details.startsWith("<p"); // A bug in polkascan made some posts in HTML. They should always be markdown.
   return (
     <Card className="card">
       <Card.Header>
