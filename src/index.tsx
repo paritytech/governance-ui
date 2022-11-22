@@ -20,7 +20,11 @@ function ReferendumCard({ referendum }: { referendum: DeriveReferendumExt }): JS
     fetchData();
   }, []);
 
-  return <CardElement index={referendum.index.toNumber()} title={details?.title || ""} details={details?.content || ""} />;
+  if (details) {
+    return <CardElement index={referendum.index.toNumber()} title={details?.title || ""} details={details?.content || ""} />;
+  } else {
+    return <Loading />;
+  }
 }
 
 function CardElement({ index, title, details }: { index: number, title: string, details: string }): JSX.Element {
