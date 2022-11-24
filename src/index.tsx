@@ -2,19 +2,20 @@ import React, { useEffect, useState } from "react";
 import * as ReactDOMClient from 'react-dom/client';
 import ReactMarkdown from 'react-markdown';
 import { Card, createTheme, Loading, NextUIProvider, Spacer, Text } from "@nextui-org/react";
-import { ApiPromise, WsProvider } from "@polkadot/api";
 import type { DeriveReferendumExt } from '@polkadot/api-derive/types';
-import { pop } from "./utils";
-import { fetchReferendum, Post } from "./utils/polkassembly";
-import { getAllReferendums } from "./utils/democracy";
 import { SwipeableCard } from "./components/card";
+import useSearchParam from "./hooks/useSearchParam";
+import { pop } from "./utils";
+import { getAllReferendums } from "./utils/democracy";
+import { fetchReferendum, Post } from "./utils/polkassembly";
+import { Network, newApi } from "./utils/polkadot-api";
 
-function ReferendumCard({ referendum }: { referendum: DeriveReferendumExt }): JSX.Element {
+function ReferendumCard({ network, referendum }: { network: Network, referendum: DeriveReferendumExt }): JSX.Element {
   const [details, setDetails] = useState<Post>();
 
   useEffect(() => {
     async function fetchData() {
-      const details = await fetchReferendum(referendum.index.toNumber());
+      const details = await fetchReferendum(network, referendum.index.toNumber());
       setDetails(details.posts[0]);
     }
     fetchData();
@@ -72,16 +73,21 @@ type Vote = {
   referendum: DeriveReferendumExt
 }
 
+function capitalizeFirstLetter(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 function App() {
+  const networkParam = useSearchParam("network");
+  const network = networkParam ? Network.parse(capitalizeFirstLetter(networkParam)) : Network.Polkadot;
+  // TODO add RPC support
   const [referendums, setReferendums] = useState<Array<DeriveReferendumExt> | undefined>();
   const [votes, setVotes] = useState<Array<Vote>>([]);
-
   useEffect(() => {
     async function fetchData() {
       // TODO add timeout / error handling
       // allow to see at older block?
-      const wsProvider = new WsProvider("wss://polkadot.api.onfinality.io/public-ws");
-      const api = await ApiPromise.create({ provider: wsProvider });
+      const api = await newApi(network)
       const referendums = await getAllReferendums(api);
       setReferendums(referendums);
     }
@@ -99,7 +105,7 @@ function App() {
         {(referendums && referendums.length > 0) && referendums.map((referendum, idx) => {
           return (
             <SwipeableCard key={idx} onVote={(vote: boolean) => onSwipe(idx, vote, referendum)} drag={true}>
-              <ReferendumCard referendum={referendum} />
+              <ReferendumCard network={network} referendum={referendum} />
             </SwipeableCard>
           );
         })}
