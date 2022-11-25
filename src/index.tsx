@@ -80,7 +80,7 @@ function capitalizeFirstLetter(s: string): string {
 function App() {
   const networkParam = useSearchParam("network");
   const rpcParam = useSearchParam("rpc");
-  const network = networkParam ? Network.parse(capitalizeFirstLetter(networkParam)) : Network.Polkadot;
+  const network = networkParam ? capitalizeFirstLetter(networkParam) as Network : Network.Polkadot;
   const [referendums, setReferendums] = useState<Array<DeriveReferendumExt> | undefined>();
   const [votes, setVotes] = useState<Array<Vote>>([]);
   useEffect(() => {
@@ -89,16 +89,14 @@ function App() {
       const api = await newApi(rpcParam ? rpcParam : endpointFor(network));
       if (rpcParam) {
         // Check that provided rpc and network point to a same logical chain
-        const connectedChain = Network[api.runtimeChain.toHuman() as string];
+        const connectedChain = api.runtimeChain.toHuman() as Network;
         if (connectedChain != network) {
           console.error(`Provided RPC doesn't match network ${network}: ${rpcParam}`);
         } else {
-          if (rpcParam) {
-            console.info(`Connected to network ${network} using RPC ${rpcParam}`);
-          } else {
-            console.info(`Connected to network ${network}`);
-          }
+          console.info(`Connected to network ${network} using RPC ${rpcParam}`);
         }
+      } else {
+        console.info(`Connected to network ${network.toString()}`);
       }
       const referendums = await getAllReferendums(api);
       setReferendums(referendums);

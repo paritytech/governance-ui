@@ -4,15 +4,8 @@ import { ApiPromise, WsProvider } from "@polkadot/api";
 // https://github.com/polkadot-js/api/tree/master/packages/rpc-provider
 
 export enum Network {
-    Kusama,
-    Polkadot
-}
-
-export namespace Network {
-  export function parse(s: string): Network {
-    const key = s as keyof typeof Network;
-    return Network[key];
-  }
+    Kusama = "Kusama",
+    Polkadot = "Polkadot"
 }
 
 export function endpointFor(network: Network): string {
