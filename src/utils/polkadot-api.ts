@@ -15,7 +15,7 @@ export namespace Network {
   }
 }
 
-function endpointFor(network: Network): string {
+export function endpointFor(network: Network): string {
   switch(network) {
     case Network.Kusama:
       return "wss://kusama.api.onfinality.io/public-ws";
@@ -24,7 +24,7 @@ function endpointFor(network: Network): string {
   }
 }
 
-export async function newApi(network: Network): Promise<ApiPromise> {
-    const wsProvider = new WsProvider(endpointFor(network));
+export async function newApi(endpoint: string): Promise<ApiPromise> {
+    const wsProvider = new WsProvider(endpoint);
     return await ApiPromise.create({ provider: wsProvider });
 }

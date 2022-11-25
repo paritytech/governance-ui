@@ -8,7 +8,7 @@ import useSearchParam from "./hooks/useSearchParam";
 import { pop } from "./utils";
 import { getAllReferendums } from "./utils/democracy";
 import { fetchReferendum, Post } from "./utils/polkassembly";
-import { Network, newApi } from "./utils/polkadot-api";
+import { endpointFor, Network, newApi } from "./utils/polkadot-api";
 
 function ReferendumCard({ network, referendum }: { network: Network, referendum: DeriveReferendumExt }): JSX.Element {
   const [details, setDetails] = useState<Post>();
@@ -79,15 +79,27 @@ function capitalizeFirstLetter(s: string): string {
 
 function App() {
   const networkParam = useSearchParam("network");
+  const rpcParam = useSearchParam("rpc");
   const network = networkParam ? Network.parse(capitalizeFirstLetter(networkParam)) : Network.Polkadot;
-  // TODO add RPC support
   const [referendums, setReferendums] = useState<Array<DeriveReferendumExt> | undefined>();
   const [votes, setVotes] = useState<Array<Vote>>([]);
   useEffect(() => {
     async function fetchData() {
-      // TODO add timeout / error handling
-      // allow to see at older block?
-      const api = await newApi(network)
+      
+      const api = await newApi(rpcParam ? rpcParam : endpointFor(network));
+      if (rpcParam) {
+        // Check that provided rpc and network point to a same logical chain
+        const connectedChain = Network[api.runtimeChain.toHuman() as string];
+        if (connectedChain != network) {
+          console.error(`Provided RPC doesn't match network ${network}: ${rpcParam}`);
+        } else {
+          if (rpcParam) {
+            console.info(`Connected to network ${network} using RPC ${rpcParam}`);
+          } else {
+            console.info(`Connected to network ${network}`);
+          }
+        }
+      }
       const referendums = await getAllReferendums(api);
       setReferendums(referendums);
     }
