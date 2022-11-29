@@ -21,10 +21,6 @@ html {
     height: 100%;
 }
 
-.swipe {
-    position: absolute;
-}
-
 @media (orientation: landscape) {
   .card {
     aspect-ratio: 4 / 3;
