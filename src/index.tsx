@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import * as ReactDOMClient from 'react-dom/client';
+import { Heart as HeartIcon, CloseSquare as CloseSquareIcon } from 'react-iconly';
 import ReactMarkdown from 'react-markdown';
-import { Card, createTheme, Loading, NextUIProvider, Spacer, Text } from "@nextui-org/react";
+import { Button, Card, createTheme, Loading, NextUIProvider, Spacer, Text } from "@nextui-org/react";
 import type { DeriveReferendumExt } from '@polkadot/api-derive/types';
 import { SwipeableCard } from "./components/card";
 import useSearchParam from "./hooks/useSearchParam";
@@ -49,11 +50,11 @@ function CardElement({ index, title, details }: { index: number, title: string, 
 export default function VotesTable({ votes }: { votes: Vote[] }) {
   return (
     <div>
-    {votes.map(vote => {
+    {votes.map((vote, idx) => {
       const color = vote.vote ? "success" : "warning";
       return (
         <>
-          <Card variant="bordered" css={{ mw: "400px" }}>
+          <Card key={idx} variant="bordered" css={{ mw: "400px" }}>
             <Card.Body style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
               <Text h3 b >#{vote.referendum.index.toHuman()}</Text>
               <Spacer y={2} />
@@ -104,21 +105,45 @@ function App() {
     fetchData();
   }, []);
 
-  function onSwipe(idx: number, vote: boolean, referendum: DeriveReferendumExt) {
-    setVotes([...votes, {index: idx, vote: vote, referendum: referendum}])
-    setReferendums(referendums && pop(referendums));
+  function voteOn(idx: number, vote: boolean, referendum: DeriveReferendumExt | undefined) {
+    if (referendum) {
+      setVotes([...votes, {index: idx, vote: vote, referendum: referendum}])
+      setReferendums(referendums && pop(referendums));
+    }
   }
 
   return (
     <>
-      <div style={{display: "flex", flex: 1, alignItems: "center", justifyContent:"center"}}>
-        {(referendums && referendums.length > 0) && referendums.map((referendum, idx) => {
-          return (
-            <SwipeableCard key={idx} onVote={(vote: boolean) => onSwipe(idx, vote, referendum)} drag={true}>
-              <ReferendumCard network={network} referendum={referendum} />
-            </SwipeableCard>
-          );
-        })}
+      <div style={{display: "flex", flex: 1, alignItems: "center", justifyContent:"center", flexDirection: "column"}}>
+      {(referendums && referendums.length > 0) &&
+        <>
+          <div style={{display: "flex", flex: 1, alignItems: "center", justifyContent:"center"}}>
+            {referendums.map((referendum, idx) => {
+            return (
+              <SwipeableCard key={idx} onVote={(vote: boolean) => voteOn(idx, vote, referendum)} drag={true}>
+                <ReferendumCard network={network} referendum={referendum} />
+              </SwipeableCard>
+            );
+            })}
+          </div>
+          <div style={{display: "flex"}}>
+            <Button
+              light
+              auto
+              color="error"
+              onPress={() => voteOn(0, false, referendums.at(0))}
+              icon={<CloseSquareIcon set="light" primaryColor="currentColor" filled />} />
+            <Spacer x={2} />
+            <Button
+              light
+              auto
+              color="success"
+              onPress={() => voteOn(0, true, referendums.at(0))}
+              icon={<HeartIcon primaryColor="currentColor" filled />} />
+          </div>
+          <Spacer y={1} />
+        </>
+        }
         {(referendums?.length == 0) && 
         <VotesTable votes={votes} />}
         {!referendums && 
@@ -154,7 +179,7 @@ if (container) {
   root.render(
     <React.StrictMode>
       <NextUIProvider theme={theme}>
-        <main style={{display: "flex", flexDirection: "column", height: "100vh", alignItems: "center"}}>
+        <main style={{display: "flex", height: "100vh"}}>
           <App />
         </main>
       </NextUIProvider>
