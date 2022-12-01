@@ -8,29 +8,31 @@ import { SwipeableCard } from "./components/card";
 import useSearchParam from "./hooks/useSearchParam";
 import { pop } from "./utils";
 import { getAllReferendums } from "./utils/democracy";
-import { fetchReferendum, Post } from "./utils/polkassembly";
+import { fetchReferendaV1, Post } from "./utils/polkassembly";
 import { endpointFor, Network, newApi } from "./utils/polkadot-api";
+
+const DEFAULT_NETWORK = Network.Kusama;
 
 function ReferendumCard({ network, referendum }: { network: Network, referendum: DeriveReferendumExt }): JSX.Element {
   const [details, setDetails] = useState<Post>();
 
   useEffect(() => {
     async function fetchData() {
-      const details = await fetchReferendum(network, referendum.index.toNumber());
+      const details = await fetchReferendaV1(network, referendum.index.toNumber());
       setDetails(details.posts[0]);
     }
     fetchData();
   }, []);
 
   if (details) {
-    return <CardElement index={referendum.index.toNumber()} title={details?.title || ""} details={details?.content || ""} />;
+    return <CardElement index={referendum.index.toNumber()} title={details?.title || ""} content={details?.content || ""} />;
   } else {
     return <Loading />;
   }
 }
 
-function CardElement({ index, title, details }: { index: number, title: string, details: string }): JSX.Element {
-  const isHTML = details.startsWith("<p"); // A bug in polkascan made some posts in HTML. They should always be markdown.
+function CardElement({ index, title, content }: { index: number, title: string, content: string }): JSX.Element {
+  const isHTML = content.startsWith("<p"); // A bug in polkascan made some posts in HTML. They should always be markdown.
   return (
     <Card className="card">
       <Card.Header>
@@ -39,8 +41,8 @@ function CardElement({ index, title, details }: { index: number, title: string, 
       <Card.Divider />
       <Card.Body css={{ p: "$12", overflowX: "clip" }}>
         {isHTML
-        ? <Text dangerouslySetInnerHTML={{__html: details}} />
-        : <ReactMarkdown>{details}</ReactMarkdown>}
+        ? <Text dangerouslySetInnerHTML={{__html: content}} />
+        : <ReactMarkdown>{content}</ReactMarkdown>}
       </Card.Body>
       <Card.Divider />
     </Card>
@@ -81,12 +83,11 @@ function capitalizeFirstLetter(s: string): string {
 function App() {
   const networkParam = useSearchParam("network");
   const rpcParam = useSearchParam("rpc");
-  const network = networkParam ? capitalizeFirstLetter(networkParam) as Network : Network.Polkadot;
+  const network = networkParam ? capitalizeFirstLetter(networkParam) as Network : DEFAULT_NETWORK;
   const [referendums, setReferendums] = useState<Array<DeriveReferendumExt> | undefined>();
   const [votes, setVotes] = useState<Array<Vote>>([]);
   useEffect(() => {
     async function fetchData() {
-      
       const api = await newApi(rpcParam ? rpcParam : endpointFor(network));
       if (rpcParam) {
         // Check that provided rpc and network point to a same logical chain
