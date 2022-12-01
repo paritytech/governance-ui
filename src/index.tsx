@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as ReactDOMClient from 'react-dom/client';
 import { Heart as HeartIcon, CloseSquare as CloseSquareIcon } from 'react-iconly';
-import ReactMarkdown from 'react-markdown';
+import { Remark } from 'react-remark';
 import { Button, Card, createTheme, Loading, NextUIProvider, Spacer, Text } from "@nextui-org/react";
 import type { DeriveReferendumExt } from '@polkadot/api-derive/types';
 import { SwipeableCard } from "./components/card";
@@ -31,7 +31,7 @@ function ReferendumCard({ network, referendum }: { network: Network, referendum:
   }
 }
 
-function CardElement({ index, title, content }: { index: number, title: string, content: string }): JSX.Element {
+const CardElement = React.memo(({ index, title, content }: { index: number, title: string, content: string }) => {
   const isHTML = content.startsWith("<p"); // A bug in polkascan made some posts in HTML. They should always be markdown.
   return (
     <Card className="card">
@@ -42,12 +42,12 @@ function CardElement({ index, title, content }: { index: number, title: string, 
       <Card.Body css={{ p: "$12", overflowX: "clip" }}>
         {isHTML
         ? <Text dangerouslySetInnerHTML={{__html: content}} />
-        : <ReactMarkdown>{content}</ReactMarkdown>}
+        : <Remark>{content}</Remark>}
       </Card.Body>
       <Card.Divider />
     </Card>
   );
-}
+});
 
 export default function VotesTable({ votes }: { votes: Vote[] }) {
   return (
