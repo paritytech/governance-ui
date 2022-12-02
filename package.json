@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf .parcel-cache dist node_modules yarn.lock",
     "dev": "parcel serve ./src/index.html",
-    "build": "parcel build ./src/index.html --no-scope-hoist --public-url https://jeluard.github.io/swipealot/"
+    "build": "parcel build ./src/index.html --log-level verbose --public-url https://jeluard.github.io/swipealot/"
   },
   "app": "dist/index.html",
   "targets": {
@@ -37,5 +37,11 @@
     "buffer": "5.5.0",
     "parcel": "2.8.0",
     "process": "0.11.10"
+  },
+  "alias": {
+    "@polkadot/x-fetch": "./node_modules/@polkadot/x-fetch/browser.js",
+    "@polkadot/x-ws": "./node_modules/@polkadot/x-ws/browser.js",
+    "@polkadot/x-textencoder": "./node_modules/@polkadot/x-textencoder/browser.js",
+    "@polkadot/x-textdecoder": "./node_modules/@polkadot/x-textdecoder/browser.js"
   }
 }
