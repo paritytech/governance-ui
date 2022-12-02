@@ -14,11 +14,9 @@ function capitalizeFirstLetter(s: string): string {
 
 export namespace Network {
   export function parse(network: string | null) {
-    return network ? capitalizeFirstLetter(network) as Network : DEFAULT_NETWORK;
+    return network ? capitalizeFirstLetter(network) as Network : process.env.NETWORK || Network.Polkadot;
   }
 }
-
-export const DEFAULT_NETWORK = Network.Kusama;
 
 export function endpointFor(network: Network): string {
   switch(network) {
