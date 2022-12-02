@@ -13,8 +13,8 @@ function capitalizeFirstLetter(s: string): string {
 }
 
 export namespace Network {
-  export function parse(network: string | null) {
-    return network ? capitalizeFirstLetter(network) as Network : process.env.NETWORK || Network.Polkadot;
+  export function parse(network: string | null): Network {
+    return network ? capitalizeFirstLetter(network) as Network : process.env.NETWORK as Network || Network.Polkadot;
   }
 }
 
