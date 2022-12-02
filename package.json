@@ -19,6 +19,9 @@
   "dependencies": {
     "@nextui-org/react": "1.0.0-beta.10",
     "@parcel/service-worker": "2.8.0",
+    "@polkadot-onboard/core": "^0.0.2-beta",
+    "@polkadot-onboard/injected-wallets": "^0.0.2-beta",
+    "@polkadot-onboard/react": "^0.0.2-beta",
     "@polkadot/api": "9.9.1",
     "@react-spring/web": "9.5.5",
     "framer-motion": "7.6.7",
