@@ -6,7 +6,7 @@ import { ReferendumCard, VotesTable } from "./components";
 import useSearchParam from "./hooks/useSearchParam";
 import { Referendum, Vote } from "./types";
 import { pop } from "./utils";
-import { getAllReferendums } from "./utils/democracy";
+import { getAllReferendums } from "./chain/democracy";
 import { endpointFor, Network, newApi } from "./utils/polkadot-api";
 
 function App() {
