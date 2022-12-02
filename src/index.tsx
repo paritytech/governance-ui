@@ -1,91 +1,21 @@
 import React, { useEffect, useState } from "react";
 import * as ReactDOMClient from 'react-dom/client';
-import { Heart as HeartIcon, CloseSquare as CloseSquareIcon } from 'react-iconly';
-import { Remark } from 'react-remark';
-import { Button, Card, createTheme, Loading, NextUIProvider, Spacer, Text } from "@nextui-org/react";
-import type { DeriveReferendumExt } from '@polkadot/api-derive/types';
-import { SwipeableCard } from "./components/card";
+import { createTheme, NextUIProvider } from "@nextui-org/react";
+import { Button, CloseSquareIcon, HeartIcon, Loading, Spacer, SwipeableCard, Text } from "./components/common";
+import { ReferendumCard, VotesTable } from "./components";
 import useSearchParam from "./hooks/useSearchParam";
+import { Referendum, Vote } from "./types";
 import { pop } from "./utils";
 import { getAllReferendums } from "./utils/democracy";
-import { fetchReferendaV1, Post } from "./utils/polkassembly";
 import { endpointFor, Network, newApi } from "./utils/polkadot-api";
-
-const DEFAULT_NETWORK = Network.Kusama;
-
-function ReferendumCard({ network, referendum }: { network: Network, referendum: DeriveReferendumExt }): JSX.Element {
-  const [details, setDetails] = useState<Post>();
-
-  useEffect(() => {
-    async function fetchData() {
-      const details = await fetchReferendaV1(network, referendum.index.toNumber());
-      setDetails(details.posts[0]);
-    }
-    fetchData();
-  }, []);
-
-  if (details) {
-    return <CardElement index={referendum.index.toNumber()} title={details?.title || ""} content={details?.content || ""} />;
-  } else {
-    return <Loading />;
-  }
-}
-
-const CardElement = React.memo(({ index, title, content }: { index: number, title: string, content: string }) => {
-  const isHTML = content.startsWith("<p"); // A bug in polkascan made some posts in HTML. They should always be markdown.
-  return (
-    <Card className="card">
-      <Card.Header>
-        <Text h3 color="#e6007a" className="block-ellipsis" css={{ m: "$8" }}>#{index} {title}</Text>
-      </Card.Header>
-      <Card.Divider />
-      <Card.Body css={{ p: "$12", overflowX: "clip" }}>
-        {isHTML
-        ? <Text dangerouslySetInnerHTML={{__html: content}} />
-        : <Remark>{content}</Remark>}
-      </Card.Body>
-      <Card.Divider />
-    </Card>
-  );
-});
-
-export default function VotesTable({ votes }: { votes: Vote[] }) {
-  return (
-    <div>
-    {votes.map((vote, idx) => {
-      const color = vote.vote ? "success" : "warning";
-      return (
-        <>
-          <Card key={idx} variant="bordered" css={{ mw: "400px" }}>
-            <Card.Body style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-              <Text h3 b >#{vote.referendum.index.toHuman()}</Text>
-              <Spacer y={2} />
-              <Text h4 color={color}>{vote.vote ? "Aye" : "Naye"}</Text>
-            </Card.Body>
-          </Card>
-          <Spacer x={1} />
-        </>);
-    })}
-    </div>
-  );
-}
-
-type Vote = {
-  index: number,
-  vote: boolean,
-  referendum: DeriveReferendumExt
-}
-
-function capitalizeFirstLetter(s: string): string {
-  return s.charAt(0).toUpperCase() + s.slice(1);
-}
 
 function App() {
   const networkParam = useSearchParam("network");
   const rpcParam = useSearchParam("rpc");
-  const network = networkParam ? capitalizeFirstLetter(networkParam) as Network : DEFAULT_NETWORK;
-  const [referendums, setReferendums] = useState<Array<DeriveReferendumExt> | undefined>();
+  const network = Network.parse(networkParam);
+  const [referendums, setReferendums] = useState<Array<Referendum> | undefined>();
   const [votes, setVotes] = useState<Array<Vote>>([]);
+
   useEffect(() => {
     async function fetchData() {
       const api = await newApi(rpcParam ? rpcParam : endpointFor(network));
@@ -100,13 +30,15 @@ function App() {
       } else {
         console.info(`Connected to network ${network.toString()}`);
       }
+
+      // Retrieve all referendums, then display them
       const referendums = await getAllReferendums(api);
       setReferendums(referendums);
     }
     fetchData();
   }, []);
 
-  function voteOn(idx: number, vote: boolean, referendum: DeriveReferendumExt | undefined) {
+  function voteOn(idx: number, vote: boolean, referendum: Referendum | undefined) {
     if (referendum) {
       setVotes([...votes, {index: idx, vote: vote, referendum: referendum}])
       setReferendums(referendums && pop(referendums));
@@ -129,15 +61,11 @@ function App() {
           </div>
           <div style={{display: "flex"}}>
             <Button
-              light
-              auto
               color="error"
               onPress={() => voteOn(0, false, referendums.at(0))}
               icon={<CloseSquareIcon set="light" primaryColor="currentColor" filled />} />
             <Spacer x={2} />
             <Button
-              light
-              auto
               color="success"
               onPress={() => voteOn(0, true, referendums.at(0))}
               icon={<HeartIcon primaryColor="currentColor" filled />} />
@@ -157,8 +85,7 @@ function App() {
             color="#e6007a"
             css={{
               textAlign: "center"
-            }}
-            weight="bold">Get ready to vote!</Text>
+            }}>Get ready to vote!</Text>
         </div>}
       </div>
     </>

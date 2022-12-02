@@ -8,6 +8,18 @@ export enum Network {
     Polkadot = "Polkadot"
 }
 
+function capitalizeFirstLetter(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+export namespace Network {
+  export function parse(network: string | null) {
+    return network ? capitalizeFirstLetter(network) as Network : DEFAULT_NETWORK;
+  }
+}
+
+export const DEFAULT_NETWORK = Network.Kusama;
+
 export function endpointFor(network: Network): string {
   switch(network) {
     case Network.Kusama:

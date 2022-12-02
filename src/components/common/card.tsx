@@ -1,7 +1,7 @@
 import { motion, useAnimation, useMotionValue } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 
-export const SwipeableCard = ({ children, onVote, ...props }) => {
+const SwipeableCard = ({ children, onVote, ...props }) => {
     // motion stuff
       const cardElem = useRef(null);
     
@@ -88,3 +88,5 @@ export const SwipeableCard = ({ children, onVote, ...props }) => {
         </motion.div>
       );
     };
+
+export default SwipeableCard;
