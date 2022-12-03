@@ -37,13 +37,14 @@ if ('serviceWorker' in navigator) {
     .then((_reg) => navigator.serviceWorker.ready)
     .then(async (reg) => {
       //await Notification.requestPermission();
+      /*
+      if (reg.periodicSync) {
+        await reg.periodicSync.register('sync-chain', {
+          minInterval: 10 * 1000,
+        });
+      }
+      */
 
-      /*   if (reg.periodicSync) {
-      await reg.periodicSync.register('sync-chain', {
-        minInterval: 10 * 1000,
-      });
-    }
-*/
       //    reg.showNotification("Markdowns synced to server");
       reg.addEventListener('updatefound', () => {
         // A wild service worker has appeared in reg.installing!
