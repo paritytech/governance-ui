@@ -2,11 +2,14 @@
   "id": "swipealot",
   "name": "Swipealot",
   "dir": "ltr",
+  "lang": "en",
   "short_name": "Swipealot",
   "description": "An intuitive governance DApp for Polkadot.",
-  "start_url": "../?utm_source=web_app_manifest",
+  "scope": "/",
+  "start_url": "/?utm_source=pwa",
   "display": "minimal-ui",
   "display_override": ["minimal-ui", "browser"],
+  "orientation": "portrait-primary",
   "icons": [
     {
         "src": "./icons/icon-32x32.png",
