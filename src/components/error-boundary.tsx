@@ -23,7 +23,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   render() {
-    const { error } = this.state || { error: null };
+    const { error } = this.state;
 
     if (error !== null) {
       return <div>Unhandled error: {error.toString()}</div>;
