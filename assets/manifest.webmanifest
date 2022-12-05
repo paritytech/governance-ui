@@ -1,10 +1,15 @@
 {
   "id": "swipealot",
   "name": "Swipealot",
-  "description": "Shows random fox pictures. Hey, at least it isn't cats.",
-  "start_url": "../?utm_source=web_app_manifest",
+  "dir": "ltr",
+  "lang": "en",
+  "short_name": "Swipealot",
+  "description": "An intuitive governance DApp for Polkadot.",
+  "scope": "/",
+  "start_url": "/?utm_source=pwa",
   "display": "minimal-ui",
   "display_override": ["minimal-ui", "browser"],
+  "orientation": "portrait-primary",
   "icons": [
     {
         "src": "./icons/icon-32x32.png",
@@ -15,9 +20,17 @@
       "src": "./icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
+    },
+    {
+      "src": "./icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
     }
   ],
   "theme_color": "#e6007a",
+  "background_color": "#e6007a",
+  "categories": ["polkadot", "governance", "dapp"],
   "related_applications": [{
     "platform": "webapp",
     "url": "https://jeluard.github.io/swipealot/manifest.webmanifest"

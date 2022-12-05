@@ -14,6 +14,9 @@ import { Referendum, Vote } from './types';
 import { pop } from './utils';
 import { getAllReferendums } from './chain/democracy';
 import { endpointFor, Network, newApi } from './utils/polkadot-api';
+import { timeout } from './utils/promise';
+
+const FETCH_DATA_TIMEOUT = 5000; // in milliseconds
 
 function App() {
   const networkParam = useSearchParam('network');
@@ -42,8 +45,8 @@ function App() {
       }
 
       // Retrieve all referendums, then display them
-      const referendums = await getAllReferendums(api);
-      setReferendums(referendums);
+      console.log("Get referendum")
+      await timeout(getAllReferendums(api), FETCH_DATA_TIMEOUT).then(referendums => setReferendums(referendums)).catch(() => setReferendums([]));
     }
     fetchData();
   }, []);
@@ -114,7 +117,8 @@ function App() {
             <Spacer y={1} />
           </>
         )}
-        {referendums?.length == 0 && <VotesTable votes={votes} />}
+        {referendums?.length == 0 && votes?.length != 0 && <VotesTable votes={votes} />}
+        {referendums?.length == 0 && votes?.length == 0 && <div>Failed to fetch data in time</div>}
         {!referendums && (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Loading />
