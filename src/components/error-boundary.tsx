@@ -1,23 +1,28 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
-export class ErrorBoundary extends React.Component {
-  state = {
-    error: null,
-  };
+type Props = {
+  children?: ReactNode[];
+};
+
+type State = {
+  error: Error | null;
+};
+
+export class ErrorBoundary extends React.Component<Props, State> {
 
   static getDerivedStateFromError(error: Error) {
     return {error}
   }
 
   componentDidCatch(error: Error, _: React.ErrorInfo) {
-    this.state.error = error;
+    this.setState({error: error});
   }
 
   render() {
     const {error} = this.state
 
     if (error !== null) {
-      return <div>Unhandled error: {error}</div>;
+      return <div>Unhandled error: {error.toString()}</div>;
     }
 
     return this.props.children;
