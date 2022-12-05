@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useContext, createContext } from 'react';
+import React, { useContext, createContext, useState } from 'react';
 
 const accountContext = createContext({});
 export const useAccount = () => useContext(accountContext);
+
 const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   const [account, setAccount] = useState({});
   return (
@@ -11,3 +11,5 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     </accountContext.Provider>
   );
 };
+
+export default AccountProvider;

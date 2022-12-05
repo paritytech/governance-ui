@@ -1,28 +1,16 @@
-import { createContext, useContext } from 'react';
+import React, { useMemo, createContext, useContext } from 'react';
 import { WalletAggregator, BaseWallet } from '@polkadot-onboard/core';
 import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets';
 import {
   PolkadotWalletsContextProvider,
   useWallets as _useWallets,
 } from '@polkadot-onboard/react';
-import { useMemo } from 'react';
 
 const APP_NAME = 'Swipe to Vote';
 
-export const useWallets = () => useContext(walletContext);
+export const useWallets = () => useContext(WalletContext);
 
-const walletContext = createContext({});
-
-const WalletProvider = ({ children }: { children: React.ReactNode }) => {
-  let walletAggregator = new WalletAggregator([
-    new InjectedWalletProvider({}, APP_NAME),
-  ]);
-  return (
-    <PolkadotWalletsContextProvider walletAggregator={walletAggregator}>
-      <WalletProviderInner>{children}</WalletProviderInner>
-    </PolkadotWalletsContextProvider>
-  );
-};
+const WalletContext = createContext({});
 
 const getStatefulWallets = (wallets: Array<BaseWallet>) => {
   const storage = window.localStorage;
@@ -48,15 +36,24 @@ const getStatefulWallets = (wallets: Array<BaseWallet>) => {
   return transformed;
 };
 
+const WalletProvider = ({ children }: { children: React.ReactNode }) => {
+  let walletAggregator = new WalletAggregator([
+    new InjectedWalletProvider({}, APP_NAME),
+  ]);
+  return (
+    <PolkadotWalletsContextProvider walletAggregator={walletAggregator}>
+      <WalletProviderInner>{children}</WalletProviderInner>
+    </PolkadotWalletsContextProvider>
+  );
+};
+
 const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
   let { wallets } = _useWallets();
-  const statefulWallets = useMemo(() => {
-    return getStatefulWallets(wallets);
-  }, [...wallets]);
+  const statefulWallets = getStatefulWallets(wallets);
   return (
-    <walletContext.Provider value={statefulWallets}>
+    <WalletContext.Provider value={{ wallets: statefulWallets }}>
       {children}
-    </walletContext.Provider>
+    </WalletContext.Provider>
   );
 };
 
