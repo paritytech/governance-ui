@@ -16,7 +16,7 @@ import { getAllReferendums } from './chain/democracy';
 import { endpointFor, Network, newApi } from './utils/polkadot-api';
 import { timeout } from './utils/promise';
 
-const FETCH_DATA_TIMEOUT = 5000; // in milliseconds
+const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
 
 function App() {
   const networkParam = useSearchParam('network');
