@@ -12,6 +12,35 @@ export const useWallets = () => useContext(WalletContext);
 
 const WalletContext = createContext({});
 
+export class WalletStateStorage {
+  static getStateStorageKey(wallet: BaseWallet) {
+    return `wallet#${wallet.metadata.title}`;
+  }
+  static setConnected(wallet: BaseWallet) {
+    let sKey = this.getStateStorageKey(wallet);
+    localStorage.setItem(sKey, 'connected');
+  }
+  static removeConnected(wallet: BaseWallet) {
+    let sKey = this.getStateStorageKey(wallet);
+    localStorage.removeItem(sKey);
+  }
+  static isConnected(wallet: BaseWallet) {
+    let sKey = this.getStateStorageKey(wallet);
+    let walletState = localStorage.getItem(sKey);
+    return walletState == 'connected';
+  }
+}
+
+const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
+  let { wallets } = _useWallets();
+
+  return (
+    <WalletContext.Provider value={{ wallets }}>
+      {children}
+    </WalletContext.Provider>
+  );
+};
+
 const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   let walletAggregator = new WalletAggregator([
     new InjectedWalletProvider({}, APP_NAME),
@@ -20,15 +49,6 @@ const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     <PolkadotWalletsContextProvider walletAggregator={walletAggregator}>
       <WalletProviderInner>{children}</WalletProviderInner>
     </PolkadotWalletsContextProvider>
-  );
-};
-
-const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
-  let { wallets } = _useWallets();
-  return (
-    <WalletContext.Provider value={{ wallets }}>
-      {children}
-    </WalletContext.Provider>
   );
 };
 
