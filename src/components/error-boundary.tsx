@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode } from 'react';
 
 type Props = {
   children?: ReactNode[];
@@ -9,17 +9,21 @@ type State = {
 };
 
 export class ErrorBoundary extends React.Component<Props, State> {
+  constructor(props: Props) {
+    super(props);
+    this.state = { error: null };
+  }
 
   static getDerivedStateFromError(error: Error) {
-    return {error}
+    return { error };
   }
 
   componentDidCatch(error: Error, _: React.ErrorInfo) {
-    this.setState({error: error});
+    this.setState({ error: error });
   }
 
   render() {
-    const {error} = this.state
+    const { error } = this.state;
 
     if (error !== null) {
       return <div>Unhandled error: {error.toString()}</div>;
