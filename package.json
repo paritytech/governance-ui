@@ -28,7 +28,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-iconly": "2.2.5",
-    "react-remark": "2.1.0"
+    "react-remark": "2.1.0",
+    "styled-components": "^5.3.6"
   },
   "devDependencies": {
     "@parcel/compressor-brotli": "2.8.0",
@@ -36,6 +37,7 @@
     "@parcel/packager-raw-url": "2.8.0",
     "@parcel/transformer-webmanifest": "2.8.0",
     "@types/react-dom": "18.0.6",
+    "@types/styled-components": "^5.1.26",
     "buffer": "5.5.0",
     "parcel": "2.8.0",
     "process": "0.11.10"
