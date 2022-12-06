@@ -12,12 +12,14 @@ export const useAccount = () => useContext(accountContext);
 
 const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   const [connectedAccount, _setConnectedAccount] = useState<SigningAccount>();
+  let { wallets } = useWallets();
+
   const getConnectedAddress = () =>
     localStorage.getItem(CONNECTED_ADRR_STORAGE_KEY);
   const setConnectedAddress = (address: string) =>
     localStorage.setItem(CONNECTED_ADRR_STORAGE_KEY, address);
 
-  const loadConnectedAccount = async () => {
+  const loadConnectedAccount = async (): Promise<SigningAccount | null> => {
     const connectedWalletsAccounts = await getConnectedWalletsAccounts();
     let connectedAccount = null;
     let connectedAddress = getConnectedAddress();
@@ -28,7 +30,6 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getConnectedWalletsAccounts = () => {
-    let { wallets } = useWallets();
     let signingAccounts = {};
     for (let wallet of wallets) {
       let signer = wallet.signer;
@@ -52,8 +53,10 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    loadConnectedAccount().then((signingAccount: SigningAccount) => {
-      setConnectedAccount(signingAccount);
+    loadConnectedAccount().then((signingAccount: SigningAccount | null) => {
+      if (signingAccount) {
+        setConnectedAccount(signingAccount);
+      }
     });
   }, [getConnectedAddress()]);
 
