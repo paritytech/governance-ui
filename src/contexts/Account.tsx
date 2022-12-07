@@ -1,7 +1,7 @@
 import { Account } from '@polkadot-onboard/core';
 import type { Signer } from '@polkadot/api/types';
 import React, { useContext, createContext, useState, useEffect } from 'react';
-import { useWallets, WalletStateStorage } from './Wallets';
+import { useWallets } from './Wallets';
 
 export type SigningAccount = { account: Account; signer: Signer };
 
@@ -12,7 +12,9 @@ export const useAccount = () => useContext(accountContext);
 
 const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   const [connectedAccount, _setConnectedAccount] = useState<SigningAccount>();
-  let { wallets } = useWallets();
+  const { wallets, walletState } = useWallets();
+  const [walletsAccounts, setWalletsAccounts] =
+    useState<Record<string, SigningAccount>>();
 
   const getConnectedAddress = () =>
     localStorage.getItem(CONNECTED_ADRR_STORAGE_KEY);
@@ -20,24 +22,27 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.setItem(CONNECTED_ADRR_STORAGE_KEY, address);
 
   const loadConnectedAccount = async (): Promise<SigningAccount | null> => {
-    const connectedWalletsAccounts = await getConnectedWalletsAccounts();
+    const walletsAccounts = await getWalletsAccounts();
     let connectedAccount = null;
     let connectedAddress = getConnectedAddress();
     if (connectedAddress) {
-      connectedAccount = connectedWalletsAccounts[connectedAddress];
+      connectedAccount = walletsAccounts[connectedAddress];
     }
     return connectedAccount;
   };
 
-  const getConnectedWalletsAccounts = () => {
+  const getWalletsAccounts = async () => {
     let signingAccounts = {};
     for (let wallet of wallets) {
-      let signer = wallet.signer;
-      if (signer && WalletStateStorage.isConnected(wallet)) {
+      let {
+        signer,
+        metadata: { title },
+      } = wallet;
+      if (signer && walletState[title] === 'connected') {
         let walletSigningAccounts = {};
-        let walletAccounts = wallet.getAccoutns();
-        if (walletAccounts.length > 0) {
-          for (let account of walletAccounts) {
+        let walletsAccounts = await wallet.getAccounts();
+        if (walletsAccounts.length > 0) {
+          for (let account of walletsAccounts) {
             walletSigningAccounts[account.address] = { account, signer };
           }
           signingAccounts = { ...signingAccounts, ...walletSigningAccounts };
@@ -60,12 +65,18 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     });
   }, [getConnectedAddress()]);
 
+  useEffect(() => {
+    getWalletsAccounts().then((accounts: Record<string, SigningAccount>) => {
+      setWalletsAccounts(accounts);
+    });
+  }, [wallets, walletState]);
+
   return (
     <accountContext.Provider
       value={{
         connectedAccount,
         setConnectedAccount,
-        getConnectedWalletsAccounts,
+        walletsAccounts,
       }}
     >
       {children}
