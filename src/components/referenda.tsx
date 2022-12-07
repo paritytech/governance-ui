@@ -3,8 +3,7 @@ import { Remark } from 'react-remark';
 import { Card } from "@nextui-org/react";
 import { Loading, Text } from "../components/common";
 import { Network } from "../utils/polkadot-api";
-import { fetchReferendaV1, Post } from "../utils/polkassembly";
-import { Referendum } from "../types";
+import { fetchReferenda, Post } from "../utils/polkassembly";
 
 const MarkdownCard = memo(({ index, title, content }: { index: number, title: string, content: string }) => {
   const isHTML = content.startsWith("<p"); // A bug in polkascan made some posts in HTML. They should always be markdown.
@@ -24,19 +23,21 @@ const MarkdownCard = memo(({ index, title, content }: { index: number, title: st
   );
 });
   
-const ReferendumCard = memo(({ network, referendum }: { network: Network, referendum: Referendum }) => {
-  const [details, setDetails] = useState<Post>();
+const ReferendumCard = memo(({ network, index }: { network: Network, index: number }) => {
+  const [details, setDetails] = useState<Post | null>();
 
   useEffect(() => {
     async function fetchData() {
-      const details = await fetchReferendaV1(network, referendum.index);
+      const details = await fetchReferenda(network, index);
       setDetails(details.posts[0]);
     }
     fetchData();
   }, []);
 
   if (details) {
-    return <MarkdownCard index={referendum.index} title={details?.title || ""} content={details?.content || ""} />;
+    return <MarkdownCard index={index} title={details?.title || ""} content={details?.content || ""} />;
+  } else if (details == null) {
+    return <div>Failed to load data</div>;
   } else {
     return <Loading />;
   }

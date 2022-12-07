@@ -12,7 +12,7 @@ function VotesTable({ votes }: { votes: Vote[] }): JSX.Element {
         <>
           <Card key={idx} variant="bordered" css={{ mw: "400px" }}>
             <Card.Body style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-              <Text h3 b>#{vote.referendum.index}</Text>
+              <Text h3 b>#{vote.index}</Text>
               <Spacer y={2} />
               <Text h4 color={color}>{vote.vote ? "Aye" : "Naye"}</Text>
             </Card.Body>
