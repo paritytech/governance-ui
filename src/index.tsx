@@ -6,7 +6,7 @@ import { ErrorBoundary } from './components/error-boundary';
 import { registerServiceWorker } from './utils/service-worker';
 import WalletProvider from './contexts/Wallets';
 import AccountProvider from './contexts/Account';
-import Connect from './components/connect';
+import Header from './components/header';
 
 const theme = createTheme({
   type: 'light',
@@ -29,7 +29,7 @@ if (container) {
           <ErrorBoundary>
             <WalletProvider>
               <AccountProvider>
-                <Connect />
+                <Header />
                 <App />
               </AccountProvider>
             </WalletProvider>

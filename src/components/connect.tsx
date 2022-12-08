@@ -37,7 +37,7 @@ const AccountList = ({ accounts, connectedAccount, accountConnectHandler }) => {
           <Account
             name={account.name}
             address={account.address}
-            meta={{ isConnected }}
+            state={{ isConnected }}
             clickHandler={() => accountConnectHandler(signingAccount)}
           />
         );
@@ -48,7 +48,7 @@ const AccountList = ({ accounts, connectedAccount, accountConnectHandler }) => {
 
 type ConnectViews = 'wallets' | 'accounts';
 
-const ConnectModal = () => {
+const ConnectButton = (props) => {
   const [visible, setVisible] = useState(false);
   const [currentView, setCurrentView] = useState<ConnectViews>();
   const { wallets, walletState, setWalletState } = useWallets();
@@ -90,11 +90,10 @@ const ConnectModal = () => {
   useEffect(() => {
     setCurrentView(initialView);
   }, [initialView]);
+  const onPress = () => openModal();
   return (
     <>
-      <Button color="secondary" onPress={() => openModal()}>
-        Connect
-      </Button>
+      <Button {...{ ...props, onPress }}>Connect</Button>
       <Modal visible={visible} onClose={() => closeModal()}>
         <div onClick={() => toggleView()}>{`${
           currentView === 'accounts'
@@ -122,4 +121,4 @@ const ConnectModal = () => {
   );
 };
 
-export default ConnectModal;
+export default ConnectButton;
