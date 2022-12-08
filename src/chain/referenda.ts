@@ -1,32 +1,73 @@
 import { ApiPromise } from "@polkadot/api";
-import { Curve, Referendum, ReferendumSubmitted, Track } from "../types";
+import { CallLookup, Curve, Referendum, ReferendumSubmitted, ScheduledWakeUp, Track } from "../types";
 
 function toReferendumSubmitted(referendum: any): ReferendumSubmitted {
   return {
     submitted: referendum[0],
     submissionDeposit: referendum[1],
-    decisionposit: referendum[2]
+    decisionDeposit: referendum[2].unwrapOr(null)
+  }
+}
+
+function toCall(codec: any): CallLookup {
+  try {
+    const lookup = codec.asLookup;
+    return {
+      hash: lookup.hash,
+      len: lookup.len,
+    };
+  } catch {
+    return {
+      hash: "",
+      len: 0
+    }
+  }
+}
+
+function toScheduledWakeUp(codec: any): ScheduledWakeUp | undefined {
+  if (codec.isSome) {
+    const o = codec.value;
+    return {
+      when: o[0].toNumber(),
+      address: o[1].toString(),
+    };
   }
 }
 
 function toReferendum(codec: any): Referendum {
-	const o = codec.toHuman();
-  const { Ongoing, Approved, Rejected, Cancelled, Timedout, Killed } = o;
-  if (Ongoing) {
+	const o = codec.unwrapOrDefault();
+  if (o.isOngoing) {
+    const ongoing = o.asOngoing;
     return {
       type: "ongoing",
-      track: Ongoing["track"],
-      enactment: Ongoing["enactment"],
-      inQueue: Ongoing["inQueue"],
-      deciding: Ongoing["deciding"],
-      tally: Ongoing["tally"],
-      ...toReferendumSubmitted(Ongoing)
+      track: ongoing.track,
+      proposal: toCall(ongoing),
+      enactment: ongoing.enactment,
+      inQueue: ongoing.inQueue,
+      deciding: ongoing.deciding,
+      tally: ongoing.tally,
+      submitted: ongoing.submitted,
+      submissionDeposit: ongoing.submissionDeposit,
+      decisionDeposit: ongoing.decisionposit,
+      alarm: toScheduledWakeUp(codec)
     };
-  } else if (Killed) {
-    return { type: "killed", submitted: Killed[0] };
+  } else if (o.isApproved) {
+    const approved = o.asApproved;
+    return { type: "approved", ...toReferendumSubmitted(approved) };
+  } else if (o.isRejected) {
+    const rejected = o.asRejected;
+    return { type: "rejected", ...toReferendumSubmitted(rejected) };
+  } else if (o.isCancelled) {
+    const cancelled = o.asCancelled;
+    return { type: "cancelled", ...toReferendumSubmitted(cancelled) };
+  } else if (o.isTimedOut) {
+    const timedout = o.asTimedOut;
+    return { type: "timedout", ...toReferendumSubmitted(timedout) };
+  } else if (o.isKilled) {
+    const killed = o.asKilled;
+    return { type: "killed", submitted: killed.submitted };
   } else {
-    const type = Approved ? "approved" : Rejected ? "rejected" : Cancelled ? "cancelled" : Timedout ? "timedout" : "unknown";
-    return { type, ...toReferendumSubmitted(o)};
+    return { type: "unknown"};
   }
 }
 

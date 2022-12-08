@@ -31,6 +31,16 @@ export type DispatchTime = {
   after: number,
 }
 
+export type CallLookup = {
+  hash: string,
+  len: number,
+}
+
+export type ScheduledWakeUp = {
+  when: number,
+  address: string,
+}
+
 export type ReferendumOngoing = {
   type: "ongoing",
   /// The track of this referendum.
@@ -38,7 +48,7 @@ export type ReferendumOngoing = {
   /// The origin for this referendum.
 //  origin: RuntimeOrigin,
   /// The hash of the proposal up for referendum.
-//  proposal: Call,
+  proposal: CallLookup,
   /// The time the proposal should be scheduled for enactment.
   enactment: DispatchTime,
   /// The time of submission. Once `UndecidingTimeout` passes, it may be closed by anyone if
@@ -55,17 +65,17 @@ export type ReferendumOngoing = {
   /// Whether we have been placed in the queue for being decided or not.
   inQueue: boolean,
   /// The next scheduled wake-up, if `Some`.
-//  alarm: Option<(Moment, ScheduleAddress)>,
+  alarm?: ScheduledWakeUp,
 };
 
 export type ReferendumSubmitted = {
   /// The time of submission. Once `UndecidingTimeout` passes, it may be closed by anyone if
   /// `deciding` is `None`.
-  submitted: number,
+  submitted: BigNumber,
   /// The deposit reserved for the submission of this referendum.
   submissionDeposit: Deposit,
   /// The deposit reserved for this referendum to be decided.
-  decisionposit?: Deposit,
+  decisionDeposit?: Deposit,
 };
 
 export type ReferendumApproved = ReferendumSubmitted & { type: "approved" };
