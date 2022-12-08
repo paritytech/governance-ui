@@ -86,7 +86,6 @@ function App() {
               }}
             >
               {Array.from(referenda).map(([index, referendum]) => {
-                console.log(referendum)
                 return (
                   <SwipeableCard
                     key={index}

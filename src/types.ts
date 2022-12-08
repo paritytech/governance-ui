@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js';
+
 export enum VoteType {
   Aye,
   Nay
@@ -86,3 +88,59 @@ export type Referendum =
   | ReferendumTimedOut
   | ReferendumKilled
   | ReferendumUnknown;
+
+export type Perbill = {
+  value: number,
+};
+
+export type LinearDecreasingCurve = {
+  type: "LinearDecreasing",
+  length: Perbill,
+  floor: Perbill,
+  ceil: Perbill,
+};
+
+export type SteppedDecreasing = {
+  type: "SteppedDecreasing",
+  begin: Perbill,
+  end: Perbill,
+  step: Perbill,
+  period: Perbill,
+};
+
+export type Reciprocal = {
+  type: "Reciprocal",
+  factor: BigNumber,
+  xOffset: BigNumber,
+  yOffset: BigNumber,
+};
+
+export type Curve =
+  | LinearDecreasingCurve
+  | SteppedDecreasing
+  | Reciprocal;
+
+// @see https://github.com/paritytech/substrate/blob/master/frame/referenda/src/types.rs#L117
+export type Track = {
+  /// Name of this track.
+  name: string,
+  /// A limit for the number of referenda on this track that can be being decided at once.
+  /// For Root origin this should generally be just one.
+  maxDeciding: number,
+  /// Amount that must be placed on deposit before a decision can be made.
+  decisionDeposit: number,
+  /// Amount of time this must be submitted for before a decision can be made.
+  preparePeriod: number,
+  /// Amount of time that a decision may take to be approved prior to cancellation.
+  decisionPeriod: number,
+  /// Amount of time that the approval criteria must hold before it can be approved.
+  confirmPeriod: number,
+  /// Minimum amount of time that an approved proposal must be in the dispatch queue.
+  minEnactmentPeriod: number,
+  /// Minimum aye votes as percentage of overall conviction-weighted votes needed for
+  /// approval as a function of time into decision period.
+  minApproval: Curve,
+  /// Minimum pre-conviction aye-votes ("support") as percentage of overall population that is
+  /// needed for approval as a function of time into decision period.
+  minSupport: Curve,
+}
