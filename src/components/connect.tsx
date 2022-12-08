@@ -4,57 +4,44 @@ import { useAccount } from '../contexts/Account';
 import type { SigningAccount } from '../contexts/Account';
 import { useWallets } from '../contexts/Wallets';
 import { Button, Modal } from './common';
+import Account from './account';
+import Wallet from './wallet';
 const WalletsList = ({ wallets, walletState, walletConnectHandler }) => {
   return (
     <div>
-      {wallets?.map((wallet) => (
-        // ToDo: add an account connect modal
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div onClick={() => walletConnectHandler(wallet)}>
-            {`${wallet?.metadata?.title}`}
-          </div>
-          <div>
-            {`${
-              walletState[`${wallet?.metadata.title}`] === 'connected'
-                ? 'connected'
-                : 'disconnected'
-            }`}
-          </div>
-        </div>
-      ))}
+      {wallets?.map((wallet) => {
+        const name = wallet?.metadata.title;
+        const iconUrl = wallet?.metadata.iconUrl;
+        const isConnected =
+          walletState[`${wallet?.metadata.title}`] === 'connected';
+        return (
+          <Wallet
+            name={name}
+            state={{ isConnected }}
+            clickHandler={() => walletConnectHandler(wallet)}
+          />
+        );
+      })}
     </div>
   );
 };
 const AccountList = ({ accounts, connectedAccount, accountConnectHandler }) => {
   return (
     <div>
-      {Object.values(accounts).map((signingAccount) => (
-        // ToDo: add an account connect modal
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div onClick={() => accountConnectHandler(signingAccount)}>
-            {`${signingAccount.account.address}`}
-          </div>
-          <div>
-            {`${
-              connectedAccount?.address === signingAccount?.address
-                ? 'connected'
-                : 'disconnected'
-            }`}
-          </div>
-        </div>
-      ))}
+      {Object.values(accounts).map((signingAccount) => {
+        const { account } = signingAccount;
+        const isConnected =
+          connectedAccount &&
+          connectedAccount.account.address === account.address;
+        return (
+          <Account
+            name={account.name}
+            address={account.address}
+            meta={{ isConnected }}
+            clickHandler={() => accountConnectHandler(signingAccount)}
+          />
+        );
+      })}
     </div>
   );
 };
@@ -68,12 +55,14 @@ const ConnectModal = () => {
   const { connectedAccount, setConnectedAccount, walletsAccounts } =
     useAccount();
 
+  const loadedAccountsCount = walletsAccounts
+    ? Object.keys(walletsAccounts).length
+    : 0;
+
   const initialView: ConnectViews =
-    walletsAccounts && Object.keys(walletsAccounts).length > 0
-      ? 'accounts'
-      : 'wallets';
+    loadedAccountsCount > 0 ? 'accounts' : 'wallets';
+
   const toggleView = () => {
-    console.log(currentView);
     setCurrentView((oldView) =>
       oldView === 'wallets' ? 'accounts' : 'wallets'
     );
@@ -99,7 +88,6 @@ const ConnectModal = () => {
     setVisible(true);
   };
   useEffect(() => {
-    console.log('initiate');
     setCurrentView(initialView);
   }, [initialView]);
   return (
@@ -109,7 +97,11 @@ const ConnectModal = () => {
       </Button>
       <Modal visible={visible} onClose={() => closeModal()}>
         <div onClick={() => toggleView()}>{`${
-          currentView === 'accounts' ? 'wallets' : 'accounts'
+          currentView === 'accounts'
+            ? '< wallets'
+            : loadedAccountsCount
+            ? 'accounts >'
+            : ''
         }`}</div>
         {currentView === 'accounts' && (
           <AccountList

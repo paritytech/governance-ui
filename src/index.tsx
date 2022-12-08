@@ -23,7 +23,9 @@ if (container) {
   root.render(
     <React.StrictMode>
       <NextUIProvider theme={theme}>
-        <main style={{ display: 'flex', height: '100vh' }}>
+        <main
+          style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}
+        >
           <ErrorBoundary>
             <WalletProvider>
               <AccountProvider>
