@@ -72,5 +72,5 @@ export async function fetchReferendaV1(network: Network, id: number): Promise<Re
 }
 
 export async function fetchReferenda(network: Network, id: number): Promise<Referendum> {
-   return fetchQuery(networkUrl(network), referendum_posts_query, {id: id});
+   return fetchQuery(networkUrl(network), open_referendum_posts_query, {id: id});
 }

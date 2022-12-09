@@ -30,7 +30,7 @@
   ],
   "theme_color": "#e6007a",
   "background_color": "#e6007a",
-  "categories": ["polkadot", "governance", "dapp"],
+  "categories": ["polkadot", "governance", "dapp", "social"],
   "related_applications": [{
     "platform": "webapp",
     "url": "https://jeluard.github.io/swipealot/manifest.webmanifest"
