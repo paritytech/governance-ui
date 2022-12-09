@@ -1,9 +1,13 @@
-import { Account } from '@polkadot-onboard/core';
+import { Account, WalletMetadata } from '@polkadot-onboard/core';
 import type { Signer } from '@polkadot/api/types';
 import React, { useContext, createContext, useState, useEffect } from 'react';
 import { useWallets } from './Wallets';
 
-export type SigningAccount = { account: Account; signer: Signer };
+export type SigningAccount = {
+  account: Account;
+  signer: Signer;
+  sourceMetadata: WalletMetadata;
+};
 
 // account context
 const CONNECTED_ADRR_STORAGE_KEY = 'connectedAddress';
@@ -11,7 +15,7 @@ const accountContext = createContext({});
 export const useAccount = () => useContext(accountContext);
 
 const AccountProvider = ({ children }: { children: React.ReactNode }) => {
-  const [connectedAccount, _setConnectedAccount] = useState<SigningAccount>();
+  const [_connectedAccount, _setConnectedAccount] = useState<SigningAccount>();
   const { wallets, walletState } = useWallets();
   const [walletsAccounts, setWalletsAccounts] =
     useState<Record<string, SigningAccount>>();
@@ -43,13 +47,24 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
         let walletsAccounts = await wallet.getAccounts();
         if (walletsAccounts.length > 0) {
           for (let account of walletsAccounts) {
-            walletSigningAccounts[account.address] = { account, signer };
+            walletSigningAccounts[account.address] = {
+              account,
+              signer,
+              sourceMetadata: wallet.metadata,
+            };
           }
           signingAccounts = { ...signingAccounts, ...walletSigningAccounts };
         }
       }
     }
     return signingAccounts;
+  };
+
+  const accountSourceIsConnected = (signingAccount: SigningAccount) => {
+    const {
+      sourceMetadata: { title },
+    } = signingAccount;
+    return walletState[title] === 'connected';
   };
 
   const setConnectedAccount = (signingAccount: SigningAccount) => {
@@ -71,6 +86,10 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     });
   }, [wallets, walletState]);
 
+  const connectedAccount =
+    _connectedAccount && accountSourceIsConnected(_connectedAccount)
+      ? _connectedAccount
+      : undefined;
   return (
     <accountContext.Provider
       value={{

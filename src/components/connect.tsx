@@ -93,7 +93,11 @@ const ConnectButton = (props) => {
   const onPress = () => openModal();
   return (
     <>
-      <Button {...{ ...props, onPress }}>Connect</Button>
+      <Button {...{ ...props, onPress }}>
+        {connectedAccount
+          ? `Connected - ${connectedAccount.account.name}`
+          : 'Connect'}
+      </Button>
       <Modal visible={visible} onClose={() => closeModal()}>
         <div onClick={() => toggleView()}>{`${
           currentView === 'accounts'
