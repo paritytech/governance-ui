@@ -12,6 +12,12 @@ export const useWallets = () => useContext(WalletContext);
 
 const WalletContext = createContext({});
 
+/**
+ * Provides a local storage utility class to store the connection state of each wallet.
+ * WalletState can be :'connected' | 'disconnected'
+ * the state is stored in localStorage under `wallet#<walletTitle>`
+ * e.g. 'wallet#polkadot-js' is the key for polkadot-js extension wallet
+ */
 export class WalletStateStorage {
   static getStateStorageKey(walletTitle: string) {
     return `wallet#${walletTitle}`;

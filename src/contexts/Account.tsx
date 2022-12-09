@@ -10,9 +10,20 @@ export type SigningAccount = {
 };
 
 // account context
-const CONNECTED_ADRR_STORAGE_KEY = 'connectedAddress';
+
 const accountContext = createContext({});
 export const useAccount = () => useContext(accountContext);
+
+/**
+ * Provides a local storage utility class to store the connected account address.
+ */
+export class AccountStorage {
+  static CONNECTED_ADRR_STORAGE_KEY = 'connectedAddress';
+  static getConnectedAddress = () =>
+    localStorage.getItem(this.CONNECTED_ADRR_STORAGE_KEY);
+  static setConnectedAddress = (address: string) =>
+    localStorage.setItem(this.CONNECTED_ADRR_STORAGE_KEY, address);
+}
 
 const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   const [_connectedAccount, _setConnectedAccount] = useState<SigningAccount>();
@@ -20,15 +31,10 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   const [walletsAccounts, setWalletsAccounts] =
     useState<Record<string, SigningAccount>>();
 
-  const getConnectedAddress = () =>
-    localStorage.getItem(CONNECTED_ADRR_STORAGE_KEY);
-  const setConnectedAddress = (address: string) =>
-    localStorage.setItem(CONNECTED_ADRR_STORAGE_KEY, address);
-
   const loadConnectedAccount = async (): Promise<SigningAccount | null> => {
     const walletsAccounts = await getWalletsAccounts();
     let connectedAccount = null;
-    let connectedAddress = getConnectedAddress();
+    let connectedAddress = AccountStorage.getConnectedAddress();
     if (connectedAddress) {
       connectedAccount = walletsAccounts[connectedAddress];
     }
@@ -68,7 +74,7 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const setConnectedAccount = (signingAccount: SigningAccount) => {
-    setConnectedAddress(signingAccount.account.address);
+    AccountStorage.setConnectedAddress(signingAccount.account.address);
     _setConnectedAccount(signingAccount);
   };
 
@@ -78,7 +84,7 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
         setConnectedAccount(signingAccount);
       }
     });
-  }, [getConnectedAddress()]);
+  }, [AccountStorage.getConnectedAddress()]);
 
   useEffect(() => {
     getWalletsAccounts().then((accounts: Record<string, SigningAccount>) => {
