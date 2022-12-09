@@ -37,7 +37,7 @@
     "@parcel/compressor-gzip": "2.8.0",
     "@parcel/packager-raw-url": "2.8.0",
     "@parcel/transformer-webmanifest": "2.8.0",
-    "@types/bignumber.js": "5.0.0",
+    "@types/bn.js": "5.1.1",
     "@types/react-dom": "18.0.6",
     "@types/styled-components": "5.1.26",
     "buffer": "5.5.0",

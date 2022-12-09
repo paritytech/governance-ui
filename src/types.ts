@@ -1,4 +1,4 @@
-import BigNumber from 'bignumber.js';
+import BN from 'bn.js';
 
 export enum VoteType {
   Aye,
@@ -71,7 +71,7 @@ export type ReferendumOngoing = {
 export type ReferendumSubmitted = {
   /// The time of submission. Once `UndecidingTimeout` passes, it may be closed by anyone if
   /// `deciding` is `None`.
-  submitted: BigNumber,
+  submitted: BN,
   /// The deposit reserved for the submission of this referendum.
   submissionDeposit: Deposit,
   /// The deposit reserved for this referendum to be decided.
@@ -120,9 +120,9 @@ export type SteppedDecreasing = {
 
 export type Reciprocal = {
   type: "Reciprocal",
-  factor: BigNumber,
-  xOffset: BigNumber,
-  yOffset: BigNumber,
+  factor: BN,
+  xOffset: BN,
+  yOffset: BN,
 };
 
 export type Curve =
