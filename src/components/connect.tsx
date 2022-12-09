@@ -98,7 +98,7 @@ const ConnectButton = (props) => {
           ? `Connected - ${connectedAccount.account.name}`
           : 'Connect'}
       </Button>
-      <Modal visible={visible} onClose={() => closeModal()}>
+      <Modal visible={visible} width={600} onClose={() => closeModal()}>
         <div onClick={() => toggleView()}>{`${
           currentView === 'accounts'
             ? '< wallets'

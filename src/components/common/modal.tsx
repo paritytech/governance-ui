@@ -4,17 +4,19 @@ import { Modal as NextUIModal } from '@nextui-org/react';
 const Modal = ({
   children,
   visible,
+  width,
   onClose,
 }: {
   children: React.ReactNode;
   visible: boolean;
+  width: number | string;
   onClose: () => void;
 }) => {
   return (
     <div>
       <NextUIModal
         scroll
-        width="600px"
+        width={width}
         aria-labelledby="modal-title"
         aria-describedby="modal-description"
         open={visible}
