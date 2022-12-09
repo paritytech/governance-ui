@@ -4,6 +4,9 @@ import { createTheme, NextUIProvider } from '@nextui-org/react';
 import App from './app';
 import { ErrorBoundary } from './components/error-boundary';
 import { registerServiceWorker } from './utils/service-worker';
+import WalletProvider from './contexts/Wallets';
+import AccountProvider from './contexts/Account';
+import Header from './components/header';
 
 const theme = createTheme({
   type: 'light',
@@ -20,9 +23,16 @@ if (container) {
   root.render(
     <React.StrictMode>
       <NextUIProvider theme={theme}>
-        <main style={{ display: 'flex', height: '100vh' }}>
+        <main
+          style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}
+        >
           <ErrorBoundary>
-            <App />
+            <WalletProvider>
+              <AccountProvider>
+                <Header />
+                <App />
+              </AccountProvider>
+            </WalletProvider>
           </ErrorBoundary>
         </main>
       </NextUIProvider>
@@ -33,6 +43,8 @@ if (container) {
   // registerServiceWorker();
 }
 
-window.addEventListener('unhandledrejection', function(event) {
-  console.error(`Unhandled promise rejection for ${event.promise}: ${event.reason}`);
+window.addEventListener('unhandledrejection', function (event) {
+  console.error(
+    `Unhandled promise rejection for ${event.promise}: ${event.reason}`
+  );
 });
