@@ -3,10 +3,10 @@ import * as ReactDOMClient from 'react-dom/client';
 import { createTheme, NextUIProvider } from '@nextui-org/react';
 import App from './app';
 import { ErrorBoundary } from './components/error-boundary';
-import { registerServiceWorker } from './utils/service-worker';
 import WalletProvider from './contexts/Wallets';
 import AccountProvider from './contexts/Account';
 import Header from './components/header';
+import '@polkadot/api-augment';
 
 const theme = createTheme({
   type: 'light',

@@ -10,11 +10,10 @@ import {
 } from './components/common';
 import { ReferendumCard, VotesTable } from './components';
 import useSearchParam from './hooks/useSearchParam';
-import { Referendum, Vote } from './types';
-import { pop } from './utils';
-import { getAllReferendums } from './chain/democracy';
+import { Referendum, Vote, VoteType } from './types';
 import { endpointFor, Network, newApi } from './utils/polkadot-api';
 import { timeout } from './utils/promise';
+import { getAllReferenda, getAllTracks } from './chain/referenda';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
 
@@ -22,8 +21,8 @@ function App() {
   const networkParam = useSearchParam('network');
   const rpcParam = useSearchParam('rpc');
   const network = Network.parse(networkParam);
-  const [referendums, setReferendums] = useState<
-    Array<Referendum> | undefined
+  const [referenda, setReferenda] = useState<
+    Map<number, Referendum> | undefined
   >();
   const [votes, setVotes] = useState<Array<Vote>>([]);
 
@@ -44,21 +43,24 @@ function App() {
         console.info(`Connected to network ${network.toString()}`);
       }
 
-      // Retrieve all referendums, then display them
-      console.log("Get referendum")
-      await timeout(getAllReferendums(api), FETCH_DATA_TIMEOUT).then(referendums => setReferendums(referendums)).catch(() => setReferendums([]));
+      // Retrieve all referenda, then display them
+      await timeout(getAllReferenda(api), FETCH_DATA_TIMEOUT).then(referenda => setReferenda(referenda)).catch((e) => {
+        console.error(`Failed to fetch referenda: ${e}`);
+        setReferenda(new Map());
+      });
     }
     fetchData();
   }, []);
 
   function voteOn(
-    idx: number,
-    vote: boolean,
+    index: number,
+    vote: VoteType,
     referendum: Referendum | undefined
   ) {
     if (referendum) {
-      setVotes([...votes, { index: idx, vote: vote, referendum: referendum }]);
-      setReferendums(referendums && pop(referendums));
+      setVotes([...votes, { vote, index, referendum }]);
+      referenda?.delete(index);
+      setReferenda(referenda);
     }
   }
 
@@ -73,7 +75,7 @@ function App() {
           flexDirection: 'column',
         }}
       >
-        {referendums && referendums.length > 0 && (
+        {referenda && referenda.size > 0 && (
           <>
             <div
               style={{
@@ -83,14 +85,14 @@ function App() {
                 justifyContent: 'center',
               }}
             >
-              {referendums.map((referendum, idx) => {
+              {Array.from(referenda).map(([index, referendum]) => {
                 return (
                   <SwipeableCard
-                    key={idx}
-                    onVote={(vote: boolean) => voteOn(idx, vote, referendum)}
+                    key={index}
+                    onVote={(vote: VoteType) => voteOn(index, vote, referendum)}
                     drag={true}
                   >
-                    <ReferendumCard network={network} referendum={referendum} />
+                    <ReferendumCard network={network} index={index} />
                   </SwipeableCard>
                 );
               })}
@@ -98,7 +100,7 @@ function App() {
             <div style={{ display: 'flex' }}>
               <Button
                 color="error"
-                onPress={() => voteOn(0, false, referendums.at(0))}
+                onPress={() => voteOn(0, VoteType.Nay, referenda.entries().next().value)}
                 icon={
                   <CloseSquareIcon
                     set="light"
@@ -110,16 +112,16 @@ function App() {
               <Spacer x={2} />
               <Button
                 color="success"
-                onPress={() => voteOn(0, true, referendums.at(0))}
+                onPress={() => voteOn(0, VoteType.Aye, referenda.entries().next().value)}
                 icon={<HeartIcon primaryColor="currentColor" filled />}
               />
             </div>
             <Spacer y={1} />
           </>
         )}
-        {referendums?.length == 0 && votes?.length != 0 && <VotesTable votes={votes} />}
-        {referendums?.length == 0 && votes?.length == 0 && <div>Failed to fetch data in time</div>}
-        {!referendums && (
+        {referenda?.size == 0 && votes?.length != 0 && <VotesTable votes={votes} />}
+        {referenda?.size == 0 && votes?.length == 0 && <div>Failed to fetch data in time</div>}
+        {!referenda && (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
             <Loading />
             <Spacer y={2} />
