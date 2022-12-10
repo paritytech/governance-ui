@@ -13,7 +13,7 @@ import useSearchParam from './hooks/useSearchParam';
 import { Referendum, Vote, VoteType } from './types';
 import { endpointFor, Network, newApi } from './utils/polkadot-api';
 import { timeout } from './utils/promise';
-import { getAllReferenda } from './chain/referenda';
+import { getAllReferenda, getAllTracks } from './chain/referenda';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
 

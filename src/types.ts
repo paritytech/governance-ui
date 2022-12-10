@@ -12,14 +12,14 @@ export type Vote = {
 }
 
 export type Tally = {
-  ayes: number,
-  nays: number,
-  support: number
+  ayes: BN,
+  nays: BN,
+  support: BN
 }
 
 export type Deposit = {
   who: string,
-  amount: number,
+  amount: BN,
 }
 
 export type DecidingStatus = {
@@ -27,9 +27,17 @@ export type DecidingStatus = {
   confirming?: number,
 }
 
-export type DispatchTime = {
+export type AtDispatchTime = {
+  at: number,
+}
+
+export type AfterDispatchTime = {
   after: number,
 }
+
+export type DispatchTime =
+  | AtDispatchTime
+  | AfterDispatchTime;
 
 export type CallLookup = {
   hash: string,
@@ -38,7 +46,6 @@ export type CallLookup = {
 
 export type ScheduledWakeUp = {
   when: number,
-  address: string,
 }
 
 export type ReferendumOngoing = {
@@ -59,7 +66,7 @@ export type ReferendumOngoing = {
   /// The deposit reserved for this referendum to be decided.
   decisionDeposit?: Deposit,
   /// The status of a decision being made. If `None`, it has not entered the deciding period.
-  deciding: DecidingStatus,
+  deciding?: DecidingStatus,
   /// The current tally of votes in this referendum.
   tally: Tally,
   /// Whether we have been placed in the queue for being decided or not.
@@ -138,7 +145,7 @@ export type Track = {
   /// For Root origin this should generally be just one.
   maxDeciding: number,
   /// Amount that must be placed on deposit before a decision can be made.
-  decisionDeposit: number,
+  decisionDeposit: BN,
   /// Amount of time this must be submitted for before a decision can be made.
   preparePeriod: number,
   /// Amount of time that a decision may take to be approved prior to cancellation.

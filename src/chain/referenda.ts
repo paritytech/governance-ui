@@ -1,5 +1,10 @@
 import { ApiPromise } from "@polkadot/api";
-import { CallLookup, Curve, Referendum, ReferendumSubmitted, ScheduledWakeUp, Track } from "../types";
+import { StorageKey } from "@polkadot/types";
+import { Option, u32 } from "@polkadot/types-codec";
+import { ITuple } from "@polkadot/types-codec/types";
+import type { FrameSupportPreimagesBounded, FrameSupportScheduleDispatchTime, PalletReferendaDeposit, PalletReferendaReferendumInfoConvictionVotingTally, PalletReferendaTrackInfo } from '@polkadot/types/lookup';
+import type { BN } from '@polkadot/util';
+import { CallLookup, Curve, Deposit, DispatchTime, Referendum, ReferendumSubmitted, ScheduledWakeUp, Track } from "../types";
 
 function toReferendumSubmitted(referendum: any): ReferendumSubmitted {
   return {
@@ -9,12 +14,12 @@ function toReferendumSubmitted(referendum: any): ReferendumSubmitted {
   }
 }
 
-function toCall(codec: any): CallLookup {
+function toCall(o: FrameSupportPreimagesBounded): CallLookup {
   try {
-    const lookup = codec.asLookup;
+    const lookup = o.asLookup;
     return {
-      hash: lookup.hash,
-      len: lookup.len,
+      hash: lookup.hash.toString(),
+      len: lookup.len.toNumber(),
     };
   } catch {
     return {
@@ -24,32 +29,51 @@ function toCall(codec: any): CallLookup {
   }
 }
 
-function toScheduledWakeUp(codec: any): ScheduledWakeUp | undefined {
-  if (codec.isSome) {
-    const o = codec.value;
-    return {
-      when: o[0].toNumber(),
-      address: o[1].toString(),
-    };
+function toScheduledWakeUp(o: ITuple<[u32, ITuple<[u32, u32]>]>): ScheduledWakeUp {
+  return {
+    when: o[0].toNumber(),
+  };
+}
+
+function toDeposit(o: PalletReferendaDeposit): Deposit {
+  return {
+    who: o.who.toString(),
+    amount: o.amount.toBn()
   }
 }
 
-function toReferendum(codec: any): Referendum {
-	const o = codec.unwrapOrDefault();
+function toDispatchTime(o: FrameSupportScheduleDispatchTime): DispatchTime {
+  if (o.isAfter) {
+    const after = o.asAfter;
+    return {
+      after: after.toNumber(),
+    }
+  } else {
+    const at = o.asAt;
+    return {
+      at: at.toNumber(),
+    }
+  }
+}
+
+function toReferendum(o: PalletReferendaReferendumInfoConvictionVotingTally): Referendum {
   if (o.isOngoing) {
     const ongoing = o.asOngoing;
+    const deciding = ongoing.deciding.unwrapOr(undefined);
+    const decisionDeposit = ongoing.decisionDeposit.unwrapOr(undefined);
+    const alarm = ongoing.alarm.unwrapOr(undefined);
     return {
       type: "ongoing",
-      track: ongoing.track,
-      proposal: toCall(ongoing),
-      enactment: ongoing.enactment,
-      inQueue: ongoing.inQueue,
-      deciding: ongoing.deciding,
+      track: ongoing.track.toNumber(),
+      proposal: toCall(ongoing.proposal),
+      enactment: toDispatchTime(ongoing.enactment),
+      inQueue: ongoing.inQueue.toPrimitive(),
+      deciding: deciding ? {since: deciding.since.toNumber(), confirming: deciding.confirming.unwrapOr(undefined)?.toNumber()} : undefined,
       tally: ongoing.tally,
-      submitted: ongoing.submitted,
-      submissionDeposit: ongoing.submissionDeposit,
-      decisionDeposit: ongoing.decisionposit,
-      alarm: toScheduledWakeUp(codec)
+      submitted: ongoing.submitted.toNumber(),
+      submissionDeposit: toDeposit(ongoing.submissionDeposit),
+      decisionDeposit: decisionDeposit ? toDeposit(decisionDeposit) : undefined,
+      alarm: alarm ? toScheduledWakeUp(alarm) : undefined
     };
   } else if (o.isApproved) {
     const approved = o.asApproved;
@@ -65,14 +89,21 @@ function toReferendum(codec: any): Referendum {
     return { type: "timedout", ...toReferendumSubmitted(timedout) };
   } else if (o.isKilled) {
     const killed = o.asKilled;
-    return { type: "killed", submitted: killed.submitted };
+    return { type: "killed", submitted: killed.toNumber() };
   } else {
     return { type: "unknown"};
   }
 }
 
+function toReferenda(referenda: [StorageKey<[u32]>, Option<PalletReferendaReferendumInfoConvictionVotingTally>][]): Map<number, Referendum> {
+  return new Map(referenda.map(o => {
+    const key = o[0].args[0].toNumber();
+    return [key, toReferendum(o[1].unwrapOrDefault())];
+  }));
+}
+
 export async function getAllReferenda(api: ApiPromise): Promise<Map<number, Referendum>> {
-  return new Map((await api.query.referenda.referendumInfoFor.entries()).map(o => [o[0].toHuman()[0], toReferendum(o[1])]));
+  return toReferenda(await api.query.referenda.referendumInfoFor.entries());
 }
 
 function toCurve(codec: any): Curve {
@@ -104,20 +135,24 @@ function toCurve(codec: any): Curve {
   }
 }
 
-function toTrack(codec: any): Track {
+function toTrack(trackInfo: PalletReferendaTrackInfo): Track {
   return {
-    name: codec.name.toString(),
-    maxDeciding: codec.maxDeciding,
-    decisionDeposit: codec.decisionDeposit,
-    preparePeriod: codec.preparePeriod,
-    decisionPeriod: codec.decisionPeriod,
-    confirmPeriod: codec.confirmPeriod,
-    minEnactmentPeriod: codec.minEnactmentPeriod,
-    minApproval: toCurve(codec.minApproval),
-    minSupport: toCurve(codec.minSupport)
+    name: trackInfo.name.toString(),
+    maxDeciding: trackInfo.maxDeciding.toNumber(),
+    decisionDeposit: trackInfo.decisionDeposit.toBn(),
+    preparePeriod: trackInfo.preparePeriod.toNumber(),
+    decisionPeriod: trackInfo.decisionPeriod.toNumber(),
+    confirmPeriod: trackInfo.confirmPeriod.toNumber(),
+    minEnactmentPeriod: trackInfo.minEnactmentPeriod.toNumber(),
+    minApproval: toCurve(trackInfo.minApproval),
+    minSupport: toCurve(trackInfo.minSupport)
   };
 }
 
-export async function getAllTracks(api: ApiPromise): Promise<Map<number, Track>> {
-    return new Map(api.consts.referenda.tracks.map(o => [o[0].toHuman(), toTrack(o[1])]));
+function toTracks(tracks?: [BN, PalletReferendaTrackInfo][]): Map<number, Track> {
+  return new Map(tracks?.map(o => [o[0].toNumber(), toTrack(o[1])]));
+}
+
+export function getAllTracks(api: ApiPromise): Map<number, Track> {
+    return toTracks(api.consts.referenda.tracks as unknown as [BN, PalletReferendaTrackInfo][]);
 }

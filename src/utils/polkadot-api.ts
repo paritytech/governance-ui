@@ -27,7 +27,7 @@ export function endpointFor(network: Network): string {
   }
 }
 
-export async function newApi(endpoint: string): Promise<ApiPromise> {
+export function newApi(endpoint: string): Promise<ApiPromise> {
     const wsProvider = new WsProvider(endpoint);
-    return await ApiPromise.create({ provider: wsProvider });
+    return ApiPromise.create({ provider: wsProvider });
 }

@@ -6,6 +6,7 @@ import { ErrorBoundary } from './components/error-boundary';
 import WalletProvider from './contexts/Wallets';
 import AccountProvider from './contexts/Account';
 import Header from './components/header';
+import '@polkadot/api-augment';
 
 const theme = createTheme({
   type: 'light',
