@@ -1,46 +1,45 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, Suspense, useEffect, useState } from "react";
 import { Remark } from 'react-remark';
-import { Card } from "@nextui-org/react";
-import { Loading, Text } from "../components/common";
+import { Card, Loading, Text } from "../components/common";
 import { Network } from "../utils/polkadot-api";
 import { fetchReferenda, Post } from "../utils/polkassembly";
 
 const MarkdownCard = memo(({ index, title, content }: { index: number, title: string, content: string }) => {
   const isHTML = content.startsWith("<p"); // A bug in polkascan made some posts in HTML. They should always be markdown.
   return (
-    <Card className="card">
-      <Card.Header>
-        <Text h3 color="#e6007a" className="block-ellipsis" css={{ m: "$8" }}>#{index} {title}</Text>
-      </Card.Header>
-      <Card.Divider />
-      <Card.Body css={{ p: "$12", overflowX: "clip" }}>
-        {isHTML
-        ? <Text dangerouslySetInnerHTML={{__html: content}} />
-        : <Remark>{content}</Remark>}
-      </Card.Body>
-      <Card.Divider />
+    <Card className="card" header={<Text h3 color="primary" className="block-ellipsis" css={{ m: "$8" }}>#{index} {title}</Text>}
+      bodyCss={{ p: "$12", overflowX: "clip" }}>
+      {isHTML
+      ? <Text dangerouslySetInnerHTML={{__html: content}} />
+      : <Remark>{content}</Remark>}
     </Card>
   );
 });
-  
+
 const ReferendumCard = memo(({ network, index }: { network: Network, index: number }) => {
   const [details, setDetails] = useState<Post | null>();
+  const [error, setError] = useState<string>();
 
   useEffect(() => {
     async function fetchData() {
-      const details = await fetchReferenda(network, index);
-      setDetails(details.posts[0]);
+      try {
+        const details = await fetchReferenda(network, index);
+        setDetails(details.posts[0]);
+      } catch {
+        setError("Failed to load data");
+      }
     }
     fetchData();
   }, []);
 
-  if (details) {
-    return <MarkdownCard index={index} title={details?.title || ""} content={details?.content || ""} />;
-  } else if (details == null) {
-    return <div>Failed to load data</div>;
-  } else {
-    return <Loading />;
-  }
+  return (
+    <Suspense fallback={<Loading />}>
+      {details &&
+      <MarkdownCard index={index} title={details.title} content={details.content} />}
+      {error &&
+      <div>{error}</div>}
+    </Suspense>
+  );
 });
 
 export default ReferendumCard;

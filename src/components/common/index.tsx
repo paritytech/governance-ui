@@ -1,7 +1,7 @@
 export { default as Button } from './button';
 export * from './button';
 
-export { default as SwipeableCard } from './card';
+export { Card, SwipeableCard } from './card';
 export * from './card';
 
 export * from './icons';

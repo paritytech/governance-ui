@@ -7,6 +7,7 @@ import WalletProvider from './contexts/Wallets';
 import AccountProvider from './contexts/Account';
 import Header from './components/header';
 import '@polkadot/api-augment';
+import '@polkadot/types-augment';
 
 const theme = createTheme({
   type: 'light',
@@ -14,6 +15,9 @@ const theme = createTheme({
     fonts: {
       sans: 'Unbounded',
     },
+    colors: {
+      primary: '#e6007a',
+    }
   },
 });
 

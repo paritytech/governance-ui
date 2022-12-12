@@ -1,19 +1,20 @@
 import { motion, useAnimation, useMotionValue } from "framer-motion";
-import { useEffect, useRef, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
+import { Card as NextUICard } from '@nextui-org/react';
 
-const SwipeableCard = ({ children, onVote, ...props }) => {
+export const SwipeableCard = ({ children, onVote, ...props }) => {
     // motion stuff
       const cardElem = useRef(null);
-    
+
       const x = useMotionValue(0);
       const controls = useAnimation();
-    
+
       const [constrained, setConstrained] = useState(true);
-    
+
       const [direction, setDirection] = useState();
-    
+
       const [velocity, setVelocity] = useState();
-    
+
       const getVote = (childNode, parentNode) => {
         const childRect = childNode.getBoundingClientRect();
         const parentRect = document.documentElement.getBoundingClientRect();
@@ -26,17 +27,17 @@ const SwipeableCard = ({ children, onVote, ...props }) => {
             : undefined;
         return result;
       };
-    
+
       // determine direction of swipe based on velocity
       const getDirection = () => {
         return velocity >= 1 ? "right" : velocity <= -1 ? "left" : undefined;
       };
-    
+
       const getTrajectory = () => {
         setVelocity(x.getVelocity());
         setDirection(getDirection());
       };
-    
+
       const flyAway = (min) => {
         const flyAwayDistance = (direction) => {
           const parentWidth = cardElem.current.parentNode.getBoundingClientRect()
@@ -46,7 +47,7 @@ const SwipeableCard = ({ children, onVote, ...props }) => {
             ? -parentWidth / 2 - childWidth / 2
             : parentWidth / 2 + childWidth / 2;
         };
-    
+
         if (direction && Math.abs(velocity) > min) {
           setConstrained(false);
           controls.start({
@@ -54,7 +55,7 @@ const SwipeableCard = ({ children, onVote, ...props }) => {
           });
         }
       };
-    
+
       useEffect(() => {
         const unsubscribeX = x.onChange(() => {
           if (cardElem.current) {
@@ -66,12 +67,12 @@ const SwipeableCard = ({ children, onVote, ...props }) => {
             };
           }
         });
-    
+
         return () => unsubscribeX();
       });
-  
+
       const style = {position: 'absolute'};
-    
+
       return (
         <motion.div
           animate={controls}
@@ -89,4 +90,25 @@ const SwipeableCard = ({ children, onVote, ...props }) => {
       );
     };
 
-export default SwipeableCard;
+function HeaderWrapper({ header }: { header?: ReactNode }): JSX.Element {
+  if (header) {
+    return (
+      <>
+        {header}
+        <NextUICard.Divider />
+      </>
+    );
+  }
+  return <></>;
+}
+
+export function Card({ className, header, children, css, bodyCss }: { className?: string,header?: ReactNode, children: ReactNode }): JSX.Element {
+  return (
+    <NextUICard className={className} css={css}>
+      <HeaderWrapper header={header} />
+      <NextUICard.Body css={bodyCss}>
+        {children}
+      </NextUICard.Body>
+    </NextUICard>
+  );
+}

@@ -7,8 +7,7 @@ export enum VoteType {
 
 export type Vote = {
   vote: VoteType,
-  index: number,
-  referendum: Referendum
+  index: number
 }
 
 export type Tally = {

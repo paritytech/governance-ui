@@ -17,11 +17,11 @@ function Button({
   bordered,
   onPress,
 }: {
-  children: React.ReactNode;
-  color: keyof typeof Colors;
+  children?: React.ReactNode;
+  color?: keyof typeof Colors;
   icon?: React.ReactNode;
   bordered?: boolean;
-  onPress: React.MouseEventHandler<HTMLButtonElement>;
+  onPress: (e: PressEvent) => void;
 }): JSX.Element {
   return (
     <NextUIButton
