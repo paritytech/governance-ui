@@ -33,7 +33,8 @@ function Text(props: TextProps): JSX.Element {
     color,
     size,
     css,
-    children
+    children,
+    style
   } = props;
   return (
     <NextUIText
@@ -47,7 +48,8 @@ function Text(props: TextProps): JSX.Element {
       h6={h6}
       color={color}
       size={size}
-      css={css}>
+      css={css}
+      style={style}>
       {children}
     </NextUIText>);
 }

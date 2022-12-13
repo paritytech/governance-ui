@@ -10,10 +10,10 @@ import {
 } from './components/common';
 import { ReferendumCard, VotesTable } from './components';
 import useSearchParam from './hooks/useSearchParam';
-import { Referendum, Vote, VoteType } from './types';
+import { Referendum, ReferendumOngoing, Track, Vote, VoteType } from './types';
 import { endpointFor, Network, newApi } from './utils/polkadot-api';
 import { timeout } from './utils/promise';
-import { getAllReferenda } from './chain/referenda';
+import { getAllReferenda, getAllTracks } from './chain/referenda';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
 
@@ -59,7 +59,7 @@ function ActionBar( { onAccept, onRefuse }: { onAccept: MouseEventHandler<HTMLBu
   );
 }
 
-function Main({ network, referenda, voteOn }: { network: Network, referenda: Map<number, Referendum>, voteOn: (index: number, vote: VoteType) => void }): JSX.Element {
+function Main({ network, tracks, referenda, voteOn }: { network: Network, tracks: Map<number, Track>, referenda: Map<number, ReferendumOngoing>, voteOn: (index: number, vote: VoteType) => void }): JSX.Element {
   let topReferenda = 0;
   return (
     <Suspense fallback={<LoadingScreen />}>
@@ -71,7 +71,7 @@ function Main({ network, referenda, voteOn }: { network: Network, referenda: Map
           justifyContent: 'center',
         }}
       >
-        {Array.from(referenda.entries()).map(([index, referenda]) => {
+        {Array.from(referenda.entries()).map(([index, referendum]) => {
           topReferenda = index;
           return (
             <SwipeableCard
@@ -79,7 +79,7 @@ function Main({ network, referenda, voteOn }: { network: Network, referenda: Map
               onVote={(vote: VoteType) => voteOn(index, vote)}
               drag={true}
             >
-              <ReferendumCard network={network} index={index} />
+              <ReferendumCard network={network} index={index} tracks={tracks} referendum={referendum} />
             </SwipeableCard>
           );
         })}
@@ -98,7 +98,8 @@ function App(): JSX.Element {
   const networkParam = useSearchParam('network');
   const rpcParam = useSearchParam('rpc');
   const network = Network.parse(networkParam);
-  const [referenda, setReferenda] = useState<Map<number, Referendum>>(new Map());
+  const [tracks, setTracks] = useState<Map<number, Track>>(new Map());
+  const [referenda, setReferenda] = useState<Map<number, ReferendumOngoing>>(new Map());
   const [error, setError] = useState<string>();
   const [votes, setVotes] = useState<Array<Vote>>([]);
 
@@ -119,13 +120,15 @@ function App(): JSX.Element {
         console.info(`Connected to network ${network.toString()}`);
       }
 
+      setTracks(getAllTracks(api));
+
       // Retrieve all referenda, then display them
       await timeout(getAllReferenda(api), FETCH_DATA_TIMEOUT).then(referenda => {
-        const filteredReferenda = new Map(
+        const ongoingdReferenda = new Map(
           [...referenda]
-          .filter(([k, v]) => v.type == 'ongoing' )
+          .filter(([_k, v]) => v.type == 'ongoing' ) as [number, ReferendumOngoing][]
         );
-        setReferenda(filteredReferenda);
+        setReferenda(ongoingdReferenda);
       }).catch((e) => {
         console.error(`Failed to fetch referenda: ${e}`);
         setError("Failed to fetch data in time");
@@ -156,7 +159,7 @@ function App(): JSX.Element {
       >
         {(referenda?.size == 0 && votes?.length != 0)
         ? <VotesTable votes={votes} />
-        : <Main voteOn={voteOn} network={network} referenda={referenda} />}
+        : <Main voteOn={voteOn} network={network} tracks={tracks} referenda={referenda} />}
         {error && <div>{error}</div>}
       </div>
     </>
