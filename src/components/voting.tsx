@@ -5,11 +5,6 @@ import { Button, Card, Spacer, Text } from "../components/common";
 import { Vote, VoteType } from "../types";
 import { useAccount } from "../contexts/Account";
 import { ApiPromise } from "@polkadot/api";
-import {
-  SubmittableExtrinsic,
-  SubmittableExtrinsicFunction,
-  SubmittableExtrinsics,
-} from "@polkadot/api/types";
 
 function VotesTable({ votes }: { api: any; votes: Vote[] }): JSX.Element {
   const { connectedAccount } = useAccount();
@@ -28,7 +23,7 @@ function VotesTable({ votes }: { api: any; votes: Vote[] }): JSX.Element {
       Standard: {
         vote: {
           conviction: "None",
-          vote: v.vote === VoteType.Aye,
+          aye: v.vote === VoteType.Aye,
         },
         balance: 0,
       },
