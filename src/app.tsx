@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, Suspense, useEffect, useState } from 'react';
+import React, { MouseEventHandler, Suspense, useEffect, useState } from "react";
 import {
   Button,
   CloseSquareIcon,
@@ -7,26 +7,26 @@ import {
   Spacer,
   SwipeableCard,
   Text,
-} from './components/common';
-import { ReferendumCard, VotesTable } from './components';
-import useSearchParam from './hooks/useSearchParam';
-import { Referendum, Vote, VoteType } from './types';
-import { endpointFor, Network, newApi } from './utils/polkadot-api';
-import { timeout } from './utils/promise';
-import { getAllReferenda } from './chain/referenda';
+} from "./components/common";
+import { ReferendumCard, VotesTable } from "./components";
+import useSearchParam from "./hooks/useSearchParam";
+import { Referendum, Vote, VoteType } from "./types";
+import { endpointFor, Network, newApi } from "./utils/polkadot-api";
+import { timeout } from "./utils/promise";
+import { getAllReferenda } from "./chain/referenda";
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
 
 function LoadingScreen(): JSX.Element {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div style={{ display: "flex", flexDirection: "column" }}>
       <Loading />
       <Spacer y={2} />
       <Text
         h1
         size={60}
         css={{
-          textAlign: 'center',
+          textAlign: "center",
         }}
       >
         Get ready to vote!
@@ -35,9 +35,15 @@ function LoadingScreen(): JSX.Element {
   );
 }
 
-function ActionBar( { onAccept, onRefuse }: { onAccept: MouseEventHandler<HTMLButtonElement>, onRefuse: MouseEventHandler<HTMLButtonElement> }): JSX.Element {
+function ActionBar({
+  onAccept,
+  onRefuse,
+}: {
+  onAccept: MouseEventHandler<HTMLButtonElement>;
+  onRefuse: MouseEventHandler<HTMLButtonElement>;
+}): JSX.Element {
   return (
-    <div style={{ display: 'flex' }}>
+    <div style={{ display: "flex" }}>
       <Button
         color="success"
         onPress={onAccept}
@@ -48,27 +54,31 @@ function ActionBar( { onAccept, onRefuse }: { onAccept: MouseEventHandler<HTMLBu
         color="error"
         onPress={onRefuse}
         icon={
-          <CloseSquareIcon
-            set="light"
-            primaryColor="currentColor"
-            filled
-          />
+          <CloseSquareIcon set="light" primaryColor="currentColor" filled />
         }
       />
     </div>
   );
 }
 
-function Main({ network, referenda, voteOn }: { network: Network, referenda: Map<number, Referendum>, voteOn: (index: number, vote: VoteType) => void }): JSX.Element {
+function Main({
+  network,
+  referenda,
+  voteOn,
+}: {
+  network: Network;
+  referenda: Map<number, Referendum>;
+  voteOn: (index: number, vote: VoteType) => void;
+}): JSX.Element {
   let topReferenda = 0;
   return (
     <Suspense fallback={<LoadingScreen />}>
       <div
         style={{
-          display: 'flex',
+          display: "flex",
           flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         {Array.from(referenda.entries()).map(([index, referenda]) => {
@@ -86,7 +96,8 @@ function Main({ network, referenda, voteOn }: { network: Network, referenda: Map
       </div>
       <ActionBar
         onAccept={() => voteOn(topReferenda, VoteType.Aye)}
-        onRefuse={() => voteOn(topReferenda, VoteType.Nay)} />
+        onRefuse={() => voteOn(topReferenda, VoteType.Nay)}
+      />
       <Spacer y={1} />
       <Text>{referenda.size} left</Text>
       <Spacer y={1} />
@@ -95,10 +106,12 @@ function Main({ network, referenda, voteOn }: { network: Network, referenda: Map
 }
 
 function App(): JSX.Element {
-  const networkParam = useSearchParam('network');
-  const rpcParam = useSearchParam('rpc');
+  const networkParam = useSearchParam("network");
+  const rpcParam = useSearchParam("rpc");
   const network = Network.parse(networkParam);
-  const [referenda, setReferenda] = useState<Map<number, Referendum>>(new Map());
+  const [referenda, setReferenda] = useState<Map<number, Referendum>>(
+    new Map()
+  );
   const [error, setError] = useState<string>();
   const [votes, setVotes] = useState<Array<Vote>>([]);
 
@@ -120,24 +133,22 @@ function App(): JSX.Element {
       }
 
       // Retrieve all referenda, then display them
-      await timeout(getAllReferenda(api), FETCH_DATA_TIMEOUT).then(referenda => {
-        const filteredReferenda = new Map(
-          [...referenda]
-          .filter(([k, v]) => v.type == 'ongoing' )
-        );
-        setReferenda(filteredReferenda);
-      }).catch((e) => {
-        console.error(`Failed to fetch referenda: ${e}`);
-        setError("Failed to fetch data in time");
-      });
+      await timeout(getAllReferenda(api), FETCH_DATA_TIMEOUT)
+        .then((referenda) => {
+          const filteredReferenda = new Map(
+            [...referenda].filter(([k, v]) => v.type == "ongoing")
+          );
+          setReferenda(filteredReferenda);
+        })
+        .catch((e) => {
+          console.error(`Failed to fetch referenda: ${e}`);
+          setError("Failed to fetch data in time");
+        });
     }
     fetchData();
   }, []);
 
-  function voteOn(
-    index: number,
-    vote: VoteType
-  ) {
+  function voteOn(index: number, vote: VoteType) {
     setVotes([...votes, { vote, index }]);
     referenda?.delete(index);
     setReferenda(new Map([...referenda]));
@@ -147,16 +158,18 @@ function App(): JSX.Element {
     <>
       <div
         style={{
-          display: 'flex',
+          display: "flex",
           flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
         }}
       >
-        {(referenda?.size == 0 && votes?.length != 0)
-        ? <VotesTable votes={votes} />
-        : <Main voteOn={voteOn} network={network} referenda={referenda} />}
+        {referenda?.size == 0 && votes?.length != 0 ? (
+          <VotesTable votes={votes} />
+        ) : (
+          <Main voteOn={voteOn} network={network} referenda={referenda} />
+        )}
         {error && <div>{error}</div>}
       </div>
     </>
