@@ -78,13 +78,16 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     _setConnectedAccount(signingAccount);
   };
 
+  const storedConnectedAddress = AccountStorage.getConnectedAddress();
   useEffect(() => {
-    loadConnectedAccount().then((signingAccount: SigningAccount | null) => {
-      if (signingAccount) {
-        setConnectedAccount(signingAccount);
-      }
-    });
-  }, [AccountStorage.getConnectedAddress()]);
+    if (storedConnectedAddress) {
+      loadConnectedAccount().then((signingAccount: SigningAccount | null) => {
+        if (signingAccount) {
+          setConnectedAccount(signingAccount);
+        }
+      });
+    }
+  }, [storedConnectedAddress, walletsAccounts]);
 
   useEffect(() => {
     getWalletsAccounts().then((accounts: Record<string, SigningAccount>) => {
@@ -110,3 +113,4 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default AccountProvider;
+
