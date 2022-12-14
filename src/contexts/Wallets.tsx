@@ -60,7 +60,6 @@ const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
         }
       }
     }
-    console.log(walletState);
     _setWalletState(walletState);
   };
 
