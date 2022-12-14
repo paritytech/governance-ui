@@ -1,13 +1,19 @@
-import React, { useMemo, createContext, useContext, useState } from 'react';
-import { WalletAggregator, BaseWallet } from '@polkadot-onboard/core';
-import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets';
+import React, {
+  useMemo,
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+} from "react";
+import { WalletAggregator, BaseWallet } from "@polkadot-onboard/core";
+import { InjectedWalletProvider } from "@polkadot-onboard/injected-wallets";
 import {
   PolkadotWalletsContextProvider,
   useWallets as _useWallets,
-} from '@polkadot-onboard/react';
+} from "@polkadot-onboard/react";
 
-const APP_NAME = 'Swipe to Vote';
-export type WalletState = 'connected' | 'disconnected';
+const APP_NAME = "Swipe to Vote";
+export type WalletState = "connected" | "disconnected";
 export const useWallets = () => useContext(WalletContext);
 
 const WalletContext = createContext({});
@@ -28,7 +34,7 @@ export class WalletStateStorage {
   }
   static get(walletTitle: string) {
     let sKey = this.getStateStorageKey(walletTitle);
-    localStorage.getItem(sKey);
+    return localStorage.getItem(sKey);
   }
 }
 
@@ -39,10 +45,28 @@ const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
   );
   const setWalletState = (title: string, state: WalletState) => {
     _setWalletState({ ...walletState, [title]: state });
-    if (state === 'connected') {
-      WalletStateStorage.set(title, state);
-    }
+    WalletStateStorage.set(title, state);
   };
+
+  const initiateWallets = async (wallets) => {
+    let walletState: Record<string, WalletState> = {};
+    for (let wallet of wallets) {
+      let title = wallet.metadata?.title;
+      if (title) {
+        let state = WalletStateStorage.get(title);
+        if (state === "connected") {
+          await wallet.connect();
+          walletState[title] = "connected";
+        }
+      }
+    }
+    console.log(walletState);
+    _setWalletState(walletState);
+  };
+
+  useEffect(() => {
+    initiateWallets(wallets);
+  }, [wallets]);
   return (
     <WalletContext.Provider value={{ wallets, walletState, setWalletState }}>
       {children}
