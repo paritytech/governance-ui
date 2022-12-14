@@ -1,7 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-const Wallet = ({ name, state, iconUrl, clickHandler }) => {
-  const { isConnected } = state;
+import { WalletState } from '../contexts/Wallets';
+
+export interface IWalletProps {
+  name: string;
+  state: WalletState;
+  iconUrl?: string;
+  clickHandler: () => void;
+}
+
+const Wallet = ({ name, state, iconUrl, clickHandler }: IWalletProps) => {
+  const isConnected = state === 'connected';
   return (
     <WalletStyle>
       <div className="wallet-box" onClick={() => clickHandler()}>
@@ -43,3 +52,4 @@ const WalletStyle = styled.div`
 `;
 
 export default Wallet;
+

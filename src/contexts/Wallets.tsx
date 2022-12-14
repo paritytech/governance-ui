@@ -13,10 +13,16 @@ import {
 } from '@polkadot-onboard/react';
 
 const APP_NAME = 'Swipe to Vote';
-export type WalletState = 'connected' | 'disconnected';
-export const useWallets = () => useContext(WalletContext);
 
-const WalletContext = createContext({});
+export type WalletState = 'connected' | 'disconnected';
+export interface IWalletContext {
+  wallets: Array<BaseWallet>;
+  walletState: Map<string, WalletState>;
+  setWalletState: (title: string, state: WalletState) => void;
+}
+
+const WalletContext = createContext({} as IWalletContext);
+export const useWallets = () => useContext<IWalletContext>(WalletContext);
 
 /**
  * Provides a local storage utility class to store the connection state of each wallet.
@@ -40,23 +46,25 @@ export class WalletStateStorage {
 
 const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
   let { wallets } = _useWallets();
-  let [walletState, _setWalletState] = useState<Record<string, WalletState>>(
-    {}
+  let [walletState, _setWalletState] = useState<Map<string, WalletState>>(
+    new Map<string, WalletState>()
   );
   const setWalletState = (title: string, state: WalletState) => {
-    _setWalletState({ ...walletState, [title]: state });
+    _setWalletState(
+      (oldState) => new Map<string, WalletState>([...oldState, [title, state]])
+    );
     WalletStateStorage.set(title, state);
   };
 
-  const initiateWallets = async (wallets) => {
-    let walletState: Record<string, WalletState> = {};
+  const initiateWallets = async (wallets: Array<BaseWallet>) => {
+    let walletState: Map<string, WalletState> = new Map<string, WalletState>();
     for (let wallet of wallets) {
       let title = wallet.metadata?.title;
       if (title) {
         let state = WalletStateStorage.get(title);
         if (state === 'connected') {
           await wallet.connect();
-          walletState[title] = 'connected';
+          walletState.set(title, 'connected');
         }
       }
     }

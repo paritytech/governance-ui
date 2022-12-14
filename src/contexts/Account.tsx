@@ -1,17 +1,21 @@
 import { Account, WalletMetadata } from '@polkadot-onboard/core';
-import type { Signer } from '@polkadot/api/types';
+import type { Signer } from '@polkadot/types/types';
 import React, { useContext, createContext, useState, useEffect } from 'react';
 import { useWallets } from './Wallets';
 
 export type SigningAccount = {
   account: Account;
-  signer: Signer;
+  signer: Signer | undefined;
   sourceMetadata: WalletMetadata;
 };
 
+export interface IAccountContext {
+  connectedAccount: SigningAccount | undefined;
+  walletsAccounts: Map<string, SigningAccount>;
+  setConnectedAccount: (signingAccount: SigningAccount) => void;
+}
 // account context
-
-const accountContext = createContext({});
+const accountContext = createContext({} as IAccountContext);
 export const useAccount = () => useContext(accountContext);
 
 /**
@@ -28,38 +32,44 @@ export class AccountStorage {
 const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   const [_connectedAccount, _setConnectedAccount] = useState<SigningAccount>();
   const { wallets, walletState } = useWallets();
-  const [walletsAccounts, setWalletsAccounts] =
-    useState<Record<string, SigningAccount>>();
+  const [walletsAccounts, setWalletsAccounts] = useState<
+    Map<string, SigningAccount>
+  >(new Map<string, SigningAccount>());
 
-  const loadConnectedAccount = async (): Promise<SigningAccount | null> => {
+  const loadConnectedAccount = async (): Promise<
+    SigningAccount | undefined
+  > => {
     const walletsAccounts = await getWalletsAccounts();
-    let connectedAccount = null;
+    let connectedAccount;
     let connectedAddress = AccountStorage.getConnectedAddress();
     if (connectedAddress) {
-      connectedAccount = walletsAccounts[connectedAddress];
+      connectedAccount = walletsAccounts.get(connectedAddress);
     }
     return connectedAccount;
   };
 
   const getWalletsAccounts = async () => {
-    let signingAccounts = {};
+    let signingAccounts = new Map<string, SigningAccount>();
     for (let wallet of wallets) {
       let {
         signer,
         metadata: { title },
       } = wallet;
-      if (signer && walletState[title] === 'connected') {
-        let walletSigningAccounts = {};
-        let walletsAccounts = await wallet.getAccounts();
-        if (walletsAccounts.length > 0) {
-          for (let account of walletsAccounts) {
-            walletSigningAccounts[account.address] = {
+      if (signer && walletState.get(title) === 'connected') {
+        let walletSigningAccounts = new Map<string, SigningAccount>();
+        let accounts = await wallet.getAccounts();
+        if (accounts.length > 0) {
+          for (let account of accounts) {
+            walletSigningAccounts.set(account.address, {
               account,
               signer,
               sourceMetadata: wallet.metadata,
-            };
+            });
           }
-          signingAccounts = { ...signingAccounts, ...walletSigningAccounts };
+          signingAccounts = new Map([
+            ...signingAccounts,
+            ...walletSigningAccounts,
+          ]);
         }
       }
     }
@@ -70,7 +80,7 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     const {
       sourceMetadata: { title },
     } = signingAccount;
-    return walletState[title] === 'connected';
+    return walletState.get(title) === 'connected';
   };
 
   const setConnectedAccount = (signingAccount: SigningAccount) => {
@@ -81,7 +91,7 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   const storedConnectedAddress = AccountStorage.getConnectedAddress();
   useEffect(() => {
     if (storedConnectedAddress) {
-      loadConnectedAccount().then((signingAccount: SigningAccount | null) => {
+      loadConnectedAccount().then((signingAccount) => {
         if (signingAccount) {
           setConnectedAccount(signingAccount);
         }
@@ -90,7 +100,7 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   }, [storedConnectedAddress, walletsAccounts]);
 
   useEffect(() => {
-    getWalletsAccounts().then((accounts: Record<string, SigningAccount>) => {
+    getWalletsAccounts().then((accounts: Map<string, SigningAccount>) => {
       setWalletsAccounts(accounts);
     });
   }, [wallets, walletState]);

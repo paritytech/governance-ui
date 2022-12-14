@@ -2,22 +2,32 @@ import { BaseWallet } from '@polkadot-onboard/core';
 import React, { useEffect, useState } from 'react';
 import { useAccount } from '../contexts/Account';
 import type { SigningAccount } from '../contexts/Account';
-import { useWallets } from '../contexts/Wallets';
+import { WalletState, useWallets } from '../contexts/Wallets';
 import { Button, Modal } from './common';
 import Account from './account';
 import Wallet from './wallet';
-const WalletsList = ({ wallets, walletState, walletConnectHandler }) => {
+
+export interface IWalletsListProps {
+  wallets: Array<BaseWallet>;
+  walletState: Map<string, WalletState>;
+  walletConnectHandler: (wallet: BaseWallet) => void;
+}
+
+const WalletsList = ({
+  wallets,
+  walletState,
+  walletConnectHandler,
+}: IWalletsListProps) => {
   return (
     <div>
       {wallets?.map((wallet) => {
         const name = wallet?.metadata.title;
         const iconUrl = wallet?.metadata.iconUrl;
-        const isConnected =
-          walletState[`${wallet?.metadata.title}`] === 'connected';
+        const state = walletState.get(wallet?.metadata.title) || 'disconnected';
         return (
           <Wallet
             name={name}
-            state={{ isConnected }}
+            state={state}
             clickHandler={() => walletConnectHandler(wallet)}
           />
         );
@@ -25,10 +35,21 @@ const WalletsList = ({ wallets, walletState, walletConnectHandler }) => {
     </div>
   );
 };
-const AccountList = ({ accounts, connectedAccount, accountConnectHandler }) => {
+
+export interface IAccountListProps {
+  accounts: Map<string, SigningAccount>;
+  connectedAccount: SigningAccount | undefined;
+  accountConnectHandler: (account: SigningAccount) => void;
+}
+
+const AccountList = ({
+  accounts,
+  connectedAccount,
+  accountConnectHandler,
+}: IAccountListProps) => {
   return (
     <div>
-      {Object.values(accounts).map((signingAccount) => {
+      {[...accounts.values()].map((signingAccount) => {
         const { account } = signingAccount;
         const isConnected =
           connectedAccount &&
@@ -55,9 +76,7 @@ const ConnectButton = (props) => {
   const { connectedAccount, setConnectedAccount, walletsAccounts } =
     useAccount();
 
-  const loadedAccountsCount = walletsAccounts
-    ? Object.keys(walletsAccounts).length
-    : 0;
+  const loadedAccountsCount = walletsAccounts ? walletsAccounts.size : 0;
 
   const initialView: ConnectViews =
     loadedAccountsCount > 0 ? 'accounts' : 'wallets';
@@ -68,7 +87,7 @@ const ConnectButton = (props) => {
     );
   };
   const walletConnectHandler = async (wallet: BaseWallet) => {
-    if (walletState[wallet?.metadata.title] == 'connected') {
+    if (walletState.get(wallet?.metadata.title) == 'connected') {
       await wallet.disconnect();
       setWalletState(wallet?.metadata.title, 'disconnected');
     } else {
@@ -126,3 +145,4 @@ const ConnectButton = (props) => {
 };
 
 export default ConnectButton;
+
