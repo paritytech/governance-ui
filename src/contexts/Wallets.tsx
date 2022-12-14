@@ -1,4 +1,10 @@
-import React, { useMemo, createContext, useContext, useState } from 'react';
+import React, {
+  useMemo,
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+} from 'react';
 import { WalletAggregator, BaseWallet } from '@polkadot-onboard/core';
 import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets';
 import {
@@ -28,7 +34,7 @@ export class WalletStateStorage {
   }
   static get(walletTitle: string) {
     let sKey = this.getStateStorageKey(walletTitle);
-    localStorage.getItem(sKey);
+    return localStorage.getItem(sKey);
   }
 }
 
@@ -39,10 +45,27 @@ const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
   );
   const setWalletState = (title: string, state: WalletState) => {
     _setWalletState({ ...walletState, [title]: state });
-    if (state === 'connected') {
-      WalletStateStorage.set(title, state);
-    }
+    WalletStateStorage.set(title, state);
   };
+
+  const initiateWallets = async (wallets) => {
+    let walletState: Record<string, WalletState> = {};
+    for (let wallet of wallets) {
+      let title = wallet.metadata?.title;
+      if (title) {
+        let state = WalletStateStorage.get(title);
+        if (state === 'connected') {
+          await wallet.connect();
+          walletState[title] = 'connected';
+        }
+      }
+    }
+    _setWalletState(walletState);
+  };
+
+  useEffect(() => {
+    initiateWallets(wallets);
+  }, [wallets]);
   return (
     <WalletContext.Provider value={{ wallets, walletState, setWalletState }}>
       {children}
@@ -62,3 +85,4 @@ const WalletProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default WalletProvider;
+
