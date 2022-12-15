@@ -9,11 +9,12 @@ import {
   Text,
 } from './components/common';
 import { ReferendumCard, VotesTable } from './components';
-import useSearchParam from './hooks/useSearchParam';
 import { Referendum, ReferendumOngoing, Track, Vote, VoteType } from './types';
-import { endpointFor, Network, newApi } from './utils/polkadot-api';
 import { timeout } from './utils/promise';
 import { getAllReferenda, getAllTracks } from './chain/referenda';
+import { ApiPromise } from '@polkadot/api';
+import { useApi } from './contexts/Api';
+import { Network } from './utils/polkadot-api';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
 
@@ -62,17 +63,16 @@ function ActionBar({
 }
 
 function Main({
-  network,
   tracks,
   referenda,
   voteOn,
 }: {
-  network: Network;
   tracks: Map<number, Track>;
   referenda: Map<number, ReferendumOngoing>;
   voteOn: (index: number, vote: VoteType) => void;
 }): JSX.Element {
   let topReferenda = 0;
+  const { network } = useApi();
   return (
     <Suspense fallback={<LoadingScreen />}>
       <div
@@ -86,18 +86,22 @@ function Main({
         {Array.from(referenda.entries()).map(([index, referendum]) => {
           topReferenda = index;
           return (
-            <SwipeableCard
-              key={index}
-              onVote={(vote: VoteType) => voteOn(index, vote)}
-              drag={true}
-            >
-              <ReferendumCard
-                network={network}
-                index={index}
-                tracks={tracks}
-                referendum={referendum}
-              />
-            </SwipeableCard>
+            <>
+              {network && (
+                <SwipeableCard
+                  key={index}
+                  onVote={(vote: VoteType) => voteOn(index, vote)}
+                  drag={true}
+                >
+                  <ReferendumCard
+                    network={network}
+                    index={index}
+                    tracks={tracks}
+                    referendum={referendum}
+                  />
+                </SwipeableCard>
+              )}
+            </>
           );
         })}
       </div>
@@ -113,33 +117,16 @@ function Main({
 }
 
 function App(): JSX.Element {
-  const networkParam = useSearchParam('network');
-  const rpcParam = useSearchParam('rpc');
-  const network = Network.parse(networkParam);
   const [tracks, setTracks] = useState<Map<number, Track>>(new Map());
   const [referenda, setReferenda] = useState<Map<number, ReferendumOngoing>>(
     new Map()
   );
   const [error, setError] = useState<string>();
   const [votes, setVotes] = useState<Array<Vote>>([]);
-
+  const { api, network } = useApi();
+  console.log('api is connected', api);
   useEffect(() => {
-    async function fetchData() {
-      const api = await newApi(rpcParam ? rpcParam : endpointFor(network));
-      if (rpcParam) {
-        // Check that provided rpc and network point to a same logical chain
-        const connectedChain = api.runtimeChain.toHuman() as Network;
-        if (connectedChain != network) {
-          console.error(
-            `Provided RPC doesn't match network ${network}: ${rpcParam}`
-          );
-        } else {
-          console.info(`Connected to network ${network} using RPC ${rpcParam}`);
-        }
-      } else {
-        console.info(`Connected to network ${network.toString()}`);
-      }
-
+    async function fetchData(api: ApiPromise) {
       setTracks(getAllTracks(api));
 
       // Retrieve all referenda, then display them
@@ -158,8 +145,8 @@ function App(): JSX.Element {
           setError('Failed to fetch data in time');
         });
     }
-    fetchData();
-  }, []);
+    api && fetchData(api);
+  }, [api]);
 
   function voteOn(index: number, vote: VoteType) {
     setVotes([...votes, { vote, index }]);
@@ -181,12 +168,7 @@ function App(): JSX.Element {
         {referenda?.size == 0 && votes?.length != 0 ? (
           <VotesTable votes={votes} />
         ) : (
-          <Main
-            voteOn={voteOn}
-            network={network}
-            tracks={tracks}
-            referenda={referenda}
-          />
+          <Main voteOn={voteOn} tracks={tracks} referenda={referenda} />
         )}
         {error && <div>{error}</div>}
       </div>

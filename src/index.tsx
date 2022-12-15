@@ -5,6 +5,7 @@ import App from './app';
 import { ErrorBoundary } from './components/error-boundary';
 import WalletProvider from './contexts/Wallets';
 import AccountProvider from './contexts/Account';
+import ApiProvider from './contexts/Api';
 import Header from './components/header';
 import '@polkadot/api-augment';
 import '@polkadot/types-augment';
@@ -17,7 +18,7 @@ const theme = createTheme({
     },
     colors: {
       primary: '#e6007a',
-    }
+    },
   },
 });
 
@@ -31,12 +32,14 @@ if (container) {
           style={{ display: 'flex', flexDirection: 'column', height: '100vh' }}
         >
           <ErrorBoundary>
-            <WalletProvider>
-              <AccountProvider>
-                <Header />
-                <App />
-              </AccountProvider>
-            </WalletProvider>
+            <ApiProvider>
+              <WalletProvider>
+                <AccountProvider>
+                  <Header />
+                  <App />
+                </AccountProvider>
+              </WalletProvider>
+            </ApiProvider>
           </ErrorBoundary>
         </main>
       </NextUIProvider>
