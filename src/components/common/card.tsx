@@ -19,7 +19,7 @@ export const SwipeableCard = ({ children, onVote, ...props }) => {
     const childRect = childNode.getBoundingClientRect();
     const parentRect = document.documentElement.getBoundingClientRect();
     const margin = ((parentRect.right - parentRect.left) * 30) / 100;
-    let result =
+    const result =
       parentRect.left + margin >= childRect.right
         ? false
         : parentRect.right - margin <= childRect.left

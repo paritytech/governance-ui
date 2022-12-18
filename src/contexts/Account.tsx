@@ -41,7 +41,7 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   > => {
     const walletsAccounts = await getWalletsAccounts();
     let connectedAccount;
-    let connectedAddress = AccountStorage.getConnectedAddress();
+    const connectedAddress = AccountStorage.getConnectedAddress();
     if (connectedAddress) {
       connectedAccount = walletsAccounts.get(connectedAddress);
     }
@@ -50,16 +50,16 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
 
   const getWalletsAccounts = async () => {
     let signingAccounts = new Map<string, SigningAccount>();
-    for (let wallet of wallets) {
-      let {
+    for (const wallet of wallets) {
+      const {
         signer,
         metadata: { title },
       } = wallet;
       if (signer && walletState.get(title) === 'connected') {
-        let walletSigningAccounts = new Map<string, SigningAccount>();
-        let accounts = await wallet.getAccounts();
+        const walletSigningAccounts = new Map<string, SigningAccount>();
+        const accounts = await wallet.getAccounts();
         if (accounts.length > 0) {
-          for (let account of accounts) {
+          for (const account of accounts) {
             walletSigningAccounts.set(account.address, {
               account,
               signer,

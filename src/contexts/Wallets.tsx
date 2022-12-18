@@ -35,18 +35,18 @@ export class WalletStateStorage {
     return `wallet#${walletTitle}`;
   }
   static set(walletTitle: string, state: WalletState) {
-    let sKey = this.getStateStorageKey(walletTitle);
+    const sKey = this.getStateStorageKey(walletTitle);
     localStorage.setItem(sKey, state);
   }
   static get(walletTitle: string) {
-    let sKey = this.getStateStorageKey(walletTitle);
+    const sKey = this.getStateStorageKey(walletTitle);
     return localStorage.getItem(sKey);
   }
 }
 
 const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
-  let { wallets } = _useWallets();
-  let [walletState, _setWalletState] = useState<Map<string, WalletState>>(
+  const { wallets } = _useWallets();
+  const [walletState, _setWalletState] = useState<Map<string, WalletState>>(
     new Map<string, WalletState>()
   );
   const setWalletState = (title: string, state: WalletState) => {
@@ -57,11 +57,11 @@ const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
   };
 
   const initiateWallets = async (wallets: Array<BaseWallet>) => {
-    let walletState: Map<string, WalletState> = new Map<string, WalletState>();
-    for (let wallet of wallets) {
-      let title = wallet.metadata?.title;
+    const walletState: Map<string, WalletState> = new Map<string, WalletState>();
+    for (const wallet of wallets) {
+      const title = wallet.metadata?.title;
       if (title) {
-        let state = WalletStateStorage.get(title);
+        const state = WalletStateStorage.get(title);
         if (state === 'connected') {
           await wallet.connect();
           walletState.set(title, 'connected');
@@ -82,7 +82,7 @@ const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
 };
 
 const WalletProvider = ({ children }: { children: React.ReactNode }) => {
-  let walletAggregator = new WalletAggregator([
+  const walletAggregator = new WalletAggregator([
     new InjectedWalletProvider({}, APP_NAME),
   ]);
   return (

@@ -1,4 +1,4 @@
-export function wait(ms: number, reason: string = 'timeout'): Promise<any> {
+export function wait(ms: number, reason = 'timeout'): Promise<any> {
   return new Promise(function (_, reject) {
     setTimeout(function () {
       reject(new Error(reason));
@@ -9,7 +9,7 @@ export function wait(ms: number, reason: string = 'timeout'): Promise<any> {
 export function timeout<T>(
   promise: Promise<T>,
   ms: number,
-  reason: string = 'timeout'
+  reason = 'timeout'
 ): Promise<T> {
   return Promise.race([wait(ms, reason), promise]);
 }
