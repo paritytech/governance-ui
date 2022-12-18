@@ -93,4 +93,3 @@ const WalletProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default WalletProvider;
-

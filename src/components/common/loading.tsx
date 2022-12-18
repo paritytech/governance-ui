@@ -1,5 +1,5 @@
-import React from "react";
-import { Loading as NextUILoading } from "@nextui-org/react";
+import React from 'react';
+import { Loading as NextUILoading } from '@nextui-org/react';
 
 function Loading(): JSX.Element {
   return <NextUILoading />;
