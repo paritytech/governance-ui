@@ -9,8 +9,8 @@
     "build": "NETWORK=kusama parcel build ./src/index.html --no-scope-hoist --log-level verbose --public-url https://jeluard.github.io/swipealot/",
     "format": "prettier -w ./src",
     "format:check": "prettier -c ./src",
-    "lint": "eslint ./src",
-    "lint:fix": "eslint ./src --fix"
+    "lint": "eslint ./src --fix",
+    "lint:check": "eslint ./src"
   },
   "app": "dist/index.html",
   "targets": {
@@ -29,7 +29,7 @@
     "@polkadot/api": "9.10.2",
     "@polkadot/react-identicon": "2.9.14",
     "@react-spring/web": "9.5.5",
-    "framer-motion": "7.6.7",
+    "@use-gesture/react": "10.2.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-iconly": "2.2.5",
@@ -44,16 +44,16 @@
     "@types/bn.js": "5.1.1",
     "@types/react-dom": "18.0.6",
     "@types/styled-components": "5.1.26",
-    "@typescript-eslint/eslint-plugin": "^5.46.1",
-    "@typescript-eslint/parser": "^5.46.1",
+    "@typescript-eslint/eslint-plugin": "5.46.1",
+    "@typescript-eslint/parser": "5.46.1",
     "buffer": "5.5.0",
-    "eslint": "^8.30.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-react": "^7.31.11",
+    "eslint": "8.30.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-plugin-react": "7.31.11",
     "parcel": "2.8.0",
-    "prettier": "^2.8.1",
+    "prettier": "2.8.1",
     "process": "0.11.10",
-    "typescript": "^4.9.4"
+    "typescript": "4.9.4"
   },
   "alias": {
     "@polkadot/x-fetch": "./node_modules/@polkadot/x-fetch/browser.js",

@@ -1,8 +1,9 @@
+import React from 'react';
 import { Button, Card, Spacer, Text } from '../components/common';
-import { Vote, VoteType } from '../types';
 import { useAccount } from '../contexts/Account';
-import { ApiPromise } from '@polkadot/api';
 import { useApi } from '../contexts/Api';
+import { Vote, VoteType } from '../types';
+import { ApiPromise } from '@polkadot/api';
 
 function VotesTable({ votes }: { votes: Vote[] }): JSX.Element {
   const { api } = useApi();

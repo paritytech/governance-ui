@@ -57,7 +57,10 @@ const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
   };
 
   const initiateWallets = async (wallets: Array<BaseWallet>) => {
-    const walletState: Map<string, WalletState> = new Map<string, WalletState>();
+    const walletState: Map<string, WalletState> = new Map<
+      string,
+      WalletState
+    >();
     for (const wallet of wallets) {
       const title = wallet.metadata?.title;
       if (title) {
