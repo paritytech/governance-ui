@@ -128,7 +128,7 @@ export function ReferendumDeck({
   voteOn: (index: number, vote: VoteType) => void;
 }): JSX.Element {
   const [gone] = useState(() => new Set()); // The set flags all the cards that are flicked out
-  const [props, api] = useSprings(referenda.size, (i) => ({
+  const [sProps, sApi] = useSprings(referenda.size, (i) => ({
     ...to(i),
     from: from(i),
   })); // Create a bunch of springs using the helpers above
@@ -143,7 +143,7 @@ export function ReferendumDeck({
     }) => {
       const trigger = vx > 0.5; // If you flick hard enough it should trigger the card to fly out
       if (!active && trigger) gone.add(index); // If button/finger's up and trigger velocity is reached, we flag the card ready to fly out
-      api.start((i) => {
+      sApi.start((i) => {
         if (index !== i) return; // We're only interested in changing spring-data for the current spring
         const isGone = gone.has(index);
         if (isGone) {
@@ -166,7 +166,7 @@ export function ReferendumDeck({
       if (!active && gone.size === referenda.size)
         setTimeout(() => {
           gone.clear();
-          api.start((i) => to(i));
+          sApi.start((i) => to(i));
         }, 600);
     }
   );
@@ -180,7 +180,7 @@ export function ReferendumDeck({
         gridTemplateAreas: 'inner-div',
       }}
     >
-      {props.map(({ x, y }, i) => (
+      {sProps.map(({ x, y }, i) => (
         <animated.div
           key={i}
           style={{ width: '100%', gridArea: 'inner-div', x, y }}

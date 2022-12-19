@@ -29,33 +29,36 @@ function VotesTable({ votes }: { votes: Vote[] }): JSX.Element {
     return batchTx;
   };
   const submiteBatchVotes = async () => {
-    const {
-      account: { address },
-      signer,
-    } = connectedAccount;
-    if (api && address && signer && votes.length > 0) {
-      const batchVoteTx = createBatchVotes(api, votes);
-      const unsub = await batchVoteTx.signAndSend(
-        address,
-        { signer },
-        (callResult) => {
-          const { status, ...result } = callResult;
-          console.log(callResult.toHuman());
-          if (status.isInBlock) {
-            console.log('Transaction is in block.');
-          } else if (status.isBroadcast) {
-            console.log('Transaction broadcasted.');
-          } else if (status.isFinalized) {
-            unsub();
-          } else if (status.isReady) {
-            console.log('Transaction isReady.');
-          } else {
-            console.log(`Other status ${status}`);
+    if (connectedAccount) {
+      const {
+        account: { address },
+        signer,
+      } = connectedAccount;
+      if (api && address && signer && votes.length > 0) {
+        const batchVoteTx = createBatchVotes(api, votes);
+        const unsub = await batchVoteTx.signAndSend(
+          address,
+          { signer },
+          (callResult) => {
+            const { status, ...result } = callResult;
+            console.log(callResult.toHuman());
+            if (status.isInBlock) {
+              console.log('Transaction is in block.');
+            } else if (status.isBroadcast) {
+              console.log('Transaction broadcasted.');
+            } else if (status.isFinalized) {
+              unsub();
+            } else if (status.isReady) {
+              console.log('Transaction isReady.');
+            } else {
+              console.log(`Other status ${status}`);
+            }
           }
-        }
-      );
+        );
+      }
     }
-    console.log('done!');
+    // ToDo: remove this log afrer proper error notifications are added to the UX
+    console.log('no account is connected');
   };
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>

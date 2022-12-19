@@ -20,15 +20,17 @@ const WalletsList = ({
 }: IWalletsListProps) => {
   return (
     <div>
-      {wallets?.map((wallet) => {
+      {wallets?.map((wallet, index) => {
         const name = wallet?.metadata.title;
         const iconUrl = wallet?.metadata.iconUrl;
         const state = walletState.get(wallet?.metadata.title) || 'disconnected';
         return (
           <Wallet
+            key={index}
             name={name}
             state={state}
             clickHandler={() => walletConnectHandler(wallet)}
+            iconUrl={iconUrl}
           />
         );
       })}
@@ -49,14 +51,15 @@ const AccountList = ({
 }: IAccountListProps) => {
   return (
     <div>
-      {[...accounts.values()].map((signingAccount) => {
+      {[...accounts.entries()].map(([key, signingAccount]) => {
         const { account } = signingAccount;
         const isConnected =
-          connectedAccount &&
+          !!connectedAccount &&
           connectedAccount.account.address === account.address;
         return (
           <Account
-            name={account.name}
+            key={key}
+            name={account.name || ''}
             address={account.address}
             state={{ isConnected }}
             clickHandler={() => accountConnectHandler(signingAccount)}

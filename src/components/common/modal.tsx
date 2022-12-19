@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Modal as NextUIModal } from '@nextui-org/react';
 
 const Modal = ({

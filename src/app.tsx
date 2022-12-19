@@ -110,7 +110,6 @@ function App(): JSX.Element {
   const [error, setError] = useState<string>();
   const [votes, setVotes] = useState<Array<Vote>>([]);
   const { api } = useApi();
-  console.log('api is connected', api);
   useEffect(() => {
     async function fetchData(api: ApiPromise) {
       setTracks(getAllTracks(api));
@@ -119,7 +118,7 @@ function App(): JSX.Element {
       await timeout(getAllReferenda(api), FETCH_DATA_TIMEOUT)
         .then((referenda) => {
           const ongoingdReferenda = new Map(
-            [...referenda].filter(([_k, v]) => v.type == 'ongoing') as [
+            [...referenda].filter(([, v]) => v.type == 'ongoing') as [
               number,
               ReferendumOngoing
             ][]
