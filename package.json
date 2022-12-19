@@ -9,8 +9,8 @@
     "build": "NETWORK=kusama parcel build ./src/index.html --no-scope-hoist --log-level verbose --public-url https://jeluard.github.io/swipealot/",
     "format": "prettier -w ./src",
     "format:check": "prettier -c ./src",
-    "lint": "eslint ./src",
-    "lint:fix": "eslint ./src --fix"
+    "lint": "eslint ./src --fix",
+    "lint:check": "eslint ./src"
   },
   "app": "dist/index.html",
   "targets": {
