@@ -5,6 +5,7 @@ import { ITuple } from '@polkadot/types-codec/types';
 import type {
   FrameSupportPreimagesBounded,
   FrameSupportScheduleDispatchTime,
+  PalletReferendaCurve,
   PalletReferendaDeposit,
   PalletReferendaReferendumInfoConvictionVotingTally,
   PalletReferendaTrackInfo,
@@ -139,7 +140,7 @@ export async function getAllReferenda(
   return toReferenda(await api.query.referenda.referendumInfoFor.entries());
 }
 
-function toCurve(codec: any): Curve {
+function toCurve(codec: PalletReferendaCurve): Curve {
   if (codec.isLinearDecreasing) {
     const linearDecreasing = codec.asLinearDecreasing;
     return {

@@ -21,7 +21,6 @@ const ApiProvider = ({ children }: { children: React.ReactNode }) => {
     const network = Network.parse(networkParam);
     const endpoint = rpcParam ? rpcParam : endpointFor(network);
     newApi(endpoint).then((api) => {
-      console.log('api:', api);
       if (rpcParam) {
         // Check that provided rpc and network point to a same logical chain
         const connectedChain = api.runtimeChain.toHuman() as Network;

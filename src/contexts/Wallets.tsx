@@ -1,10 +1,4 @@
-import React, {
-  useMemo,
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-} from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 import { WalletAggregator, BaseWallet } from '@polkadot-onboard/core';
 import { InjectedWalletProvider } from '@polkadot-onboard/injected-wallets';
 import {

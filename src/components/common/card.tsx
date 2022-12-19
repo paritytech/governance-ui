@@ -22,6 +22,8 @@ export function Card({
   className?: string;
   header?: ReactNode;
   children: ReactNode;
+  css?: any;
+  bodyCss?: any;
 }): JSX.Element {
   return (
     <NextUICard className={className} css={css} variant={'bordered'}>

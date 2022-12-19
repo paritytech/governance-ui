@@ -103,9 +103,7 @@ export type Referendum =
   | ReferendumKilled
   | ReferendumUnknown;
 
-export type Perbill = {
-  value: number;
-};
+export type Perbill = BN;
 
 export type LinearDecreasingCurve = {
   type: 'LinearDecreasing';

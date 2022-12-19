@@ -2,7 +2,13 @@ import React from 'react';
 import Identicon from '@polkadot/react-identicon';
 import { stringShorten } from '@polkadot/util';
 import styled from 'styled-components';
-const Account = ({ name, address, clickHandler, state }) => {
+export interface AccountProps {
+  name: string;
+  address: string;
+  clickHandler: () => void;
+  state: { isConnected: boolean };
+}
+const Account = ({ name, address, clickHandler, state }: AccountProps) => {
   const { isConnected } = state;
   return (
     <AccountStyle>
