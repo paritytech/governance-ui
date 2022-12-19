@@ -1,5 +1,5 @@
-import React, { ReactNode } from "react";
-import { Text as NextUIText } from "@nextui-org/react";
+import React, { ReactNode } from 'react';
+import { Text as NextUIText } from '@nextui-org/react';
 
 interface Props {
   children?: ReactNode;
@@ -34,7 +34,7 @@ function Text(props: TextProps): JSX.Element {
     size,
     css,
     children,
-    style
+    style,
   } = props;
   return (
     <NextUIText
@@ -49,9 +49,11 @@ function Text(props: TextProps): JSX.Element {
       color={color}
       size={size}
       css={css}
-      style={style}>
+      style={style}
+    >
       {children}
-    </NextUIText>);
+    </NextUIText>
+  );
 }
 
 export default Text;

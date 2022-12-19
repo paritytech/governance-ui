@@ -52,4 +52,3 @@ const WalletStyle = styled.div`
 `;
 
 export default Wallet;
-

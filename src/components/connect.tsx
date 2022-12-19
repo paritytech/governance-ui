@@ -145,4 +145,3 @@ const ConnectButton = (props) => {
 };
 
 export default ConnectButton;
-

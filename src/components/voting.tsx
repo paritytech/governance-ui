@@ -10,7 +10,7 @@ function VotesTable({ votes }: { votes: Vote[] }): JSX.Element {
 
   const createVoteTx = (api: ApiPromise, v: Vote) => {
     // ToDo: extend the Vote to include the split votes as well.
-    let vote = {
+    const vote = {
       Standard: {
         vote: {
           conviction: 'None',
@@ -19,22 +19,22 @@ function VotesTable({ votes }: { votes: Vote[] }): JSX.Element {
         balance: 0,
       },
     };
-    let voteTx = api.tx.convictionVoting.vote(v.index, vote);
+    const voteTx = api.tx.convictionVoting.vote(v.index, vote);
     return voteTx;
   };
   const createBatchVotes = (api: ApiPromise, votes: Array<Vote>) => {
-    let txs = votes.map((vote) => createVoteTx(api, vote));
-    let batchTx = api.tx.utility.batchAll([...txs]);
+    const txs = votes.map((vote) => createVoteTx(api, vote));
+    const batchTx = api.tx.utility.batchAll([...txs]);
     return batchTx;
   };
   const submiteBatchVotes = async () => {
-    let {
+    const {
       account: { address },
       signer,
     } = connectedAccount;
     if (api && address && signer && votes.length > 0) {
-      let batchVoteTx = createBatchVotes(api, votes);
-      let unsub = await batchVoteTx.signAndSend(
+      const batchVoteTx = createBatchVotes(api, votes);
+      const unsub = await batchVoteTx.signAndSend(
         address,
         { signer },
         (callResult) => {

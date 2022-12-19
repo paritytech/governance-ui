@@ -47,4 +47,3 @@ const ApiProvider = ({ children }: { children: React.ReactNode }) => {
 };
 
 export default ApiProvider;
-
