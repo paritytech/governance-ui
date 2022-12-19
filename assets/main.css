@@ -21,20 +21,6 @@ html {
     height: 100%;
 }
 
-@media (orientation: landscape) {
-  .card {
-    aspect-ratio: 4 / 3;
-    max-height: 80vh;
-  }
-}
-
-@media (orientation: portrait) {
-  .card {
-    aspect-ratio: 3 / 4;
-    max-width: 80vw;
-  }
-}
-
 .block-ellipsis {
   text-overflow: ellipsis;
   display: -webkit-box;

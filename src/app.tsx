@@ -5,16 +5,14 @@ import {
   HeartIcon,
   Loading,
   Spacer,
-  SwipeableCard,
   Text,
 } from './components/common';
-import { ReferendumCard, VotesTable } from './components';
-import { Referendum, ReferendumOngoing, Track, Vote, VoteType } from './types';
+import { ReferendumDeck, VotesTable } from './components';
+import { ReferendumOngoing, Track, Vote, VoteType } from './types';
 import { timeout } from './utils/promise';
 import { getAllReferenda, getAllTracks } from './chain/referenda';
 import { ApiPromise } from '@polkadot/api';
 import { useApi } from './contexts/Api';
-import { Network } from './utils/polkadot-api';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
 
@@ -37,26 +35,30 @@ function LoadingScreen(): JSX.Element {
 }
 
 function ActionBar({
+  left,
   onAccept,
   onRefuse,
 }: {
+  left: number;
   onAccept: MouseEventHandler<HTMLButtonElement>;
   onRefuse: MouseEventHandler<HTMLButtonElement>;
 }): JSX.Element {
   return (
-    <div style={{ display: 'flex' }}>
-      <Button
-        color="success"
-        onPress={onAccept}
-        icon={<HeartIcon primaryColor="currentColor" filled />}
-      />
-      <Spacer x={2} />
+    <div style={{ display: 'flex', alignItems: 'center' }}>
       <Button
         color="error"
         onPress={onRefuse}
         icon={
           <CloseSquareIcon set="light" primaryColor="currentColor" filled />
         }
+      />
+      <Spacer x={1} />
+      <Text>{left} left</Text>
+      <Spacer x={1} />
+      <Button
+        color="success"
+        onPress={onAccept}
+        icon={<HeartIcon primaryColor="currentColor" filled />}
       />
     </div>
   );
@@ -71,7 +73,7 @@ function Main({
   referenda: Map<number, ReferendumOngoing>;
   voteOn: (index: number, vote: VoteType) => void;
 }): JSX.Element {
-  let topReferenda = 0;
+  const topReferenda: number = referenda.keys().next().value;
   const { network } = useApi();
   return (
     <Suspense fallback={<LoadingScreen />}>
@@ -83,34 +85,18 @@ function Main({
           justifyContent: 'center',
         }}
       >
-        {Array.from(referenda.entries()).map(([index, referendum]) => {
-          topReferenda = index;
-          return (
-            <>
-              {network && (
-                <SwipeableCard
-                  key={index}
-                  onVote={(vote: VoteType) => voteOn(index, vote)}
-                  drag={true}
-                >
-                  <ReferendumCard
-                    network={network}
-                    index={index}
-                    tracks={tracks}
-                    referendum={referendum}
-                  />
-                </SwipeableCard>
-              )}
-            </>
-          );
-        })}
+        <ReferendumDeck
+          network={network}
+          tracks={tracks}
+          referenda={referenda}
+          voteOn={voteOn}
+        />
       </div>
       <ActionBar
+        left={referenda.size}
         onAccept={() => voteOn(topReferenda, VoteType.Aye)}
         onRefuse={() => voteOn(topReferenda, VoteType.Nay)}
       />
-      <Spacer y={1} />
-      <Text>{referenda.size} left</Text>
       <Spacer y={1} />
     </Suspense>
   );
@@ -123,7 +109,7 @@ function App(): JSX.Element {
   );
   const [error, setError] = useState<string>();
   const [votes, setVotes] = useState<Array<Vote>>([]);
-  const { api, network } = useApi();
+  const { api } = useApi();
   console.log('api is connected', api);
   useEffect(() => {
     async function fetchData(api: ApiPromise) {
@@ -150,29 +136,29 @@ function App(): JSX.Element {
 
   function voteOn(index: number, vote: VoteType) {
     setVotes([...votes, { vote, index }]);
-    referenda?.delete(index);
+    if (!referenda?.delete(index)) {
+      console.error(`Failed to remove referenda ${index}`);
+    }
     setReferenda(new Map([...referenda]));
   }
 
   return (
-    <>
-      <div
-        style={{
-          display: 'flex',
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-          flexDirection: 'column',
-        }}
-      >
-        {referenda?.size == 0 && votes?.length != 0 ? (
-          <VotesTable votes={votes} />
-        ) : (
-          <Main voteOn={voteOn} tracks={tracks} referenda={referenda} />
-        )}
-        {error && <div>{error}</div>}
-      </div>
-    </>
+    <div
+      style={{
+        display: 'flex',
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+      }}
+    >
+      {referenda?.size == 0 && votes?.length != 0 ? (
+        <VotesTable votes={votes} />
+      ) : (
+        <Main voteOn={voteOn} tracks={tracks} referenda={referenda} />
+      )}
+      {error && <div>{error}</div>}
+    </div>
   );
 }
 
