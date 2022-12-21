@@ -18,12 +18,12 @@ function Header({
   track: Track | undefined;
 }): JSX.Element {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className={styles.header}>
       <Text h3 color="primary" className="block-ellipsis" css={{ m: '$8' }}>
         #{index} {title}
       </Text>
       <Text
-        style={{ textAlign: 'end', marginRight: '1em', marginBottom: '1em' }}
+        className={styles.track}
         color="secondary"
       >
         #{track?.name}
@@ -174,16 +174,12 @@ export function ReferendumDeck({
   // Now we're just mapping the animated values to our view, that's it. Btw, this component only renders once. :-)
   return (
     <div
-      style={{
-        display: 'grid',
-        placeItems: 'center',
-        gridTemplateAreas: 'inner-div',
-      }}
+      className={styles.deck}
     >
       {sProps.map(({ x, y }, i) => (
         <animated.div
           key={i}
-          style={{ width: '100%', gridArea: 'inner-div', x, y }}
+          style={{ x, y }}
         >
           {/* This is the card itself, we're binding our gesture to it (and inject its index so we know which is which) */}
           <animated.div {...bind(i)}>
