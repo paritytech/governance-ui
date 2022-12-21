@@ -28,9 +28,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
     if (error !== null) {
       return (
-        <div className={styles.box}>
-          Unhandled error: {error.toString()}
-        </div>
+        <div className={styles.box}>Unhandled error: {error.toString()}</div>
       );
     }
 

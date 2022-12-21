@@ -22,10 +22,7 @@ function Header({
       <Text h3 color="primary" className="block-ellipsis" css={{ m: '$8' }}>
         #{index} {title}
       </Text>
-      <Text
-        className={styles.track}
-        color="secondary"
-      >
+      <Text className={styles.track} color="secondary">
         #{track?.name}
       </Text>
     </div>
@@ -173,14 +170,9 @@ export function ReferendumDeck({
 
   // Now we're just mapping the animated values to our view, that's it. Btw, this component only renders once. :-)
   return (
-    <div
-      className={styles.deck}
-    >
+    <div className={styles.deck}>
       {sProps.map(({ x, y }, i) => (
-        <animated.div
-          key={i}
-          style={{ x, y }}
-        >
+        <animated.div key={i} style={{ x, y }}>
           {/* This is the card itself, we're binding our gesture to it (and inject its index so we know which is which) */}
           <animated.div {...bind(i)}>
             <ReferendumCard
