@@ -1,0 +1,23 @@
+.box {
+  display: flex;
+  flex-flow: row nowrap;
+  border: 1px solid;
+  border-radius: 10px;
+  margin: 5px 0;
+}
+
+.icon {
+  margin: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.info {
+  margin: 5px;
+  flex-grow: 1;
+}
+
+.state {
+  margin: 5px;
+}

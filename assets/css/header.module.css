@@ -1,0 +1,10 @@
+.box {
+  padding: 10px;
+  display: flex;
+  flex-flow: row nowrap;
+  width: 100%;
+}
+
+.nav {
+  flex-grow: 1;
+}

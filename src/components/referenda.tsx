@@ -6,7 +6,7 @@ import { Card, Loading, Text } from '../components/common';
 import { ReferendumOngoing, Track, VoteType } from '../types';
 import { Network } from '../utils/polkadot-api';
 import { fetchReferenda, Post } from '../utils/polkassembly';
-import styles from '../../assets/referenda.module.css';
+import styles from '../../assets/css/referenda.module.css';
 
 function Header({
   index,
