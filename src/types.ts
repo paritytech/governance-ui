@@ -1,14 +1,9 @@
 import BN from 'bn.js';
 
-export enum VoteType {
+export enum Vote {
   Aye,
   Nay,
 }
-
-export type Vote = {
-  vote: VoteType;
-  index: number;
-};
 
 export type Tally = {
   ayes: BN;

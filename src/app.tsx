@@ -1,4 +1,6 @@
-import React, { MouseEventHandler, Suspense, useEffect, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
+import { ApiPromise } from '@polkadot/api';
+import { getAllReferenda, getAllTracks } from './chain/referenda';
 import {
   Button,
   CloseSquareIcon,
@@ -7,12 +9,10 @@ import {
   Spacer,
   Text,
 } from './components/common';
-import { ReferendumDeck, VotesTable } from './components';
-import { ReferendumOngoing, Track, Vote, VoteType } from './types';
-import { timeout } from './utils/promise';
-import { getAllReferenda, getAllTracks } from './chain/referenda';
-import { ApiPromise } from '@polkadot/api';
+import { ReferendaDeck, VotesTable } from './components';
 import { useApi } from './contexts/Api';
+import { ReferendumOngoing, Track, Vote } from './types';
+import { timeout } from './utils/promise';
 import styles from './app.module.css';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
@@ -65,59 +65,132 @@ function ActionBar({
   );
 }
 
-function Main({
+function VotingPanel({
   tracks,
   referenda,
   voteOn,
 }: {
   tracks: Map<number, Track>;
-  referenda: Map<number, ReferendumOngoing>;
-  voteOn: (index: number, vote: VoteType) => void;
+  referenda: [number, ReferendumOngoing][];
+  voteOn: (index: number, vote: Vote) => void;
 }): JSX.Element {
-  const topReferenda: number = referenda.keys().next().value;
   const { network } = useApi();
+  // The referenda currently visible to the user
+  const topReferenda = referenda.at(0)?.[0];
   return (
-    <Suspense fallback={<LoadingScreen />}>
+    <>
       <div className={styles.main}>
-        <ReferendumDeck
+        <ReferendaDeck
           network={network}
-          tracks={tracks}
           referenda={referenda}
+          tracks={tracks}
           voteOn={voteOn}
         />
       </div>
-      <ActionBar
-        left={referenda.size}
-        onAccept={() => voteOn(topReferenda, VoteType.Aye)}
-        onRefuse={() => voteOn(topReferenda, VoteType.Nay)}
-      />
-      <Spacer y={1} />
-    </Suspense>
+      {referenda.length > 0 && (
+        <ActionBar
+          left={referenda.length}
+          onAccept={() => topReferenda && voteOn(topReferenda, Vote.Aye)}
+          onRefuse={() => topReferenda && voteOn(topReferenda, Vote.Nay)}
+        />
+      )}
+    </>
   );
 }
 
+enum State {
+  LOADING,
+  STARTED,
+}
+
+type StartedContext = {
+  state: State.STARTED;
+  tracks: Map<number, Track>;
+  referenda: Map<number, ReferendumOngoing>;
+  votes: Map<number, Vote>;
+};
+
+export type Context = { state: State.LOADING } | StartedContext;
+
+function voteOn(
+  index: number,
+  vote: Vote,
+  setContext: React.Dispatch<React.SetStateAction<StartedContext>>
+) {
+  setContext((context) => {
+    context.votes.set(index, vote);
+    return { ...context }; // Copy object to trigger re-draw
+  });
+}
+
+function AppPanel({
+  context,
+  setContext,
+}: {
+  context: Context;
+  setContext: React.Dispatch<React.SetStateAction<StartedContext>>;
+}): JSX.Element {
+  const { state } = context;
+  switch (state) {
+    case State.LOADING:
+      return <LoadingScreen />;
+    case State.STARTED: {
+      const { referenda, tracks, votes } = context;
+      const referendumKeys = new Set(referenda.keys());
+      const voteKeys = new Set(votes.keys());
+      if (
+        referendumKeys.size > 0 &&
+        referendumKeys.size == voteKeys.size &&
+        [...referendumKeys].every((x) => voteKeys.has(x))
+      ) {
+        // Sets equality consider insertion order
+        // There are some referenda to vote on left
+        return <VotesTable votes={votes} />;
+      } else {
+        // Let user vote on referenda
+        // Only consider referenda that have not be voted on yet
+        const referendaToBeVotedOn: [number, ReferendumOngoing][] = [
+          ...referenda,
+        ].filter(([index]) => !votes.has(index));
+        return (
+          <VotingPanel
+            voteOn={(index, vote) => voteOn(index, vote, setContext)}
+            tracks={tracks}
+            referenda={referendaToBeVotedOn}
+          />
+        );
+      }
+    }
+  }
+}
+
 function App(): JSX.Element {
-  const [tracks, setTracks] = useState<Map<number, Track>>(new Map());
-  const [referenda, setReferenda] = useState<Map<number, ReferendumOngoing>>(
-    new Map()
-  );
   const [error, setError] = useState<string>();
-  const [votes, setVotes] = useState<Array<Vote>>([]);
+  const [context, setContext] = useState<Context>({ state: State.LOADING });
   const { api } = useApi();
+
   useEffect(() => {
     async function fetchData(api: ApiPromise) {
-      setTracks(getAllTracks(api));
+      const tracks = getAllTracks(api);
 
       // Retrieve all referenda, then display them
       await timeout(getAllReferenda(api), FETCH_DATA_TIMEOUT)
-        .then((referenda) => {
-          const ongoingdReferenda = new Map(
-            [...referenda].filter(([, v]) => v.type == 'ongoing') as [
+        .then((allReferenda) => {
+          // Only consider 'ongoing' referendum
+          const referenda = new Map(
+            [...allReferenda]
+              .filter(([, v]) => v.type == 'ongoing')
+              .map(([index, referendum]) => [index, referendum]) as [
               number,
               ReferendumOngoing
             ][]
           );
-          setReferenda(ongoingdReferenda);
+          setContext({
+            state: State.STARTED,
+            tracks,
+            referenda,
+            votes: new Map(),
+          });
         })
         .catch((e) => {
           console.error(`Failed to fetch referenda: ${e}`);
@@ -127,22 +200,18 @@ function App(): JSX.Element {
     api && fetchData(api);
   }, [api]);
 
-  function voteOn(index: number, vote: VoteType) {
-    setVotes([...votes, { vote, index }]);
-    if (!referenda?.delete(index)) {
-      console.error(`Failed to remove referenda ${index}`);
-    }
-    setReferenda(new Map([...referenda]));
-  }
-
   return (
     <div className={styles.app}>
-      {referenda?.size == 0 && votes?.length != 0 ? (
-        <VotesTable votes={votes} />
+      {error ? (
+        <div>{error}</div>
       ) : (
-        <Main voteOn={voteOn} tracks={tracks} referenda={referenda} />
+        <AppPanel
+          context={context}
+          setContext={
+            setContext as React.Dispatch<React.SetStateAction<StartedContext>>
+          }
+        />
       )}
-      {error && <div>{error}</div>}
     </div>
   );
 }

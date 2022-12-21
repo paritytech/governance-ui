@@ -17,16 +17,14 @@ export function Card({
   className,
   header,
   children,
-  css,
 }: {
   className?: string;
   header?: ReactNode;
   children: ReactNode;
-  css?: any;
   bodyCss?: any;
 }): JSX.Element {
   return (
-    <NextUICard className={className} css={css} variant={'bordered'}>
+    <NextUICard className={className} variant={'bordered'}>
       <HeaderWrapper header={header} />
       <NextUICard.Body>{children}</NextUICard.Body>
     </NextUICard>
