@@ -110,25 +110,25 @@ type StartedContext = {
   votes: Map<number, Vote>;
 };
 
-export type Context = { state: State.LOADING } | StartedContext;
+export type StateContext = { state: State.LOADING } | StartedContext;
 
 function voteOn(
   index: number,
   vote: Vote,
-  setContext: React.Dispatch<React.SetStateAction<StartedContext>>
+  setStateContext: React.Dispatch<React.SetStateAction<StartedContext>>
 ) {
-  setContext((context) => {
-    context.votes.set(index, vote);
-    return { ...context }; // Copy object to trigger re-draw
+  setStateContext((stateContext) => {
+    stateContext.votes.set(index, vote);
+    return { ...stateContext }; // Copy object to trigger re-draw
   });
 }
 
 function AppPanel({
   context,
-  setContext,
+  voteHandler,
 }: {
-  context: Context;
-  setContext: React.Dispatch<React.SetStateAction<StartedContext>>;
+  context: StateContext;
+  voteHandler: (index: number, vote: Vote) => void;
 }): JSX.Element {
   const { state } = context;
   switch (state) {
@@ -154,7 +154,7 @@ function AppPanel({
         ].filter(([index]) => !votes.has(index));
         return (
           <VotingPanel
-            voteOn={(index, vote) => voteOn(index, vote, setContext)}
+            voteOn={voteHandler}
             tracks={tracks}
             referenda={referendaToBeVotedOn}
           />
@@ -166,7 +166,9 @@ function AppPanel({
 
 function App(): JSX.Element {
   const [error, setError] = useState<string>();
-  const [context, setContext] = useState<Context>({ state: State.LOADING });
+  const [stateContext, setStateContext] = useState<StateContext>({
+    state: State.LOADING,
+  });
   const { api } = useApi();
 
   useEffect(() => {
@@ -185,7 +187,7 @@ function App(): JSX.Element {
               ReferendumOngoing
             ][]
           );
-          setContext({
+          setStateContext({
             state: State.STARTED,
             tracks,
             referenda,
@@ -206,9 +208,15 @@ function App(): JSX.Element {
         <div>{error}</div>
       ) : (
         <AppPanel
-          context={context}
-          setContext={
-            setContext as React.Dispatch<React.SetStateAction<StartedContext>>
+          context={stateContext}
+          voteHandler={(index, vote) =>
+            voteOn(
+              index,
+              vote,
+              setStateContext as React.Dispatch<
+                React.SetStateAction<StartedContext>
+              >
+            )
           }
         />
       )}
