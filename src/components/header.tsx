@@ -1,6 +1,6 @@
 import React from 'react';
 import ConnectButton from './connect';
-import styles from '../../assets/css/header.module.css';
+import styles from './header.module.css';
 
 const Header = () => (
   <div className={styles.box}>

@@ -4,7 +4,7 @@ import { useAccount } from '../contexts/Account';
 import { useApi } from '../contexts/Api';
 import { Vote, VoteType } from '../types';
 import { ApiPromise } from '@polkadot/api';
-import styles from '../../assets/css/voting.module.css';
+import styles from './voting.module.css';
 
 function VotesTable({ votes }: { votes: Vote[] }): JSX.Element {
   const { api } = useApi();

@@ -1,7 +1,7 @@
 import React from 'react';
 import Identicon from '@polkadot/react-identicon';
 import { stringShorten } from '@polkadot/util';
-import styles from '../../assets/css/account.module.css';
+import styles from './account.module.css';
 
 export interface AccountProps {
   name: string;

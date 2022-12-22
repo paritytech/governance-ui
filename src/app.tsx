@@ -13,7 +13,7 @@ import { timeout } from './utils/promise';
 import { getAllReferenda, getAllTracks } from './chain/referenda';
 import { ApiPromise } from '@polkadot/api';
 import { useApi } from './contexts/Api';
-import styles from '../assets/css/app.module.css';
+import styles from './app.module.css';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
 
@@ -45,7 +45,7 @@ function ActionBar({
   onRefuse: MouseEventHandler<HTMLButtonElement>;
 }): JSX.Element {
   return (
-    <div className={styles.actions}>
+    <div className={styles.action}>
       <Button
         color="error"
         onPress={onRefuse}
