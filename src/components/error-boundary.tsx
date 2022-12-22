@@ -1,4 +1,5 @@
 import React, { ReactNode } from 'react';
+import styles from './error-boundary.module.css';
 
 type Props = {
   children?: ReactNode;
@@ -27,16 +28,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
 
     if (error !== null) {
       return (
-        <div
-          style={{
-            display: 'flex',
-            height: '100vh',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          Unhandled error: {error.toString()}
-        </div>
+        <div className={styles.box}>Unhandled error: {error.toString()}</div>
       );
     }
 

@@ -4,6 +4,7 @@ import { useAccount } from '../contexts/Account';
 import { useApi } from '../contexts/Api';
 import { Vote, VoteType } from '../types';
 import { ApiPromise } from '@polkadot/api';
+import styles from './voting.module.css';
 
 function VotesTable({ votes }: { votes: Vote[] }): JSX.Element {
   const { api } = useApi();
@@ -61,17 +62,8 @@ function VotesTable({ votes }: { votes: Vote[] }): JSX.Element {
     console.log('no account is connected');
   };
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          overflow: 'auto',
-          maxHeight: '60vh',
-          width: '30vw',
-          alignItems: 'center',
-        }}
-      >
+    <div className={styles.table}>
+      <div>
         {votes.map((vote, idx) => {
           const isAye = vote.vote == VoteType.Aye;
           const color = isAye ? 'success' : 'warning';

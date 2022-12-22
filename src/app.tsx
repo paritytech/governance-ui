@@ -13,12 +13,13 @@ import { timeout } from './utils/promise';
 import { getAllReferenda, getAllTracks } from './chain/referenda';
 import { ApiPromise } from '@polkadot/api';
 import { useApi } from './contexts/Api';
+import styles from './app.module.css';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
 
 function LoadingScreen(): JSX.Element {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className={styles.loading}>
       <Loading />
       <Spacer y={2} />
       <Text
@@ -44,7 +45,7 @@ function ActionBar({
   onRefuse: MouseEventHandler<HTMLButtonElement>;
 }): JSX.Element {
   return (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
+    <div className={styles.action}>
       <Button
         color="error"
         onPress={onRefuse}
@@ -77,14 +78,7 @@ function Main({
   const { network } = useApi();
   return (
     <Suspense fallback={<LoadingScreen />}>
-      <div
-        style={{
-          display: 'flex',
-          flex: 1,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      <div className={styles.main}>
         <ReferendumDeck
           network={network}
           tracks={tracks}
@@ -142,15 +136,7 @@ function App(): JSX.Element {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexDirection: 'column',
-      }}
-    >
+    <div className={styles.app}>
       {referenda?.size == 0 && votes?.length != 0 ? (
         <VotesTable votes={votes} />
       ) : (

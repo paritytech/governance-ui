@@ -1,24 +1,15 @@
 import React from 'react';
 import ConnectButton from './connect';
-import styled from 'styled-components';
-const HeaderStyle = styled.div`
-  padding: 10px;
-  display: flex;
-  flex-flow: row nowrap;
-  width: 100%;
-  .nav-bar {
-    flex-grow: 1;
-  }
-`;
+import styles from './header.module.css';
 
 const Header = () => (
-  <HeaderStyle>
-    <div className="brand" />
-    <div className="nav-bar"></div>
-    <div className="account-connect">
+  <div className={styles.box}>
+    <div />
+    <div className={styles.nav}></div>
+    <div>
       <ConnectButton color="secondary" bordered />
     </div>
-  </HeaderStyle>
+  </div>
 );
 
 export default Header;

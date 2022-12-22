@@ -1,0 +1,47 @@
+.card[role=section] {
+  padding: 2em;
+}
+
+@media (orientation: landscape) {
+  .card {
+    aspect-ratio: 4 / 3;
+    max-height: 80vh;
+  }
+}
+
+@media (orientation: portrait) {
+  .card {
+    aspect-ratio: 3 / 4;
+    max-width: 80vw;
+  }
+}
+
+.track {
+  text-align: end;
+  margin-right: 1em;
+  margin-bottom: 1em;
+}
+
+.deck {
+  display: grid;
+  place-items: center;
+  grid-template-areas: inner-div;
+}
+
+.deck div {
+  width: 100%;
+  grid-area: inner-div;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+}
+
+.header .block-ellipsis {
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
