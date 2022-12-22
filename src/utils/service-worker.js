@@ -9,7 +9,7 @@ export async function registerServiceWorker() {
       .register(new URL('service-worker.js', import.meta.url), {
         type: 'module',
       })
-      .then((_reg) => navigator.serviceWorker.ready)
+      .then(() => navigator.serviceWorker.ready)
       .then(async (reg) => {
         //await Notification.requestPermission();
         /*

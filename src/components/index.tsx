@@ -1,4 +1,4 @@
-export { default as ReferendumCard } from './referenda';
+export { default as ReferendaDeck } from './referenda';
 export * from './referenda';
 
 export { default as VotesTable } from './voting';

@@ -1,47 +1,47 @@
 import React from 'react';
+import { ApiPromise } from '@polkadot/api';
 import { Button, Card, Spacer, Text } from '../components/common';
 import { useAccount } from '../contexts/Account';
 import { useApi } from '../contexts/Api';
-import { Vote, VoteType } from '../types';
-import { ApiPromise } from '@polkadot/api';
+import { Vote } from '../types';
 import styles from './voting.module.css';
 
-function VotesTable({ votes }: { votes: Vote[] }): JSX.Element {
+function createVoteTx(api: ApiPromise, index: number, vote: Vote) {
+  // ToDo: extend the Vote to include the split votes as well.
+  const convictionVoting = {
+    Standard: {
+      vote: {
+        conviction: 'None',
+        aye: vote === Vote.Aye,
+      },
+      balance: 0,
+    },
+  };
+  return api.tx.convictionVoting.vote(index, convictionVoting);
+}
+
+function createBatchVotes(api: ApiPromise, votes: Map<number, Vote>) {
+  const txs = [...votes].map(([index, vote]) => createVoteTx(api, index, vote));
+  return api.tx.utility.batchAll([...txs]);
+}
+
+function VotesTable({ votes }: { votes: Map<number, Vote> }): JSX.Element {
   const { api } = useApi();
   const { connectedAccount } = useAccount();
 
-  const createVoteTx = (api: ApiPromise, v: Vote) => {
-    // ToDo: extend the Vote to include the split votes as well.
-    const vote = {
-      Standard: {
-        vote: {
-          conviction: 'None',
-          aye: v.vote === VoteType.Aye,
-        },
-        balance: 0,
-      },
-    };
-    const voteTx = api.tx.convictionVoting.vote(v.index, vote);
-    return voteTx;
-  };
-  const createBatchVotes = (api: ApiPromise, votes: Array<Vote>) => {
-    const txs = votes.map((vote) => createVoteTx(api, vote));
-    const batchTx = api.tx.utility.batchAll([...txs]);
-    return batchTx;
-  };
   const submiteBatchVotes = async () => {
     if (connectedAccount) {
       const {
         account: { address },
         signer,
       } = connectedAccount;
-      if (api && address && signer && votes.length > 0) {
+      if (api && address && signer && votes.size > 0) {
         const batchVoteTx = createBatchVotes(api, votes);
         const unsub = await batchVoteTx.signAndSend(
           address,
           { signer },
           (callResult) => {
-            const { status, ...result } = callResult;
+            const { status } = callResult;
             console.log(callResult.toHuman());
             if (status.isInBlock) {
               console.log('Transaction is in block.');
@@ -64,22 +64,21 @@ function VotesTable({ votes }: { votes: Vote[] }): JSX.Element {
   return (
     <div className={styles.table}>
       <div>
-        {votes.map((vote, idx) => {
-          const isAye = vote.vote == VoteType.Aye;
+        {[...votes.entries()].map(([index, vote]) => {
+          const isAye = vote == Vote.Aye;
           const color = isAye ? 'success' : 'warning';
           return (
-            <>
-              <Card key={idx} css={{ display: 'table', mw: '400px' }}>
+            <div key={index} style={{ width: '100%' }}>
+              <Card>
                 <Text h3 b>
-                  #{vote.index}
+                  #{index}
                 </Text>
                 <Spacer y={2} />
                 <Text h4 color={color}>
                   {isAye ? 'Aye' : 'Naye'}
                 </Text>
               </Card>
-              <Spacer key={`spacer-${idx}`} x={1} />
-            </>
+            </div>
           );
         })}
       </div>
