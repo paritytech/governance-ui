@@ -9,6 +9,8 @@ import ApiProvider from './contexts/Api';
 import Header from './components/header';
 import '@polkadot/api-augment';
 import '@polkadot/types-augment';
+import NotificationProvider from './contexts/Notification';
+import NotificationBox from './components/notificationBox';
 
 const theme = createTheme({
   type: 'light',
@@ -30,14 +32,17 @@ if (container) {
       <NextUIProvider theme={theme}>
         <main>
           <ErrorBoundary>
-            <ApiProvider>
-              <WalletProvider>
-                <AccountProvider>
-                  <Header />
-                  <App />
-                </AccountProvider>
-              </WalletProvider>
-            </ApiProvider>
+            <NotificationProvider>
+              <ApiProvider>
+                <WalletProvider>
+                  <AccountProvider>
+                    <NotificationBox />
+                    <Header />
+                    <App />
+                  </AccountProvider>
+                </WalletProvider>
+              </ApiProvider>
+            </NotificationProvider>
           </ErrorBoundary>
         </main>
       </NextUIProvider>
