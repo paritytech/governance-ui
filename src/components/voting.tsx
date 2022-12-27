@@ -1,31 +1,47 @@
 import React from 'react';
 import { ApiPromise } from '@polkadot/api';
+import { vote } from '../chain/conviction-voting';
 import { Button, Card, Spacer, Text } from '../components/common';
-import { useAccount } from '../contexts/Account';
-import { useApi } from '../contexts/Api';
-import { Vote } from '../types';
+import { useAccount, useApi } from '../contexts';
+import { AccountVote } from '../types';
 import styles from './voting.module.css';
 
-function createVoteTx(api: ApiPromise, index: number, vote: Vote) {
-  // ToDo: extend the Vote to include the split votes as well.
-  const convictionVoting = {
-    Standard: {
-      vote: {
-        conviction: 'None',
-        aye: vote === Vote.Aye,
-      },
-      balance: 0,
-    },
-  };
-  return api.tx.convictionVoting.vote(index, convictionVoting);
-}
-
-function createBatchVotes(api: ApiPromise, votes: Map<number, Vote>) {
-  const txs = [...votes].map(([index, vote]) => createVoteTx(api, index, vote));
+function createBatchVotes(
+  api: ApiPromise,
+  accountVotes: Map<number, AccountVote>
+) {
+  const txs = [...accountVotes].map(([index, accountVote]) =>
+    vote(api, index, accountVote)
+  );
   return api.tx.utility.batchAll([...txs]);
 }
 
-function VotesTable({ votes }: { votes: Map<number, Vote> }): JSX.Element {
+function VoteDetails({
+  accountVote,
+}: {
+  accountVote: AccountVote;
+}): JSX.Element {
+  switch (accountVote.type) {
+    case 'standard': {
+      const isAye = accountVote.vote.aye;
+      const color = isAye ? 'success' : 'warning';
+      return (
+        <Text h4 color={color}>
+          {isAye ? 'Aye' : 'Naye'}
+        </Text>
+      );
+    }
+    default: {
+      return <Text h4>TODO</Text>;
+    }
+  }
+}
+
+function VotesTable({
+  accountVotes,
+}: {
+  accountVotes: Map<number, AccountVote>;
+}): JSX.Element {
   const { api } = useApi();
   const { connectedAccount } = useAccount();
 
@@ -35,8 +51,8 @@ function VotesTable({ votes }: { votes: Map<number, Vote> }): JSX.Element {
         account: { address },
         signer,
       } = connectedAccount;
-      if (api && address && signer && votes.size > 0) {
-        const batchVoteTx = createBatchVotes(api, votes);
+      if (api && address && signer && accountVotes.size > 0) {
+        const batchVoteTx = createBatchVotes(api, accountVotes);
         const unsub = await batchVoteTx.signAndSend(
           address,
           { signer },
@@ -64,9 +80,7 @@ function VotesTable({ votes }: { votes: Map<number, Vote> }): JSX.Element {
   return (
     <div className={styles.table}>
       <div>
-        {[...votes.entries()].map(([index, vote]) => {
-          const isAye = vote == Vote.Aye;
-          const color = isAye ? 'success' : 'warning';
+        {[...accountVotes.entries()].map(([index, accountVote]) => {
           return (
             <div key={index} style={{ width: '100%' }}>
               <Card>
@@ -74,9 +88,7 @@ function VotesTable({ votes }: { votes: Map<number, Vote> }): JSX.Element {
                   #{index}
                 </Text>
                 <Spacer y={2} />
-                <Text h4 color={color}>
-                  {isAye ? 'Aye' : 'Naye'}
-                </Text>
+                <VoteDetails accountVote={accountVote} />
               </Card>
             </div>
           );

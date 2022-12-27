@@ -1,5 +1,9 @@
 import React, { MouseEventHandler, useEffect, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
+import {
+  createStandardAccountVote,
+  getVotingFor,
+} from './chain/conviction-voting';
 import { getAllReferenda, getAllTracks } from './chain/referenda';
 import {
   Button,
@@ -10,8 +14,8 @@ import {
   Text,
 } from './components/common';
 import { ReferendaDeck, VotesTable } from './components';
-import { useApi } from './contexts/Api';
-import { ReferendumOngoing, Track, Vote } from './types';
+import { useAccount, useApi } from './contexts';
+import { AccountVote, ReferendumOngoing, Track } from './types';
 import { timeout } from './utils/promise';
 import styles from './app.module.css';
 
@@ -72,7 +76,7 @@ function VotingPanel({
 }: {
   tracks: Map<number, Track>;
   referenda: [number, ReferendumOngoing][];
-  voteOn: (index: number, vote: Vote) => void;
+  voteOn: (index: number, vote: AccountVote) => void;
 }): JSX.Element {
   const { network } = useApi();
   // The referenda currently visible to the user
@@ -90,8 +94,14 @@ function VotingPanel({
       {referenda.length > 0 && (
         <ActionBar
           left={referenda.length}
-          onAccept={() => topReferenda && voteOn(topReferenda, Vote.Aye)}
-          onRefuse={() => topReferenda && voteOn(topReferenda, Vote.Nay)}
+          onAccept={() =>
+            topReferenda &&
+            voteOn(topReferenda, createStandardAccountVote(true))
+          }
+          onRefuse={() =>
+            topReferenda &&
+            voteOn(topReferenda, createStandardAccountVote(false))
+          }
         />
       )}
     </>
@@ -107,18 +117,18 @@ type StartedContext = {
   state: State.STARTED;
   tracks: Map<number, Track>;
   referenda: Map<number, ReferendumOngoing>;
-  votes: Map<number, Vote>;
+  accountVotes: Map<number, AccountVote>;
 };
 
 export type StateContext = { state: State.LOADING } | StartedContext;
 
 function voteOn(
   index: number,
-  vote: Vote,
+  vote: AccountVote,
   setStateContext: React.Dispatch<React.SetStateAction<StartedContext>>
 ) {
   setStateContext((stateContext) => {
-    stateContext.votes.set(index, vote);
+    stateContext.accountVotes.set(index, vote);
     return { ...stateContext }; // Copy object to trigger re-draw
   });
 }
@@ -128,30 +138,30 @@ function AppPanel({
   voteHandler,
 }: {
   context: StateContext;
-  voteHandler: (index: number, vote: Vote) => void;
+  voteHandler: (index: number, accountVote: AccountVote) => void;
 }): JSX.Element {
   const { state } = context;
   switch (state) {
     case State.LOADING:
       return <LoadingScreen />;
     case State.STARTED: {
-      const { referenda, tracks, votes } = context;
+      const { referenda, tracks, accountVotes } = context;
       const referendumKeys = new Set(referenda.keys());
-      const voteKeys = new Set(votes.keys());
+      const voteKeys = new Set(accountVotes.keys());
       if (
+        // Sets equality consider insertion order, roll on our own
         referendumKeys.size > 0 &&
         referendumKeys.size == voteKeys.size &&
         [...referendumKeys].every((x) => voteKeys.has(x))
       ) {
-        // Sets equality consider insertion order
         // There are some referenda to vote on left
-        return <VotesTable votes={votes} />;
+        return <VotesTable accountVotes={accountVotes} />;
       } else {
         // Let user vote on referenda
-        // Only consider referenda that have not be voted on yet
+        // Only consider referenda that have not be voted on yet by user (both on-chain and in local state)
         const referendaToBeVotedOn: [number, ReferendumOngoing][] = [
           ...referenda,
-        ].filter(([index]) => !votes.has(index));
+        ].filter(([index]) => !accountVotes.has(index));
         return (
           <VotingPanel
             voteOn={voteHandler}
@@ -170,36 +180,58 @@ function App(): JSX.Element {
     state: State.LOADING,
   });
   const { api } = useApi();
+  const { connectedAccount } = useAccount();
 
   useEffect(() => {
     async function fetchData(api: ApiPromise) {
       const tracks = getAllTracks(api);
+      const accountVotes = new Map<number, AccountVote>();
 
       // Retrieve all referenda, then display them
-      await timeout(getAllReferenda(api), FETCH_DATA_TIMEOUT)
-        .then((allReferenda) => {
-          // Only consider 'ongoing' referendum
-          const referenda = new Map(
-            [...allReferenda]
-              .filter(([, v]) => v.type == 'ongoing')
-              .map(([index, referendum]) => [index, referendum]) as [
-              number,
-              ReferendumOngoing
-            ][]
-          );
-          setStateContext({
-            state: State.STARTED,
-            tracks,
-            referenda,
-            votes: new Map(),
-          });
-        })
-        .catch((e) => {
-          console.error(`Failed to fetch referenda: ${e}`);
-          setError('Failed to fetch data in time');
+      const allReferenda = await timeout(
+        getAllReferenda(api),
+        FETCH_DATA_TIMEOUT
+      );
+
+      // Only consider 'ongoing' referendum
+      const referenda = new Map(
+        [...allReferenda]
+          .filter(([, v]) => v.type == 'ongoing')
+          .map(([index, referendum]) => [index, referendum]) as [
+          number,
+          ReferendumOngoing
+        ][]
+      );
+
+      const currentAddress = connectedAccount?.account?.address;
+      if (currentAddress) {
+        // Go through user votes and restore the ones relevant to `referenda`
+        const chainVotings = await getVotingFor(api, currentAddress);
+        chainVotings.forEach((voting) => {
+          if (voting.type === 'casting') {
+            voting.votes.forEach((accountVote, index) => {
+              if (referenda.has(index)) {
+                accountVotes.set(index, accountVote);
+              }
+            });
+          }
         });
+      }
+
+      setStateContext({
+        state: State.STARTED,
+        tracks,
+        referenda,
+        accountVotes,
+      });
     }
-    api && fetchData(api);
+
+    try {
+      api && fetchData(api);
+    } catch (e) {
+      console.error(`Failed to fetch referenda: ${e}`);
+      setError('Failed to fetch data in time');
+    }
   }, [api]);
 
   return (

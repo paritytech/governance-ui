@@ -2,8 +2,9 @@ import React, { memo, useEffect, useState } from 'react';
 import { Remark } from 'react-remark';
 import { useSprings, animated } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
+import { createStandardAccountVote } from '../chain/conviction-voting';
 import { Card, Loading, Text } from '../components/common';
-import { ReferendumOngoing, Track, Vote } from '../types';
+import { AccountVote, ReferendumOngoing, Track } from '../types';
 import { Network } from '../utils/polkadot-api';
 import { fetchReferenda, Post } from '../utils/polkassembly';
 import styles from './referenda.module.css';
@@ -126,12 +127,12 @@ export function ReferendaDeck({
   network: Network;
   tracks: Map<number, Track>;
   referenda: Array<[number, ReferendumOngoing]>;
-  voteOn: (index: number, vote: Vote) => void;
+  voteOn: (index: number, accountVote: AccountVote) => void;
 }): JSX.Element {
   const [gone] = useState(() => new Set()); // The set flags all the cards that are flicked out
   const [sProps, sApi] = useSprings(referenda.length, (i) => ({
     ...to(i),
-    from: from(i),
+    from: from(),
   })); // Create a bunch of springs using the helpers above
   // Create a gesture, we're interested in down-state, delta (current-pos - click-pos), direction and velocity
   const bind = useDrag(
@@ -148,7 +149,7 @@ export function ReferendaDeck({
         if (index !== i) return; // We're only interested in changing spring-data for the current spring
         const isGone = gone.has(index);
         if (isGone) {
-          voteOn(referenda[i][0], xDir == 1 ? Vote.Aye : Vote.Nay);
+          voteOn(referenda[i][0], createStandardAccountVote(xDir == 1));
         }
         const x = isGone ? (200 + window.innerWidth) * xDir : active ? mx : 0; // When a card is gone it flys out left or right, otherwise goes back to zero
         const rot = mx / 100 + (isGone ? xDir * 10 * vx : 0); // How much the card tilts, flicking it harder makes it rotate faster

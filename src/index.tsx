@@ -1,3 +1,8 @@
+// Must be loaded before anything else
+// See https://polkadot.js.org/docs/api/FAQ/#since-upgrading-to-the-7x-series-typescript-augmentation-is-missing
+import '@polkadot/api-augment';
+import '@polkadot/types-augment';
+
 import React from 'react';
 import * as ReactDOMClient from 'react-dom/client';
 import { createTheme, NextUIProvider } from '@nextui-org/react';
@@ -7,8 +12,6 @@ import WalletProvider from './contexts/Wallets';
 import AccountProvider from './contexts/Account';
 import ApiProvider from './contexts/Api';
 import Header from './components/header';
-import '@polkadot/api-augment';
-import '@polkadot/types-augment';
 import NotificationProvider from './contexts/Notification';
 import NotificationBox from './components/notificationBox';
 

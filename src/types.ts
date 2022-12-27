@@ -1,9 +1,9 @@
 import BN from 'bn.js';
 
-export enum Vote {
-  Aye,
-  Nay,
-}
+export type Vote = {
+  aye: boolean;
+  conviction: Conviction;
+};
 
 export type Tally = {
   ayes: BN;
@@ -87,8 +87,6 @@ export type ReferendumKilled = {
   submitted: number;
 };
 
-export type ReferendumUnknown = { type: 'unknown' };
-
 export type Referendum =
   | ReferendumOngoing
   | ReferendumApproved
@@ -96,7 +94,90 @@ export type Referendum =
   | ReferendumCancelled
   | ReferendumTimedOut
   | ReferendumKilled
-  | ReferendumUnknown;
+  | Unknown;
+
+export type PriorLock = {
+  block: number;
+  balance: BN;
+};
+
+export type Delegations = {
+  /// The number of votes (this is post-conviction).
+  votes: BN;
+  /// The amount of raw capital, used for the support.
+  capital: BN;
+};
+
+export enum Conviction {
+  /// 0.1x votes, unlocked.
+  None,
+  /// 1x votes, locked for an enactment period following a successful vote.
+  Locked1x,
+  /// 2x votes, locked for 2x enactment periods following a successful vote.
+  Locked2x,
+  /// 3x votes, locked for 4x...
+  Locked3x,
+  /// 4x votes, locked for 8x...
+  Locked4x,
+  /// 5x votes, locked for 16x...
+  Locked5x,
+  /// 6x votes, locked for 32x...
+  Locked6x,
+}
+
+export type VotingDelegating = {
+  type: 'delegating';
+  /// The amount of balance delegated.
+  balance: BN;
+  /// The account to which the voting power is delegated.
+  target: string;
+  /// The conviction with which the voting power is delegated. When this gets undelegated, the
+  /// relevant lock begins.
+  conviction: Conviction;
+  /// The total amount of delegations that this account has received, post-conviction-weighting.
+  delegations: Delegations;
+  /// Any pre-existing locks from past voting/delegating activity.
+  prior: PriorLock;
+};
+
+/// A standard vote, one-way (approve or reject) with a given amount of conviction.
+export type AccountVoteStandard = {
+  type: 'standard';
+  vote: Vote;
+  balance: BN;
+};
+
+export type AccountVoteSplit = {
+  type: 'split';
+  aye: BN;
+  nay: BN;
+};
+
+export type AccountVoteSplitAbstain = {
+  type: 'splitAbstain';
+  aye: BN;
+  nay: BN;
+  abstain: BN;
+};
+
+export type AccountVote =
+  | AccountVoteStandard
+  | AccountVoteSplit
+  | AccountVoteSplitAbstain;
+
+export type VotingCasting = {
+  type: 'casting';
+  /// The current votes of the account.
+  votes: Map<number, AccountVote>;
+  /// The total amount of delegations that this account has received, post-conviction-weighting.
+  delegations: Delegations;
+  /// Any pre-existing locks from past voting/delegating activity.
+  prior: PriorLock;
+};
+
+export type Unknown = { type: 'unknown' };
+
+export type Voting = VotingDelegating | VotingCasting | Unknown;
 
 export type Perbill = BN;
 
