@@ -118,7 +118,12 @@ export async function getVotingFor(
 function toAllVotings(
   votings: [StorageKey<[AccountId32, u16]>, PalletConvictionVotingVoteVoting][]
 ): Map<[string, number], Voting> {
-  return new Map(votings.map((o) => [[o[0].args[0].toString(), o[0].args[1].toNumber()], toVoting(o[1])]));
+  return new Map(
+    votings.map((o) => [
+      [o[0].args[0].toString(), o[0].args[1].toNumber()],
+      toVoting(o[1]),
+    ])
+  );
 }
 
 export async function getAllVotingFor(
