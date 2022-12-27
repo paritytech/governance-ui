@@ -2,6 +2,7 @@ import React, { useContext, createContext, useEffect, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import useSearchParam from '../hooks/useSearchParam';
 import { endpointFor, Network, newApi } from '../utils/polkadot-api';
+import { NotificationType, useNotifications } from './Notification';
 
 export interface IApiContext {
   api: ApiPromise | undefined;
@@ -17,6 +18,7 @@ const ApiProvider = ({ children }: { children: React.ReactNode }) => {
   const networkParam = useSearchParam('network');
   const network = Network.parse(networkParam);
   const rpcParam = useSearchParam('rpc');
+  const { notify } = useNotifications();
 
   useEffect(() => {
     const endpoint = rpcParam ? rpcParam : endpointFor(network);
@@ -25,14 +27,20 @@ const ApiProvider = ({ children }: { children: React.ReactNode }) => {
         // Check that provided rpc and network point to a same logical chain
         const connectedChain = api.runtimeChain.toHuman() as Network;
         if (connectedChain != network) {
-          console.error(
-            `Provided RPC doesn't match network ${network}: ${rpcParam}`
-          );
+          const message = `Provided RPC doesn't match network ${network}: ${rpcParam}`;
+          const notification = { type: NotificationType.Error, message };
+          notify(notification);
         } else {
-          console.info(`Connected to network ${network} using RPC ${rpcParam}`);
+          const message = `Connected to network ${network} using RPC ${rpcParam}`;
+          const notification = { type: NotificationType.Notification, message };
+          console.info(message);
+          notify(notification);
         }
       } else {
-        console.info(`Connected to network ${network.toString()}`);
+        const message = `Connected to network ${network.toString()}`;
+        const notification = { type: NotificationType.Notification, message };
+        console.info(message);
+        notify(notification);
       }
       setApi(api);
     });
