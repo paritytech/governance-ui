@@ -28,7 +28,6 @@ const NotificationProvider = ({ children }: { children: React.ReactNode }) => {
 
   // removes the next notification from the queue.
   const markAsRead = () => {
-    console.log('read');
     setNotifications((notifications) => [...notifications.slice(1)]);
   };
   return (
