@@ -2,7 +2,7 @@ import React from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { vote } from '../chain/conviction-voting';
 import { Button, Card, Spacer, Text } from '../components/common';
-import { useAccount, useApi } from '../contexts';
+import { SigningAccount, useAccount, useApi } from '../contexts';
 import { AccountVote } from '../types';
 import styles from './voting.module.css';
 
@@ -14,6 +14,39 @@ function createBatchVotes(
     vote(api, index, accountVote)
   );
   return api.tx.utility.batchAll([...txs]);
+}
+
+async function submitBatchVotes(
+  api: ApiPromise,
+  connectedAccount: SigningAccount,
+  accountVotes: Map<number, AccountVote>
+) {
+  const {
+    account: { address },
+    signer,
+  } = connectedAccount;
+  if (api && address && signer) {
+    const batchVoteTx = createBatchVotes(api, accountVotes);
+    const unsub = await batchVoteTx.signAndSend(
+      address,
+      { signer },
+      (callResult) => {
+        const { status } = callResult;
+        console.log(callResult.toHuman());
+        if (status.isInBlock) {
+          console.log('Transaction is in block.');
+        } else if (status.isBroadcast) {
+          console.log('Transaction broadcasted.');
+        } else if (status.isFinalized) {
+          unsub();
+        } else if (status.isReady) {
+          console.log('Transaction isReady.');
+        } else {
+          console.log(`Other status ${status}`);
+        }
+      }
+    );
+  }
 }
 
 function VoteDetails({
@@ -45,38 +78,6 @@ function VotesTable({
   const { api } = useApi();
   const { connectedAccount } = useAccount();
 
-  const submiteBatchVotes = async () => {
-    if (connectedAccount) {
-      const {
-        account: { address },
-        signer,
-      } = connectedAccount;
-      if (api && address && signer && accountVotes.size > 0) {
-        const batchVoteTx = createBatchVotes(api, accountVotes);
-        const unsub = await batchVoteTx.signAndSend(
-          address,
-          { signer },
-          (callResult) => {
-            const { status } = callResult;
-            console.log(callResult.toHuman());
-            if (status.isInBlock) {
-              console.log('Transaction is in block.');
-            } else if (status.isBroadcast) {
-              console.log('Transaction broadcasted.');
-            } else if (status.isFinalized) {
-              unsub();
-            } else if (status.isReady) {
-              console.log('Transaction isReady.');
-            } else {
-              console.log(`Other status ${status}`);
-            }
-          }
-        );
-      }
-    }
-    // ToDo: remove this log afrer proper error notifications are added to the UX
-    console.log('no account is connected');
-  };
   return (
     <div className={styles.table}>
       <div>
@@ -95,9 +96,19 @@ function VotesTable({
         })}
       </div>
       <Spacer y={1} />
-      <Button color="primary" onPress={() => submiteBatchVotes()}>
-        Submit votes
-      </Button>
+      {api && connectedAccount ? (
+        <Button
+          color="primary"
+          onPress={() => submitBatchVotes(api, connectedAccount, accountVotes)}
+        >
+          Submit votes
+        </Button>
+      ) : (
+        <Text color="secondary"
+        css={{
+          textAlign: 'center',
+        }}>Connect to submit your votes</Text>
+      )}
     </div>
   );
 }
