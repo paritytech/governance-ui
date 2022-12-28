@@ -4,6 +4,7 @@ import { vote } from '../chain/conviction-voting';
 import { Button, Card, Spacer, Text } from '../components/common';
 import { SigningAccount, useAccount, useApi } from '../contexts';
 import { AccountVote } from '../types';
+import { Store, Stores } from '../utils/store';
 import styles from './voting.module.css';
 
 function createBatchVotes(
@@ -99,15 +100,27 @@ function VotesTable({
       {api && connectedAccount ? (
         <Button
           color="primary"
-          onPress={() => submitBatchVotes(api, connectedAccount, accountVotes)}
+          onPress={async () => {
+            await submitBatchVotes(api, connectedAccount, accountVotes);
+
+            // Clear user votes
+            const accountVotesStore = await Store.storeFor<AccountVote>(
+              Stores.AccountVote
+            );
+            await accountVotesStore.clear();
+          }}
         >
           Submit votes
         </Button>
       ) : (
-        <Text color="secondary"
-        css={{
-          textAlign: 'center',
-        }}>Connect to submit your votes</Text>
+        <Text
+          color="secondary"
+          css={{
+            textAlign: 'center',
+          }}
+        >
+          Connect to submit your votes
+        </Text>
       )}
     </div>
   );

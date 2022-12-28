@@ -17,6 +17,7 @@ import { ReferendaDeck, VotesTable } from './components';
 import { useAccount, useApi } from './contexts';
 import { AccountVote, ReferendumOngoing, Track } from './types';
 import { timeout } from './utils/promise';
+import { Store, Stores } from './utils/store';
 import styles from './app.module.css';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
@@ -72,11 +73,11 @@ function ActionBar({
 function VotingPanel({
   tracks,
   referenda,
-  voteOn,
+  voteHandler,
 }: {
   tracks: Map<number, Track>;
   referenda: [number, ReferendumOngoing][];
-  voteOn: (index: number, vote: AccountVote) => void;
+  voteHandler: (index: number, vote: AccountVote) => void;
 }): JSX.Element {
   const { network } = useApi();
   // The referenda currently visible to the user
@@ -88,7 +89,7 @@ function VotingPanel({
           network={network}
           referenda={referenda}
           tracks={tracks}
-          voteOn={voteOn}
+          voteHandler={voteHandler}
         />
       </div>
       {referenda.length > 0 && (
@@ -96,11 +97,11 @@ function VotingPanel({
           left={referenda.length}
           onAccept={() =>
             topReferenda &&
-            voteOn(topReferenda, createStandardAccountVote(true))
+            voteHandler(topReferenda, createStandardAccountVote(true))
           }
           onRefuse={() =>
             topReferenda &&
-            voteOn(topReferenda, createStandardAccountVote(false))
+            voteHandler(topReferenda, createStandardAccountVote(false))
           }
         />
       )}
@@ -164,7 +165,7 @@ function AppPanel({
         ].filter(([index]) => !accountVotes.has(index));
         return (
           <VotingPanel
-            voteOn={voteHandler}
+            voteHandler={voteHandler}
             tracks={tracks}
             referenda={referendaToBeVotedOn}
           />
@@ -185,7 +186,6 @@ function App(): JSX.Element {
   useEffect(() => {
     async function fetchData(api: ApiPromise) {
       const tracks = getAllTracks(api);
-      const accountVotes = new Map<number, AccountVote>();
 
       // Retrieve all referenda, then display them
       const allReferenda = await timeout(
@@ -203,6 +203,19 @@ function App(): JSX.Element {
         ][]
       );
 
+      const accountVotes = new Map<number, AccountVote>();
+      const accountVotesStore = await Store.storeFor<AccountVote>(
+        Stores.AccountVote
+      );
+
+      // Retrieve all stored votes
+      const storedAccountVotes = await accountVotesStore.loadAll();
+      storedAccountVotes.forEach((accountVote, index) => {
+        if (referenda.has(index)) {
+          accountVotes.set(index, accountVote);
+        }
+      });
+
       const currentAddress = connectedAccount?.account?.address;
       if (currentAddress) {
         // Go through user votes and restore the ones relevant to `referenda`
@@ -217,6 +230,10 @@ function App(): JSX.Element {
           }
         });
       }
+
+      // Only keep in the store votes updated from the chain and matching current referenda
+      await accountVotesStore.clear();
+      await accountVotesStore.saveAll(accountVotes);
 
       setStateContext({
         state: State.STARTED,
@@ -241,15 +258,21 @@ function App(): JSX.Element {
       ) : (
         <AppPanel
           context={stateContext}
-          voteHandler={(index, vote) =>
+          voteHandler={async (index, vote) => {
+            // Store user votes
+            const accountVotesStore = await Store.storeFor<AccountVote>(
+              Stores.AccountVote
+            );
+            await accountVotesStore.save(index, vote);
+
             voteOn(
               index,
               vote,
               setStateContext as React.Dispatch<
                 React.SetStateAction<StartedContext>
               >
-            )
-          }
+            );
+          }}
         />
       )}
     </div>
