@@ -1,20 +1,25 @@
+import React from 'react';
+import { Card } from './common';
 import { NotificationType, useNotifications } from '../contexts/Notification';
 import styles from './notificationBox.module.css';
-import { Card } from './common';
 
 const TRANSIENT_DISPLAY_TIME_MS = 3000; //milliseconds
+
 const NotificationBox = () => {
   const { notifications, markAsRead } = useNotifications();
-  const current = notifications?.[0];
-  const isTransient = current?.type === NotificationType.Notification;
+  const current = notifications.at(0);
   const closeHandler = () => markAsRead();
+  const isTransient = current?.type === NotificationType.Notification;
+
   if (isTransient) {
     setTimeout(() => {
       markAsRead();
     }, TRANSIENT_DISPLAY_TIME_MS);
   }
+
   return (
-    current && (
+    <>
+    {current &&
       <div className={styles.notification}>
         {!isTransient && (
           <div className={styles.closeBtn} onClick={closeHandler}>
@@ -25,7 +30,8 @@ const NotificationBox = () => {
           {current.message}
         </Card>
       </div>
-    )
+    }
+    </>
   );
 };
 
