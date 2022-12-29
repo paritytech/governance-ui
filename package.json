@@ -28,7 +28,7 @@
     "@polkadot-onboard/react": "0.0.2-beta",
     "@polkadot/api": "9.10.2",
     "@polkadot/react-identicon": "2.9.14",
-    "@react-spring/web": "9.5.5",
+    "@react-spring/web": "9.6.1",
     "@use-gesture/react": "10.2.23",
     "react": "18.2.0",
     "react-dom": "18.2.0",
