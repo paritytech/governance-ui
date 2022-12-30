@@ -52,6 +52,7 @@ function ActionBar({
   return (
     <div className={styles.action}>
       <Button
+        aria-label="Refuse"
         color="error"
         onPress={onRefuse}
         icon={
@@ -62,6 +63,7 @@ function ActionBar({
       <Text>{left} left</Text>
       <Spacer x={1} />
       <Button
+        aria-label="Accept"
         color="success"
         onPress={onAccept}
         icon={<HeartIcon primaryColor="currentColor" filled />}
