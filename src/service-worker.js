@@ -29,7 +29,7 @@ self.addEventListener('activate', (e) => {
   self.clients.claim();
 });
 
-self.addEventListener('fetch', (event) => {
+/*self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   if (url.origin == location.origin && manifest.includes(url.pathname)) {
     // Only consider
@@ -47,11 +47,12 @@ self.addEventListener('fetch', (event) => {
       })
     );
   }
-});
+});*/
 
 self.addEventListener('periodicsync', (event) => {
   console.log('periodicsync', event);
   if (event.tag === 'get-latest-news') {
+    console.log('get-latest-news');
     //event.waitUntil(fetchAndCacheLatestNews());
   }
 });
