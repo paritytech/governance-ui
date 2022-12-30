@@ -55,8 +55,25 @@ self.addEventListener('fetch', (event) => {
 
 self.addEventListener('periodicsync', (event) => {
   console.log('periodicsync', event);
-  if (event.tag === 'get-latest-news') {
-    console.log('get-latest-news');
+  if (event.tag === 'fetch-referenda-updates') {
+    const notifyUser = true;
+    if (notifyUser) {
+      // See https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
+      self.registration.showNotification('Vibration Sample', {
+        body: 'Buzz! Buzz!',
+        actions: [
+          {
+            action: 'Some fresh referenda',
+            title: 'News',
+            icon: '../assets/icons/icon-192x192.png',
+          },
+        ],
+        icon: '../assets/icons/icon-192x192.png',
+        vibrate: [200, 100, 200, 100, 200, 100, 200],
+        tag: 'vibration-sample',
+        requireInteraction: true,
+      });
+    }
     //event.waitUntil(fetchAndCacheLatestNews());
   }
 });
