@@ -21,7 +21,7 @@ function Button({
   children?: React.ReactNode;
   color?: keyof typeof Colors;
   icon?: React.ReactNode;
-  label: string,
+  label: string;
   bordered?: boolean;
   onPress: (e: PressEvent) => void;
 }): JSX.Element {
