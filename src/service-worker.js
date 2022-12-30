@@ -53,6 +53,11 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  console.log(`Notification clicked ${event.action}`, event.notification, event.reply);
+});
+
 self.addEventListener('periodicsync', (event) => {
   console.log('periodicsync', event);
   if (event.tag === 'fetch-referenda-updates') {
@@ -63,15 +68,22 @@ self.addEventListener('periodicsync', (event) => {
         body: 'Buzz! Buzz!',
         actions: [
           {
-            action: 'Some fresh referenda',
+            action: 'news',
             title: 'News',
-            icon: '../assets/icons/icon-192x192.png',
+            icon: '/assets/icons/icon-192x192.png'
           },
+          {
+            action: 'no',
+            type: 'text',
+            title: '👎 No (explain why)',
+            placeholder: 'Type your explanation here',
+          }
         ],
         icon: '../assets/icons/icon-192x192.png',
         vibrate: [200, 100, 200, 100, 200, 100, 200],
         tag: 'vibration-sample',
         requireInteraction: true,
+        data: { key: 'value' },
       });
     }
     //event.waitUntil(fetchAndCacheLatestNews());
