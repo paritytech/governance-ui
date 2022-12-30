@@ -9,9 +9,12 @@ async function install() {
   await cache.addAll(manifest);
 }
 
-// First entry point, only called once
+// First entry point, only called once per service worker version
 // See https://web.dev/service-worker-lifecycle/
 addEventListener('install', (e) => {
+  // Use latest version right away, even if some clients are using an older version
+  self.skipWaiting();
+
   e.waitUntil(install());
 });
 
@@ -29,16 +32,17 @@ self.addEventListener('activate', (e) => {
   self.clients.claim();
 });
 
-/*self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   if (url.origin == location.origin && manifest.includes(url.pathname)) {
-    // Only consider
+    // Only consider cached assets
     event.respondWith(
-      caches.open(ASSETS_CACHE).then(function (cache) {
-        return cache.match(event.request).then(async function (response) {
+      caches.open(ASSETS_CACHE).then((cache) => {
+        return cache.match(event.request).then(async (response) => {
           if (response) {
             return response;
           } else {
+            // This should never happen
             const responseFromNetwork = await fetch(event.request);
             cache.put(event.request, responseFromNetwork.clone());
             return responseFromNetwork;
@@ -47,7 +51,7 @@ self.addEventListener('activate', (e) => {
       })
     );
   }
-});*/
+});
 
 self.addEventListener('periodicsync', (event) => {
   console.log('periodicsync', event);
