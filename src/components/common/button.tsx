@@ -33,7 +33,7 @@ function Button({
       onPress={onPress}
       icon={icon}
       bordered={bordered}
-      ariaLabel={label}
+      aria-label={label}
     >
       {children}
     </NextUIButton>
