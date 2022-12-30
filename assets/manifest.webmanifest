@@ -5,6 +5,7 @@
   "lang": "en",
   "short_name": "Swipealot",
   "description": "An intuitive governance DApp for Polkadot.",
+  "start_url": "/?utm_source=pwa",
   "display": "minimal-ui",
   "display_override": ["minimal-ui", "browser"],
   "orientation": "portrait-primary",
