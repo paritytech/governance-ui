@@ -3,7 +3,7 @@ import {
   isPeriodicBackgroundSyncGranted,
 } from './permissions';
 
-export const REFERENDA_UPDATES_TAG = "fetch-referenda-updates";
+export const REFERENDA_UPDATES_TAG = 'fetch-referenda-updates';
 
 export async function registerServiceWorker() {
   const reg = await navigator.serviceWorker.register(
