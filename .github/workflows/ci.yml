@@ -11,8 +11,6 @@ jobs:
 
       - name: Setup node
         uses: actions/setup-node@v3
-        with:
-          node-version: "14"
 
       - name: Install
         run: yarn install --check-files
@@ -43,5 +41,6 @@ jobs:
           # See https://github.com/GoogleChrome/budget.json
           budgetPath: ./budget.json
           uploadArtifacts: true
+          temporaryPublicStorage: true
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
