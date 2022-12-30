@@ -14,12 +14,14 @@ function Button({
   children,
   color,
   icon,
+  label,
   bordered,
   onPress,
 }: {
   children?: React.ReactNode;
   color?: keyof typeof Colors;
   icon?: React.ReactNode;
+  label: string,
   bordered?: boolean;
   onPress: (e: PressEvent) => void;
 }): JSX.Element {
@@ -31,6 +33,7 @@ function Button({
       onPress={onPress}
       icon={icon}
       bordered={bordered}
+      ariaLabel={label}
     >
       {children}
     </NextUIButton>

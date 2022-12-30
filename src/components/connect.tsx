@@ -115,7 +115,7 @@ const ConnectButton = (props) => {
   const onPress = () => openModal();
   return (
     <>
-      <Button {...{ ...props, onPress }}>
+      <Button label="connect" {...{ ...props, onPress }}>
         {connectedAccount
           ? `Connected - ${connectedAccount.account.name}`
           : 'Connect'}
