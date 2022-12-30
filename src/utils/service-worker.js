@@ -1,3 +1,8 @@
+import {
+  areNotificationsGranted,
+  isPeriodicBackgroundSyncGranted,
+} from './permissions';
+
 export async function registerServiceWorker() {
   const reg = await navigator.serviceWorker.register(
     new URL('../service-worker.js', import.meta.url),
@@ -5,17 +10,31 @@ export async function registerServiceWorker() {
       type: 'module',
     }
   );
+
+  // Wait for the service worker to be ready
   await navigator.serviceWorker.ready;
-  //await Notification.requestPermission();
+
   try {
-    await reg.periodicSync.register('get-latest-news', {
-      minInterval: 24 * 60 * 60 * 1000, // 1 day
-    });
+    if (isPeriodicBackgroundSyncGranted()) {
+      await reg.periodicSync.register('fetch-referenda-updates', {
+        minInterval: 24 * 60 * 60 * 1000, // 1 day
+      });
+    } else {
+      console.warn('Permission to register a periodicSync denied');
+    }
   } catch {
-    console.log('Periodic Sync could not be registered!');
+    console.warn('Periodic Sync could not be registered!');
   }
 
-  //    reg.showNotification("Markdowns synced to server");
+  try {
+    // Request user to grant notifications request if necessary
+    if (!areNotificationsGranted()) {
+      await Notification.requestPermission();
+    }
+  } catch (e) {
+    console.warn(e);
+  }
+
   reg.addEventListener('updatefound', () => {
     // A wild service worker has appeared in reg.installing!
     const newWorker = reg.installing;
