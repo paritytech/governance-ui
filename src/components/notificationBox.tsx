@@ -19,18 +19,18 @@ const NotificationBox = () => {
 
   return (
     <>
-    {current &&
-      <div className={styles.notification}>
-        {!isTransient && (
-          <div className={styles.closeBtn} onClick={closeHandler}>
-            x
-          </div>
-        )}
-        <Card className={styles.card} variant="shadow">
-          {current.message}
-        </Card>
-      </div>
-    }
+      {current && (
+        <div className={styles.notification}>
+          {!isTransient && (
+            <div className={styles.closeBtn} onClick={closeHandler}>
+              x
+            </div>
+          )}
+          <Card className={styles.card} variant="shadow">
+            {current.message}
+          </Card>
+        </div>
+      )}
     </>
   );
 };
