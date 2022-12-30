@@ -30,7 +30,7 @@ jobs:
       uses: actions/setup-node@v3
 
     - name: Build
-      run: yarn clean && yarn install && yarn build
+      run: yarn clean && yarn install && NETWORK=kusama PUBLIC_URL=https://jeluard.github.io/swipealot/ yarn build
 
     - name: Setup Pages
       uses: actions/configure-pages@v2

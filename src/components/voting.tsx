@@ -1,72 +1,88 @@
 import React from 'react';
 import { ApiPromise } from '@polkadot/api';
+import { vote } from '../chain/conviction-voting';
 import { Button, Card, Spacer, Text } from '../components/common';
-import { useAccount } from '../contexts/Account';
-import { useApi } from '../contexts/Api';
-import { Vote } from '../types';
+import { SigningAccount, useAccount, useApi } from '../contexts';
+import { AccountVote } from '../types';
+import { Store, Stores } from '../utils/store';
 import styles from './voting.module.css';
 
-function createVoteTx(api: ApiPromise, index: number, vote: Vote) {
-  // ToDo: extend the Vote to include the split votes as well.
-  const convictionVoting = {
-    Standard: {
-      vote: {
-        conviction: 'None',
-        aye: vote === Vote.Aye,
-      },
-      balance: 0,
-    },
-  };
-  return api.tx.convictionVoting.vote(index, convictionVoting);
-}
-
-function createBatchVotes(api: ApiPromise, votes: Map<number, Vote>) {
-  const txs = [...votes].map(([index, vote]) => createVoteTx(api, index, vote));
+function createBatchVotes(
+  api: ApiPromise,
+  accountVotes: Map<number, AccountVote>
+) {
+  const txs = [...accountVotes].map(([index, accountVote]) =>
+    vote(api, index, accountVote)
+  );
   return api.tx.utility.batchAll([...txs]);
 }
 
-function VotesTable({ votes }: { votes: Map<number, Vote> }): JSX.Element {
+async function submitBatchVotes(
+  api: ApiPromise,
+  connectedAccount: SigningAccount,
+  accountVotes: Map<number, AccountVote>
+) {
+  const {
+    account: { address },
+    signer,
+  } = connectedAccount;
+  if (api && address && signer) {
+    const batchVoteTx = createBatchVotes(api, accountVotes);
+    const unsub = await batchVoteTx.signAndSend(
+      address,
+      { signer },
+      (callResult) => {
+        const { status } = callResult;
+        console.log(callResult.toHuman());
+        if (status.isInBlock) {
+          console.log('Transaction is in block.');
+        } else if (status.isBroadcast) {
+          console.log('Transaction broadcasted.');
+        } else if (status.isFinalized) {
+          unsub();
+        } else if (status.isReady) {
+          console.log('Transaction isReady.');
+        } else {
+          console.log(`Other status ${status}`);
+        }
+      }
+    );
+  }
+}
+
+function VoteDetails({
+  accountVote,
+}: {
+  accountVote: AccountVote;
+}): JSX.Element {
+  switch (accountVote.type) {
+    case 'standard': {
+      const isAye = accountVote.vote.aye;
+      const color = isAye ? 'success' : 'warning';
+      return (
+        <Text h4 color={color}>
+          {isAye ? 'Aye' : 'Naye'}
+        </Text>
+      );
+    }
+    default: {
+      return <Text h4>TODO</Text>;
+    }
+  }
+}
+
+function VotesTable({
+  accountVotes,
+}: {
+  accountVotes: Map<number, AccountVote>;
+}): JSX.Element {
   const { api } = useApi();
   const { connectedAccount } = useAccount();
 
-  const submiteBatchVotes = async () => {
-    if (connectedAccount) {
-      const {
-        account: { address },
-        signer,
-      } = connectedAccount;
-      if (api && address && signer && votes.size > 0) {
-        const batchVoteTx = createBatchVotes(api, votes);
-        const unsub = await batchVoteTx.signAndSend(
-          address,
-          { signer },
-          (callResult) => {
-            const { status } = callResult;
-            console.log(callResult.toHuman());
-            if (status.isInBlock) {
-              console.log('Transaction is in block.');
-            } else if (status.isBroadcast) {
-              console.log('Transaction broadcasted.');
-            } else if (status.isFinalized) {
-              unsub();
-            } else if (status.isReady) {
-              console.log('Transaction isReady.');
-            } else {
-              console.log(`Other status ${status}`);
-            }
-          }
-        );
-      }
-    }
-    // ToDo: remove this log afrer proper error notifications are added to the UX
-    console.log('no account is connected');
-  };
   return (
     <div className={styles.table}>
       <div>
-        {[...votes.entries()].map(([index, vote]) => {
-          const isAye = vote == Vote.Aye;
-          const color = isAye ? 'success' : 'warning';
+        {[...accountVotes.entries()].map(([index, accountVote]) => {
           return (
             <div key={index} style={{ width: '100%' }}>
               <Card>
@@ -74,18 +90,38 @@ function VotesTable({ votes }: { votes: Map<number, Vote> }): JSX.Element {
                   #{index}
                 </Text>
                 <Spacer y={2} />
-                <Text h4 color={color}>
-                  {isAye ? 'Aye' : 'Naye'}
-                </Text>
+                <VoteDetails accountVote={accountVote} />
               </Card>
             </div>
           );
         })}
       </div>
       <Spacer y={1} />
-      <Button color="primary" onPress={() => submiteBatchVotes()}>
-        Submit votes
-      </Button>
+      {api && connectedAccount ? (
+        <Button
+          color="primary"
+          onPress={async () => {
+            await submitBatchVotes(api, connectedAccount, accountVotes);
+
+            // Clear user votes
+            const accountVotesStore = await Store.storeFor<AccountVote>(
+              Stores.AccountVote
+            );
+            await accountVotesStore.clear();
+          }}
+        >
+          Submit votes
+        </Button>
+      ) : (
+        <Text
+          color="secondary"
+          css={{
+            textAlign: 'center',
+          }}
+        >
+          Connect to submit your votes
+        </Text>
+      )}
     </div>
   );
 }
