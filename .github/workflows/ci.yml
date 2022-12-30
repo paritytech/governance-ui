@@ -28,3 +28,20 @@ jobs:
 
       - name: Build
         run: yarn build
+
+      - name: Wait for the Netlify Preview
+        uses: jakepartusch/wait-for-netlify-action@v1
+        id: netlify
+        with:
+          site_name: 'stirring-alfajores-b573c7'
+
+      - name: Audit URLs using Lighthouse
+        uses: treosh/lighthouse-ci-action@v9
+        with:
+          urls: |
+            ${{ steps.netlify.outputs.url }}
+          # See https://github.com/GoogleChrome/budget.json
+          budgetPath: ./budget.json
+          uploadArtifacts: true
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
