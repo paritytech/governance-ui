@@ -5,6 +5,7 @@ on: [pull_request, workflow_dispatch]
 jobs:
   ci:
     runs-on: ubuntu-latest
+    environment: development
     if: "! contains(github.event.head_commit.message, '[CI Skip]')"
     steps:
       - uses: actions/checkout@v3
@@ -39,7 +40,7 @@ jobs:
           urls: |
             ${{ steps.netlify.outputs.url }}
           # See https://github.com/GoogleChrome/budget.json
-          budgetPath: ./budget.json
+          budgetPath: .github/workflows/budget.json
           uploadArtifacts: true
           temporaryPublicStorage: true
         env:
