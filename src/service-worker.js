@@ -55,7 +55,11 @@ self.addEventListener('fetch', (event) => {
 
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  console.log(`Notification clicked ${event.action}`, event.notification, event.reply);
+  console.log(
+    `Notification clicked ${event.action}`,
+    event.notification,
+    event.reply
+  );
 });
 
 self.addEventListener('periodicsync', (event) => {
@@ -70,14 +74,14 @@ self.addEventListener('periodicsync', (event) => {
           {
             action: 'news',
             title: 'News',
-            icon: '/assets/icons/icon-192x192.png'
+            icon: '/assets/icons/icon-192x192.png',
           },
           {
             action: 'no',
             type: 'text',
             title: '👎 No (explain why)',
             placeholder: 'Type your explanation here',
-          }
+          },
         ],
         icon: '../assets/icons/icon-192x192.png',
         vibrate: [200, 100, 200, 100, 200, 100, 200],
