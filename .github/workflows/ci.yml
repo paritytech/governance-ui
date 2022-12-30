@@ -30,9 +30,13 @@ jobs:
       - name: Audit
         run: yarn audit
 
+      # Ensures `build` runs fine but do not use it, any PUBLIC_URL would do
       - name: Build
         run: yarn build
+        env:
+          PUBLIC_URL: dummy
 
+      # Netlify monitors both main and PRs, wait for the deployment to end
       - name: Wait for the Netlify Preview
         uses: jakepartusch/wait-for-netlify-action@v1
         id: netlify
