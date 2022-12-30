@@ -1,4 +1,5 @@
 import { manifest, version } from '@parcel/service-worker';
+import { REFERENDA_UPDATES_TAG } from './utils/service-worker';
 
 const ASSETS_CACHE = `assets-version-${version}`;
 const ALL_CACHES = [ASSETS_CACHE];
@@ -63,8 +64,7 @@ self.addEventListener('notificationclick', (event) => {
 });
 
 self.addEventListener('periodicsync', (event) => {
-  console.log('periodicsync', event);
-  if (event.tag === 'fetch-referenda-updates') {
+  if (event.tag === REFERENDA_UPDATES_TAG) {
     const notifyUser = true;
     if (notifyUser) {
       // See https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
