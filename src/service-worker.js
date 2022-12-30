@@ -1,4 +1,5 @@
 import { manifest, version } from '@parcel/service-worker';
+import { REFERENDA_UPDATES_TAG } from './utils/service-worker';
 
 const ASSETS_CACHE = `assets-version-${version}`;
 const ALL_CACHES = [ASSETS_CACHE];
@@ -9,9 +10,12 @@ async function install() {
   await cache.addAll(manifest);
 }
 
-// First entry point, only called once
+// First entry point, only called once per service worker version
 // See https://web.dev/service-worker-lifecycle/
 addEventListener('install', (e) => {
+  // Use latest version right away, even if some clients are using an older version
+  self.skipWaiting();
+
   e.waitUntil(install());
 });
 
@@ -32,13 +36,14 @@ self.addEventListener('activate', (e) => {
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
   if (url.origin == location.origin && manifest.includes(url.pathname)) {
-    // Only consider
+    // Only consider cached assets
     event.respondWith(
-      caches.open(ASSETS_CACHE).then(function (cache) {
-        return cache.match(event.request).then(async function (response) {
+      caches.open(ASSETS_CACHE).then((cache) => {
+        return cache.match(event.request).then(async (response) => {
           if (response) {
             return response;
           } else {
+            // This should never happen
             const responseFromNetwork = await fetch(event.request);
             cache.put(event.request, responseFromNetwork.clone());
             return responseFromNetwork;
@@ -49,9 +54,42 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  console.log(
+    `Notification clicked ${event.action}`,
+    event.notification,
+    event.reply
+  );
+});
+
 self.addEventListener('periodicsync', (event) => {
-  console.log('periodicsync', event);
-  if (event.tag === 'get-latest-news') {
+  if (event.tag === REFERENDA_UPDATES_TAG) {
+    const notifyUser = true;
+    if (notifyUser) {
+      // See https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
+      self.registration.showNotification('Vibration Sample', {
+        body: 'Buzz! Buzz!',
+        actions: [
+          {
+            action: 'news',
+            title: 'News',
+            icon: '/assets/icons/icon-192x192.png',
+          },
+          {
+            action: 'no',
+            type: 'text',
+            title: '👎 No (explain why)',
+            placeholder: 'Type your explanation here',
+          },
+        ],
+        icon: '../assets/icons/icon-192x192.png',
+        vibrate: [200, 100, 200, 100, 200, 100, 200],
+        tag: 'vibration-sample',
+        requireInteraction: true,
+        data: { key: 'value' },
+      });
+    }
     //event.waitUntil(fetchAndCacheLatestNews());
   }
 });

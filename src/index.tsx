@@ -14,6 +14,7 @@ import ApiProvider from './contexts/Api';
 import Header from './components/header';
 import NotificationProvider from './contexts/Notification';
 import NotificationBox from './components/notificationBox';
+import { registerServiceWorker } from './utils/service-worker';
 
 const theme = createTheme({
   type: 'light',
@@ -52,8 +53,11 @@ if (container) {
     </React.StrictMode>
   );
 
-  // TODO disable for now, helps during dev
-  // registerServiceWorker();
+  registerServiceWorker().catch(() =>
+    console.warn(
+      "Browser doesn't support ServiceWorker; App won't be available offline"
+    )
+  );
 }
 
 window.addEventListener('unhandledrejection', function (event) {

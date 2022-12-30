@@ -100,6 +100,7 @@ function VotesTable({
       {api && connectedAccount ? (
         <Button
           color="primary"
+          label="vote"
           onPress={async () => {
             await submitBatchVotes(api, connectedAccount, accountVotes);
 

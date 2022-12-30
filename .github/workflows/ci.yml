@@ -1,18 +1,22 @@
 name: Continuous Integration
 
-on: [pull_request, workflow_dispatch]
+on: 
+  pull_request:
+  workflow_dispatch:
+  push:
+    branches:
+    - main
 
 jobs:
   ci:
     runs-on: ubuntu-latest
+    environment: development
     if: "! contains(github.event.head_commit.message, '[CI Skip]')"
     steps:
       - uses: actions/checkout@v3
 
       - name: Setup node
         uses: actions/setup-node@v3
-        with:
-          node-version: "14"
 
       - name: Install
         run: yarn install --check-files
@@ -26,9 +30,13 @@ jobs:
       - name: Audit
         run: yarn audit
 
+      # Ensures `build` runs fine but do not use it, any PUBLIC_URL would do
       - name: Build
         run: yarn build
+        env:
+          PUBLIC_URL: dummy
 
+      # Netlify monitors both main and PRs, wait for the deployment to end
       - name: Wait for the Netlify Preview
         uses: jakepartusch/wait-for-netlify-action@v1
         id: netlify
@@ -41,7 +49,8 @@ jobs:
           urls: |
             ${{ steps.netlify.outputs.url }}
           # See https://github.com/GoogleChrome/budget.json
-          budgetPath: ./budget.json
+          budgetPath: .github/workflows/budget.json
           uploadArtifacts: true
+          temporaryPublicStorage: true
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
