@@ -187,13 +187,19 @@ function App(): JSX.Element {
 
   useEffect(() => {
     async function fetchData(api: ApiPromise) {
+      performance.mark('start:tracks');
       const tracks = getAllTracks(api);
+      performance.mark('end:tracks');
+      performance.measure('tracks', 'start:tracks', 'end:tracks');
 
+      performance.mark('start:allReferenda');
       // Retrieve all referenda, then display them
       const allReferenda = await timeout(
         getAllReferenda(api),
         FETCH_DATA_TIMEOUT
       );
+      performance.mark('end:allReferenda');
+      performance.measure('allReferenda', 'start:allReferenda', 'end:allReferenda');
 
       // Only consider 'ongoing' referendum
       const referenda = new Map(
@@ -221,7 +227,10 @@ function App(): JSX.Element {
       const currentAddress = connectedAccount?.account?.address;
       if (currentAddress) {
         // Go through user votes and restore the ones relevant to `referenda`
+        performance.mark('start:votingFor');
         const chainVotings = await getVotingFor(api, currentAddress);
+        performance.mark('end:votingFor');
+        performance.measure('votingFor', 'start:votingFor', 'end:votingFor');
         chainVotings.forEach((voting) => {
           if (voting.type === 'casting') {
             voting.votes.forEach((accountVote, index) => {
@@ -232,6 +241,9 @@ function App(): JSX.Element {
           }
         });
       }
+
+      const measures = performance.getEntriesByType('measure');
+      console.table(measures, ['name', 'duration']);
 
       // Only keep in the store votes updated from the chain and matching current referenda
       await accountVotesStore.clear();

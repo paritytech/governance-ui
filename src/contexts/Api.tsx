@@ -22,7 +22,10 @@ const ApiProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const endpoint = rpcParam ? rpcParam : endpointFor(network);
+    performance.mark('start:api');
     newApi(endpoint).then((api) => {
+      performance.mark('end:api');
+      performance.measure('api', 'start:api', 'end:api');
       if (rpcParam) {
         // Check that provided rpc and network point to a same logical chain
         const connectedChain = api.runtimeChain.toHuman() as Network;
