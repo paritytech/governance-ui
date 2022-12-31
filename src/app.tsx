@@ -16,6 +16,7 @@ import {
 import { ReferendaDeck, VotesTable } from './components';
 import { useAccount, useApi } from './contexts';
 import { AccountVote, ReferendumOngoing, Track } from './types';
+import { measured } from './utils/performance';
 import { timeout } from './utils/promise';
 import { Store, Stores } from './utils/store';
 import styles from './app.module.css';
@@ -187,19 +188,13 @@ function App(): JSX.Element {
 
   useEffect(() => {
     async function fetchData(api: ApiPromise) {
-      performance.mark('start:tracks');
       const tracks = getAllTracks(api);
-      performance.mark('end:tracks');
-      performance.measure('tracks', 'start:tracks', 'end:tracks');
 
-      performance.mark('start:allReferenda');
       // Retrieve all referenda, then display them
-      const allReferenda = await timeout(
+      const allReferenda = await measured('allReferenda', () => timeout(
         getAllReferenda(api),
         FETCH_DATA_TIMEOUT
-      );
-      performance.mark('end:allReferenda');
-      performance.measure('allReferenda', 'start:allReferenda', 'end:allReferenda');
+      ));
 
       // Only consider 'ongoing' referendum
       const referenda = new Map(
@@ -227,10 +222,7 @@ function App(): JSX.Element {
       const currentAddress = connectedAccount?.account?.address;
       if (currentAddress) {
         // Go through user votes and restore the ones relevant to `referenda`
-        performance.mark('start:votingFor');
-        const chainVotings = await getVotingFor(api, currentAddress);
-        performance.mark('end:votingFor');
-        performance.measure('votingFor', 'start:votingFor', 'end:votingFor');
+        const chainVotings = await measured('votingFor', () => getVotingFor(api, currentAddress));
         chainVotings.forEach((voting) => {
           if (voting.type === 'casting') {
             voting.votes.forEach((accountVote, index) => {
@@ -259,6 +251,11 @@ function App(): JSX.Element {
 
     try {
       api && fetchData(api);
+      if (api === null) {
+        const measures = performance.getEntriesByType('measure');
+        console.log(measures)
+        console.table(measures, ['name', 'duration']);
+      }
     } catch (e) {
       console.error(`Failed to fetch referenda: ${e}`);
       setError('Failed to fetch data in time');
@@ -267,7 +264,9 @@ function App(): JSX.Element {
 
   return (
     <div className={styles.app}>
-      {error ? (
+      {api === null ?
+        <div>Failed to connect to the chain</div>
+      : error ? (
         <div>{error}</div>
       ) : (
         <AppPanel

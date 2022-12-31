@@ -1,8 +1,12 @@
 import React, { useContext, createContext, useEffect, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
-import useSearchParam from '../hooks/useSearchParam';
-import { endpointFor, Network, newApi } from '../utils/polkadot-api';
 import { NotificationType, useNotifications } from './Notification';
+import useSearchParam from '../hooks/useSearchParam';
+import { measured } from '../utils/performance';
+import { endpointFor, Network, newApi } from '../utils/polkadot-api';
+import { timeout } from '../utils/promise';
+
+const CHAIN_CONNECTION_TIMEOUT = 5000; // in milliseconds
 
 export interface IApiContext {
   api: ApiPromise | undefined;
@@ -21,32 +25,36 @@ const ApiProvider = ({ children }: { children: React.ReactNode }) => {
   const { notify } = useNotifications();
 
   useEffect(() => {
-    const endpoint = rpcParam ? rpcParam : endpointFor(network);
-    performance.mark('start:api');
-    newApi(endpoint).then((api) => {
-      performance.mark('end:api');
-      performance.measure('api', 'start:api', 'end:api');
-      if (rpcParam) {
-        // Check that provided rpc and network point to a same logical chain
-        const connectedChain = api.runtimeChain.toHuman() as Network;
-        if (connectedChain != network) {
-          const message = `Provided RPC doesn't match network ${network}: ${rpcParam}`;
-          const notification = { type: NotificationType.Error, message };
-          notify(notification);
+    async function fetch() {
+      const endpoint = rpcParam ? rpcParam : endpointFor(network);
+      try {
+        const api = await measured('api', () => timeout(newApi(endpoint), CHAIN_CONNECTION_TIMEOUT));
+        if (rpcParam) {
+          // Check that provided rpc and network point to a same logical chain
+          const connectedChain = api.runtimeChain.toHuman() as Network;
+          if (connectedChain != network) {
+            const message = `Provided RPC doesn't match network ${network}: ${rpcParam}`;
+            const notification = { type: NotificationType.Error, message };
+            notify(notification);
+          } else {
+            const message = `Connected to network ${network} using RPC ${rpcParam}`;
+            const notification = { type: NotificationType.Notification, message };
+            console.info(message);
+            notify(notification);
+          }
         } else {
-          const message = `Connected to network ${network} using RPC ${rpcParam}`;
+          const message = `Connected to network ${network.toString()}`;
           const notification = { type: NotificationType.Notification, message };
           console.info(message);
           notify(notification);
         }
-      } else {
-        const message = `Connected to network ${network.toString()}`;
-        const notification = { type: NotificationType.Notification, message };
-        console.info(message);
-        notify(notification);
-      }
-      setApi(api);
-    });
+        setApi(api);
+      } catch {
+        setApi(null);
+      };
+    }
+
+    fetch();
   }, [networkParam, rpcParam]);
 
   return (
