@@ -25,9 +25,9 @@ export namespace Network {
 export function endpointFor(network: Network): string {
   switch (network) {
     case Network.Kusama:
-      return 'wss://kusama.api.onfinality.io/public-ws';
+      return 'wss://kusama-rpc.polkadot.io';
     case Network.Polkadot:
-      return 'wss://polkadot.api.onfinality.io/public-ws';
+      return 'wss://rpc.polkadot.io';
   }
 }
 
