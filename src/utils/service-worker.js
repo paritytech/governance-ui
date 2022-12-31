@@ -56,11 +56,11 @@ export async function registerServiceWorker() {
     }
   });
 
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
+  navigator.serviceWorker.addEventListener('controllerchange', (e) => {
     // This fires when the service worker controlling this page
     // changes, eg a new worker has skipped waiting and become
     // the new active worker.
-    console.log('New ServiceWorker has been activated');
+    console.debug('ServiceWorker has been activated', e);
   });
 
   navigator.serviceWorker.addEventListener('message', () => {
