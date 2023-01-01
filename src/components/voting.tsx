@@ -2,7 +2,7 @@ import React from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { vote } from '../chain/conviction-voting';
 import { Button, Card, Spacer, Text } from '../components/common';
-import { SigningAccount, useAccount, useApi } from '../contexts';
+import { SigningAccount } from '../contexts';
 import { AccountVote } from '../types';
 import { Store, Stores } from '../utils/store';
 import styles from './voting.module.css';
@@ -72,13 +72,14 @@ function VoteDetails({
 }
 
 function VotesTable({
+  api,
   accountVotes,
+  connectedAccount,
 }: {
+  api: ApiPromise;
+  connectedAccount: SigningAccount | undefined;
   accountVotes: Map<number, AccountVote>;
 }): JSX.Element {
-  const { api } = useApi();
-  const { connectedAccount } = useAccount();
-
   return (
     <div className={styles.table}>
       <div>
@@ -97,7 +98,7 @@ function VotesTable({
         })}
       </div>
       <Spacer y={1} />
-      {api && connectedAccount ? (
+      {connectedAccount ? (
         <Button
           color="primary"
           label="vote"

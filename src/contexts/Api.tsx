@@ -1,12 +1,20 @@
 import React, { useContext, createContext, useEffect, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
-import useSearchParam from '../hooks/useSearchParam';
-import { endpointFor, Network, newApi } from '../utils/polkadot-api';
 import { NotificationType, useNotifications } from './Notification';
+import useSearchParam from '../hooks/useSearchParam';
+import { measured } from '../utils/performance';
+import {
+  endpointFor,
+  Network,
+  networkFor,
+  newApi,
+} from '../utils/polkadot-api';
+import { timeout } from '../utils/promise';
+
+const CHAIN_CONNECTION_TIMEOUT = 5000; // in milliseconds
 
 export interface IApiContext {
   api: ApiPromise | undefined;
-  network: Network;
 }
 
 // api context
@@ -21,36 +29,43 @@ const ApiProvider = ({ children }: { children: React.ReactNode }) => {
   const { notify } = useNotifications();
 
   useEffect(() => {
-    const endpoint = rpcParam ? rpcParam : endpointFor(network);
-    newApi(endpoint).then((api) => {
-      if (rpcParam) {
-        // Check that provided rpc and network point to a same logical chain
-        const connectedChain = api.runtimeChain.toHuman() as Network;
-        if (connectedChain != network) {
-          const message = `Provided RPC doesn't match network ${network}: ${rpcParam}`;
-          const notification = { type: NotificationType.Error, message };
-          notify(notification);
+    async function fetch() {
+      const endpoint = rpcParam ? rpcParam : endpointFor(network);
+      try {
+        const api = await measured('api', () =>
+          timeout(newApi(endpoint), CHAIN_CONNECTION_TIMEOUT)
+        );
+        if (rpcParam) {
+          // Check that provided rpc and network point to a same logical chain
+          if (networkFor(api) != network) {
+            const message = `Provided RPC doesn't match network ${network}: ${rpcParam}`;
+            const notification = { type: NotificationType.Error, message };
+            notify(notification);
+          } else {
+            const message = `Connected to network ${network} using RPC ${rpcParam}`;
+            const notification = {
+              type: NotificationType.Notification,
+              message,
+            };
+            console.info(message);
+            notify(notification);
+          }
         } else {
-          const message = `Connected to network ${network} using RPC ${rpcParam}`;
+          const message = `Connected to network ${network.toString()}`;
           const notification = { type: NotificationType.Notification, message };
           console.info(message);
           notify(notification);
         }
-      } else {
-        const message = `Connected to network ${network.toString()}`;
-        const notification = { type: NotificationType.Notification, message };
-        console.info(message);
-        notify(notification);
+        setApi(api);
+      } catch {
+        setApi(null);
       }
-      setApi(api);
-    });
+    }
+
+    fetch();
   }, [networkParam, rpcParam]);
 
-  return (
-    <apiContext.Provider value={{ network, api }}>
-      {children}
-    </apiContext.Provider>
-  );
+  return <apiContext.Provider value={{ api }}>{children}</apiContext.Provider>;
 };
 
 export default ApiProvider;

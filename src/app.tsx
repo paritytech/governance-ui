@@ -14,11 +14,14 @@ import {
   Text,
 } from './components/common';
 import { ReferendaDeck, VotesTable } from './components';
-import { useAccount, useApi } from './contexts';
+import { SigningAccount, useAccount, useApi } from './contexts';
 import { AccountVote, ReferendumOngoing, Track } from './types';
+import { measured } from './utils/performance';
+import { networkFor } from './utils/polkadot-api';
 import { timeout } from './utils/promise';
 import { Store, Stores } from './utils/store';
 import styles from './app.module.css';
+import { areEquals } from './utils/set';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
 
@@ -73,22 +76,23 @@ function ActionBar({
 }
 
 function VotingPanel({
+  api,
   tracks,
   referenda,
   voteHandler,
 }: {
+  api: ApiPromise;
   tracks: Map<number, Track>;
   referenda: [number, ReferendumOngoing][];
   voteHandler: (index: number, vote: AccountVote) => void;
 }): JSX.Element {
-  const { network } = useApi();
   // The referenda currently visible to the user
   const topReferenda = referenda.at(0)?.[0];
   return (
     <>
       <div className={styles.main}>
         <ReferendaDeck
-          network={network}
+          network={networkFor(api)}
           referenda={referenda}
           tracks={tracks}
           voteHandler={voteHandler}
@@ -137,9 +141,13 @@ function voteOn(
 }
 
 function AppPanel({
+  api,
+  connectedAccount,
   context,
   voteHandler,
 }: {
+  api: ApiPromise;
+  connectedAccount: SigningAccount | undefined;
   context: StateContext;
   voteHandler: (index: number, accountVote: AccountVote) => void;
 }): JSX.Element {
@@ -151,14 +159,15 @@ function AppPanel({
       const { referenda, tracks, accountVotes } = context;
       const referendumKeys = new Set(referenda.keys());
       const voteKeys = new Set(accountVotes.keys());
-      if (
-        // Sets equality consider insertion order, roll on our own
-        referendumKeys.size > 0 &&
-        referendumKeys.size == voteKeys.size &&
-        [...referendumKeys].every((x) => voteKeys.has(x))
-      ) {
+      if (referendumKeys.size > 0 && areEquals(referendumKeys, voteKeys)) {
         // There are some referenda to vote on left
-        return <VotesTable accountVotes={accountVotes} />;
+        return (
+          <VotesTable
+            api={api}
+            connectedAccount={connectedAccount}
+            accountVotes={accountVotes}
+          />
+        );
       } else {
         // Let user vote on referenda
         // Only consider referenda that have not be voted on yet by user (both on-chain and in local state)
@@ -167,6 +176,7 @@ function AppPanel({
         ].filter(([index]) => !accountVotes.has(index));
         return (
           <VotingPanel
+            api={api}
             voteHandler={voteHandler}
             tracks={tracks}
             referenda={referendaToBeVotedOn}
@@ -177,12 +187,11 @@ function AppPanel({
   }
 }
 
-function App(): JSX.Element {
+function ConnectedApp({ api }: { api: ApiPromise }): JSX.Element {
   const [error, setError] = useState<string>();
   const [stateContext, setStateContext] = useState<StateContext>({
     state: State.LOADING,
   });
-  const { api } = useApi();
   const { connectedAccount } = useAccount();
 
   useEffect(() => {
@@ -190,9 +199,8 @@ function App(): JSX.Element {
       const tracks = getAllTracks(api);
 
       // Retrieve all referenda, then display them
-      const allReferenda = await timeout(
-        getAllReferenda(api),
-        FETCH_DATA_TIMEOUT
+      const allReferenda = await measured('allReferenda', () =>
+        timeout(getAllReferenda(api), FETCH_DATA_TIMEOUT)
       );
 
       // Only consider 'ongoing' referendum
@@ -221,7 +229,9 @@ function App(): JSX.Element {
       const currentAddress = connectedAccount?.account?.address;
       if (currentAddress) {
         // Go through user votes and restore the ones relevant to `referenda`
-        const chainVotings = await getVotingFor(api, currentAddress);
+        const chainVotings = await measured('votingFor', () =>
+          getVotingFor(api, currentAddress)
+        );
         chainVotings.forEach((voting) => {
           if (voting.type === 'casting') {
             voting.votes.forEach((accountVote, index) => {
@@ -232,6 +242,9 @@ function App(): JSX.Element {
           }
         });
       }
+
+      const measures = performance.getEntriesByType('measure');
+      console.table(measures, ['name', 'duration']);
 
       // Only keep in the store votes updated from the chain and matching current referenda
       await accountVotesStore.clear();
@@ -255,10 +268,14 @@ function App(): JSX.Element {
 
   return (
     <div className={styles.app}>
-      {error ? (
+      {api === null ? (
+        <div>Failed to connect to the chain</div>
+      ) : error ? (
         <div>{error}</div>
       ) : (
         <AppPanel
+          api={api}
+          connectedAccount={connectedAccount}
           context={stateContext}
           voteHandler={async (index, vote) => {
             // Store user votes
@@ -279,6 +296,12 @@ function App(): JSX.Element {
       )}
     </div>
   );
+}
+
+function App(): JSX.Element {
+  const { api } = useApi();
+
+  return <ConnectedApp api={api} />;
 }
 
 export default App;
