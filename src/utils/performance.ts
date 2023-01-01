@@ -1,4 +1,7 @@
-export async function measured<T>(name: string, callback: () => Promise<T>): Promise<T> {
+export async function measured<T>(
+  name: string,
+  callback: () => Promise<T>
+): Promise<T> {
   startMeasure(name);
   try {
     return await callback();

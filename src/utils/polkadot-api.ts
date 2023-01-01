@@ -22,6 +22,10 @@ export namespace Network {
   }
 }
 
+export function networkFor(api: ApiPromise): Network {
+  return api.runtimeChain.toHuman() as Network;
+}
+
 export function endpointFor(network: Network): string {
   switch (network) {
     case Network.Kusama:
