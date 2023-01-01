@@ -21,7 +21,7 @@ import { networkFor } from './utils/polkadot-api';
 import { timeout } from './utils/promise';
 import { areEquals } from './utils/set';
 import { Store, Stores } from './utils/store';
-import styles from './app.module.css';
+import styles from './App.module.css';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
 
