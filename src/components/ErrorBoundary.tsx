@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react';
-import styles from './error-boundary.module.css';
+import styles from './ErrorBoundary.module.css';
 
 type Props = {
   children?: ReactNode;

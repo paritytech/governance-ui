@@ -1,19 +1,19 @@
-export { default as Button } from './button';
-export * from './button';
+export { default as Button } from './Button';
+export * from './Button';
 
-export { Card, SwipeableCard } from './card';
-export * from './card';
+export { Card, SwipeableCard } from './Card';
+export * from './Card';
 
-export * from './icons';
+export * from './Icons';
 
-export { default as Loading } from './loading';
-export * from './loading';
+export { default as Loading } from './Loading';
+export * from './Loading';
 
-export { default as Spacer } from './spacer';
-export * from './spacer';
+export { default as Spacer } from './Spacer';
+export * from './Spacer';
 
-export { default as Text } from './text';
-export * from './text';
+export { default as Text } from './Text';
+export * from './Text';
 
-export { default as Modal } from './modal';
-export * from './modal';
+export { default as Modal } from './Modal';
+export * from './Modal';
