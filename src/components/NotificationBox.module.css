@@ -1,0 +1,25 @@
+.notification {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  font-size: 0.75rem;
+  max-width: 50%;
+}
+
+.notification .closeBtn {
+  position: absolute;
+  top: 5px;
+  right: 1px;
+  z-index: 10000;
+  cursor: pointer;
+  width: 1rem;
+  height: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.notification .card {
+  padding-right: 10px;
+  padding-left: 10px;
+}

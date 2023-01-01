@@ -6,14 +6,14 @@ import '@polkadot/types-augment';
 import React from 'react';
 import * as ReactDOMClient from 'react-dom/client';
 import { createTheme, NextUIProvider } from '@nextui-org/react';
-import App from './app';
-import { ErrorBoundary } from './components/error-boundary';
+import App from './App';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import WalletProvider from './contexts/Wallets';
 import AccountProvider from './contexts/Account';
 import ApiProvider from './contexts/Api';
-import Header from './components/header';
+import Header from './components/Header';
 import NotificationProvider from './contexts/Notification';
-import NotificationBox from './components/notificationBox';
+import NotificationBox from './components/NotificationBox';
 import { registerServiceWorker } from './utils/service-worker';
 
 const theme = createTheme({
