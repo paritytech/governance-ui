@@ -39,9 +39,17 @@ jobs:
       # Netlify monitors both main and PRs, wait for the deployment to end
       - name: Wait for the Netlify Preview
         uses: jakepartusch/wait-for-netlify-action@v1
-        id: netlify
+        if: github.event_name == 'pull_request'
+        id: wait-for-netlify
         with:
           site_name: 'stirring-alfajores-b573c7'
+
+      - name: Set netlify URL
+        id: netlify
+        run: echo "url=${PR_URL:-https://main--stirring-alfajores-b573c7.netlify.app/}" >> $GITHUB_OUTPUT
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_URL: ${{ steps.wait-for-netlify.outputs.url }}
 
       - name: Audit URLs using Lighthouse
         uses: treosh/lighthouse-ci-action@v9
