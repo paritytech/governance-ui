@@ -1066,20 +1066,33 @@
     chrome-trace-event "^1.0.2"
     nullthrows "^1.1.1"
 
-"@polkadot-onboard/core@../wallet-sdk/packages/core", "@polkadot-onboard/core@^0.0.2-beta":
+"@polkadot-onboard/core@^0.0.2-beta":
   version "0.0.2-beta"
+  resolved "https://registry.yarnpkg.com/@polkadot-onboard/core/-/core-0.0.2-beta.tgz#bc41f38e4c16130667358022075a61030b8a4a49"
+  integrity sha512-YjxxBqWaqXBrVNC7znYgt4U1tBPEKvvPcn7dCMt000/Vmz4x3oVI5Qf+C5kBy8KHF63VEcgghJoL3WLXlAYEPA==
   dependencies:
     "@polkadot/api" "^9.1.1"
 
-"@polkadot-onboard/injected-wallets@../wallet-sdk/packages/injected-wallets":
-  version "0.0.2-beta"
+"@polkadot-onboard/core@^0.0.3-beta":
+  version "0.0.3-beta"
+  resolved "https://registry.yarnpkg.com/@polkadot-onboard/core/-/core-0.0.3-beta.tgz#4e52f2aa0c7feb5af5339f828865f27bfdff0b42"
+  integrity sha512-tHiT1VXTasxDJZM9WrfNcXb4Sc1jmAGMOA2s188QBOHXIvR26HTs6c7bAG1fLMEApc2t4o/z1d8eMc0q15aIQA==
+  dependencies:
+    "@polkadot/api" "^9.1.1"
+
+"@polkadot-onboard/injected-wallets@^0.0.3-beta":
+  version "0.0.3-beta"
+  resolved "https://registry.yarnpkg.com/@polkadot-onboard/injected-wallets/-/injected-wallets-0.0.3-beta.tgz#71546186e2add24b28bd5a33db2365b8581b8d54"
+  integrity sha512-GubsszDv7BDXvx6H9KLnt0FAhRWWllsUVBNjaLSJ2GWKbhAXaiV1hmevUSU1akHKVXSxiv8SMj0OVe8txe/NwA==
   dependencies:
     "@polkadot-onboard/core" "^0.0.2-beta"
     "@polkadot/api" "^9.1.1"
     "@polkadot/extension-inject" "^0.44.4"
 
-"@polkadot-onboard/react@../wallet-sdk/packages/react":
-  version "0.0.2-beta"
+"@polkadot-onboard/react@^0.0.3-beta":
+  version "0.0.3-beta"
+  resolved "https://registry.yarnpkg.com/@polkadot-onboard/react/-/react-0.0.3-beta.tgz#72b509d955a4039ee296d392a1f7e454abb21c27"
+  integrity sha512-KjiSpOB1gNgd9yez4W0bSm3WUU40RiJYW6odLBxgBGLku1qb6vQxmzjyo2kiGJoIUUquPkPSNVwpGstTTm2euw==
   dependencies:
     "@polkadot-onboard/core" "^0.0.2-beta"
     "@polkadot/extension-inject" "^0.44.4"
