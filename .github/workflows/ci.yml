@@ -8,7 +8,7 @@ on:
     - main
 
 jobs:
-  ci:
+  build:
     runs-on: ubuntu-latest
     environment: development
     if: "! contains(github.event.head_commit.message, '[CI Skip]')"
@@ -35,6 +35,9 @@ jobs:
         run: yarn build
         env:
           PUBLIC_URL: dummy
+
+      # Netlify picks up changes from PR and on main branch and deploy them
+      # Lighthouse is then run on them
 
       # Netlify monitors both main and PRs, wait for the deployment to end
       - name: Wait for the Netlify Preview
@@ -87,3 +90,38 @@ jobs:
           echo "Best-practices: ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.best-practices }}" >> $GITHUB_STEP_SUMMARY
           echo "SEO: ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.seo }}" >> $GITHUB_STEP_SUMMARY
           echo "PWA: ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.pwa }}" >> $GITHUB_STEP_SUMMARY
+
+  # TODO
+  # Deploy a local chain, host frontend on a local host with proper DNS, then run playwright tests
+  # tests:
+  #   env:
+  #     URL: Monday
+  #   if: false
+  #   timeout-minutes: 10
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - name: Setup node
+  #       uses: actions/setup-node@v3
+
+  #     - name: Install redirection
+  #       run: echo "127.0.0.1 $URL" | sudo tee -a /etc/hosts
+
+  #     - name: Build
+  #       run: yarn build
+  #       env:
+  #         PUBLIC_URL: ${{ env.URL }}
+
+  #     - name: Install playwright browsers
+  #       run: npx playwright install --with-deps
+
+  #     - name: Run tests
+  #       run: npx playwright test
+
+  #     - uses: actions/upload-artifact@v3
+  #       if: always()
+  #       with:
+  #         name: playwright-report
+  #         path: playwright-report/
+  #         retention-days: 30
