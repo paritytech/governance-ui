@@ -1041,35 +1041,35 @@
     chrome-trace-event "^1.0.2"
     nullthrows "^1.1.1"
 
-"@polkadot-onboard/core@0.0.2-beta":
+"@polkadot-onboard/core@0.0.3-beta":
+  version "0.0.3-beta"
+  resolved "https://registry.yarnpkg.com/@polkadot-onboard/core/-/core-0.0.3-beta.tgz#4e52f2aa0c7feb5af5339f828865f27bfdff0b42"
+  integrity sha512-tHiT1VXTasxDJZM9WrfNcXb4Sc1jmAGMOA2s188QBOHXIvR26HTs6c7bAG1fLMEApc2t4o/z1d8eMc0q15aIQA==
+  dependencies:
+    "@polkadot/api" "^9.1.1"
+
+"@polkadot-onboard/core@^0.0.2-beta":
   version "0.0.2-beta"
   resolved "https://registry.yarnpkg.com/@polkadot-onboard/core/-/core-0.0.2-beta.tgz#bc41f38e4c16130667358022075a61030b8a4a49"
   integrity sha512-YjxxBqWaqXBrVNC7znYgt4U1tBPEKvvPcn7dCMt000/Vmz4x3oVI5Qf+C5kBy8KHF63VEcgghJoL3WLXlAYEPA==
   dependencies:
     "@polkadot/api" "^9.1.1"
 
-"@polkadot-onboard/core@^0.0.1-beta":
-  version "0.0.1-beta"
-  resolved "https://registry.yarnpkg.com/@polkadot-onboard/core/-/core-0.0.1-beta.tgz#af78b2e5728a1fac13b80f034cb22a593c829479"
-  integrity sha512-xdgR0xyBgCuuTbl3Ko0XI6gvG9nUFj+rxQf2TaRUdI4Bcj3vEkc0XU2WWr2g6tiA+TZCKsZk0v7P5FAeFG4h7g==
+"@polkadot-onboard/injected-wallets@0.0.3-beta":
+  version "0.0.3-beta"
+  resolved "https://registry.yarnpkg.com/@polkadot-onboard/injected-wallets/-/injected-wallets-0.0.3-beta.tgz#71546186e2add24b28bd5a33db2365b8581b8d54"
+  integrity sha512-GubsszDv7BDXvx6H9KLnt0FAhRWWllsUVBNjaLSJ2GWKbhAXaiV1hmevUSU1akHKVXSxiv8SMj0OVe8txe/NwA==
   dependencies:
-    "@polkadot/api" "^9.1.1"
-
-"@polkadot-onboard/injected-wallets@0.0.2-beta":
-  version "0.0.2-beta"
-  resolved "https://registry.yarnpkg.com/@polkadot-onboard/injected-wallets/-/injected-wallets-0.0.2-beta.tgz#725b98b19fbbf4299b4fbeffeee7acc8785f316a"
-  integrity sha512-MgXgQECVCh2XViW1zXTusyPxwEIiancF0pFiuNUUut2E0aH7X8BBKQGqpYsk4iVY8LiZvvURz43MaoT6ibnzQA==
-  dependencies:
-    "@polkadot-onboard/core" "^0.0.1-beta"
+    "@polkadot-onboard/core" "^0.0.2-beta"
     "@polkadot/api" "^9.1.1"
     "@polkadot/extension-inject" "^0.44.4"
 
-"@polkadot-onboard/react@0.0.2-beta":
-  version "0.0.2-beta"
-  resolved "https://registry.yarnpkg.com/@polkadot-onboard/react/-/react-0.0.2-beta.tgz#375673bf37e44f4b24189525a872b038f3d1c310"
-  integrity sha512-wy6bRgYwFUxcLmUzRDaVimZ0x31N1scvt9ZxRcJ8OCrF1gASmMIfwy/LHWyIBlkWpeLNStsP8lqgcu6pmZU2HQ==
+"@polkadot-onboard/react@0.0.3-beta":
+  version "0.0.3-beta"
+  resolved "https://registry.yarnpkg.com/@polkadot-onboard/react/-/react-0.0.3-beta.tgz#72b509d955a4039ee296d392a1f7e454abb21c27"
+  integrity sha512-KjiSpOB1gNgd9yez4W0bSm3WUU40RiJYW6odLBxgBGLku1qb6vQxmzjyo2kiGJoIUUquPkPSNVwpGstTTm2euw==
   dependencies:
-    "@polkadot-onboard/core" "^0.0.1-beta"
+    "@polkadot-onboard/core" "^0.0.2-beta"
     "@polkadot/extension-inject" "^0.44.4"
     react "^18.2.0"
     react-dom "^18.2.0"
@@ -3213,9 +3213,9 @@ fast-levenshtein@^2.0.6:
   integrity sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==
 
 fastq@^1.6.0:
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.14.0.tgz#107f69d7295b11e0fccc264e1fc6389f623731ce"
-  integrity sha512-eR2D+V9/ExcbF9ls441yIuN6TI2ED1Y2ZcA5BmMtJsOkWOFRJQ0Jt0g1UwqXJJVAb+V+umH5Dfr8oh4EVP7VVg==
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.15.0.tgz#d04d07c6a2a68fe4599fea8d2e103a937fae6b3a"
+  integrity sha512-wBrocU2LCXXa+lWBt8RoIRD89Fi8OdABODa/kEnyeyjS5aZO5/GNvI5sEINADqP/h8M29UHTHUb53sUu5Ihqdw==
   dependencies:
     reusify "^1.0.4"
 
