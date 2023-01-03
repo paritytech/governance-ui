@@ -777,6 +777,15 @@
   dependencies:
     "@parcel/types" "2.8.2"
 
+"@parcel/reporter-bundle-analyzer@^2.8.2":
+  version "2.8.2"
+  resolved "https://registry.yarnpkg.com/@parcel/reporter-bundle-analyzer/-/reporter-bundle-analyzer-2.8.2.tgz#996986c477911cde5bdb8a4a2fe44ffcdd11e571"
+  integrity sha512-naUFCTNO0WmSyDkpC9T9QiAEfyqVA6ToDm42rTKZ8MXUP0b88yGxMRfWZ4FY4eK0nJIyWGdalj5a5vzTE55nWA==
+  dependencies:
+    "@parcel/plugin" "2.8.2"
+    "@parcel/utils" "2.8.2"
+    nullthrows "^1.1.1"
+
 "@parcel/reporter-cli@2.8.2":
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/@parcel/reporter-cli/-/reporter-cli-2.8.2.tgz#bfd63b8bfb0bd72e483f4de496af6dc8e819a97e"
@@ -985,6 +994,15 @@
     posthtml-render "^3.0.0"
     semver "^5.7.1"
 
+"@parcel/transformer-typescript-tsc@^2.8.2":
+  version "2.8.2"
+  resolved "https://registry.yarnpkg.com/@parcel/transformer-typescript-tsc/-/transformer-typescript-tsc-2.8.2.tgz#6e7ec00ed1f08f1748b4f0dda09392945b51ec1d"
+  integrity sha512-VyAyTLtFlzGz4yuOVEw1Gs7gxlxErFRj3sE3Xv/IaGyV+01u20RLX92uB/nH4WRxor9f2WOKoPbhbRcw/ZOzMA==
+  dependencies:
+    "@parcel/plugin" "2.8.2"
+    "@parcel/source-map" "^2.1.1"
+    "@parcel/ts-utils" "2.8.2"
+
 "@parcel/transformer-webmanifest@2.8.2":
   version "2.8.2"
   resolved "https://registry.yarnpkg.com/@parcel/transformer-webmanifest/-/transformer-webmanifest-2.8.2.tgz#d810063267e15e8ab84d1feb96c1da9bb74e83e9"
@@ -994,6 +1012,13 @@
     "@parcel/diagnostic" "2.8.2"
     "@parcel/plugin" "2.8.2"
     "@parcel/utils" "2.8.2"
+
+"@parcel/ts-utils@2.8.2":
+  version "2.8.2"
+  resolved "https://registry.yarnpkg.com/@parcel/ts-utils/-/ts-utils-2.8.2.tgz#2a1d6ce57cce088ec313b773bd2860c7217d49cf"
+  integrity sha512-ahEUuL26bjGhKX+fMwK1dmvqzU0t3xWbm0mya81nPTXSZ0clN19yaW3+ei7/HMUmX/8H6tbmUp7a1/lyqsoYoQ==
+  dependencies:
+    nullthrows "^1.1.1"
 
 "@parcel/types@2.8.2":
   version "2.8.2"
@@ -1041,35 +1066,22 @@
     chrome-trace-event "^1.0.2"
     nullthrows "^1.1.1"
 
-"@polkadot-onboard/core@0.0.2-beta":
+"@polkadot-onboard/core@../wallet-sdk/packages/core", "@polkadot-onboard/core@^0.0.2-beta":
   version "0.0.2-beta"
-  resolved "https://registry.yarnpkg.com/@polkadot-onboard/core/-/core-0.0.2-beta.tgz#bc41f38e4c16130667358022075a61030b8a4a49"
-  integrity sha512-YjxxBqWaqXBrVNC7znYgt4U1tBPEKvvPcn7dCMt000/Vmz4x3oVI5Qf+C5kBy8KHF63VEcgghJoL3WLXlAYEPA==
   dependencies:
     "@polkadot/api" "^9.1.1"
 
-"@polkadot-onboard/core@^0.0.1-beta":
-  version "0.0.1-beta"
-  resolved "https://registry.yarnpkg.com/@polkadot-onboard/core/-/core-0.0.1-beta.tgz#af78b2e5728a1fac13b80f034cb22a593c829479"
-  integrity sha512-xdgR0xyBgCuuTbl3Ko0XI6gvG9nUFj+rxQf2TaRUdI4Bcj3vEkc0XU2WWr2g6tiA+TZCKsZk0v7P5FAeFG4h7g==
-  dependencies:
-    "@polkadot/api" "^9.1.1"
-
-"@polkadot-onboard/injected-wallets@0.0.2-beta":
+"@polkadot-onboard/injected-wallets@../wallet-sdk/packages/injected-wallets":
   version "0.0.2-beta"
-  resolved "https://registry.yarnpkg.com/@polkadot-onboard/injected-wallets/-/injected-wallets-0.0.2-beta.tgz#725b98b19fbbf4299b4fbeffeee7acc8785f316a"
-  integrity sha512-MgXgQECVCh2XViW1zXTusyPxwEIiancF0pFiuNUUut2E0aH7X8BBKQGqpYsk4iVY8LiZvvURz43MaoT6ibnzQA==
   dependencies:
-    "@polkadot-onboard/core" "^0.0.1-beta"
+    "@polkadot-onboard/core" "^0.0.2-beta"
     "@polkadot/api" "^9.1.1"
     "@polkadot/extension-inject" "^0.44.4"
 
-"@polkadot-onboard/react@0.0.2-beta":
+"@polkadot-onboard/react@../wallet-sdk/packages/react":
   version "0.0.2-beta"
-  resolved "https://registry.yarnpkg.com/@polkadot-onboard/react/-/react-0.0.2-beta.tgz#375673bf37e44f4b24189525a872b038f3d1c310"
-  integrity sha512-wy6bRgYwFUxcLmUzRDaVimZ0x31N1scvt9ZxRcJ8OCrF1gASmMIfwy/LHWyIBlkWpeLNStsP8lqgcu6pmZU2HQ==
   dependencies:
-    "@polkadot-onboard/core" "^0.0.1-beta"
+    "@polkadot-onboard/core" "^0.0.2-beta"
     "@polkadot/extension-inject" "^0.44.4"
     react "^18.2.0"
     react-dom "^18.2.0"
@@ -3213,9 +3225,9 @@ fast-levenshtein@^2.0.6:
   integrity sha512-DCXu6Ifhqcks7TZKY3Hxp3y6qphY5SJZmrWMDrKcERSOXWQdMhU9Ig/PYrzyw/ul9jOIyh0N4M0tbC5hodg8dw==
 
 fastq@^1.6.0:
-  version "1.14.0"
-  resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.14.0.tgz#107f69d7295b11e0fccc264e1fc6389f623731ce"
-  integrity sha512-eR2D+V9/ExcbF9ls441yIuN6TI2ED1Y2ZcA5BmMtJsOkWOFRJQ0Jt0g1UwqXJJVAb+V+umH5Dfr8oh4EVP7VVg==
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/fastq/-/fastq-1.15.0.tgz#d04d07c6a2a68fe4599fea8d2e103a937fae6b3a"
+  integrity sha512-wBrocU2LCXXa+lWBt8RoIRD89Fi8OdABODa/kEnyeyjS5aZO5/GNvI5sEINADqP/h8M29UHTHUb53sUu5Ihqdw==
   dependencies:
     reusify "^1.0.4"
 
