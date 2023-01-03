@@ -6,8 +6,7 @@
   "scripts": {
     "clean": "rm -rf .parcel-cache dist node_modules yarn.lock",
     "dev": "NETWORK=kusama parcel serve ./src/index.html",
-    "build": "parcel build ./src/index.html --no-scope-hoist --log-level verbose --public-url ${PUBLIC_URL} && cp assets/robots.txt dist/",
-    "build:analyze": "parcel build ./src/index.html --no-scope-hoist --log-level verbose --public-url ${PUBLIC_URL} --reporter @parcel/reporter-bundle-analyzer && cp assets/robots.txt dist/",
+    "build": "parcel build ./src/index.html --no-scope-hoist --detailed-report --log-level verbose --public-url ${PUBLIC_URL} && cp assets/robots.txt dist/",
     "format": "prettier -w ./src",
     "format:check": "prettier -c ./src",
     "lint": "eslint ./src --fix",
@@ -40,7 +39,6 @@
     "@parcel/compressor-brotli": "2.8.2",
     "@parcel/compressor-gzip": "2.8.2",
     "@parcel/packager-raw-url": "2.8.2",
-    "@parcel/reporter-bundle-analyzer": "^2.8.2",
     "@parcel/transformer-typescript-tsc": "^2.8.2",
     "@parcel/transformer-webmanifest": "2.8.2",
     "@types/bn.js": "5.1.1",
