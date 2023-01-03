@@ -39,18 +39,51 @@ jobs:
       # Netlify monitors both main and PRs, wait for the deployment to end
       - name: Wait for the Netlify Preview
         uses: jakepartusch/wait-for-netlify-action@v1
-        id: netlify
+        if: github.event_name == 'pull_request'
+        id: wait-for-netlify
         with:
           site_name: 'stirring-alfajores-b573c7'
 
+      - name: Wait for the Netlify
+        if: github.event_name != 'pull_request'
+        run: sleep 60
+
+      - name: Set netlify URL
+        id: netlify
+        run: echo "url=${PR_URL:-https://main--stirring-alfajores-b573c7.netlify.app/}" >> $GITHUB_OUTPUT
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_URL: ${{ steps.wait-for-netlify.outputs.url }}
+
       - name: Audit URLs using Lighthouse
         uses: treosh/lighthouse-ci-action@v9
+        id: lighthouse
         with:
           urls: |
             ${{ steps.netlify.outputs.url }}
           # See https://github.com/GoogleChrome/budget.json
           budgetPath: .github/workflows/budget.json
-          uploadArtifacts: true
           temporaryPublicStorage: true
         env:
           LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Success summary
+        if: ${{ success() }}
+        run: |
+          echo '### Successfully published :white_check_mark:' >> $GITHUB_STEP_SUMMARY
+          echo "Changes went live under: ${{ steps.netlify.outputs.url }}" >> $GITHUB_STEP_SUMMARY
+          vaultValues=(${{join(fromJson(steps.lighthouse.outputs.links).*, ' ')}})
+          echo "Lighthouse report went live under: ${vaultValues[0]}" >> $GITHUB_STEP_SUMMARY
+          for index in ${!vaultValues[@]}
+          do
+            echo "${vaultKeys[$index]}"
+            echo "${vaultValues[$index]}"
+          done
+          echo "Triggered by **${{ github.actor }}** ∙ deployed from **${{ github.ref_name    }}**" >> $GITHUB_STEP_SUMMARY
+          echo ' ' >> $GITHUB_STEP_SUMMARY
+          echo "**Lighthouse results:**" >> $GITHUB_STEP_SUMMARY
+          echo "Performance: ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.performance }}" >> $GITHUB_STEP_SUMMARY
+          echo "Accessibility: ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.accessibility }}" >> $GITHUB_STEP_SUMMARY
+          echo "Best-practices: ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.best-practices }}" >> $GITHUB_STEP_SUMMARY
+          echo "SEO: ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.seo }}" >> $GITHUB_STEP_SUMMARY
+          echo "PWA: ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.pwa }}" >> $GITHUB_STEP_SUMMARY
