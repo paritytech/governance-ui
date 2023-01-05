@@ -1,5 +1,9 @@
 import { manifest, version } from '@parcel/service-worker';
 import { getAllReferenda } from './chain/referenda';
+import { measured } from './utils/performance';
+import { endpointFor, Network, newApi } from './utils/polkadot-api';
+import { timeout } from './utils/promise';
+import { getAllReferenda } from './chain/referenda';
 import { endpointFor, Network, newApi } from './utils/polkadot-api';
 import { REFERENDA_UPDATES_TAG } from './utils/service-worker';
 
@@ -81,8 +85,16 @@ self.addEventListener('notificationclick', (event) => {
   );
 });
 
-self.addEventListener('periodicsync', async (event) => {
+self.addEventListener('periodicsync', async async (event) => {
   if (event.tag === REFERENDA_UPDATES_TAG) {
+    // TODO
+    // Retrieve referenda updates, based on those trigger a notification
+    /*const api = await newApi(endpointFor(Network.Kusama));
+    const allReferenda = await measured('allReferenda', () =>
+      timeout(getAllReferenda(api), 1000)
+    );
+    console.log("referenda", allReferenda)*/
+
     const api = await newApi(endpointFor(Network.Kusama)); // TODO access proper endpoints
     const referenda = await getAllReferenda(api);
 

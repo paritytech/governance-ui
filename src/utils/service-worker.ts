@@ -7,7 +7,7 @@ export const REFERENDA_UPDATES_TAG = 'fetch-referenda-updates';
 
 export async function registerServiceWorker() {
   const reg = await navigator.serviceWorker.register(
-    new URL('../service-worker.js', import.meta.url),
+    new URL('../service-worker.ts', import.meta.url),
     {
       type: 'module',
     }
@@ -17,7 +17,7 @@ export async function registerServiceWorker() {
   await navigator.serviceWorker.ready;
 
   try {
-    if (isPeriodicBackgroundSyncGranted()) {
+    if (await isPeriodicBackgroundSyncGranted()) {
       await reg.periodicSync.register(REFERENDA_UPDATES_TAG, {
         minInterval: 24 * 60 * 60 * 1000, // 1 day
       });
