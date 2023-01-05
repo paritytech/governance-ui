@@ -1,5 +1,5 @@
-export { default as ReferendaDeck } from './Referenda';
-export * from './Referenda';
+export { LoadingPanel } from './Loading';
+export * from './Loading';
 
-export { default as VotesTable } from './Voting';
+export { VoteActionBar, VotesTable, VotingPanel } from './Voting';
 export * from './Voting';

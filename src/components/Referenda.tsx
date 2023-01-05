@@ -199,5 +199,3 @@ export function ReferendaDeck({
     );
   }
 }
-
-export default ReferendaDeck;

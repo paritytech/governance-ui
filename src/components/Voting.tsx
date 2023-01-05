@@ -1,8 +1,17 @@
 import { ApiPromise } from '@polkadot/api';
-import { vote } from '../chain/conviction-voting';
-import { Button, Card, Spacer, Text } from '../ui/nextui';
+import { ReferendaDeck } from './Referenda';
+import { createStandardAccountVote, vote } from '../chain/conviction-voting';
+import {
+  Button,
+  Card,
+  CloseSquareIcon,
+  HeartIcon,
+  Spacer,
+  Text,
+} from '../ui/nextui';
 import { SigningAccount } from '../contexts';
-import { AccountVote } from '../types';
+import { AccountVote, ReferendumOngoing, Track } from '../types';
+import { networkFor } from '../utils/polkadot-api';
 import { Store, Stores } from '../utils/store';
 
 function createBatchVotes(
@@ -69,7 +78,7 @@ function VoteDetails({
   }
 }
 
-function VotesTable({
+export function VotesTable({
   api,
   accountVotes,
   connectedAccount,
@@ -126,4 +135,72 @@ function VotesTable({
   );
 }
 
-export default VotesTable;
+export function VoteActionBar({
+  left,
+  onAccept,
+  onRefuse,
+}: {
+  left: number;
+  onAccept: () => void;
+  onRefuse: () => void;
+}): JSX.Element {
+  return (
+    <div className="flex items-center">
+      <Button
+        label="Refuse"
+        color="error"
+        onPress={onRefuse}
+        icon={<CloseSquareIcon />}
+      />
+      <Spacer x={1} />
+      <Text>{left} left</Text>
+      <Spacer x={1} />
+      <Button
+        label="Accept"
+        color="success"
+        onPress={onAccept}
+        icon={<HeartIcon />}
+      />
+    </div>
+  );
+}
+
+export function VotingPanel({
+  api,
+  tracks,
+  referenda,
+  voteHandler,
+}: {
+  api: ApiPromise;
+  tracks: Map<number, Track>;
+  referenda: [number, ReferendumOngoing][];
+  voteHandler: (index: number, vote: AccountVote) => void;
+}): JSX.Element {
+  // The referenda currently visible to the user
+  const topReferenda = referenda.at(0)?.[0];
+  return (
+    <>
+      <div className="flex flex-auto items-center justify-center">
+        <ReferendaDeck
+          network={networkFor(api)}
+          referenda={referenda}
+          tracks={tracks}
+          voteHandler={voteHandler}
+        />
+      </div>
+      {referenda.length > 0 && (
+        <VoteActionBar
+          left={referenda.length}
+          onAccept={() =>
+            topReferenda &&
+            voteHandler(topReferenda, createStandardAccountVote(true))
+          }
+          onRefuse={() =>
+            topReferenda &&
+            voteHandler(topReferenda, createStandardAccountVote(false))
+          }
+        />
+      )}
+    </>
+  );
+}

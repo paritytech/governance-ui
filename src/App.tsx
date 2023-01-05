@@ -1,116 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
-import {
-  createStandardAccountVote,
-  getVotingFor,
-} from './chain/conviction-voting';
+import { getVotingFor } from './chain/conviction-voting';
 import { getAllReferenda, getAllTracks } from './chain/referenda';
-import {
-  Button,
-  CloseSquareIcon,
-  HeartIcon,
-  Loading,
-  Spacer,
-  Text,
-} from './ui/nextui';
-import { ReferendaDeck, VotesTable } from './components';
+import { LoadingPanel, VotesTable, VotingPanel } from './components';
 import { SigningAccount, useAccount, useApi } from './contexts';
 import { AccountVote, ReferendumOngoing, Track } from './types';
 import { measured } from './utils/performance';
-import { networkFor } from './utils/polkadot-api';
 import { timeout } from './utils/promise';
 import { areEquals } from './utils/set';
 import { Store, Stores } from './utils/store';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
-
-function LoadingScreen(): JSX.Element {
-  return (
-    <div className="flex flex-col">
-      <Loading />
-      <Spacer y={2} />
-      <Text
-        h1
-        size={60}
-        css={{
-          textAlign: 'center',
-        }}
-      >
-        Get ready to vote!
-      </Text>
-    </div>
-  );
-}
-
-function ActionBar({
-  left,
-  onAccept,
-  onRefuse,
-}: {
-  left: number;
-  onAccept: () => void;
-  onRefuse: () => void;
-}): JSX.Element {
-  return (
-    <div className="flex items-center">
-      <Button
-        label="Refuse"
-        color="error"
-        onPress={onRefuse}
-        icon={<CloseSquareIcon />}
-      />
-      <Spacer x={1} />
-      <Text>{left} left</Text>
-      <Spacer x={1} />
-      <Button
-        label="Accept"
-        color="success"
-        onPress={onAccept}
-        icon={<HeartIcon />}
-      />
-    </div>
-  );
-}
-
-function VotingPanel({
-  api,
-  tracks,
-  referenda,
-  voteHandler,
-}: {
-  api: ApiPromise;
-  tracks: Map<number, Track>;
-  referenda: [number, ReferendumOngoing][];
-  voteHandler: (index: number, vote: AccountVote) => void;
-}): JSX.Element {
-  // The referenda currently visible to the user
-  const topReferenda = referenda.at(0)?.[0];
-  return (
-    <>
-      <div className="flex flex-auto items-center justify-center">
-        <ReferendaDeck
-          network={networkFor(api)}
-          referenda={referenda}
-          tracks={tracks}
-          voteHandler={voteHandler}
-        />
-      </div>
-      {referenda.length > 0 && (
-        <ActionBar
-          left={referenda.length}
-          onAccept={() =>
-            topReferenda &&
-            voteHandler(topReferenda, createStandardAccountVote(true))
-          }
-          onRefuse={() =>
-            topReferenda &&
-            voteHandler(topReferenda, createStandardAccountVote(false))
-          }
-        />
-      )}
-    </>
-  );
-}
 
 enum State {
   LOADING,
@@ -151,7 +51,7 @@ function AppPanel({
   const { state } = context;
   switch (state) {
     case State.LOADING:
-      return <LoadingScreen />;
+      return <LoadingPanel message="Get ready to vote!" />;
     case State.STARTED: {
       const { referenda, tracks, accountVotes } = context;
       const referendumKeys = new Set(referenda.keys());
@@ -193,6 +93,7 @@ function ConnectedApp({ api }: { api: ApiPromise }): JSX.Element {
 
   useEffect(() => {
     async function fetchData(api: ApiPromise) {
+      // Although tracks can theoretically be updated via a chain upgrade, they will be considered static
       const tracks = getAllTracks(api);
 
       // Retrieve all referenda, then display them
