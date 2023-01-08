@@ -1,4 +1,6 @@
 import { manifest, version } from '@parcel/service-worker';
+import { getAllReferenda } from './chain/referenda';
+import { endpointFor, Network, newApi } from './utils/polkadot-api';
 import { REFERENDA_UPDATES_TAG } from './utils/service-worker';
 
 const ASSETS_CACHE = `assets-version-${version}`;
@@ -54,42 +56,47 @@ self.addEventListener('fetch', (event) => {
   }
 });
 
+// Fired when user clicks on a notification
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
-  console.log(
-    `Notification clicked ${event.action}`,
-    event.notification,
-    event.reply
+
+  const scope = self.registration.scope;
+  const action = event.action; // Identify if the user clicked on the notification itself or on one action
+
+  event.waitUntil(
+    clients // eslint-disable-line
+      .matchAll({
+        type: 'window',
+      })
+      .then((allClients) => {
+        const client = allClients.find((client) => client.url == scope);
+        if (client) {
+          // Focus on a matching hidden client
+          return client.focus();
+        } else {
+          // Otherwise open a new window
+          return clients.openWindow(scope); // eslint-disable-line
+        }
+      })
   );
 });
 
-self.addEventListener('periodicsync', (event) => {
+self.addEventListener('periodicsync', async (event) => {
   if (event.tag === REFERENDA_UPDATES_TAG) {
-    const notifyUser = true;
-    if (notifyUser) {
+    const api = await newApi(endpointFor(Network.Kusama)); // TODO access proper endpoints
+    const referenda = await getAllReferenda(api);
+
+    // TODO only retrieved referenda to be voted on and not yet seen
+    if (referenda.size > 0) {
       // See https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
-      self.registration.showNotification('Vibration Sample', {
-        body: 'Buzz! Buzz!',
-        actions: [
-          {
-            action: 'news',
-            title: 'News',
-            icon: '/assets/icons/icon-192x192.png',
-          },
-          {
-            action: 'no',
-            type: 'text',
-            title: '👎 No (explain why)',
-            placeholder: 'Type your explanation here',
-          },
-        ],
+
+      self.registration.showNotification('Referenda', {
+        body: `${referenda.size} new referenda to be voted on`,
         icon: '../assets/icons/icon-192x192.png',
-        vibrate: [200, 100, 200, 100, 200, 100, 200],
-        tag: 'vibration-sample',
+        tag: 'referenda-updates',
         requireInteraction: true,
-        data: { key: 'value' },
+        data: { referenda },
       });
     }
-    //event.waitUntil(fetchAndCacheLatestNews());
   }
 });
