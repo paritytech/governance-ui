@@ -16,13 +16,15 @@ function Button({
   icon,
   label,
   bordered,
+  rounded,
   onPress,
 }: {
   children?: React.ReactNode;
   color?: keyof typeof Colors;
   icon?: React.ReactNode;
-  label: string;
+  label?: string;
   bordered?: boolean;
+  rounded?: boolean;
   onPress: (e: PressEvent) => void;
 }): JSX.Element {
   return (
@@ -33,6 +35,7 @@ function Button({
       onPress={onPress}
       icon={icon}
       bordered={bordered}
+      rounded={rounded}
       aria-label={label}
     >
       {children}

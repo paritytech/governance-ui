@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card } from './common';
 import { NotificationType, useNotifications } from '../contexts/Notification';
 import styles from './NotificationBox.module.css';
