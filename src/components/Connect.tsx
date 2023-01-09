@@ -1,9 +1,9 @@
 import { BaseWallet } from '@polkadot-onboard/core';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
+import { Button, Modal } from './common';
 import { useAccount, useWallets } from '../contexts';
 import type { SigningAccount } from '../contexts/Account';
 import { WalletState } from '../contexts/Wallets';
-import { Button, Modal } from './common';
 import Account from './Account';
 import Wallet from './Wallet';
 

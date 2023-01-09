@@ -9,3 +9,7 @@ export async function areNotificationsGranted(): Promise<boolean> {
 export async function isPeriodicBackgroundSyncGranted(): Promise<boolean> {
   return isPermissionGranted('periodic-background-sync' as PermissionName);
 }
+
+export async function requestNotificationPermission(): Promise<NotificationPermission> {
+  return Notification.requestPermission();
+}
