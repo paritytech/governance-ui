@@ -376,10 +376,10 @@
   resolved "https://registry.yarnpkg.com/@msgpackr-extract/msgpackr-extract-win32-x64/-/msgpackr-extract-win32-x64-2.2.0.tgz#016d855b6bc459fd908095811f6826e45dd4ba64"
   integrity sha512-XrC0JzsqQSvOyM3t04FMLO6z5gCuhPE6k4FXuLK5xf52ZbdvcFe1yBmo7meCew9B8G2f0T9iu9t3kfTYRYROgA==
 
-"@nextui-org/react@1.0.0-beta.11":
-  version "1.0.0-beta.11"
-  resolved "https://registry.yarnpkg.com/@nextui-org/react/-/react-1.0.0-beta.11.tgz#5728506d196570d3f6c4ecf3d500cdd9dd931667"
-  integrity sha512-vI4umNZfeO8OIgAik/VJiYjq7YHAfrX9GXjgNeBAGOSEngzLjSQtbLD9qMEKzfJ9NCD7+dAq3k9exkEmasi7qw==
+"@nextui-org/react@1.0.0-beta.12":
+  version "1.0.0-beta.12"
+  resolved "https://registry.yarnpkg.com/@nextui-org/react/-/react-1.0.0-beta.12.tgz#a9674cfd4bdeab3ed3e81339b56664730393fb71"
+  integrity sha512-ay6LrdRDwIFiZDvFH6nQjRuzLWE9yPQfI3W3qEfaY1I8e+CGYm0fc8RPSj3rrfZTa9OLeV+Defh/+/ysrwrloQ==
   dependencies:
     "@babel/runtime" "^7.20.1"
     "@react-aria/button" "3.6.2"
