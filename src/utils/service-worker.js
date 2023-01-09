@@ -28,15 +28,6 @@ export async function registerServiceWorker() {
     console.warn('Periodic Sync could not be registered!');
   }
 
-  try {
-    // Request user to grant notifications request if necessary
-    if (!areNotificationsGranted()) {
-      await Notification.requestPermission();
-    }
-  } catch (e) {
-    console.warn(e);
-  }
-
   reg.addEventListener('updatefound', () => {
     // A wild service worker has appeared in reg.installing!
     const newWorker = reg.installing;
