@@ -1,0 +1,21 @@
+name: run a zombienet
+on:
+  push:
+    branches: [main, master, hamid/e2e]
+  pull_request:
+    branches: [main, master]
+jobs:
+  setup:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install dependencies
+        run: yarn install --check-files
+      - name: Setup zombinet
+        run: yarn --verbose zombienet:setup
+      - name: Run zombienet
+        run: yarn zobmienet:run

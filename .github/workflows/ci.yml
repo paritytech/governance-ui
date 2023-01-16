@@ -1,12 +1,10 @@
 name: Continuous Integration
-
-on: 
+on:
   pull_request:
   workflow_dispatch:
   push:
     branches:
-    - main
-
+      - main
 jobs:
   build:
     runs-on: ubuntu-latest
