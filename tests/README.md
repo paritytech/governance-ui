@@ -31,7 +31,7 @@ To run zombienet locally in Native mode you need to have the polkadot binary in 
 - Add the polkadot binary to your path. e.g. in MacOS with zsh:
 
 ```bash
-> echo 'export PATH=$PATH:<replace this with the path to polkat folder>/target/release' >> ~/.zshrc
+> echo 'export PATH=$PATH:<replace this with the path to polkadot folder>/target/release' >> ~/.zshrc
 ```
 
 - restart your terminal and verify polkadot is available in your PATH:
