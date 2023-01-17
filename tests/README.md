@@ -4,7 +4,7 @@ you can use [zombienet](https://github.com/paritytech/zombienet) to run a local 
 
 ## Prerequisite:
 
-To run zombienet locally in Native mode you need to have the polkadot binary in your path to be used by zombienet to spawn the polkadot nodes . You can either build polkadot locally and add it to your PATH or use zombinet setup command which is a utility script to download and set up required binaries in your local machine (currently the setup script only works on linux machines).
+To run zombienet locally in Native mode you need to have Polkadot binary in your path to be used by zombienet to spawn Polkadot nodes . You can either build Polkadot locally and add it to your PATH or use zombinet setup command, which is a utility script to download and set up required binaries on your local machine (currently the setup script only works on linux machines).
 
 ### Set up manually (works on MacOS and Linux):
 
