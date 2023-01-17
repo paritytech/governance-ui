@@ -1,4 +1,4 @@
-import { ApiPromise } from '@polkadot/api';
+import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
 import { StorageKey } from '@polkadot/types';
 import { Option, u32 } from '@polkadot/types-codec';
 import { ITuple } from '@polkadot/types-codec/types';
@@ -134,9 +134,9 @@ function toReferenda(
   );
 }
 
-export async function getAllReferenda(
-  api: ApiPromise
-): Promise<Map<number, Referendum>> {
+export async function getAllReferenda(api: {
+  query: QueryableStorage<'promise'>;
+}): Promise<Map<number, Referendum>> {
   return toReferenda(await api.query.referenda.referendumInfoFor.entries());
 }
 
@@ -189,7 +189,9 @@ function toTracks(
   return new Map(tracks?.map((o) => [o[0].toNumber(), toTrack(o[1])]));
 }
 
-export function getAllTracks(api: ApiPromise): Map<number, Track> {
+export function getAllTracks(api: {
+  consts: QueryableConsts<'promise'>;
+}): Map<number, Track> {
   return toTracks(
     api.consts.referenda.tracks as unknown as [BN, PalletReferendaTrackInfo][]
   );

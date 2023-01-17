@@ -1,4 +1,3 @@
-import { ApiPromise } from '@polkadot/api';
 import { StorageKey } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
 import { u16 } from '@polkadot/types-codec';
@@ -9,6 +8,7 @@ import type {
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { AccountVote, Conviction, Voting } from '../types';
+import { QueryableStorage } from '@polkadot/api/types';
 
 export function createStandardAccountVote(
   aye: boolean,
@@ -109,7 +109,7 @@ function toVotings(
 }
 
 export async function getVotingFor(
-  api: ApiPromise,
+  api: { query: QueryableStorage<'promise'> },
   address: string
 ): Promise<Map<number, Voting>> {
   return toVotings(await api.query.convictionVoting.votingFor.entries(address));
@@ -126,9 +126,9 @@ function toAllVotings(
   );
 }
 
-export async function getAllVotingFor(
-  api: ApiPromise
-): Promise<Map<[string, number], Voting>> {
+export async function getAllVotingFor(api: {
+  query: QueryableStorage<'promise'>;
+}): Promise<Map<[string, number], Voting>> {
   return toAllVotings(await api.query.convictionVoting.votingFor.entries());
 }
 
@@ -171,6 +171,10 @@ function fromAccountVote(accountVote: AccountVote):
   }
 }
 
-export function vote(api: ApiPromise, index: number, accountVote: AccountVote) {
+export function vote(
+  api: { tx: QueryableT<'promise'> },
+  index: number,
+  accountVote: AccountVote
+) {
   return api.tx.convictionVoting.vote(index, fromAccountVote(accountVote));
 }
