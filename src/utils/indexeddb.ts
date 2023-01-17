@@ -4,16 +4,16 @@ export type OpenOptions = {
 };
 
 export type ObjectStoreIndex = {
-  name: string,
-  keyPath: string,
-  parameters: IDBIndexParameters,
-}
+  name: string;
+  keyPath: string;
+  parameters: IDBIndexParameters;
+};
 
 export type ObjectStore = {
   name: string;
   autoIncrement?: boolean;
   keyPath?: string[];
-  indexes?: ObjectStoreIndex[]
+  indexes?: ObjectStoreIndex[];
 };
 
 /**
@@ -40,7 +40,7 @@ export async function open(
       request.onupgradeneeded = (event) => {
         const database = request.result;
         const objectStoreNames = Array.from(database.objectStoreNames);
-        stores.forEach(({name, indexes, ...options}) => {
+        stores.forEach(({ name, indexes, ...options }) => {
           if (!objectStoreNames.includes(name)) {
             const store = database.createObjectStore(name, options);
             if (indexes) {
@@ -72,7 +72,7 @@ export async function open(
 export async function latest<T>(
   db: IDBDatabase,
   storeName: string
-): Promise<{key: IDBValidKey, value: T} | null> {
+): Promise<{ key: IDBValidKey; value: T } | null> {
   return new Promise(function (resolve, reject) {
     const request = db
       .transaction(storeName, 'readonly')
@@ -81,7 +81,7 @@ export async function latest<T>(
     request.onsuccess = () => {
       if (request.result) {
         const { key, value } = request.result;
-        resolve({key, value});
+        resolve({ key, value });
       }
     };
     request.onerror = reject;
@@ -176,7 +176,12 @@ export async function allKeys(
  * @param value
  * @returns
  */
-export async function save(db: IDBDatabase, storeName: string, key: IDBValidKey, value: any) {
+export async function save(
+  db: IDBDatabase,
+  storeName: string,
+  key: IDBValidKey,
+  value: any
+) {
   return new Promise<void>(function (resolve, reject) {
     const request = db
       .transaction(storeName, 'readwrite')
@@ -195,7 +200,11 @@ export async function save(db: IDBDatabase, storeName: string, key: IDBValidKey,
  * @param map
  * @returns
  */
-export async function saveAll(db: IDBDatabase, storeName: string, map: Map<IDBValidKey, any>) {
+export async function saveAll(
+  db: IDBDatabase,
+  storeName: string,
+  map: Map<IDBValidKey, any>
+) {
   return new Promise<void>(function (resolve, reject) {
     const tx = db.transaction(storeName, 'readwrite');
     tx.oncomplete = () => resolve();

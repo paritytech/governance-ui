@@ -1,6 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { ReferendaDeck } from './Referenda';
 import { createStandardAccountVote, vote } from '../chain/conviction-voting';
+import { DB_NAME, DB_VERSION, VOTE_STORE_NAME } from '../chainstate';
 import {
   Button,
   Card,
@@ -9,10 +10,10 @@ import {
   Spacer,
   Text,
 } from '../ui/nextui';
-import { SigningAccount } from '../contexts';
+import { SigningAccount, useAccount } from '../contexts';
+import { Network } from '../network';
 import { AccountVote, ReferendumOngoing, Track } from '../types';
-import { networkFor } from '../utils/polkadot-api';
-import { Store, Stores } from '../utils/store';
+import { clear, open } from '../utils/indexeddb';
 
 function createBatchVotes(
   api: ApiPromise,
@@ -78,15 +79,14 @@ function VoteDetails({
   }
 }
 
-export function VotesTable({
+export function VotesSummaryTable({
   api,
   accountVotes,
-  connectedAccount,
 }: {
   api: ApiPromise;
-  connectedAccount: SigningAccount | undefined;
   accountVotes: Map<number, AccountVote>;
 }): JSX.Element {
+  const { connectedAccount } = useAccount();
   return (
     <div className="flex flex-col">
       <div className="flex max-h-[60vh] w-[30vw] flex-col items-center overflow-auto">
@@ -113,10 +113,12 @@ export function VotesTable({
             await submitBatchVotes(api, connectedAccount, accountVotes);
 
             // Clear user votes
-            const accountVotesStore = await Store.storeFor<AccountVote>(
-              Stores.AccountVote
+            const db = await open(
+              DB_NAME,
+              [{ name: VOTE_STORE_NAME }],
+              DB_VERSION
             );
-            await accountVotesStore.clear();
+            await clear(db, VOTE_STORE_NAME);
           }}
         >
           Submit votes
@@ -166,12 +168,12 @@ export function VoteActionBar({
 }
 
 export function VotingPanel({
-  api,
+  network,
   tracks,
   referenda,
   voteHandler,
 }: {
-  api: ApiPromise;
+  network: Network;
   tracks: Map<number, Track>;
   referenda: [number, ReferendumOngoing][];
   voteHandler: (index: number, vote: AccountVote) => void;
@@ -182,7 +184,7 @@ export function VotingPanel({
     <>
       <div className="flex flex-auto items-center justify-center">
         <ReferendaDeck
-          network={networkFor(api)}
+          network={network}
           referenda={referenda}
           tracks={tracks}
           voteHandler={voteHandler}

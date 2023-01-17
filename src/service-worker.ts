@@ -1,6 +1,7 @@
 import { manifest, version } from '@parcel/service-worker';
 import { getAllReferenda } from './chain/referenda';
-import { endpointFor, Network, newApi } from './utils/polkadot-api';
+import { endpointsFor, Network } from './network';
+import { newApi } from './utils/polkadot-api';
 import { REFERENDA_UPDATES_TAG } from './utils/service-worker';
 
 const ASSETS_CACHE = `assets-version-${version}`;
@@ -91,7 +92,7 @@ self.addEventListener('periodicsync', async (event) => {
     );
     console.log("referenda", allReferenda)*/
 
-    const api = await newApi(endpointFor(Network.Kusama)); // TODO access proper endpoints
+    const api = await newApi(endpointsFor(Network.Kusama)); // TODO access proper endpoints
     const referenda = await getAllReferenda(api);
 
     // TODO only retrieved referenda to be voted on and not yet seen
