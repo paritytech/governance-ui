@@ -1,5 +1,5 @@
 import { fetchQuery } from './graphql';
-import { Network } from './polkadot-api';
+import { Network } from '../network';
 
 export type Post = {
   title: string;
