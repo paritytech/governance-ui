@@ -192,6 +192,21 @@ export async function save(
   });
 }
 
+export async function remove(
+  db: IDBDatabase,
+  storeName: string,
+  key: IDBValidKey,
+) {
+  return new Promise<void>(function (resolve, reject) {
+    const request = db
+      .transaction(storeName, 'readwrite')
+      .objectStore(storeName)
+      .delete(key);
+    request.onsuccess = () => resolve();
+    request.onerror = reject;
+  });
+}
+
 /**
  * Save a map of key / value pairs in this store
  *

@@ -8,7 +8,7 @@ import {
   extractParams,
 } from './hooks';
 import { AccountVote, Referendum, Track } from './types';
-import { all, latest, open } from './utils/indexeddb';
+import { all, latest, open, remove } from './utils/indexeddb';
 import { measured } from './utils/performance';
 import { newApi } from './utils/polkadot-api';
 import { timeout } from './utils/promise';
@@ -199,13 +199,23 @@ export const DB_VERSION = 1;
 const STORES = [{ name: CHAINSTATE_STORE_NAME }, { name: VOTE_STORE_NAME }];
 
 async function restorePersisted(db: IDBDatabase): Promise<Context> {
-  const [chain, votes] = await Promise.all([
+  const [chain, votesRaw] = await Promise.all([
     latest<ChainState>(db, CHAINSTATE_STORE_NAME),
     all<AccountVote>(db, VOTE_STORE_NAME),
   ]);
+  // Only consider vote that still match existing referenda
+  const votes = votesRaw as Map<number, AccountVote>;
+  votes.forEach(async (_, index) => {
+    if (!chain?.value.referenda.has(index)) {
+      votes.delete(index);
+    } else {
+        // Remove older votes that do not match existing referendum anymore
+        await remove(db, VOTE_STORE_NAME, index);
+    }
+  });
   return {
     chain: chain?.value || initialState.chain,
-    votes: votes as Map<number, AccountVote>,
+    votes,
   };
 }
 
@@ -384,19 +394,6 @@ export async function updateChainState(
 
 /*
 
-      const accountVotes = new Map<number, AccountVote>();
-      const accountVotesStore = await Store.storeFor<AccountVote>(
-        Stores.AccountVote
-      );
-
-      // Retrieve all stored votes
-      const storedAccountVotes = await accountVotesStore.loadAll();
-      storedAccountVotes.forEach((accountVote, index) => {
-        if (referenda.has(index)) {
-          accountVotes.set(index, accountVote);
-        }
-      });
-
       const currentAddress = connectedAccount?.account?.address;
       if (currentAddress) {
         // Go through user votes and restore the ones relevant to `referenda`
@@ -414,10 +411,4 @@ export async function updateChainState(
         });
       }
 
-      const measures = performance.getEntriesByType('measure');
-      console.table(measures, ['name', 'duration']);
-
-      // Only keep in the store votes updated from the chain and matching current referenda
-      await accountVotesStore.clear();
-      await accountVotesStore.saveAll(accountVotes);
 */
