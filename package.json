@@ -11,10 +11,10 @@
     "format:check": "prettier -c ./src",
     "lint": "eslint ./src --fix",
     "lint:check": "eslint ./src",
+    "tsc:check": "tsc --noEmit",
+    "all-checks": "yarn tsc:check && yarn format:check && yarn lint:check",
     "zombienet:setup": "zombienet setup polkadot",
-    "zombienet:run": "zombienet --provider native spawn ./tests/small-network.toml",
-    "check": "tsc --noEmit && yarn format:check && yarn lint:check",
-    "test": "jest"
+    "zombienet:run": "zombienet --provider native spawn ./tests/small-network.toml"
   },
   "app": "dist/index.html",
   "targets": {

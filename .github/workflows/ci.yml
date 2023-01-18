@@ -21,8 +21,8 @@ jobs:
       - name: Install
         run: yarn install --check-files
 
-      - name: Check
-        run: yarn check
+      - name: Checks
+        run: yarn all-checks
 
       - name: Audit
         run: yarn audit
