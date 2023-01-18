@@ -1,7 +1,7 @@
 import React from 'react';
-import { Button as NextUIButton } from '@nextui-org/react';
+import { Button as NextUIButton, PressEvent } from '@nextui-org/react';
 
-enum Colors {
+export enum Colors {
   default,
   primary,
   secondary,

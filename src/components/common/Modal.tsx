@@ -9,7 +9,7 @@ const Modal = ({
 }: {
   children: React.ReactNode;
   visible: boolean;
-  width: number | string;
+  width: string;
   onClose: () => void;
 }) => {
   return (
