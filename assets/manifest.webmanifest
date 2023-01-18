@@ -8,6 +8,9 @@
   "start_url": "/?utm_source=pwa",
   "display": "minimal-ui",
   "display_override": ["minimal-ui", "browser"],
+  "launch_handler": {
+    "client_mode": "auto"
+  },
   "orientation": "portrait-primary",
   "icons": [
     {
