@@ -144,7 +144,7 @@ function reducer(previousState: State, action: Action): State {
         chain: action.chain,
         votes: action.votes,
       };
-    case 'SetOfflineAction':
+    case 'SetOfflineAction': {
       const since =
         previousState.type == 'OfflineState' ? previousState.since : new Date();
       const retryCount =
@@ -155,6 +155,7 @@ function reducer(previousState: State, action: Action): State {
         since,
         retryCount,
       };
+    }
     case 'SetConnectingAction':
       return {
         ...baseRestoredState(previousState),

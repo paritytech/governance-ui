@@ -62,7 +62,7 @@ self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
   const scope = self.registration.scope;
-  const action = event.action; // Identify if the user clicked on the notification itself or on one action
+  //const action = event.action; // Identify if the user clicked on the notification itself or on one action
 
   event.waitUntil(
     clients // eslint-disable-line

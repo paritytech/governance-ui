@@ -1,7 +1,4 @@
-import {
-  areNotificationsGranted,
-  isPeriodicBackgroundSyncGranted,
-} from './permissions';
+import { isPeriodicBackgroundSyncGranted } from './permissions';
 
 export const REFERENDA_UPDATES_TAG = 'fetch-referenda-updates';
 
