@@ -12,7 +12,9 @@
     "lint": "eslint ./src --fix",
     "lint:check": "eslint ./src",
     "zombienet:setup": "zombienet setup polkadot",
-    "zombienet:run": "zombienet --provider native spawn ./tests/small-network.toml"
+    "zombienet:run": "zombienet --provider native spawn ./tests/small-network.toml",
+    "check": "tsc --noEmit && yarn format:check && yarn lint:check",
+    "test": "jest"
   },
   "app": "dist/index.html",
   "targets": {
