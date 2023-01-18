@@ -38,7 +38,7 @@
     "react-remark": "2.1.0"
   },
   "devDependencies": {
-    "@parcel/compressor-brotli": "2.8.2",
+    "@parcel/compressor-brotli": "2.8.3",
     "@parcel/compressor-gzip": "2.8.2",
     "@parcel/packager-raw-url": "2.8.2",
     "@parcel/transformer-webmanifest": "2.8.2",
