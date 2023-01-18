@@ -17,11 +17,11 @@
     "zombienet:setup": "zombienet setup polkadot",
     "zombienet:run": "zombienet --provider native spawn ./tests/small-network.toml"
   },
+  "source": "src/index.tsx",
   "app": "dist/index.html",
   "targets": {
     "app": {}
   },
-  "source": "src/index.tsx",
   "browserslist": [
     "last 2 versions"
   ],
