@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button as NextUIButton } from '@nextui-org/react';
 
-enum Colors {
+export enum Colors {
   default,
   primary,
   secondary,
@@ -10,7 +10,7 @@ enum Colors {
   error,
 }
 
-function Button({
+export function Button({
   children,
   color,
   icon,
@@ -25,7 +25,7 @@ function Button({
   label?: string;
   bordered?: boolean;
   rounded?: boolean;
-  onPress: (e: PressEvent) => void;
+  onPress: () => void;
 }): JSX.Element {
   return (
     <NextUIButton
@@ -42,5 +42,3 @@ function Button({
     </NextUIButton>
   );
 }
-
-export default Button;

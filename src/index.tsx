@@ -5,7 +5,6 @@ import '@polkadot/types-augment';
 
 import React from 'react';
 import * as ReactDOMClient from 'react-dom/client';
-import { createTheme, NextUIProvider } from '@nextui-org/react';
 import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import WalletProvider from './contexts/Wallets';
@@ -15,25 +14,14 @@ import Header from './components/Header';
 import NotificationProvider from './contexts/Notification';
 import NotificationBox from './components/NotificationBox';
 import { registerServiceWorker } from './utils/service-worker';
-
-const theme = createTheme({
-  type: 'light',
-  theme: {
-    fonts: {
-      sans: 'Unbounded',
-    },
-    colors: {
-      primary: '#e6007a',
-    },
-  },
-});
+import { UIProvider } from './ui/nextui';
 
 const container = document.getElementById('root');
 if (container) {
   const root = ReactDOMClient.createRoot(container);
   root.render(
     <React.StrictMode>
-      <NextUIProvider theme={theme}>
+      <UIProvider>
         <main>
           <ErrorBoundary>
             <NotificationProvider>
@@ -49,7 +37,7 @@ if (container) {
             </NotificationProvider>
           </ErrorBoundary>
         </main>
-      </NextUIProvider>
+      </UIProvider>
     </React.StrictMode>
   );
 

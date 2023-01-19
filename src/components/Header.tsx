@@ -1,7 +1,6 @@
-import { Navbar } from '@nextui-org/react';
 import { useEffect, useState } from 'react';
 import { NotificationType, useNotifications } from '../contexts/Notification';
-import { Button, HeartIcon, Text } from './common';
+import { Button, HeartIcon, Navbar } from '../ui/nextui';
 import ConnectButton from './Connect';
 import {
   areNotificationsGranted,
@@ -21,38 +20,29 @@ function Header(): JSX.Element {
   }, []);
 
   return (
-    <Navbar variant="static">
-      <Navbar.Brand>
-        <Text b color="inherit">
-          Open Gov
-        </Text>
-      </Navbar.Brand>
-      <Navbar.Content>
+    <Navbar title="Open Gov">
+      <>
         {!notificationGranted && (
-          <Navbar.Item>
-            <Button
-              color="secondary"
-              rounded
-              onPress={async () => {
-                const permission = await requestNotificationPermission();
-                if (permission !== 'granted') {
-                  notify({
-                    type: NotificationType.Notification,
-                    message: 'Notification permission has been denied',
-                  });
-                } else {
-                  setNotificationGranted(true);
-                }
-              }}
-              label="Request notification"
-              icon={<HeartIcon primaryColor="currentColor" filled />}
-            />
-          </Navbar.Item>
+          <Button
+            color="secondary"
+            rounded
+            onPress={async () => {
+              const permission = await requestNotificationPermission();
+              if (permission !== 'granted') {
+                notify({
+                  type: NotificationType.Notification,
+                  message: 'Notification permission has been denied',
+                });
+              } else {
+                setNotificationGranted(true);
+              }
+            }}
+            label="Request notification"
+            icon={<HeartIcon />}
+          />
         )}
-        <Navbar.Item>
-          <ConnectButton color="secondary" bordered />
-        </Navbar.Item>
-      </Navbar.Content>
+        <ConnectButton color="secondary" bordered />
+      </>
     </Navbar>
   );
 }

@@ -6,5 +6,9 @@
       "@parcel/compressor-gzip",
       "@parcel/compressor-brotli"
     ]
+  },
+  "transformers": {
+    "jsx:*.svg": ["@parcel/transformer-svg-react"],
+    "jsx:*": ["..."]
   }
 }

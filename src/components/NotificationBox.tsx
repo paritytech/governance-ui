@@ -1,6 +1,6 @@
-import { Card } from './common';
+import { Card } from '../ui/nextui';
 import { NotificationType, useNotifications } from '../contexts/Notification';
-import styles from './NotificationBox.module.css';
+import * as styles from './NotificationBox.module.css';
 
 const TRANSIENT_DISPLAY_TIME_MS = 3000; //milliseconds
 

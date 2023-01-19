@@ -20,7 +20,7 @@ type NativeAttrs = Omit<React.HTMLAttributes<unknown>, keyof Props>;
 
 export type TextProps = Props & NativeAttrs;
 
-function Text(props: TextProps): JSX.Element {
+export function Text(props: TextProps): JSX.Element {
   const {
     h1 = false,
     h2 = false,
@@ -53,5 +53,3 @@ function Text(props: TextProps): JSX.Element {
     </NextUIText>
   );
 }
-
-export default Text;

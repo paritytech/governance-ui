@@ -1,6 +1,6 @@
-import { BaseWallet } from '@polkadot-onboard/core';
 import { useEffect, useState } from 'react';
-import { Button, Modal } from './common';
+import { BaseWallet } from '@polkadot-onboard/core';
+import { Button, Colors, Modal } from '../ui/nextui';
 import { useAccount, useWallets } from '../contexts';
 import type { SigningAccount } from '../contexts/Account';
 import { WalletState } from '../contexts/Wallets';
@@ -72,7 +72,12 @@ const AccountList = ({
 
 type ConnectViews = 'wallets' | 'accounts';
 
-const ConnectButton = (props) => {
+const ConnectButton = (
+  props: JSX.IntrinsicAttributes & {
+    color?: keyof typeof Colors;
+    bordered?: boolean;
+  }
+) => {
   const [visible, setVisible] = useState(false);
   const [currentView, setCurrentView] = useState<ConnectViews>();
   const { wallets, walletState, setWalletState } = useWallets();
@@ -120,7 +125,7 @@ const ConnectButton = (props) => {
           ? `Connected - ${connectedAccount.account.name}`
           : 'Connect'}
       </Button>
-      <Modal visible={visible} width={600} onClose={() => closeModal()}>
+      <Modal visible={visible} width="600px" onClose={() => closeModal()}>
         <div onClick={() => toggleView()}>{`${
           currentView === 'accounts'
             ? '< wallets'

@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import {
   createStandardAccountVote,
@@ -12,7 +12,7 @@ import {
   Loading,
   Spacer,
   Text,
-} from './components/common';
+} from './ui/nextui';
 import { ReferendaDeck, VotesTable } from './components';
 import { SigningAccount, useAccount, useApi } from './contexts';
 import { AccountVote, ReferendumOngoing, Track } from './types';
@@ -21,7 +21,7 @@ import { networkFor } from './utils/polkadot-api';
 import { timeout } from './utils/promise';
 import { areEquals } from './utils/set';
 import { Store, Stores } from './utils/store';
-import styles from './App.module.css';
+import * as styles from './App.module.css';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
 
@@ -49,8 +49,8 @@ function ActionBar({
   onRefuse,
 }: {
   left: number;
-  onAccept: MouseEventHandler<HTMLButtonElement>;
-  onRefuse: MouseEventHandler<HTMLButtonElement>;
+  onAccept: () => void;
+  onRefuse: () => void;
 }): JSX.Element {
   return (
     <div className={styles.action}>
@@ -58,9 +58,7 @@ function ActionBar({
         label="Refuse"
         color="error"
         onPress={onRefuse}
-        icon={
-          <CloseSquareIcon set="light" primaryColor="currentColor" filled />
-        }
+        icon={<CloseSquareIcon />}
       />
       <Spacer x={1} />
       <Text>{left} left</Text>
@@ -69,7 +67,7 @@ function ActionBar({
         label="Accept"
         color="success"
         onPress={onAccept}
-        icon={<HeartIcon primaryColor="currentColor" filled />}
+        icon={<HeartIcon />}
       />
     </div>
   );
@@ -300,8 +298,10 @@ function ConnectedApp({ api }: { api: ApiPromise }): JSX.Element {
 
 function App(): JSX.Element {
   const { api } = useApi();
-
-  return <ConnectedApp api={api} />;
+  if (api) {
+    return <ConnectedApp api={api} />;
+  }
+  return <></>;
 }
 
 export default App;

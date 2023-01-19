@@ -1,7 +1,7 @@
 import React from 'react';
 import { Modal as NextUIModal } from '@nextui-org/react';
 
-const Modal = ({
+export function Modal({
   children,
   visible,
   width,
@@ -9,9 +9,9 @@ const Modal = ({
 }: {
   children: React.ReactNode;
   visible: boolean;
-  width: number | string;
+  width: string;
   onClose: () => void;
-}) => {
+}): JSX.Element {
   return (
     <div>
       <NextUIModal
@@ -26,6 +26,4 @@ const Modal = ({
       </NextUIModal>
     </div>
   );
-};
-
-export default Modal;
+}

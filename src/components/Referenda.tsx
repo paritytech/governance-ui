@@ -1,13 +1,13 @@
-import React, { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { Remark } from 'react-remark';
 import { useSprings, animated } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
 import { createStandardAccountVote } from '../chain/conviction-voting';
-import { Card, Loading, Text } from './common';
+import { Card, Loading, Text } from '../ui/nextui';
 import { AccountVote, ReferendumOngoing, Track } from '../types';
 import { Network } from '../utils/polkadot-api';
 import { fetchReferenda, Post } from '../utils/polkassembly';
-import styles from './Referenda.module.css';
+import * as styles from './Referenda.module.css';
 
 function Header({
   index,
