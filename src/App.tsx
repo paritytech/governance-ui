@@ -298,8 +298,10 @@ function ConnectedApp({ api }: { api: ApiPromise }): JSX.Element {
 
 function App(): JSX.Element {
   const { api } = useApi();
-
-  return <ConnectedApp api={api} />;
+  if (api) {
+    return <ConnectedApp api={api} />;
+  }
+  return <></>;
 }
 
 export default App;

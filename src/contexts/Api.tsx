@@ -58,7 +58,7 @@ const ApiProvider = ({ children }: { children: React.ReactNode }) => {
         }
         setApi(api);
       } catch {
-        setApi(null);
+        setApi(undefined);
       }
     }
 
