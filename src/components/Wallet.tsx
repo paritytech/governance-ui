@@ -1,6 +1,5 @@
-import React from 'react';
 import { WalletState } from '../contexts/Wallets';
-import styles from './Wallet.module.css';
+import * as styles from './Wallet.module.css';
 
 export interface IWalletProps {
   name: string;

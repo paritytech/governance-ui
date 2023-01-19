@@ -1,11 +1,10 @@
-import React from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { vote } from '../chain/conviction-voting';
 import { Button, Card, Spacer, Text } from './common';
 import { SigningAccount } from '../contexts';
 import { AccountVote } from '../types';
 import { Store, Stores } from '../utils/store';
-import styles from './Voting.module.css';
+import * as styles from './Voting.module.css';
 
 function createBatchVotes(
   api: ApiPromise,
