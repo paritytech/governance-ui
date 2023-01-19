@@ -3074,13 +3074,13 @@
   dependencies:
     "@use-gesture/core" "10.2.23"
 
-"@zombienet/cli@1.3.27":
-  version "1.3.27"
-  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.27.tgz#df5b118facc35555e8ec509ef5e6e941715f44cb"
-  integrity sha512-gnQDom46hieW0VyhOgKjnB2rM1Vz3KX4q654wMHel3/ju6Il85ZDh1VxNClFHXhrGZSuSLSbu+swkWH94N7dww==
+"@zombienet/cli@1.3.28":
+  version "1.3.28"
+  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.28.tgz#f74c06d1f185ec582b2f507ab8e58af00a22f2db"
+  integrity sha512-Yfi0FZm2oTXfbM2VbzvpQe0dRX37kGA0wWvtTJY2WtiOg0tv6xx69tCH4S80LrYVNpE5B4OU+m0hsyV8QP62cw==
   dependencies:
     "@zombienet/dsl-parser-wrapper" "^0.1.7"
-    "@zombienet/orchestrator" "^0.0.19"
+    "@zombienet/orchestrator" "^0.0.20"
     "@zombienet/utils" "^0.0.13"
     axios "^0.27.2"
     debug "^4.3.2"
@@ -3093,10 +3093,10 @@
   resolved "https://registry.yarnpkg.com/@zombienet/dsl-parser-wrapper/-/dsl-parser-wrapper-0.1.7.tgz#ed3a1e25081732b188d2fefbd78517c7709ca3bf"
   integrity sha512-pJqo1LZbNqnL6Of1h67eYtTTu0BLcf+U/nGQtj8pYr0V4XVDWdCYvT4C9kXkrh5964nKz3KGB7Eky43NqRJZqg==
 
-"@zombienet/orchestrator@^0.0.19":
-  version "0.0.19"
-  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.19.tgz#087b063234b4dc4484d75b37cfe1815167c2a8bc"
-  integrity sha512-W4Yt21z5cFLwv2EPKfx8mTaz2HYg22Uj9JPlEtjyU7k2k5k+14l8KgSHIIqlaZezjyy0gmmJffHkZ/hdOQNgzg==
+"@zombienet/orchestrator@^0.0.20":
+  version "0.0.20"
+  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.20.tgz#b7595ee499f59bbefc0288cf888d9fe2cc092a6d"
+  integrity sha512-lCpbEbxmHckUT2A6QHUo3ESbWBrEzh5b3KT3XCSbn7E4kNaJ8ewtHkgqMm5YcUVPBk3mYQYNs5wyXHYpB2cQgg==
   dependencies:
     "@polkadot/api" "^9.2.4"
     "@polkadot/keyring" "^10.1.6"
@@ -5535,7 +5535,7 @@ jest-worker@^29.3.1:
     merge-stream "^2.0.0"
     supports-color "^8.0.0"
 
-jest@^29.3.1:
+jest@29.3.1:
   version "29.3.1"
   resolved "https://registry.yarnpkg.com/jest/-/jest-29.3.1.tgz#c130c0d551ae6b5459b8963747fed392ddbde122"
   integrity sha512-6iWfL5DTT0Np6UYs/y5Niu7WIfNv/wRTtN5RSXt2DIEft3dx3zPuw/3WJQBCJfmEzvDiEKwoqMbGD9n49+qLSA==
