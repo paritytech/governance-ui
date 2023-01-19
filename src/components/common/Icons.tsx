@@ -1,4 +1,3 @@
-export {
-  FaHeart as HeartIcon,
-  FaSquare as CloseSquareIcon,
-} from 'react-icons/fa';
+import Heart from 'jsx:./icons/heart.svg';
+import Square from 'jsx:./icons/square.svg';
+export { Heart as HeartIcon, Square as CloseSquareIcon };
