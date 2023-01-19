@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Card as NextUICard } from '@nextui-org/react';
 
 function HeaderWrapper({ header }: { header?: ReactNode }): JSX.Element {
