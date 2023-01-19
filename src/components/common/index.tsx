@@ -2,7 +2,6 @@ export { default as Button } from './Button';
 export * from './Button';
 
 export { Card } from './Card';
-export * from './Card';
 
 export * from './Icons';
 
