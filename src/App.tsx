@@ -12,7 +12,7 @@ import {
   Loading,
   Spacer,
   Text,
-} from './components/common';
+} from './ui/nextui';
 import { ReferendaDeck, VotesTable } from './components';
 import { SigningAccount, useAccount, useApi } from './contexts';
 import { AccountVote, ReferendumOngoing, Track } from './types';

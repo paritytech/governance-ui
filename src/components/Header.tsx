@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { NotificationType, useNotifications } from '../contexts/Notification';
-import { Button, HeartIcon, Navbar } from './common';
+import { Button, HeartIcon, Navbar } from '../ui/nextui';
 import ConnectButton from './Connect';
 import {
   areNotificationsGranted,
@@ -22,26 +22,26 @@ function Header(): JSX.Element {
   return (
     <Navbar title="Open Gov">
       <>
-      {!notificationGranted && (
-        <Button
-          color="secondary"
-          rounded
-          onPress={async () => {
-            const permission = await requestNotificationPermission();
-            if (permission !== 'granted') {
-              notify({
-                type: NotificationType.Notification,
-                message: 'Notification permission has been denied',
-              });
-            } else {
-              setNotificationGranted(true);
-            }
-          }}
-          label="Request notification"
-          icon={<HeartIcon />}
-        />
-      )}
-      <ConnectButton color="secondary" bordered />
+        {!notificationGranted && (
+          <Button
+            color="secondary"
+            rounded
+            onPress={async () => {
+              const permission = await requestNotificationPermission();
+              if (permission !== 'granted') {
+                notify({
+                  type: NotificationType.Notification,
+                  message: 'Notification permission has been denied',
+                });
+              } else {
+                setNotificationGranted(true);
+              }
+            }}
+            label="Request notification"
+            icon={<HeartIcon />}
+          />
+        )}
+        <ConnectButton color="secondary" bordered />
       </>
     </Navbar>
   );

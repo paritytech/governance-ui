@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { BaseWallet } from '@polkadot-onboard/core';
-import { Button, Colors, Modal } from './common';
+import { Button, Colors, Modal } from '../ui/nextui';
 import { useAccount, useWallets } from '../contexts';
 import type { SigningAccount } from '../contexts/Account';
 import { WalletState } from '../contexts/Wallets';

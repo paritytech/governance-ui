@@ -1,7 +1,13 @@
 import { Navbar as NextUINavbar } from '@nextui-org/react';
 import { Text } from '.';
 
-export function Navbar({ title, children }: { title: string, children: React.ReactNode }): JSX.Element {
+export function Navbar({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}): JSX.Element {
   return (
     <NextUINavbar variant="static" maxWidth="xl">
       <NextUINavbar.Brand>
@@ -10,9 +16,7 @@ export function Navbar({ title, children }: { title: string, children: React.Rea
         </Text>
       </NextUINavbar.Brand>
       <NextUINavbar.Content>
-        <NextUINavbar.Item>
-          {children}
-        </NextUINavbar.Item>
+        <NextUINavbar.Item>{children}</NextUINavbar.Item>
       </NextUINavbar.Content>
     </NextUINavbar>
   );

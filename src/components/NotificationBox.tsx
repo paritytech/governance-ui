@@ -1,4 +1,4 @@
-import { Card } from './common';
+import { Card } from '../ui/nextui';
 import { NotificationType, useNotifications } from '../contexts/Notification';
 import * as styles from './NotificationBox.module.css';
 
