@@ -45,7 +45,7 @@ function Header(): JSX.Element {
                 }
               }}
               label="Request notification"
-              icon={<HeartIcon primaryColor="currentColor" filled />}
+              icon={<HeartIcon />}
             />
           </Navbar.Item>
         )}

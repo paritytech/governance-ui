@@ -1,4 +1,4 @@
-import React, { MouseEventHandler, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import {
   createStandardAccountVote,
@@ -49,8 +49,8 @@ function ActionBar({
   onRefuse,
 }: {
   left: number;
-  onAccept: MouseEventHandler<HTMLButtonElement>;
-  onRefuse: MouseEventHandler<HTMLButtonElement>;
+  onAccept: () => void;
+  onRefuse: () => void;
 }): JSX.Element {
   return (
     <div className={styles.action}>
@@ -58,9 +58,7 @@ function ActionBar({
         label="Refuse"
         color="error"
         onPress={onRefuse}
-        icon={
-          <CloseSquareIcon set="light" primaryColor="currentColor" filled />
-        }
+        icon={<CloseSquareIcon />}
       />
       <Spacer x={1} />
       <Text>{left} left</Text>
@@ -69,7 +67,7 @@ function ActionBar({
         label="Accept"
         color="success"
         onPress={onAccept}
-        icon={<HeartIcon primaryColor="currentColor" filled />}
+        icon={<HeartIcon />}
       />
     </div>
   );

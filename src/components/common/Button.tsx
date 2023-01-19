@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button as NextUIButton, PressEvent } from '@nextui-org/react';
+import { Button as NextUIButton } from '@nextui-org/react';
 
 export enum Colors {
   default,
@@ -25,7 +25,7 @@ function Button({
   label?: string;
   bordered?: boolean;
   rounded?: boolean;
-  onPress: (e: PressEvent) => void;
+  onPress: () => void;
 }): JSX.Element {
   return (
     <NextUIButton
