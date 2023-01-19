@@ -1,4 +1,4 @@
 export {
-  Heart as HeartIcon,
-  CloseSquare as CloseSquareIcon,
-} from 'react-iconly';
+  FaHeart as HeartIcon,
+  FaSquare as CloseSquareIcon,
+} from 'react-icons/fa';
