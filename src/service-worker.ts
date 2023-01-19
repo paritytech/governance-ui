@@ -30,13 +30,13 @@ async function activate() {
   );
 }
 
-self.addEventListener('activate', (e) => {
+self.addEventListener('activate', (e: ExtendableEvent) => {
   e.waitUntil(activate());
   // Tell the active service worker to take control of the page immediately.
   self.clients.claim();
 });
 
-self.addEventListener('fetch', (event) => {
+self.addEventListener('fetch', (event: FetchEvent) => {
   const url = new URL(event.request.url);
   if (url.origin == location.origin && manifest.includes(url.pathname)) {
     // Only consider cached assets
@@ -58,7 +58,7 @@ self.addEventListener('fetch', (event) => {
 });
 
 // Fired when user clicks on a notification
-self.addEventListener('notificationclick', (event) => {
+self.addEventListener('notificationclick', (event: NotificationEvent) => {
   event.notification.close();
 
   const scope = self.registration.scope;
@@ -82,7 +82,7 @@ self.addEventListener('notificationclick', (event) => {
   );
 });
 
-self.addEventListener('periodicsync', async (event) => {
+self.addEventListener('periodicsync', async (event: SyncEvent) => {
   if (event.tag === REFERENDA_UPDATES_TAG) {
     // TODO
     // Retrieve referenda updates, based on those trigger a notification

@@ -8,3 +8,12 @@ declare module 'jsx:*.svg' {
   const SVGComponent: ComponentType<SVGProps<SVGSVGElement>>;
   export default SVGComponent;
 }
+
+interface SyncEvent {
+  readonly lastChance: boolean;
+  readonly tag: string;
+}
+
+interface ServiceWorkerGlobalScopeEventMap {
+  periodicsync: SyncEvent;
+}
