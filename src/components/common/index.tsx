@@ -1,18 +1,7 @@
-export { default as Button } from './Button';
-export * from './Button';
-
+export { Button, Colors } from './Button';
 export { Card } from './Card';
-
 export * from './Icons';
-
-export { default as Loading } from './Loading';
-export * from './Loading';
-
-export { default as Spacer } from './Spacer';
-export * from './Spacer';
-
-export { default as Text } from './Text';
-export * from './Text';
-
-export { default as Modal } from './Modal';
-export * from './Modal';
+export { Loading } from './Loading';
+export { Spacer } from './Spacer';
+export { Text } from './Text';
+export { Modal } from './Modal';

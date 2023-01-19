@@ -10,7 +10,7 @@ export enum Colors {
   error,
 }
 
-function Button({
+export function Button({
   children,
   color,
   icon,
@@ -42,5 +42,3 @@ function Button({
     </NextUIButton>
   );
 }
-
-export default Button;
