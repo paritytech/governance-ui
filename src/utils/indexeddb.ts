@@ -82,6 +82,8 @@ export async function latest<T>(
       if (request.result) {
         const { key, value } = request.result;
         resolve({ key, value });
+      } else {
+        resolve(null);
       }
     };
     request.onerror = reject;
