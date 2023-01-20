@@ -1,6 +1,9 @@
 import { manifest, version } from '@parcel/service-worker';
 import { getAllReferenda } from './chain/referenda';
+import { DB_NAME, DB_VERSION, STORES,VOTE_STORE_NAME, filterOngoingReferenda, filterToBeVotedReferenda } from './chainstate';
 import { endpointsFor, Network } from './network';
+import { AccountVote } from './types';
+import { all, open } from './utils/indexeddb';
 import { newApi } from './utils/polkadot-api';
 import { REFERENDA_UPDATES_TAG } from './utils/service-worker';
 
@@ -64,19 +67,20 @@ self.addEventListener('notificationclick', (event: NotificationEvent) => {
   const scope = self.registration.scope;
   //const action = event.action; // Identify if the user clicked on the notification itself or on one action
 
+  // Open window
   event.waitUntil(
-    clients // eslint-disable-line
+    clients
       .matchAll({
         type: 'window',
       })
       .then((allClients) => {
         const client = allClients.find((client) => client.url == scope);
         if (client) {
-          // Focus on a matching hidden client
+          // Focus on a matching hidden window
           return client.focus();
         } else {
           // Otherwise open a new window
-          return clients.openWindow(scope); // eslint-disable-line
+          return clients.openWindow(scope);
         }
       })
   );
@@ -84,27 +88,20 @@ self.addEventListener('notificationclick', (event: NotificationEvent) => {
 
 self.addEventListener('periodicsync', async (event: SyncEvent) => {
   if (event.tag === REFERENDA_UPDATES_TAG) {
-    // TODO
-    // Retrieve referenda updates, based on those trigger a notification
-    /*const api = await newApi(endpointFor(Network.Kusama));
-    const allReferenda = await measured('allReferenda', () =>
-      timeout(getAllReferenda(api), 1000)
-    );
-    console.log("referenda", allReferenda)*/
-
+    // Retrieve referenda updates
     const api = await newApi(endpointsFor(Network.Kusama)); // TODO access proper endpoints
     const referenda = await getAllReferenda(api);
-
-    // TODO only retrieved referenda to be voted on and not yet seen
-    if (referenda.size > 0) {
-      // See https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/showNotification
-
+    const ongoingReferenda = filterOngoingReferenda(referenda);
+    const db = await open(DB_NAME, STORES, DB_VERSION);
+    const votes = await all<AccountVote>(db, VOTE_STORE_NAME) as Map<number, AccountVote>;
+    const referendaToBeVotedOn = filterToBeVotedReferenda(ongoingReferenda, votes);
+    if (referendaToBeVotedOn.size > 0) {
       self.registration.showNotification('Referenda', {
-        body: `${referenda.size} new referenda to be voted on`,
+        body: `${referendaToBeVotedOn.size} new referenda to be voted on`,
         icon: '../assets/icons/icon-192x192.png',
         tag: 'referenda-updates',
         requireInteraction: true,
-        data: { referenda },
+        data: { referendaToBeVotedOn },
       });
     }
   }

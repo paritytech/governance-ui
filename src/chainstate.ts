@@ -7,7 +7,7 @@ import {
   deriveEnpoints,
   extractParams,
 } from './hooks';
-import { AccountVote, Referendum, Track } from './types';
+import { AccountVote, Referendum, ReferendumOngoing, Track } from './types';
 import { all, latest, open, remove } from './utils/indexeddb';
 import { measured } from './utils/performance';
 import { newApi } from './utils/polkadot-api';
@@ -113,6 +113,32 @@ export type Action =
   | SetSyncedAction
   | CastVoteAction;
 
+/**
+ * @param referenda
+ * @returns a subset containing only ReferendumOngoing
+ */
+export function filterOngoingReferenda(
+  referenda: Map<number, Referendum>
+): Map<number, ReferendumOngoing> {
+  return new Map(
+    [...referenda].filter(([, v]) => v.type == 'ongoing') as [
+      number,
+      ReferendumOngoing
+    ][]
+  );
+}
+
+/**
+ * @param referenda
+ * @param votes
+ * @returns a subset of referenda not yet voted on
+ */
+export function filterToBeVotedReferenda(referenda: Map<number, ReferendumOngoing>, votes: Map<number, AccountVote>): Map<number, ReferendumOngoing> {
+  return new Map([
+    ...referenda,
+  ].filter(([index]) => !votes.has(index)));
+}
+
 const initialState = {
   chain: { referenda: new Map(), tracks: new Map() },
   votes: new Map(),
@@ -195,8 +221,7 @@ const CHAINSTATE_STORE_NAME = `chain`;
 export const VOTE_STORE_NAME = `votes`;
 export const DB_NAME = 'polkadot/governance/kusama';
 export const DB_VERSION = 1;
-
-const STORES = [{ name: CHAINSTATE_STORE_NAME }, { name: VOTE_STORE_NAME }];
+export const STORES = [{ name: CHAINSTATE_STORE_NAME }, { name: VOTE_STORE_NAME }];
 
 async function restorePersisted(db: IDBDatabase): Promise<Context> {
   const [chain, votesRaw] = await Promise.all([
@@ -386,6 +411,7 @@ export async function updateChainState(
   } catch (e) {
     // Error while restoring
     // TODO offer user to clear out persistency and continue
+    console.error('Error while restoring persistency', e);
   }
 
   // And finally keep track of chain state

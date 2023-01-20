@@ -126,7 +126,7 @@ export function ReferendaDeck({
 }: {
   network: Network;
   tracks: Map<number, Track>;
-  referenda: Array<[number, ReferendumOngoing]>;
+  referenda: [number, ReferendumOngoing][];
   voteHandler: (index: number, accountVote: AccountVote) => void;
 }): JSX.Element {
   const [gone] = useState(() => new Set()); // The set flags all the cards that are flicked out

@@ -1,23 +1,8 @@
-import { useLifeCycle } from './chainstate';
+import { filterOngoingReferenda, filterToBeVotedReferenda, useLifeCycle } from './chainstate';
 import { LoadingPanel, VotesSummaryTable, VotingPanel } from './components';
 import { networkFor } from './network';
 import { AccountVote, Referendum, ReferendumOngoing } from './types';
 import { areEquals } from './utils/set';
-
-/**
- * @param referenda
- * @returns a subset containing only ReferendumOngoing
- */
-function filteringOngoingReferenda(
-  referenda: Map<number, Referendum>
-): Map<number, ReferendumOngoing> {
-  return new Map<number, ReferendumOngoing>(
-    [...referenda].filter(([, v]) => v.type == 'ongoing') as [
-      number,
-      ReferendumOngoing
-    ][]
-  );
-}
 
 /**
  * @param referenda
@@ -54,22 +39,20 @@ export function App(): JSX.Element {
     case 'SyncedState': {
       const { api, chain, votes } = state;
       const { referenda, tracks } = chain;
-      const ongoingReferenda = filteringOngoingReferenda(referenda);
+      const ongoingReferenda = filterOngoingReferenda(referenda);
       if (isVotingComplete(ongoingReferenda, votes)) {
         // User went through all referenda
         return <VotesSummaryTable api={api} accountVotes={votes} />;
       } else {
         // Let user vote on referenda
         // Only consider referenda that have not be voted on yet by user (both on-chain and in local state)
-        const referendaToBeVotedOn: [number, ReferendumOngoing][] = [
-          ...ongoingReferenda,
-        ].filter(([index]) => !votes.has(index));
+        const referendaToBeVotedOn = filterToBeVotedReferenda(ongoingReferenda, votes);
         return (
           <VotingPanel
             network={networkFor(api)}
             voteHandler={(index, vote) => updater.castVote(index, vote)}
             tracks={tracks}
-            referenda={referendaToBeVotedOn}
+            referenda={Array.from(referendaToBeVotedOn)}
           />
         );
       }
