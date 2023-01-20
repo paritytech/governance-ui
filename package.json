@@ -16,7 +16,7 @@
     "test": "jest --detectOpenHandles",
     "zombienet:setup": "zombienet setup polkadot",
     "zombienet:native": "zombienet --provider native spawn ./tests/small-network.toml",
-    "zombienet:podman": "zombienet --provider native spawn ./tests/small-network.toml"
+    "zombienet:podman": "zombienet --provider podman spawn ./tests/small-network.toml"
   },
   "source": "src/index.tsx",
   "app": "dist/index.html",
