@@ -35,9 +35,11 @@ export class WsReconnectProvider extends WsProvider {
   // Rely on stats
 
   get #currentEndpoint() {
-    //@ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const endpoints = this['__private_14_endpoints'] as string[];
-    //@ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     const endpointIndex: number = this['__private_22_endpointIndex'] as number;
     return endpoints[endpointIndex];
   }

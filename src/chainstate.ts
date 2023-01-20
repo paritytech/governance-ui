@@ -303,8 +303,8 @@ async function moveToOnline(
 
   // TODO api can be undefined, and will
   const unsub = await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
-    const number = await api.query.system.number();
-    const events = await api.query.system.events();
+    //const number = await api.query.system.number();
+    //const events = await api.query.system.events();
     const apiAt = await api.at(header.hash);
     const chain = await fetchChainState(apiAt);
     dispatch({
@@ -323,6 +323,9 @@ async function moveToOnline(
   return unsub;
 }
 
+/*eslint-disable-next-line @typescript-eslint/no-empty-function*/
+function emptyUnsub() {}
+
 async function tryMoveToOnline(
   dispatch: Dispatch<Action>
 ): Promise<() => void> {
@@ -335,7 +338,7 @@ async function tryMoveToOnline(
     return await moveToOnline(dispatch, endpoints.value);
   } else {
     // TODO Incorrect endpoints
-    return () => {};
+    return emptyUnsub;
   }
 }
 
@@ -346,7 +349,7 @@ async function moveToRestored(dispatch: Dispatch<Action>): Promise<() => void> {
     dispatch({
       type: 'SetOfflineAction',
     });
-    return () => {};
+    return emptyUnsub;
   }
 }
 
