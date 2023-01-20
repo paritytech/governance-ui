@@ -1,7 +1,7 @@
 import { manifest, version } from '@parcel/service-worker';
 import { getAllReferenda } from './chain/referenda';
 import { DB_NAME, DB_VERSION, STORES,VOTE_STORE_NAME, filterOngoingReferenda, filterToBeVotedReferenda } from './chainstate';
-import { endpointsFor, Network } from './network';
+import { DEFAULT_NETWORK, endpointsFor, Network } from './network';
 import { AccountVote } from './types';
 import { all, open } from './utils/indexeddb';
 import { newApi } from './utils/polkadot-api';
@@ -89,7 +89,7 @@ self.addEventListener('notificationclick', (event: NotificationEvent) => {
 self.addEventListener('periodicsync', async (event: SyncEvent) => {
   if (event.tag === REFERENDA_UPDATES_TAG) {
     // Retrieve referenda updates
-    const api = await newApi(endpointsFor(Network.Kusama)); // TODO access proper endpoints
+    const api = await newApi(endpointsFor(DEFAULT_NETWORK)); // TODO go through all user accessed networks
     const referenda = await getAllReferenda(api);
     const ongoingReferenda = filterOngoingReferenda(referenda);
     const db = await open(DB_NAME, STORES, DB_VERSION);

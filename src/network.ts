@@ -9,7 +9,7 @@ export enum Network {
 const DEFAULT_NETWORK_ENV = process.env.DEFAULT_NETWORK;
 export const DEFAULT_NETWORK = DEFAULT_NETWORK_ENV
   ? (capitalizeFirstLetter(DEFAULT_NETWORK_ENV) as Network)
-  : Network.Polkadot;
+  : Network.Kusama;
 
 export namespace Network {
   export function parse(network: string): Network | null {
