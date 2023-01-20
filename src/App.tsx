@@ -1,4 +1,8 @@
-import { filterOngoingReferenda, filterToBeVotedReferenda, useLifeCycle } from './chainstate';
+import {
+  filterOngoingReferenda,
+  filterToBeVotedReferenda,
+  useLifeCycle,
+} from './chainstate';
 import { LoadingPanel, VotesSummaryTable, VotingPanel } from './components';
 import { networkFor } from './network';
 import { AccountVote, Referendum, ReferendumOngoing } from './types';
@@ -46,7 +50,10 @@ export function App(): JSX.Element {
       } else {
         // Let user vote on referenda
         // Only consider referenda that have not be voted on yet by user (both on-chain and in local state)
-        const referendaToBeVotedOn = filterToBeVotedReferenda(ongoingReferenda, votes);
+        const referendaToBeVotedOn = filterToBeVotedReferenda(
+          ongoingReferenda,
+          votes
+        );
         return (
           <VotingPanel
             network={networkFor(api)}

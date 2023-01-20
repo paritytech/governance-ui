@@ -133,10 +133,11 @@ export function filterOngoingReferenda(
  * @param votes
  * @returns a subset of referenda not yet voted on
  */
-export function filterToBeVotedReferenda(referenda: Map<number, ReferendumOngoing>, votes: Map<number, AccountVote>): Map<number, ReferendumOngoing> {
-  return new Map([
-    ...referenda,
-  ].filter(([index]) => !votes.has(index)));
+export function filterToBeVotedReferenda(
+  referenda: Map<number, ReferendumOngoing>,
+  votes: Map<number, AccountVote>
+): Map<number, ReferendumOngoing> {
+  return new Map([...referenda].filter(([index]) => !votes.has(index)));
 }
 
 const initialState = {
@@ -217,11 +218,15 @@ function reducer(previousState: State, action: Action): State {
 
 // Persisted data
 
-const CHAINSTATE_STORE_NAME = `chain`;
+export const CHAINSTATE_STORE_NAME = `chain`;
 export const VOTE_STORE_NAME = `votes`;
+// TODO reflect correct network
 export const DB_NAME = 'polkadot/governance/kusama';
 export const DB_VERSION = 1;
-export const STORES = [{ name: CHAINSTATE_STORE_NAME }, { name: VOTE_STORE_NAME }];
+export const STORES = [
+  { name: CHAINSTATE_STORE_NAME },
+  { name: VOTE_STORE_NAME },
+];
 
 async function restorePersisted(db: IDBDatabase): Promise<Context> {
   const [chain, votesRaw] = await Promise.all([
@@ -244,7 +249,7 @@ async function restorePersisted(db: IDBDatabase): Promise<Context> {
   };
 }
 
-async function fetchChainState(api: {
+export async function fetchChainState(api: {
   consts: QueryableConsts<'promise'>;
   query: QueryableStorage<'promise'>;
 }): Promise<ChainState> {

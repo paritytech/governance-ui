@@ -1,9 +1,17 @@
 import { manifest, version } from '@parcel/service-worker';
-import { getAllReferenda } from './chain/referenda';
-import { DB_NAME, DB_VERSION, STORES,VOTE_STORE_NAME, filterOngoingReferenda, filterToBeVotedReferenda } from './chainstate';
-import { DEFAULT_NETWORK, endpointsFor, Network } from './network';
-import { AccountVote } from './types';
-import { all, open } from './utils/indexeddb';
+import {
+  DB_NAME,
+  DB_VERSION,
+  STORES,
+  VOTE_STORE_NAME,
+  filterOngoingReferenda,
+  filterToBeVotedReferenda,
+  fetchChainState,
+  CHAINSTATE_STORE_NAME,
+} from './chainstate';
+import { DEFAULT_NETWORK, endpointsFor } from './network';
+import { AccountVote, Referendum } from './types';
+import { all, latest, open, save } from './utils/indexeddb';
 import { newApi } from './utils/polkadot-api';
 import { REFERENDA_UPDATES_TAG } from './utils/service-worker';
 
@@ -86,23 +94,49 @@ self.addEventListener('notificationclick', (event: NotificationEvent) => {
   );
 });
 
+function showNotification(referenda: Map<number, Referendum>) {
+  self.registration.showNotification('Referenda', {
+    body: `${referenda.size} new referenda to be voted on`,
+    icon: '../assets/icons/icon-192x192.png',
+    tag: 'referenda-updates',
+    requireInteraction: true,
+    data: { referenda },
+  });
+}
+
 self.addEventListener('periodicsync', async (event: SyncEvent) => {
   if (event.tag === REFERENDA_UPDATES_TAG) {
     // Retrieve referenda updates
     const api = await newApi(endpointsFor(DEFAULT_NETWORK)); // TODO go through all user accessed networks
-    const referenda = await getAllReferenda(api);
-    const ongoingReferenda = filterOngoingReferenda(referenda);
     const db = await open(DB_NAME, STORES, DB_VERSION);
-    const votes = await all<AccountVote>(db, VOTE_STORE_NAME) as Map<number, AccountVote>;
-    const referendaToBeVotedOn = filterToBeVotedReferenda(ongoingReferenda, votes);
+    const number = await (await api.query.system.number()).toNumber();
+
+    const latestChainstate = await latest(db, CHAINSTATE_STORE_NAME);
+    if (latestChainstate) {
+      if (number <= latestChainstate.key) {
+        // No chain progress, skip block
+        return;
+      }
+    }
+
+    const hash = await api.rpc.chain.getBlockHash(number);
+    const apiAt = await api.at(hash);
+    const chain = await fetchChainState(apiAt);
+
+    // Store chainstate for latest block
+    await save(db, CHAINSTATE_STORE_NAME, number, chain);
+
+    const ongoingReferenda = filterOngoingReferenda(chain.referenda);
+    const votes = (await all<AccountVote>(db, VOTE_STORE_NAME)) as Map<
+      number,
+      AccountVote
+    >;
+    const referendaToBeVotedOn = filterToBeVotedReferenda(
+      ongoingReferenda,
+      votes
+    );
     if (referendaToBeVotedOn.size > 0) {
-      self.registration.showNotification('Referenda', {
-        body: `${referendaToBeVotedOn.size} new referenda to be voted on`,
-        icon: '../assets/icons/icon-192x192.png',
-        tag: 'referenda-updates',
-        requireInteraction: true,
-        data: { referendaToBeVotedOn },
-      });
+      showNotification(referendaToBeVotedOn);
     }
   }
 });
