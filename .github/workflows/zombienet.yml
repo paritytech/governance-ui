@@ -11,9 +11,9 @@ jobs:
     steps:
       - name: download polkadot
         run: |
-          curl -L https://github.com/paritytech/polkadot/releases/download/v0.9.37/polkadot -o "${GITHUB_WORKSPACE}/polkadot"
-          chmod 777 "${GITHUB_WORKSPACE}/polkadot"
-          echo PATH=$PATH:"${GITHUB_WORKSPACE}/polkadot" >> $GITHUB_ENV
+          curl -L https://github.com/paritytech/polkadot/releases/download/v0.9.37/polkadot -o "${GITHUB_WORKSPACE}/zb/polkadot"
+          chmod 777 "${GITHUB_WORKSPACE}/zb/polkadot"
+          echo PATH=$PATH:"${GITHUB_WORKSPACE}/zb" >> $GITHUB_ENV
           echo $PATH
       #- name: podman
       #  run: sudo apt-get -y update
