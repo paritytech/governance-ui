@@ -209,8 +209,8 @@ async function restorePersisted(db: IDBDatabase): Promise<Context> {
     if (!chain?.value.referenda.has(index)) {
       votes.delete(index);
     } else {
-        // Remove older votes that do not match existing referendum anymore
-        await remove(db, VOTE_STORE_NAME, index);
+      // Remove older votes that do not match existing referendum anymore
+      await remove(db, VOTE_STORE_NAME, index);
     }
   });
   return {

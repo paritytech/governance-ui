@@ -195,7 +195,7 @@ export async function save(
 export async function remove(
   db: IDBDatabase,
   storeName: string,
-  key: IDBValidKey,
+  key: IDBValidKey
 ) {
   return new Promise<void>(function (resolve, reject) {
     const request = db
