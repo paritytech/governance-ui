@@ -8,7 +8,7 @@ import type {
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { AccountVote, Conviction, Voting } from '../types';
-import { QueryableStorage } from '@polkadot/api/types';
+import { QueryableStorage, SubmittableExtrinsics } from '@polkadot/api/types';
 
 export function createStandardAccountVote(
   aye: boolean,
@@ -172,7 +172,7 @@ function fromAccountVote(accountVote: AccountVote):
 }
 
 export function vote(
-  api: { tx: QueryableT<'promise'> },
+  api: { tx: SubmittableExtrinsics<'promise'> },
   index: number,
   accountVote: AccountVote
 ) {
