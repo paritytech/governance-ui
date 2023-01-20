@@ -15,6 +15,7 @@ import NotificationProvider from './contexts/Notification';
 import NotificationBox from './components/NotificationBox';
 import { registerServiceWorker } from './utils/service-worker';
 import { UIProvider } from './ui/nextui';
+import * as styles from './index.module.css';
 
 const container = document.getElementById('root');
 if (container) {
@@ -30,7 +31,9 @@ if (container) {
                   <AccountProvider>
                     <NotificationBox />
                     <Header />
-                    <App />
+                    <div className={styles.app}>
+                      <App />
+                    </div>
                   </AccountProvider>
                 </WalletProvider>
               </ApiProvider>
