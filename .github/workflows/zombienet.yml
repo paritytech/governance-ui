@@ -9,13 +9,21 @@ jobs:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
+      - name: download polkadot
+        run: |
+          mkdir /polkadot
+          curl -L https://github.com/paritytech/polkadot/releases/download/v0.9.37/polkadot -o /polkadot/polkadot
+          chmod 777 /polkadot/polkadot
+          echo PATH=$PATH:/polkadot >> $GITHUB_ENV
+      #- name: podman
+      #  run: sudo apt-get -y update
+      #- name: podman install
+      #  run: sudo apt-get -y install podman
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 16
       - name: Install dependencies
-        run: yarn install --check-files
-      - name: Setup zombinet
-        run: yarn --verbose zombienet:setup
+        run: npm install
       - name: Run zombienet
-        run: yarn zobmienet:run
+        run: npm run zombienet:run
