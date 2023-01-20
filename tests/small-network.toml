@@ -1,6 +1,8 @@
 [relaychain]
+default_image = "docker.io/paritypr/polkadot-debug:master"
 default_command = "polkadot"
 default_args = [ "-lparachain=debug" ]
+
 
 chain = "kusama-local"
 
