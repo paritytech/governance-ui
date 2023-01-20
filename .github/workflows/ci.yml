@@ -19,7 +19,7 @@ jobs:
         uses: actions/setup-node@v3
 
       - name: Install
-        run: yarn install --check-files
+        run: yarn install --immutable --immutable-cache --check-cache
 
       - name: Checks
         run: yarn all-checks
