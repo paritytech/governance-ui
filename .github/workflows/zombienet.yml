@@ -19,11 +19,11 @@ jobs:
       #  run: sudo apt-get -y update
       #- name: podman install
       #  run: sudo apt-get -y install podman
+      - uses: actions/checkout@v3
       - name: check polkadot
         run: |
           echo $PATH
           polkadot --version
-      - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 16
