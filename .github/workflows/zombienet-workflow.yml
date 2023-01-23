@@ -1,9 +1,5 @@
 name: run a zombienet
-on:
-  push:
-    branches: [main, master, hamid/e2e]
-  pull_request:
-    branches: [main, master]
+on: workflow_call
 jobs:
   setup:
     timeout-minutes: 5
@@ -13,12 +9,12 @@ jobs:
         run: sudo apt-get -y update
       - name: podman install
         run: sudo apt-get -y install podman
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - name: Install dependencies
-        run: npm install
+      #- uses: actions/checkout@v3
+      #- uses: actions/setup-node@v3
+      #  with:
+      #    node-version: 16
+      #- name: Install dependencies
+      #  run: npm install
       #- name: download polkadot
       #  run: |
       #    curl -L https://github.com/paritytech/polkadot/releases/download/v0.9.37/polkadot -o "${GITHUB_WORKSPACE}/polkadot"

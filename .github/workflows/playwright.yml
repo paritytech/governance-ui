@@ -14,11 +14,21 @@ jobs:
         with:
           node-version: 16
       - name: Install dependencies
-        run: yarn ci
+        run: |
+          npm install -g yarn
+          yarn install
+      - name: podman
+        run: sudo apt-get -y update
+      # zombinet
+      - name: podman install
+        run: sudo apt-get -y install podman
+      - name: Run zombienet
+        run: npm run zombienet:podman
+      # tests
       - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+        run: yarn playwright install --with-deps
       - name: Run Playwright tests
-        run: npx playwright test
+        run: yarn playwright test
       - uses: actions/upload-artifact@v3
         if: always()
         with:
