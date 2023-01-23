@@ -4,7 +4,6 @@ import { Button, Card, Spacer, Text } from '../ui/nextui';
 import { SigningAccount } from '../contexts';
 import { AccountVote } from '../types';
 import { Store, Stores } from '../utils/store';
-import * as styles from './Voting.module.css';
 
 function createBatchVotes(
   api: ApiPromise,
@@ -80,11 +79,11 @@ function VotesTable({
   accountVotes: Map<number, AccountVote>;
 }): JSX.Element {
   return (
-    <div className={styles.table}>
-      <div>
+    <div className="flex flex-col">
+      <div className="flex max-h-[60vh] w-[30vw] flex-col items-center overflow-auto">
         {[...accountVotes.entries()].map(([index, accountVote]) => {
           return (
-            <div key={index} style={{ width: '100%' }}>
+            <div key={index} className="w-full">
               <Card>
                 <Text h3 b>
                   #{index}

@@ -21,13 +21,12 @@ import { networkFor } from './utils/polkadot-api';
 import { timeout } from './utils/promise';
 import { areEquals } from './utils/set';
 import { Store, Stores } from './utils/store';
-import * as styles from './App.module.css';
 
 const FETCH_DATA_TIMEOUT = 15000; // in milliseconds
 
 function LoadingScreen(): JSX.Element {
   return (
-    <div className={styles.loading}>
+    <div className="flex flex-col">
       <Loading />
       <Spacer y={2} />
       <Text
@@ -53,7 +52,7 @@ function ActionBar({
   onRefuse: () => void;
 }): JSX.Element {
   return (
-    <div className={styles.action}>
+    <div className="flex items-center">
       <Button
         label="Refuse"
         color="error"
@@ -88,7 +87,7 @@ function VotingPanel({
   const topReferenda = referenda.at(0)?.[0];
   return (
     <>
-      <div className={styles.main}>
+      <div className="flex flex-auto items-center justify-center">
         <ReferendaDeck
           network={networkFor(api)}
           referenda={referenda}
@@ -265,7 +264,7 @@ function ConnectedApp({ api }: { api: ApiPromise }): JSX.Element {
   }, [api]);
 
   return (
-    <div className={styles.app}>
+    <div className="flex flex-auto flex-col items-center justify-center">
       {api === null ? (
         <div>Failed to connect to the chain</div>
       ) : error ? (

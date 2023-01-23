@@ -1,5 +1,4 @@
 import { WalletState } from '../contexts/Wallets';
-import * as styles from './Wallet.module.css';
 
 export interface IWalletProps {
   name: string;
@@ -11,16 +10,17 @@ export interface IWalletProps {
 const Wallet = ({ name, state, iconUrl, clickHandler }: IWalletProps) => {
   const isConnected = state === 'connected';
   return (
-    <div className={styles.box} onClick={() => clickHandler()}>
-      <div className={styles.icon}>
+    <div
+      className="my-1 flex flex-nowrap rounded-lg border-2 border-solid"
+      onClick={() => clickHandler()}
+    >
+      <div className="m-1 flex items-center justify-center">
         {iconUrl ? <img src={iconUrl} /> : null}
       </div>
-      <div className={styles.info}>
+      <div className="m-1 flex-auto">
         <div>{name}</div>
       </div>
-      <div className={styles.state}>
-        {isConnected ? 'connected' : 'not connected'}
-      </div>
+      <div className="m-1">{isConnected ? 'connected' : 'not connected'}</div>
     </div>
   );
 };

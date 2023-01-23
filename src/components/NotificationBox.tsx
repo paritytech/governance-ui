@@ -1,6 +1,5 @@
 import { Card } from '../ui/nextui';
 import { NotificationType, useNotifications } from '../contexts/Notification';
-import * as styles from './NotificationBox.module.css';
 
 const TRANSIENT_DISPLAY_TIME_MS = 3000; //milliseconds
 
@@ -19,13 +18,16 @@ const NotificationBox = () => {
   return (
     <>
       {current && (
-        <div className={styles.notification}>
+        <div className="absolute bottom-4 right-4 z-50 max-w-[50%] text-xs">
           {!isTransient && (
-            <div className={styles.closeBtn} onClick={closeHandler}>
+            <div
+              className="absolute right-px top-1  z-50 flex h-4 w-4 cursor-pointer justify-center"
+              onClick={closeHandler}
+            >
               x
             </div>
           )}
-          <Card className={styles.card} variant="shadow">
+          <Card className="pl-2 pr-2" variant="shadow">
             {current.message}
           </Card>
         </div>
