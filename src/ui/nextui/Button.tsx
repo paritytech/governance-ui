@@ -1,44 +1,20 @@
 import React from 'react';
-import { Button as NextUIButton } from '@nextui-org/react';
-
-export enum Colors {
-  default,
-  primary,
-  secondary,
-  success,
-  warning,
-  error,
-}
 
 export function Button({
   children,
-  color,
-  icon,
-  label,
-  bordered,
-  rounded,
-  onPress,
+  className,
+  style,
+  onClick,
 }: {
   children?: React.ReactNode;
-  color?: keyof typeof Colors;
-  icon?: React.ReactNode;
-  label?: string;
-  bordered?: boolean;
-  rounded?: boolean;
-  onPress: () => void;
+  className?: string | undefined;
+  onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
+  style?: React.CSSProperties | undefined;
 }): JSX.Element {
+  const cn = `appearance-none flex justify-center w-9 min-w-min w-auto rounded-full py-2 px-4 ${className}`;
   return (
-    <NextUIButton
-      light
-      auto
-      color={color}
-      onPress={onPress}
-      icon={icon}
-      bordered={bordered}
-      rounded={rounded}
-      aria-label={label}
-    >
+    <button className={cn} style={{ ...style }} onClick={onClick}>
       {children}
-    </NextUIButton>
+    </button>
   );
 }

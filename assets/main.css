@@ -21,10 +21,14 @@
 }
 
 html {
-  font-family: Unbounded, Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: Inter, Helvetica Neue, Helvetica, Arial, sans-serif;
   font-style: normal;
   font-weight: 400;
   height: 100%;
+}
+
+.font-brand {
+  font-family: Unbounded, Helvetica Neue, Helvetica, Arial, sans-serif;
 }
 
 main {

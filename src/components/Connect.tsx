@@ -6,6 +6,7 @@ import type { SigningAccount } from '../contexts/Account';
 import { WalletState } from '../contexts/Wallets';
 import Account from './Account';
 import Wallet from './Wallet';
+import Identicon from '@polkadot/react-identicon';
 
 export interface IWalletsListProps {
   wallets: Array<BaseWallet>;
@@ -72,12 +73,7 @@ const AccountList = ({
 
 type ConnectViews = 'wallets' | 'accounts';
 
-const ConnectButton = (
-  props: JSX.IntrinsicAttributes & {
-    color?: keyof typeof Colors;
-    bordered?: boolean;
-  }
-) => {
+const ConnectButton = () => {
   const [visible, setVisible] = useState(false);
   const [currentView, setCurrentView] = useState<ConnectViews>();
   const { wallets, walletState, setWalletState } = useWallets();
@@ -94,6 +90,7 @@ const ConnectButton = (
       oldView === 'wallets' ? 'accounts' : 'wallets'
     );
   };
+
   const walletConnectHandler = async (wallet: BaseWallet) => {
     if (walletState.get(wallet?.metadata.title) == 'connected') {
       await wallet.disconnect();
@@ -103,27 +100,36 @@ const ConnectButton = (
       setWalletState(wallet?.metadata.title, 'connected');
     }
   };
+
   const accountConnectHandler = async (signingAccount: SigningAccount) => {
     setConnectedAccount(signingAccount);
     closeModal();
   };
+
   const closeModal = () => {
     setVisible(false);
   };
+
   const openModal = () => {
     setCurrentView(initialView);
     setVisible(true);
   };
+
   useEffect(() => {
     setCurrentView(initialView);
   }, [initialView]);
-  const onPress = () => openModal();
+
+  const btnClickHandler = () => openModal();
+  const { name, address } = connectedAccount?.account || {};
+  const btnTitle = connectedAccount?.account ? name || address : 'Connect';
+
   return (
     <>
-      <Button label="connect" {...{ ...props, onPress }}>
-        {connectedAccount
-          ? `Connected - ${connectedAccount.account.name}`
-          : 'Connect'}
+      <Button className="border-[1px] border-solid" onClick={btnClickHandler}>
+        <div className="flex flex-nowrap items-center gap-1">
+          {address && <Identicon value={address} theme="polkadot" size={18} />}
+          <div className="text-sm">{btnTitle}</div>
+        </div>
       </Button>
       <Modal visible={visible} width="600px" onClose={() => closeModal()}>
         <div onClick={() => toggleView()}>{`${
