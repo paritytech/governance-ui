@@ -1,6 +1,5 @@
 import Identicon from '@polkadot/react-identicon';
 import { stringShorten } from '@polkadot/util';
-import * as styles from './Account.module.css';
 
 export interface AccountProps {
   name: string;
@@ -12,15 +11,18 @@ export interface AccountProps {
 const Account = ({ name, address, clickHandler, state }: AccountProps) => {
   const { isConnected } = state;
   return (
-    <div className={styles.box} onClick={() => clickHandler()}>
-      <div className={styles.icon}>
+    <div
+      className="mx-1 flex flex-nowrap rounded-lg border-2 border-solid"
+      onClick={() => clickHandler()}
+    >
+      <div className="m-1 flex items-center justify-center">
         <Identicon value={address} theme="polkadot" size={32} />
       </div>
-      <div className={styles.info}>
+      <div className="m-1 flex flex-auto flex-col">
         <div>{stringShorten(name, 10)}</div>
         <div>{stringShorten(address, 10)}</div>
       </div>
-      <div className={styles.state}>{isConnected ? 'connected' : ''}</div>
+      <div className="m-1">{isConnected ? 'connected' : ''}</div>
     </div>
   );
 };
