@@ -3108,13 +3108,13 @@
   dependencies:
     "@use-gesture/core" "10.2.23"
 
-"@zombienet/cli@1.3.28":
-  version "1.3.28"
-  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.28.tgz#f74c06d1f185ec582b2f507ab8e58af00a22f2db"
-  integrity sha512-Yfi0FZm2oTXfbM2VbzvpQe0dRX37kGA0wWvtTJY2WtiOg0tv6xx69tCH4S80LrYVNpE5B4OU+m0hsyV8QP62cw==
+"@zombienet/cli@1.3.29":
+  version "1.3.29"
+  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.29.tgz#1e8cdf162e2c0d5bd80772a571d15194bc5e9c6b"
+  integrity sha512-mXYeOPaRaJFYPWzH7tYSzDrV5Ltr2KFU6VoiNMBv+ZNv2le+f2S35Ytfd9cLq/VXweEE9ZocjMD/VpgVBZ+dog==
   dependencies:
     "@zombienet/dsl-parser-wrapper" "^0.1.7"
-    "@zombienet/orchestrator" "^0.0.20"
+    "@zombienet/orchestrator" "^0.0.21"
     "@zombienet/utils" "^0.0.13"
     axios "^0.27.2"
     debug "^4.3.2"
@@ -3127,10 +3127,10 @@
   resolved "https://registry.yarnpkg.com/@zombienet/dsl-parser-wrapper/-/dsl-parser-wrapper-0.1.7.tgz#ed3a1e25081732b188d2fefbd78517c7709ca3bf"
   integrity sha512-pJqo1LZbNqnL6Of1h67eYtTTu0BLcf+U/nGQtj8pYr0V4XVDWdCYvT4C9kXkrh5964nKz3KGB7Eky43NqRJZqg==
 
-"@zombienet/orchestrator@^0.0.20":
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.20.tgz#b7595ee499f59bbefc0288cf888d9fe2cc092a6d"
-  integrity sha512-lCpbEbxmHckUT2A6QHUo3ESbWBrEzh5b3KT3XCSbn7E4kNaJ8ewtHkgqMm5YcUVPBk3mYQYNs5wyXHYpB2cQgg==
+"@zombienet/orchestrator@^0.0.21":
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.21.tgz#82cbae3a1a25c05fb8970236d1b3c0d88e430795"
+  integrity sha512-c1osFmESdteMAqqVFwnzNZgEM4SXHwOQLu1HJxiCF9g7J1fXfQ1yDO8YAmWrWMMnNU37dR2SRzZWBKCUy48JIg==
   dependencies:
     "@polkadot/api" "^9.2.4"
     "@polkadot/keyring" "^10.1.6"
