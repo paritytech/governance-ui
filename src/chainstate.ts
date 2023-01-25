@@ -50,7 +50,7 @@ export type Report = Error;
 
 type BaseState = {
   reports?: Report[];
-  connectedAccounts?: string[];
+  connectedAccount?: string;
   connectivity: Connectivity;
 };
 
@@ -87,9 +87,9 @@ export type SetRestoredAction = PersistedDataContext & {
   network: Network;
 };
 
-export type SetAccountsAction = {
-  type: 'SetAccountsAction';
-  connectedAccounts?: string[];
+export type SetConnectedAccountAction = {
+  type: 'SetConnectedAccountAction';
+  connectedAccount?: string;
 };
 
 export type UpdateConnectivityAction = {
@@ -144,7 +144,7 @@ export type CastVoteAction = {
 
 export type Action =
   | NewReportAction
-  | SetAccountsAction
+  | SetConnectedAccountAction
   | SetRestoredAction
   | UpdateConnectivityAction
   | NewFinalizedBlockAction
@@ -196,11 +196,11 @@ function reducer(previousState: State, action: Action): State {
   // Note that unlucky timing might lead to overstepping changes (triggered via listeners registered just above)
   // So applying changes must be indempotent
   switch (action.type) {
-    case 'SetAccountsAction': {
-      const { connectedAccounts } = action;
+    case 'SetConnectedAccountAction': {
+      const { connectedAccount } = action;
       return {
         ...previousState,
-        connectedAccounts,
+        connectedAccount,
       };
     }
     case 'SetRestoredAction': {
@@ -252,11 +252,11 @@ function reducer(previousState: State, action: Action): State {
     }
     case 'CastVoteAction':
       if ('votes' in previousState) {
-        const newVotes = previousState.votes;
+        const newVotes = previousState.votes || new Map();
         newVotes.set(action.index, action.vote);
         return {
           ...previousState,
-          votes: newVotes,
+          votes: new Map(newVotes),
         };
       } else {
         return withFailedTransition(previousState);
@@ -342,6 +342,13 @@ export class Updater {
     } else {
       await this.newReport({ type: 'Error', message: '' });
     }
+  }
+
+  async setConnectedAccount(connectedAccount: string) {
+    this.#dispatch({
+      type: 'SetConnectedAccountAction',
+      connectedAccount,
+    });
   }
 
   async newReport(report: Report) {
