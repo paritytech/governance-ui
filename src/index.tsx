@@ -14,7 +14,6 @@ import NotificationProvider from './contexts/Notification';
 import NotificationBox from './components/NotificationBox';
 import { registerServiceWorker } from './utils/service-worker';
 import { UIProvider } from './ui/nextui';
-import * as styles from './index.module.css';
 
 const container = document.getElementById('root');
 if (container) {
@@ -29,7 +28,7 @@ if (container) {
                 <AccountProvider>
                   <NotificationBox />
                   <Header />
-                  <div className={styles.app}>
+                  <div className="flex flex-auto flex-col items-center justify-center">
                     <App />
                   </div>
                 </AccountProvider>
