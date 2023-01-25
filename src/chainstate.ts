@@ -2,43 +2,63 @@ import { Dispatch, useEffect, useReducer } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
 import { getAllReferenda, getAllTracks } from './chain/referenda';
-import {
-  addQueryParamsChangeListener,
-  deriveEnpoints,
-  extractParams,
-} from './hooks';
+import { DEFAULT_NETWORK, endpointsFor, Network, networkFor } from './network';
 import { AccountVote, Referendum, ReferendumOngoing, Track } from './types';
-import { all, latest, open, remove } from './utils/indexeddb';
+import { err, ok, Result } from './utils';
+import { all, open, save } from './utils/indexeddb';
 import { measured } from './utils/performance';
 import { newApi } from './utils/polkadot-api';
 import { timeout } from './utils/promise';
+
+// Auto follow chain updates? Only if user settings? Show notif? Only if impacting change?
+// Revisit if/when ChainState is persisted
+
+// TODO also load from polkassembly and others
+// https://github.com/evan-liu/fetch-queue
+// https://github.com/jkramp/fetch-queue
+// https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide
+
+// Actions
+// TODO
+// Heartbeat (to detect no new finalized blocks are reeived, keep track of delta between last received and now)
+
+// Startup
+// settings, overriden by Env variable, overriden by query params, overriden by user settings? offer user confirmation
+// network, allow to restore chain db
+// endpoints, allow to connect to chain
+// if no endpoints provided, default to network endpoints
+// endpoints and network: must match network
+// only endpoints: sets network
 
 export type ChainState = {
   tracks: Map<number, Track>;
   referenda: Map<number, Referendum>;
 };
 
-export type Context = {
-  chain: ChainState;
+type PersistedDataContext = {
   votes: Map<number, AccountVote>;
-};
-
-export type ChainSync = {
-  block: number;
-  when: Date;
 };
 
 // States
 
-export type BaseState = {
-  since: Date;
+export type Error = {
+  type: 'Error';
+  message: string;
 };
 
-export type BaseRestoredState = BaseState & Context;
+export type Report = Error;
 
-export type BaseConnectedState = BaseRestoredState & {
-  api: ApiPromise;
+type BaseState = {
+  reports?: Report[];
+  connectedAccounts?: string[];
+  connectivity: Connectivity;
 };
+
+type BaseRestoredState = BaseState &
+  PersistedDataContext & {
+    db: IDBDatabase;
+    network: Network;
+  };
 
 export type InitialState = BaseState & {
   type: 'InitialState';
@@ -48,56 +68,73 @@ export type RestoredState = BaseRestoredState & {
   type: 'RestoredState';
 };
 
-export type OfflineState = BaseRestoredState & {
-  type: 'OfflineState';
-  retryCount: number;
-};
-
-export type ConnectingState = BaseRestoredState & {
-  type: 'ConnectingState';
-};
-
-export type SyncedState = BaseConnectedState & {
-  type: 'SyncedState';
-};
-
-export type SyncingState = BaseConnectedState & {
-  type: 'SyncingState';
-};
-
-export type SyncState = SyncingState | SyncedState;
-
-export type OnlineState = ConnectingState | SyncState;
-
-export type State = InitialState | RestoredState | OfflineState | OnlineState;
-
-// Actions
-
-export type SetRestoredAction = {
-  type: 'SetRestoredAction';
-  chain: ChainState;
-  votes: Map<number, AccountVote>;
-};
-
-export type SetOfflineAction = {
-  type: 'SetOfflineAction';
-};
-
-export type SetConnectingAction = {
-  type: 'SetConnectingAction';
-};
-
-export type SetSyncingAction = {
-  type: 'SetSyncingAction';
-  api: ApiPromise;
-};
-
-export type SetSyncedAction = {
-  type: 'SetSyncedAction';
-  api: ApiPromise;
+export type ConnectedState = BaseRestoredState & {
+  type: 'ConnectedState';
   block: number;
   chain: ChainState;
 };
+
+export type State = InitialState | RestoredState | ConnectedState;
+
+export type NewReportAction = {
+  type: 'NewReportAction';
+  report: Report;
+};
+
+export type SetRestoredAction = PersistedDataContext & {
+  type: 'SetRestoredAction';
+  db: IDBDatabase;
+  network: Network;
+};
+
+export type SetAccountsAction = {
+  type: 'SetAccountsAction';
+  connectedAccounts?: string[];
+};
+
+export type UpdateConnectivityAction = {
+  type: 'UpdateConnectivityAction';
+  connectivity: Connectivity;
+};
+
+export type NewFinalizedBlockAction = BaseConnected & {
+  type: 'NewFinalizedBlockAction';
+  block: number;
+  chain: ChainState;
+};
+
+type Offline = {
+  type: 'Offline';
+};
+
+type Online = {
+  type: 'Online';
+};
+
+type BaseConnected = {
+  api: ApiPromise;
+  endpoints: string[];
+};
+
+type Connected = BaseConnected & {
+  type: 'Connected';
+};
+
+type Following = BaseConnected & {
+  type: 'Following';
+};
+
+export type Connectivity = Offline | Online | Connected | Following;
+
+export function apiFromConnectivity(
+  connectivity: Connectivity
+): ApiPromise | null {
+  const { type } = connectivity;
+  if (type == 'Connected' || type == 'Following') {
+    return connectivity.api;
+  }
+  return null;
+}
 
 export type CastVoteAction = {
   type: 'CastVoteAction';
@@ -106,11 +143,11 @@ export type CastVoteAction = {
 };
 
 export type Action =
+  | NewReportAction
+  | SetAccountsAction
   | SetRestoredAction
-  | SetOfflineAction
-  | SetConnectingAction
-  | SetSyncingAction
-  | SetSyncedAction
+  | UpdateConnectivityAction
+  | NewFinalizedBlockAction
   | CastVoteAction;
 
 /**
@@ -140,67 +177,78 @@ export function filterToBeVotedReferenda(
   return new Map([...referenda].filter(([index]) => !votes.has(index)));
 }
 
-const initialState = {
-  chain: { referenda: new Map(), tracks: new Map() },
-  votes: new Map(),
-};
+function withNewReport(previousState: State, report: Report): State {
+  const previousReports = previousState.reports || [];
+  return {
+    ...previousState,
+    reports: [report, ...previousReports],
+  };
+}
 
-function baseRestoredState(state: State): BaseRestoredState {
-  switch (state.type) {
-    // Some of those transitions do not happen; still fallback to safe values
-    case 'InitialState':
-      return {
-        since: new Date(),
-        ...initialState,
-      };
-    case 'ConnectingState':
-    case 'OfflineState':
-    case 'SyncedState':
-    case 'SyncingState':
-    case 'RestoredState':
-      return state;
-  }
+function withFailedTransition(previousState: State): State {
+  return withNewReport(previousState, {
+    type: 'Error',
+    message: `Incorrect transition: ${previousState.type}`,
+  });
 }
 
 function reducer(previousState: State, action: Action): State {
+  // Note that unlucky timing might lead to overstepping changes (triggered via listeners registered just above)
+  // So applying changes must be indempotent
   switch (action.type) {
-    case 'SetRestoredAction':
+    case 'SetAccountsAction': {
+      const { connectedAccounts } = action;
       return {
-        type: 'RestoredState',
-        since: new Date(),
-        chain: action.chain,
-        votes: action.votes,
-      };
-    case 'SetOfflineAction': {
-      const since =
-        previousState.type == 'OfflineState' ? previousState.since : new Date();
-      const retryCount =
-        previousState.type == 'OfflineState' ? previousState.retryCount++ : 0;
-      return {
-        ...baseRestoredState(previousState),
-        type: 'OfflineState',
-        since,
-        retryCount,
+        ...previousState,
+        connectedAccounts,
       };
     }
-    case 'SetConnectingAction':
+    case 'SetRestoredAction': {
+      const { db, network, votes } = action;
       return {
-        ...baseRestoredState(previousState),
-        type: 'ConnectingState',
+        ...previousState,
+        type: 'RestoredState',
+        db,
+        network,
+        votes,
       };
-    case 'SetSyncingAction':
-      return {
-        ...baseRestoredState(previousState),
-        type: 'SyncingState',
-        api: action.api,
-      };
-    case 'SetSyncedAction': {
-      return {
-        ...baseRestoredState(previousState),
-        type: 'SyncedState',
-        api: action.api,
-        chain: action.chain,
-      };
+    }
+    case 'UpdateConnectivityAction': {
+      const { connectivity } = action;
+      if ('connectivity' in previousState) {
+        return {
+          ...previousState,
+          connectivity,
+        };
+      } else {
+        return withFailedTransition(previousState);
+      }
+    }
+    case 'NewReportAction': {
+      return withNewReport(previousState, action.report);
+    }
+    case 'NewFinalizedBlockAction': {
+      const { api, endpoints, block, chain } = action;
+      if (previousState.type == 'ConnectedState') {
+        // Already connected, update connectivity
+        // But do not update chain details
+        return {
+          ...previousState,
+          connectivity: { type: 'Following', api, endpoints },
+          block: previousState.block,
+          chain: previousState.chain,
+        };
+      } else if (previousState.type == 'RestoredState') {
+        // First block received
+        return {
+          ...previousState,
+          type: 'ConnectedState',
+          block,
+          chain,
+        };
+      } else {
+        return withFailedTransition(previousState);
+      }
     }
     case 'CastVoteAction':
       if ('votes' in previousState) {
@@ -211,7 +259,7 @@ function reducer(previousState: State, action: Action): State {
           votes: newVotes,
         };
       } else {
-        return previousState;
+        return withFailedTransition(previousState);
       }
   }
 }
@@ -220,31 +268,40 @@ function reducer(previousState: State, action: Action): State {
 
 export const CHAINSTATE_STORE_NAME = `chain`;
 export const VOTE_STORE_NAME = `votes`;
-// TODO reflect correct network
-export const DB_NAME = 'polkadot/governance/kusama';
 export const DB_VERSION = 1;
 export const STORES = [
   { name: CHAINSTATE_STORE_NAME },
   { name: VOTE_STORE_NAME },
 ];
 
-async function restorePersisted(db: IDBDatabase): Promise<Context> {
-  const [chain, votesRaw] = await Promise.all([
-    latest<ChainState>(db, CHAINSTATE_STORE_NAME),
-    all<AccountVote>(db, VOTE_STORE_NAME),
-  ]);
-  // Only consider vote that still match existing referenda
-  const votes = votesRaw as Map<number, AccountVote>;
-  votes.forEach(async (_, index) => {
-    if (!chain?.value.referenda.has(index)) {
-      votes.delete(index);
-    } else {
-      // Remove older votes that do not match existing referendum anymore
-      await remove(db, VOTE_STORE_NAME, index);
-    }
-  });
+const BASE_DB_NAME = 'polkadot/governance';
+
+export function dbNameFor(network: Network): string {
+  return `${BASE_DB_NAME}/${network.toString()}`;
+}
+
+export async function networksFromPersistence(): Promise<Network[]> {
+  const databases = await indexedDB.databases();
+  const names = databases
+    .filter((database) => database.name?.startsWith(BASE_DB_NAME))
+    .map((database) => database.name) as string[];
+  return names
+    .map(Network.parse)
+    .filter(
+      (network): network is { type: 'ok'; value: Network } =>
+        network.type == 'ok'
+    )
+    .map((network) => network.value);
+}
+
+async function restorePersisted(
+  db: IDBDatabase
+): Promise<PersistedDataContext> {
+  const votes = (await all<AccountVote>(db, VOTE_STORE_NAME)) as Map<
+    number,
+    AccountVote
+  >;
   return {
-    chain: chain?.value || initialState.chain,
     votes,
   };
 }
@@ -255,25 +312,21 @@ export async function fetchChainState(api: {
 }): Promise<ChainState> {
   const tracks = getAllTracks(api);
   const referenda = await getAllReferenda(api);
+  // TODO add votings
   return { tracks, referenda };
 }
 
 export class Updater {
+  readonly #state;
   readonly #dispatch;
-  #cleaner: (() => void) | undefined = undefined;
 
-  constructor(dispatch: Dispatch<Action>) {
+  constructor(state: State, dispatch: Dispatch<Action>) {
+    this.#state = state;
     this.#dispatch = dispatch;
   }
 
   async start() {
-    this.#cleaner = await updateChainState(this.#dispatch);
-  }
-
-  stop() {
-    if (this.#cleaner) {
-      this.#cleaner();
-    }
+    await updateChainState(this.#state, this.#dispatch);
   }
 
   async castVote(index: number, vote: AccountVote) {
@@ -282,7 +335,20 @@ export class Updater {
       index,
       vote,
     });
-    // TODO persist
+
+    // Persist votes before they are broadcasted on chain
+    if (this.#state.type == 'ConnectedState') {
+      await save(this.#state.db, VOTE_STORE_NAME, index, vote);
+    } else {
+      await this.newReport({ type: 'Error', message: '' });
+    }
+  }
+
+  async newReport(report: Report) {
+    this.#dispatch({
+      type: 'NewReportAction',
+      report,
+    });
   }
 }
 
@@ -296,9 +362,9 @@ export class Updater {
 export function useLifeCycle(): [State, Updater] {
   const [state, dispatch] = useReducer(reducer, {
     type: 'InitialState',
-    since: new Date(),
+    connectivity: { type: navigator.onLine ? 'Online' : 'Offline' },
   });
-  const updater = new Updater(dispatch);
+  const updater = new Updater(state, dispatch);
 
   useEffect(() => {
     async function start() {
@@ -306,143 +372,248 @@ export function useLifeCycle(): [State, Updater] {
     }
 
     start();
-
-    return () => updater.stop();
   }, []);
 
   return [state, updater];
 }
 
-async function moveToOnline(
+/**
+ * Called when the connected network has changed.
+ * Underlying `indexeddb`, `api` and associated resources will refreshed.
+ * Also calls `dispatchEndpointsChange`.
+ *
+ * @param network
+ * @param dispatch
+ */
+async function dispatchNetworkChange(
   dispatch: Dispatch<Action>,
-  endpoints: string[]
-): Promise<() => void> {
+  network: Network,
+  rpcParam?: string
+) {
+  const db = await open(dbNameFor(network), STORES, DB_VERSION);
+  const { votes } = await restorePersisted(db);
   dispatch({
-    type: 'SetConnectingAction',
+    type: 'SetRestoredAction',
+    db,
+    network,
+    votes,
   });
 
+  dispatchEndpointsParamChange(dispatch, network, rpcParam);
+}
+
+function dispatchNewReport(dispatch: Dispatch<Action>, report: Report) {
+  dispatch({
+    type: 'NewReportAction',
+    report,
+  });
+}
+
+async function dispatchEndpointsParamChange(
+  dispatch: Dispatch<Action>,
+  network: Network,
+  rpcParam?: string
+) {
+  if (rpcParam) {
+    const endpoints = extractEndpointsFromParam(rpcParam);
+    if (endpoints.type == 'ok') {
+      await dispatchEndpointsChange(dispatch, network, endpoints.value);
+    } else {
+      dispatchNewReport(dispatch, {
+        type: 'Error',
+        message: `Invalid 'rpc' param ${rpcParam}: ${endpoints.error}`,
+      });
+    }
+  } else {
+    await dispatchEndpointsChange(dispatch, network, endpointsFor(network));
+  }
+}
+
+async function dispatchEndpointsChange(
+  dispatch: Dispatch<Action>,
+  network: Network,
+  endpoints: string[]
+) {
   const api = await measured('api', () => timeout(newApi(endpoints), 5000));
   //  api.on('disconnected', () => console.log('api', 'disconnected'));
   //  api.on('connected', () => console.log('api', 'connected'));
   //  api.on('error', (error) => console.log('api', 'error', error));
 
   dispatch({
-    type: 'SetSyncingAction',
-    api,
+    type: 'UpdateConnectivityAction',
+    connectivity: { type: 'Connected', api, endpoints },
   });
 
-  // TODO api can be undefined, and will
-  const unsub = await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
-    //const number = await api.query.system.number();
-    //const events = await api.query.system.events();
-    const apiAt = await api.at(header.hash);
-    const chain = await fetchChainState(apiAt);
-    dispatch({
-      type: 'SetSyncedAction',
-      api,
-      block: header.number.toNumber(),
-      chain,
+  const connectedNetwork = networkFor(api);
+  if (network == connectedNetwork) {
+    return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
+      const apiAt = await api.at(header.hash);
+      const chain = await fetchChainState(apiAt);
+      dispatch({
+        type: 'NewFinalizedBlockAction',
+        api,
+        endpoints,
+        block: header.number.toNumber(),
+        chain,
+      });
     });
-  });
-
-  // TODO also load from polkassembly and others
-  // https://github.com/evan-liu/fetch-queue
-  // https://github.com/jkramp/fetch-queue
-  // https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide
-
-  return unsub;
+  } else {
+    dispatchNewReport(dispatch, {
+      type: 'Error',
+      message: `Provided Enpoints do not point to ${network}`,
+    });
+  }
 }
 
-/*eslint-disable-next-line @typescript-eslint/no-empty-function*/
-function emptyUnsub() {}
+function isValidEnpoint(endpoint: string): boolean {
+  try {
+    const url = new URL(endpoint);
+    return url.protocol === 'ws:' || url.protocol === 'wss:';
+  } catch (err) {
+    return false;
+  }
+}
 
-async function tryMoveToOnline(
-  dispatch: Dispatch<Action>
-): Promise<() => void> {
-  const { rpc, network } = extractParams(window.location.search, [
-    'rpc',
+export function validateEnpoints(endpoints: string[]): Result<string[]> {
+  const invalidEndpoints = endpoints.filter(
+    (endpoint) => !isValidEnpoint(endpoint)
+  );
+  if (invalidEndpoints.length !== 0) {
+    return err(
+      new Error(
+        `Some of provided rpcs are not valid endpoints: ${invalidEndpoints}`
+      )
+    );
+  }
+  return ok(endpoints);
+}
+
+function getSearchParams(search: string, params: string[]): string[] {
+  const searchParams = new URLSearchParams(search);
+  return Array.from(searchParams.entries())
+    .filter(([key]) => params.includes(key))
+    .map(([, value]) => value);
+}
+
+export type NetworkParams = {
+  networkParam?: string;
+  rpcParam?: string;
+};
+
+export function currentParams(): NetworkParams {
+  const [networkParam, rpcParam] = getSearchParams(window.location.search, [
     'network',
+    'rpc',
   ]);
-  const endpoints = deriveEnpoints(rpc, network);
-  if (endpoints.type == 'ok') {
-    return await moveToOnline(dispatch, endpoints.value);
-  } else {
-    // TODO Incorrect endpoints
-    return emptyUnsub;
-  }
+  return {
+    networkParam,
+    rpcParam,
+  };
 }
 
-async function moveToRestored(dispatch: Dispatch<Action>): Promise<() => void> {
-  if (navigator.onLine) {
-    return await tryMoveToOnline(dispatch);
-  } else {
-    dispatch({
-      type: 'SetOfflineAction',
-    });
-    return emptyUnsub;
+export function addParamsChangeListener(
+  onChange: (rpcParam?: string, networkParam?: string) => void
+) {
+  function onChangeWrapper(
+    onChange: (rpcParam?: string, networkParam?: string) => void
+  ): EventListenerOrEventListenerObject {
+    const { networkParam, rpcParam } = currentParams();
+    return () => onChange(rpcParam, networkParam);
   }
+  const wrapper = onChangeWrapper(onChange);
+  window.addEventListener('popstate', wrapper);
+  window.addEventListener('pushstate', wrapper);
+  window.addEventListener('replacestate', wrapper);
+  return wrapper;
+}
+
+export function removeQueryParamsChangeListener(
+  onChange: EventListenerOrEventListenerObject
+) {
+  window.removeEventListener('popstate', onChange);
+  window.removeEventListener('pushstate', onChange);
+  window.removeEventListener('replacestate', onChange);
+}
+
+function extractEndpointsFromParam(s: string): Result<string[]> {
+  return validateEnpoints(s.split('|'));
 }
 
 export async function updateChainState(
+  state: State,
   dispatch: Dispatch<Action>
-): Promise<() => void> {
-  //First setup listeners
+) {
+  // First setup listeners
 
-  addQueryParamsChangeListener(async () => {
+  /*addAccountListener((accounts) => {
+    // TODO get votings
+    // Update state from that
+
+  });*/
+
+  addParamsChangeListener(async (rpcParam?: string, networkParam?: string) => {
     // Track changes to network related query parameters
-    await moveToRestored(dispatch);
-    // TODO unsub
+    // Only consider values set, absent values are not consider (keep unchanged)
+    // If `network` is set, `endpoints` if unset will default to Network default
+    if (state.type == 'ConnectedState') {
+      if (networkParam) {
+        // `network` param is set and takes precedence, `endpoints` might
+        const network = Network.parse(networkParam);
+        if (network.type == 'ok') {
+          if (state.network != network.value) {
+            // Only react to network changes
+            await dispatchNetworkChange(dispatch, network.value, rpcParam);
+          }
+        } else {
+          dispatchNewReport(dispatch, {
+            type: 'Error',
+            message: `Invalid 'network' param ${networkParam}: ${network.error}`,
+          });
+        }
+      } else if (rpcParam) {
+        // Only `rpc` param is set, reconnect using those
+        dispatchEndpointsParamChange(dispatch, state.network, rpcParam);
+      } else {
+        // No network provided; noop
+      }
+    } else {
+      // Transition impossible; noop
+    }
   });
 
   window.addEventListener('online', async () => {
-    await tryMoveToOnline(dispatch);
+    dispatch({
+      type: 'UpdateConnectivityAction',
+      connectivity: { type: 'Online' },
+    });
   });
 
   window.addEventListener('offline', () =>
     dispatch({
-      type: 'SetOfflineAction',
+      type: 'UpdateConnectivityAction',
+      connectivity: { type: 'Offline' },
     })
   );
 
-  const db = await open(DB_NAME, STORES, DB_VERSION);
-  // Then restore persisted state
-  try {
-    const { chain, votes } = await restorePersisted(db);
-    dispatch({
-      type: 'SetRestoredAction',
-      chain,
-      votes,
-    });
-  } catch (e) {
-    // Error while restoring
-    // TODO offer user to clear out persistency and continue
-    console.error('Error while restoring persistency', e);
+  window.addEventListener('unhandledrejection', (event) =>
+    dispatchNewReport(dispatch, {
+      type: 'Error',
+      message: `Unhandled promise rejection for ${event.promise}: ${event.reason}`,
+    })
+  );
+
+  const { networkParam, rpcParam } = currentParams();
+  if (networkParam) {
+    const network = Network.parse(networkParam);
+    if (network.type == 'ok') {
+      await dispatchNetworkChange(dispatch, network.value, rpcParam);
+    } else {
+      dispatchNewReport(dispatch, {
+        type: 'Error',
+        message: network.error.message,
+      });
+    }
+  } else {
+    await dispatchNetworkChange(dispatch, DEFAULT_NETWORK, rpcParam);
   }
-
-  // And finally keep track of chain state
-  return await moveToRestored(dispatch);
-
-  // Note that unlucky timing might lead to overstepping changes (triggered via listeners registered just above)
-  // So applying changes must be indempotent
 }
-
-/*
-
-      const currentAddress = connectedAccount?.account?.address;
-      if (currentAddress) {
-        // Go through user votes and restore the ones relevant to `referenda`
-        const chainVotings = await measured('votingFor', () =>
-          getVotingFor(api, currentAddress)
-        );
-        chainVotings.forEach((voting) => {
-          if (voting.type === 'casting') {
-            voting.votes.forEach((accountVote, index) => {
-              if (referenda.has(index)) {
-                accountVotes.set(index, accountVote);
-              }
-            });
-          }
-        });
-      }
-
-*/

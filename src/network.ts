@@ -1,4 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
+import { err, ok, Result } from './utils';
 import { capitalizeFirstLetter } from './utils/string';
 
 export enum Network {
@@ -12,8 +13,9 @@ export const DEFAULT_NETWORK = DEFAULT_NETWORK_ENV
   : Network.Kusama;
 
 export namespace Network {
-  export function parse(network: string): Network | null {
-    return capitalizeFirstLetter(network) as Network;
+  export function parse(s: string): Result<Network> {
+    const network = capitalizeFirstLetter(s) as Network;
+    return network ? ok(network) : err(new Error(`Unrecognized network ${s}`));
   }
 }
 

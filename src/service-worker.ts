@@ -1,17 +1,17 @@
 import { manifest, version } from '@parcel/service-worker';
 import {
-  DB_NAME,
   DB_VERSION,
   STORES,
   VOTE_STORE_NAME,
   filterOngoingReferenda,
   filterToBeVotedReferenda,
   fetchChainState,
-  CHAINSTATE_STORE_NAME,
+  dbNameFor,
+  networksFromPersistence,
 } from './chainstate';
-import { DEFAULT_NETWORK, endpointsFor } from './network';
+import { endpointsFor, Network } from './network';
 import { AccountVote, Referendum } from './types';
-import { all, latest, open, save } from './utils/indexeddb';
+import { all, open } from './utils/indexeddb';
 import { newApi } from './utils/polkadot-api';
 import { REFERENDA_UPDATES_TAG } from './utils/service-worker';
 
@@ -104,39 +104,38 @@ function showNotification(referenda: Map<number, Referendum>) {
   });
 }
 
+async function networks(): Promise<Network[]> {
+  return networksFromPersistence();
+}
+
 self.addEventListener('periodicsync', async (event: SyncEvent) => {
   if (event.tag === REFERENDA_UPDATES_TAG) {
     // Retrieve referenda updates
-    const api = await newApi(endpointsFor(DEFAULT_NETWORK)); // TODO go through all user accessed networks
-    const db = await open(DB_NAME, STORES, DB_VERSION);
-    const number = await (await api.query.system.number()).toNumber();
+    for (const network of await networks()) {
+      const api = await newApi(endpointsFor(network));
+      const db = await open(dbNameFor(network), STORES, DB_VERSION);
+      const number = (await api.query.system.number()).toNumber();
 
-    const latestChainstate = await latest(db, CHAINSTATE_STORE_NAME);
-    if (latestChainstate) {
-      if (number <= latestChainstate.key) {
-        // No chain progress, skip block
-        return;
+      // TODO filter based on current votings
+      // Get referenda for latest block
+      const hash = await api.rpc.chain.getBlockHash(number);
+      const apiAt = await api.at(hash);
+      const chain = await fetchChainState(apiAt);
+
+      // Extract to be voted on referenda based on current votes
+      const ongoingReferenda = filterOngoingReferenda(chain.referenda);
+      const votes = (await all<AccountVote>(db, VOTE_STORE_NAME)) as Map<
+        number,
+        AccountVote
+      >;
+      // TODO filter old votes
+      const referendaToBeVotedOn = filterToBeVotedReferenda(
+        ongoingReferenda,
+        votes
+      );
+      if (referendaToBeVotedOn.size > 0) {
+        showNotification(referendaToBeVotedOn);
       }
-    }
-
-    const hash = await api.rpc.chain.getBlockHash(number);
-    const apiAt = await api.at(hash);
-    const chain = await fetchChainState(apiAt);
-
-    // Store chainstate for latest block
-    await save(db, CHAINSTATE_STORE_NAME, number, chain);
-
-    const ongoingReferenda = filterOngoingReferenda(chain.referenda);
-    const votes = (await all<AccountVote>(db, VOTE_STORE_NAME)) as Map<
-      number,
-      AccountVote
-    >;
-    const referendaToBeVotedOn = filterToBeVotedReferenda(
-      ongoingReferenda,
-      votes
-    );
-    if (referendaToBeVotedOn.size > 0) {
-      showNotification(referendaToBeVotedOn);
     }
   }
 });

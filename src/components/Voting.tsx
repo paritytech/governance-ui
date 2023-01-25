@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { ReferendaDeck } from './Referenda';
 import { createStandardAccountVote, vote } from '../chain/conviction-voting';
-import { DB_NAME, DB_VERSION, VOTE_STORE_NAME } from '../chainstate';
+import { dbNameFor, DB_VERSION, VOTE_STORE_NAME } from '../chainstate';
 import {
   Button,
   Card,
@@ -11,7 +11,7 @@ import {
   Text,
 } from '../ui/nextui';
 import { SigningAccount, useAccount } from '../contexts';
-import { Network } from '../network';
+import { Network, networkFor } from '../network';
 import { AccountVote, ReferendumOngoing, Track } from '../types';
 import { clear, open } from '../utils/indexeddb';
 
@@ -83,7 +83,7 @@ export function VotesSummaryTable({
   api,
   accountVotes,
 }: {
-  api: ApiPromise;
+  api: ApiPromise | null;
   accountVotes: Map<number, AccountVote>;
 }): JSX.Element {
   const { connectedAccount } = useAccount();
@@ -105,7 +105,7 @@ export function VotesSummaryTable({
         })}
       </div>
       <Spacer y={1} />
-      {connectedAccount ? (
+      {api && connectedAccount ? (
         <Button
           color="primary"
           label="vote"
@@ -114,7 +114,7 @@ export function VotesSummaryTable({
 
             // Clear user votes
             const db = await open(
-              DB_NAME,
+              dbNameFor(networkFor(api)),
               [{ name: VOTE_STORE_NAME }],
               DB_VERSION
             );
@@ -123,7 +123,7 @@ export function VotesSummaryTable({
         >
           Submit votes
         </Button>
-      ) : (
+      ) : api ? (
         <Text
           color="secondary"
           css={{
@@ -131,6 +131,15 @@ export function VotesSummaryTable({
           }}
         >
           Connect to submit your votes
+        </Text>
+      ) : (
+        <Text
+          color="secondary"
+          css={{
+            textAlign: 'center',
+          }}
+        >
+          Connection with chain lost
         </Text>
       )}
     </div>

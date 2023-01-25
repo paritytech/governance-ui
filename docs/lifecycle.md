@@ -1,21 +1,26 @@
 ```mermaid
 stateDiagram-v2
-    state Connectivity <<choice>>
-    [*] --> Starting
-    Starting --> Restoring
-    Restoring --> Connectivity
-    Connectivity --> Offline
-    Connectivity --> Online : navigator.onLine
-    Offline --> Online : navigator.onLine
-    Online --> Offline
+    [*] --> Restored: restoring
+
+    NetworkChange --> Restored
+
+    EndpointsChange --> Online
+
+    state Restored {
+        [*] --> Offline
+        [*] --> Online : navigator.onLine
+        Offline --> Online : navigator.onLine
+        Online --> Offline
+    }
+
     state Online {
-        [*] --> Connecting
-        Connecting --> Sync
-        Sync --> Connecting : Reconnect
-        state Sync {
-            [*] --> Syncing
-            Syncing --> Synced : Access chain
-            Synced --> Syncing : Receive new head
+        [*] --> Connected: Connecting
+        Connected --> Disconnected
+        Disconnected --> Connected : Reconnecting
+        state Connected {
+            [*] --> Finalized
+            Finalized --> Synced : Access chain
+            Synced --> Finalized : Receive new head
         }
     }
 ```

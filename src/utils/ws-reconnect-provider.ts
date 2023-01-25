@@ -72,3 +72,6 @@ export class WsReconnectProvider extends WsProvider {
 // https://stackoverflow.com/questions/13797262/how-to-reconnect-to-websocket-after-close-connection
 // https://stackoverflow.com/questions/3780511/reconnection-of-client-when-server-reboots-in-websocket
 // https://github.com/pladaria/reconnecting-websocket/blob/master/reconnecting-websocket.ts
+
+// https://paritytech.github.io/polkadot_network_directory/chains.json
+// https://paritytech.github.io/polkadot_network_directory/registry.json
