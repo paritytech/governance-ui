@@ -1,22 +1,13 @@
 import { WsProvider } from '@polkadot/api';
 
 export class WsReconnectProvider extends WsProvider {
-  static CHECKER_INTERVAL = 5_000; // in ms
+  static CHECKER_INTERVAL_MS = 5_000;
+  static PER_REQUEST_TIMEOUT_MS = 5_000;
 
   #checkerId: ReturnType<typeof setTimeout> | undefined; // Workaround typescript limitation, see https://stackoverflow.com/a/56239226
 
   constructor(endpoints: string[]) {
-    super(endpoints, false, undefined, 5_000);
-    // timeout: how long to wait per request before an error is sent back
-    // Checked every TIMEOUT_INTERVAL = 5_000
-
-    // WsProvider tries to reconnect every RETRY_DELAY=2_500 when onSocketClose is called
-
-    // events: connected, disconnected, error
-
-    // Spawn a setInterval that monitors stats
-
-    // Remove from endpoints RPC that looks stalled or dead
+    super(endpoints, false, undefined, WsReconnectProvider.PER_REQUEST_TIMEOUT_MS);
 
     this.connect();
     this.on('disconnected', () => console.log('DISCONNECTED'));
@@ -25,7 +16,7 @@ export class WsReconnectProvider extends WsProvider {
 
   async reconnect() {
     await this.disconnect();
-    await this.reconnect();
+    await this.connect();
   }
 
   // TODO manually handle connect, retry
@@ -54,7 +45,7 @@ export class WsReconnectProvider extends WsProvider {
 
     this.#checkerId = setInterval(
       this.#checker.bind(this),
-      WsReconnectProvider.CHECKER_INTERVAL
+      WsReconnectProvider.CHECKER_INTERVAL_MS
     );
 
     await result;
@@ -73,5 +64,6 @@ export class WsReconnectProvider extends WsProvider {
 // https://stackoverflow.com/questions/3780511/reconnection-of-client-when-server-reboots-in-websocket
 // https://github.com/pladaria/reconnecting-websocket/blob/master/reconnecting-websocket.ts
 
+// TODO rotate URL based on those:
 // https://paritytech.github.io/polkadot_network_directory/chains.json
 // https://paritytech.github.io/polkadot_network_directory/registry.json
