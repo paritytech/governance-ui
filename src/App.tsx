@@ -26,7 +26,7 @@ function filterOldVotes(
   votes: Map<number, AccountVote>,
   referenda: Map<number, ReferendumOngoing>
 ): Map<number, AccountVote> {
-  return new Map(Array.from(votes).filter(([index]) => !referenda.has(index)));
+  return new Map(Array.from(votes).filter(([index]) => referenda.has(index)));
 }
 
 /**
@@ -67,7 +67,7 @@ export function App(): JSX.Element {
       // TODO Restore on chain votings for connected user
       //const onChainVotes = extractUserVotes(votings, referenda);
       const allVotes = new Map([...currentVotes /*, ...onChainVotes */]);
-      if (isVotingComplete(ongoingReferenda, votes)) {
+      if (isVotingComplete(ongoingReferenda, allVotes)) {
         // User went through all referenda
         const api = apiFromConnectivity(connectivity);
         return <VotesSummaryTable api={api} accountVotes={allVotes} />;
