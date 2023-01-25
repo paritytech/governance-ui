@@ -1,14 +1,20 @@
 import { Dispatch, useEffect, useReducer } from 'react';
-import { ApiPromise } from '@polkadot/api';
 import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
-import { getAllReferenda, getAllTracks } from './chain/referenda';
-import { DEFAULT_NETWORK, endpointsFor, Network, networkFor } from './network';
-import { AccountVote, Referendum, ReferendumOngoing, Track } from './types';
-import { err, ok, Result } from './utils';
-import { all, open, save } from './utils/indexeddb';
-import { measured } from './utils/performance';
-import { newApi } from './utils/polkadot-api';
-import { timeout } from './utils/promise';
+import { getAllReferenda, getAllTracks } from '../chain/referenda';
+import { DEFAULT_NETWORK, endpointsFor, Network, networkFor } from '../network';
+import { AccountVote, Referendum, ReferendumOngoing } from '../types';
+import { err, ok, Result } from '../utils';
+import { all, open, save } from '../utils/indexeddb';
+import { measured } from '../utils/performance';
+import { newApi } from '../utils/polkadot-api';
+import { timeout } from '../utils/promise';
+import {
+  Action,
+  ChainState,
+  PersistedDataContext,
+  Report,
+  State,
+} from './types';
 
 // Auto follow chain updates? Only if user settings? Show notif? Only if impacting change?
 // Revisit if/when ChainState is persisted
@@ -29,126 +35,6 @@ import { timeout } from './utils/promise';
 // if no endpoints provided, default to network endpoints
 // endpoints and network: must match network
 // only endpoints: sets network
-
-export type ChainState = {
-  tracks: Map<number, Track>;
-  referenda: Map<number, Referendum>;
-};
-
-type PersistedDataContext = {
-  votes: Map<number, AccountVote>;
-};
-
-// States
-
-export type Error = {
-  type: 'Error';
-  message: string;
-};
-
-export type Report = Error;
-
-type BaseState = {
-  reports?: Report[];
-  connectedAccount?: string;
-  connectivity: Connectivity;
-};
-
-type BaseRestoredState = BaseState &
-  PersistedDataContext & {
-    db: IDBDatabase;
-    network: Network;
-  };
-
-export type InitialState = BaseState & {
-  type: 'InitialState';
-};
-
-export type RestoredState = BaseRestoredState & {
-  type: 'RestoredState';
-};
-
-export type ConnectedState = BaseRestoredState & {
-  type: 'ConnectedState';
-  block: number;
-  chain: ChainState;
-};
-
-export type State = InitialState | RestoredState | ConnectedState;
-
-export type NewReportAction = {
-  type: 'NewReportAction';
-  report: Report;
-};
-
-export type SetRestoredAction = PersistedDataContext & {
-  type: 'SetRestoredAction';
-  db: IDBDatabase;
-  network: Network;
-};
-
-export type SetConnectedAccountAction = {
-  type: 'SetConnectedAccountAction';
-  connectedAccount?: string;
-};
-
-export type UpdateConnectivityAction = {
-  type: 'UpdateConnectivityAction';
-  connectivity: Connectivity;
-};
-
-export type NewFinalizedBlockAction = BaseConnected & {
-  type: 'NewFinalizedBlockAction';
-  block: number;
-  chain: ChainState;
-};
-
-type Offline = {
-  type: 'Offline';
-};
-
-type Online = {
-  type: 'Online';
-};
-
-type BaseConnected = {
-  api: ApiPromise;
-  endpoints: string[];
-};
-
-type Connected = BaseConnected & {
-  type: 'Connected';
-};
-
-type Following = BaseConnected & {
-  type: 'Following';
-};
-
-export type Connectivity = Offline | Online | Connected | Following;
-
-export function apiFromConnectivity(
-  connectivity: Connectivity
-): ApiPromise | null {
-  const { type } = connectivity;
-  if (type == 'Connected' || type == 'Following') {
-    return connectivity.api;
-  }
-  return null;
-}
-
-export type CastVoteAction = {
-  type: 'CastVoteAction';
-  index: number;
-  vote: AccountVote;
-};
-
-export type Action =
-  | NewReportAction
-  | SetConnectedAccountAction
-  | SetRestoredAction
-  | UpdateConnectivityAction
-  | NewFinalizedBlockAction
-  | CastVoteAction;
 
 /**
  * @param referenda

@@ -8,7 +8,7 @@ import {
   fetchChainState,
   dbNameFor,
   networksFromPersistence,
-} from './chainstate';
+} from './lifecycle';
 import { endpointsFor, Network } from './network';
 import { AccountVote, Referendum } from './types';
 import { all, open } from './utils/indexeddb';

@@ -1,12 +1,12 @@
 import {
-  apiFromConnectivity,
   filterOngoingReferenda,
   filterToBeVotedReferenda,
   useLifeCycle,
-} from './chainstate';
+} from './lifecycle';
 import { LoadingPanel, VotesSummaryTable, VotingPanel } from './components';
 import { AccountVote, Referendum, ReferendumOngoing, Voting } from './types';
 import { areEquals } from './utils/set';
+import { apiFromConnectivity } from './lifecycle/types';
 
 /**
  * @param referenda

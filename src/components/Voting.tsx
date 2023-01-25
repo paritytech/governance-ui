@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { ReferendaDeck } from './Referenda';
 import { createStandardAccountVote, vote } from '../chain/conviction-voting';
-import { dbNameFor, DB_VERSION, VOTE_STORE_NAME } from '../chainstate';
+import { dbNameFor, DB_VERSION, VOTE_STORE_NAME } from '../lifecycle';
 import {
   Button,
   Card,
