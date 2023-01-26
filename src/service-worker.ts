@@ -1,4 +1,5 @@
 import { manifest, version } from '@parcel/service-worker';
+import { AccountStorage } from './contexts';
 import {
   DB_VERSION,
   STORES,
@@ -8,6 +9,7 @@ import {
   fetchChainState,
   dbNameFor,
   networksFromPersistence,
+  getAllVotes,
 } from './lifecycle';
 import { endpointsFor, Network } from './network';
 import { AccountVote, Referendum } from './types';
@@ -110,28 +112,33 @@ async function networks(): Promise<Network[]> {
 
 self.addEventListener('periodicsync', async (event: SyncEvent) => {
   if (event.tag === REFERENDA_UPDATES_TAG) {
+    const connectedAccount = AccountStorage.getConnectedAddress();
     // Retrieve referenda updates
     for (const network of await networks()) {
       const api = await newApi(endpointsFor(network));
       const db = await open(dbNameFor(network), STORES, DB_VERSION);
       const number = (await api.query.system.number()).toNumber();
 
-      // TODO filter based on current votings
       // Get referenda for latest block
       const hash = await api.rpc.chain.getBlockHash(number);
       const apiAt = await api.at(hash);
-      const chain = await fetchChainState(apiAt);
+      const { allVotings, referenda } = await fetchChainState(apiAt);
 
       // Extract to be voted on referenda based on current votes
-      const ongoingReferenda = filterOngoingReferenda(chain.referenda);
+      const ongoingReferenda = filterOngoingReferenda(referenda);
       const votes = (await all<AccountVote>(db, VOTE_STORE_NAME)) as Map<
         number,
         AccountVote
       >;
-      // TODO filter old votes
+      const allVotes = getAllVotes(
+        votes,
+        allVotings,
+        ongoingReferenda,
+        connectedAccount
+      );
       const referendaToBeVotedOn = filterToBeVotedReferenda(
         ongoingReferenda,
-        votes
+        allVotes
       );
       if (referendaToBeVotedOn.size > 0) {
         showNotification(referendaToBeVotedOn);

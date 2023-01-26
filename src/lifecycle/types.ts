@@ -36,7 +36,7 @@ export type Report = Warning | Error;
 
 type BaseState = {
   reports?: Report[];
-  connectedAccount?: string;
+  connectedAccount: string | null;
   connectivity: Connectivity;
 };
 
@@ -78,7 +78,7 @@ export type SetRestoredAction = PersistedDataContext & {
 
 export type SetConnectedAccountAction = {
   type: 'SetConnectedAccountAction';
-  connectedAccount?: Address;
+  connectedAccount: Address | null;
 };
 
 export type UpdateConnectivityAction = {

@@ -22,11 +22,6 @@ import {
 // Auto follow chain updates? Only if user settings? Show notif? Only if impacting change?
 // Revisit if/when ChainState is persisted
 
-// TODO also load from polkassembly and others
-// https://github.com/evan-liu/fetch-queue
-// https://github.com/jkramp/fetch-queue
-// https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide
-
 // Actions
 // TODO
 // Heartbeat (to detect no new finalized blocks are reeived, keep track of delta between last received and now)
@@ -38,6 +33,64 @@ import {
 // if no endpoints provided, default to network endpoints
 // endpoints and network: must match network
 // only endpoints: sets network
+
+/**
+ * @param votes
+ * @param referenda
+ * @returns filter away `votes` that do not map to `referenda`
+ */
+function filterOldVotes(
+  votes: Map<number, AccountVote>,
+  referenda: Map<number, ReferendumOngoing>
+): Map<number, AccountVote> {
+  return new Map(Array.from(votes).filter(([index]) => referenda.has(index)));
+}
+
+/**
+ * @param votings
+ * @param referenda
+ * @returns
+ */
+function extractUserVotes(
+  address: Address,
+  allVotings: Map<Address, Map<number, Voting>>,
+  referenda: Map<number, Referendum>
+): Map<number, AccountVote> {
+  // Go through user votes and restore the ones relevant to `referenda`
+  const votes = new Map<number, AccountVote>();
+  const votings = allVotings.get(address);
+  if (votings) {
+    votings.forEach((voting) => {
+      if (voting.type === 'casting') {
+        voting.votes.forEach((accountVote, index) => {
+          if (referenda.has(index)) {
+            votes.set(index, accountVote);
+          }
+        });
+      }
+    });
+  }
+  return votes;
+}
+
+export function getAllVotes(
+  votes: Map<number, AccountVote>,
+  allVotings: Map<Address, Map<number, Voting>>,
+  referenda: Map<number, ReferendumOngoing>,
+  connectedAccount: Address | null
+): Map<number, AccountVote> {
+  const currentVotes = filterOldVotes(votes, referenda);
+  if (connectedAccount) {
+    const onChainVotes = extractUserVotes(
+      connectedAccount,
+      allVotings,
+      referenda
+    );
+    return new Map([...currentVotes, ...onChainVotes]);
+  } else {
+    return currentVotes;
+  }
+}
 
 /**
  * @param referenda
@@ -290,6 +343,7 @@ export function useLifeCycle(): [State, Updater] {
   const [state, dispatch] = useReducer(reducer, {
     type: 'InitialState',
     connectivity: { type: navigator.onLine ? 'Online' : 'Offline' },
+    connectedAccount: null,
   });
   const updater = new Updater(state, dispatch);
 
@@ -490,9 +544,8 @@ export async function updateChainState(
   // First setup listeners
 
   /*addAccountListener((accounts) => {
-    // TODO get votings
-    // Update state from that
-
+    // TODO
+    // Updated votings whenever selected accounts are updated
   });*/
 
   addParamsChangeListener(async (rpcParam?: string, networkParam?: string) => {

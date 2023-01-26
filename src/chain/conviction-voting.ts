@@ -1,3 +1,4 @@
+import { QueryableStorage, SubmittableExtrinsics } from '@polkadot/api/types';
 import { StorageKey } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
 import { u16 } from '@polkadot/types-codec';
@@ -7,8 +8,8 @@ import type {
   PalletConvictionVotingVoteVoting,
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
+import { Address } from '../lifecycle/types';
 import { AccountVote, Conviction, Voting } from '../types';
-import { QueryableStorage, SubmittableExtrinsics } from '@polkadot/api/types';
 
 export function createStandardAccountVote(
   aye: boolean,
@@ -110,7 +111,7 @@ function toVotings(
 
 export async function getVotingFor(
   api: { query: QueryableStorage<'promise'> },
-  address: string
+  address: Address
 ): Promise<Map<number, Voting>> {
   return toVotings(await api.query.convictionVoting.votingFor.entries(address));
 }
