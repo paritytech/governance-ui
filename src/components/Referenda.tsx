@@ -53,7 +53,7 @@ const ReferendumCard = memo(
           className={styles.card}
           header={<Header index={index} title={title} track={track} />}
         >
-          <div className={styles.content}>
+          <div>
             {isHTML ? (
               <Text dangerouslySetInnerHTML={{ __html: content }} />
             ) : (
