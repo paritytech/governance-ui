@@ -7,7 +7,12 @@ export class WsReconnectProvider extends WsProvider {
   #checkerId: ReturnType<typeof setTimeout> | undefined; // Workaround typescript limitation, see https://stackoverflow.com/a/56239226
 
   constructor(endpoints: string[]) {
-    super(endpoints, false, undefined, WsReconnectProvider.PER_REQUEST_TIMEOUT_MS);
+    super(
+      endpoints,
+      false,
+      undefined,
+      WsReconnectProvider.PER_REQUEST_TIMEOUT_MS
+    );
 
     this.connect();
     this.on('disconnected', () => console.log('DISCONNECTED'));
