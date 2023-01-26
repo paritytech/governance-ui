@@ -22,7 +22,7 @@ jobs:
         run: yarn install --immutable --immutable-cache --check-cache
 
       - name: Checks
-        run: yarn all-checks
+        run: yarn checks:all
 
       - name: Audit
         run: yarn audit

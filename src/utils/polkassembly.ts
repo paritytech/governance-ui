@@ -1,14 +1,6 @@
 import { fetchQuery } from './graphql';
-import { Network } from './polkadot-api';
-
-export type Post = {
-  title: string;
-  content: string;
-};
-
-export type Referendum = {
-  posts: Array<Post>;
-};
+import { Network } from '../network';
+import { ReferendumDetails } from 'src/types';
 
 const referendum_posts_query = `
 query getReferendum($id: Int) {
@@ -70,14 +62,14 @@ function networkUrl(network: Network): string {
 export async function fetchReferendaV1(
   network: Network,
   id: number
-): Promise<Referendum> {
+): Promise<ReferendumDetails> {
   return fetchQuery(networkUrl(network), referendum_posts_query, { id: id });
 }
 
 export async function fetchReferenda(
   network: Network,
   id: number
-): Promise<Referendum> {
+): Promise<ReferendumDetails> {
   return fetchQuery(networkUrl(network), open_referendum_posts_query, {
     id: id,
   });

@@ -1,12 +1,15 @@
-import { memo, useEffect, useState } from 'react';
+import { memo, useState } from 'react';
 import { Remark } from 'react-remark';
 import { useSprings, animated } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
 import { createStandardAccountVote } from '../chain/conviction-voting';
 import { Card, Loading, Text } from '../ui/nextui';
-import { AccountVote, ReferendumOngoing, Track } from '../types';
-import { Network } from '../utils/polkadot-api';
-import { fetchReferenda, Post } from '../utils/polkassembly';
+import {
+  AccountVote,
+  ReferendumDetails,
+  ReferendumOngoing,
+  Track,
+} from '../types';
 import * as styles from './Referenda.module.css';
 
 function Header({
@@ -15,94 +18,61 @@ function Header({
   track,
 }: {
   index: number;
-  title: string;
-  track: Track;
+  title?: string;
+  track?: Track;
 }): JSX.Element {
   return (
     <div className={styles.header}>
       <Text h3 color="primary" className="block-ellipsis" css={{ m: '$8' }}>
         #{index} {title}
       </Text>
-      <Text className={styles.track} color="secondary">
-        #{track.name}
-      </Text>
+      {track && (
+        <Text className={styles.track} color="secondary">
+          #{track.name}
+        </Text>
+      )}
     </div>
   );
 }
 
-const MarkdownCard = memo(
+const ReferendumCard = memo(
   ({
     index,
-    title,
-    content,
+    details,
     track,
   }: {
     index: number;
-    title: string;
-    content: string;
-    track: Track;
+    details: ReferendumDetails | undefined;
+    track?: Track;
   }) => {
-    const isHTML = content.startsWith('<p'); // A bug in polkascan made some posts in HTML. They should always be markdown.
-    return (
-      <Card
-        className={styles.card}
-        header={<Header index={index} title={title} track={track} />}
-      >
-        <div>
-          {isHTML ? (
-            <Text dangerouslySetInnerHTML={{ __html: content }} />
-          ) : (
-            <Remark>{content}</Remark>
-          )}
-        </div>
-      </Card>
-    );
-  }
-);
-
-const ReferendumCard = memo(
-  ({
-    network,
-    index,
-    tracks,
-    referendum,
-  }: {
-    network: Network;
-    index: number;
-    tracks: Map<number, Track>;
-    referendum: ReferendumOngoing;
-  }) => {
-    const [details, setDetails] = useState<Post>();
-    const track = tracks.get(referendum.track);
-    const [error, setError] = useState<string>();
-
-    useEffect(() => {
-      async function fetchData() {
-        try {
-          const details = await fetchReferenda(network, index);
-          setDetails(details.posts[0]);
-        } catch {
-          setError('Failed to load data');
-        }
-      }
-      fetchData();
-    }, []);
-
-    if (error) {
-      return <div>{error}</div>;
-    } else if (!track) {
-      return <div>Unknown track ${referendum.track}</div>;
-    } else if (details) {
+    if (details && details.posts.length > 0) {
+      const { title, content } = details.posts[0];
+      const isHTML = content.startsWith('<p'); // A bug in polkascan made some posts in HTML. They should always be markdown.
       return (
-        <MarkdownCard
-          index={index}
-          title={details.title}
-          content={details.content}
-          track={track}
-        />
+        <Card
+          className={styles.card}
+          header={<Header index={index} title={title} track={track} />}
+        >
+          <div>
+            {isHTML ? (
+              <Text dangerouslySetInnerHTML={{ __html: content }} />
+            ) : (
+              <Remark>{content}</Remark>
+            )}
+          </div>
+        </Card>
       );
     } else {
-      return <Loading />;
+      return (
+        <Card
+          className={styles.card}
+          header={<Header index={index} track={track} />}
+        >
+          <div className="flex w-[32rem] flex-auto flex-col items-center justify-center">
+            <Loading />
+          </div>
+        </Card>
+      );
     }
   }
 );
@@ -119,14 +89,14 @@ const from = () => ({ x: 0, rot: 0, scale: 1.5, y: -1000 });
 // This is being used down there in the view, it interpolates rotation and scale into a css transform
 
 export function ReferendaDeck({
-  network,
   tracks,
   referenda,
+  details,
   voteHandler,
 }: {
-  network: Network;
   tracks: Map<number, Track>;
-  referenda: Array<[number, ReferendumOngoing]>;
+  referenda: Array<ReferendumOngoing & { index: number }>;
+  details: Map<number, ReferendumDetails>;
   voteHandler: (index: number, accountVote: AccountVote) => void;
 }): JSX.Element {
   const [gone] = useState(() => new Set()); // The set flags all the cards that are flicked out
@@ -149,7 +119,7 @@ export function ReferendaDeck({
         if (index !== i) return; // We're only interested in changing spring-data for the current spring
         const isGone = gone.has(index);
         if (isGone) {
-          voteHandler(referenda[i][0], createStandardAccountVote(xDir == 1));
+          voteHandler(referenda[i].index, createStandardAccountVote(xDir == 1));
         }
         const x = isGone ? (200 + window.innerWidth) * xDir : active ? mx : 0; // When a card is gone it flys out left or right, otherwise goes back to zero
         const rot = mx / 100 + (isGone ? xDir * 10 * vx : 0); // How much the card tilts, flicking it harder makes it rotate faster
@@ -177,7 +147,8 @@ export function ReferendaDeck({
     return (
       <div className={styles.deck}>
         {sProps.map(({ x, y }, i) => {
-          const [index, referendum] = referenda[i];
+          const { index, trackIndex } = referenda[i];
+          const track = tracks.get(trackIndex);
           return (
             <animated.div
               key={i}
@@ -186,10 +157,9 @@ export function ReferendaDeck({
               {/* This is the card itself, we're binding our gesture to it (and inject its index so we know which is which) */}
               <animated.div {...bind(i)}>
                 <ReferendumCard
-                  network={network}
                   index={index}
-                  tracks={tracks}
-                  referendum={referendum}
+                  details={details.get(index)}
+                  track={track}
                 />
               </animated.div>
             </animated.div>
@@ -199,5 +169,3 @@ export function ReferendaDeck({
     );
   }
 }
-
-export default ReferendaDeck;

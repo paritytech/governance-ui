@@ -9,7 +9,6 @@ import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import WalletProvider from './contexts/Wallets';
 import AccountProvider from './contexts/Account';
-import ApiProvider from './contexts/Api';
 import Header from './components/Header';
 import NotificationProvider from './contexts/Notification';
 import NotificationBox from './components/NotificationBox';
@@ -25,15 +24,15 @@ if (container) {
         <main>
           <ErrorBoundary>
             <NotificationProvider>
-              <ApiProvider>
-                <WalletProvider>
-                  <AccountProvider>
-                    <NotificationBox />
-                    <Header />
+              <WalletProvider>
+                <AccountProvider>
+                  <NotificationBox />
+                  <Header />
+                  <div className="flex flex-auto flex-col items-center justify-center">
                     <App />
-                  </AccountProvider>
-                </WalletProvider>
-              </ApiProvider>
+                  </div>
+                </AccountProvider>
+              </WalletProvider>
             </NotificationProvider>
           </ErrorBoundary>
         </main>
@@ -47,9 +46,3 @@ if (container) {
     )
   );
 }
-
-window.addEventListener('unhandledrejection', function (event) {
-  console.error(
-    `Unhandled promise rejection for ${event.promise}: ${event.reason}`
-  );
-});

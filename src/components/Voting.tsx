@@ -1,9 +1,24 @@
 import { ApiPromise } from '@polkadot/api';
-import { vote } from '../chain/conviction-voting';
-import { Button, Card, Spacer, Text } from '../ui/nextui';
-import { SigningAccount } from '../contexts';
-import { AccountVote } from '../types';
-import { Store, Stores } from '../utils/store';
+import { ReferendaDeck } from './Referenda';
+import { createStandardAccountVote, vote } from '../chain/conviction-voting';
+import { dbNameFor, DB_VERSION, VOTE_STORE_NAME } from '../lifecycle';
+import {
+  Button,
+  Card,
+  CloseSquareIcon,
+  HeartIcon,
+  Spacer,
+  Text,
+} from '../ui/nextui';
+import { SigningAccount, useAccount } from '../contexts';
+import { networkFor } from '../network';
+import {
+  AccountVote,
+  ReferendumDetails,
+  ReferendumOngoing,
+  Track,
+} from '../types';
+import { clear, open } from '../utils/indexeddb';
 
 function createBatchVotes(
   api: ApiPromise,
@@ -69,15 +84,14 @@ function VoteDetails({
   }
 }
 
-function VotesTable({
+export function VotesSummaryTable({
   api,
   accountVotes,
-  connectedAccount,
 }: {
-  api: ApiPromise;
-  connectedAccount: SigningAccount | undefined;
+  api: ApiPromise | null;
   accountVotes: Map<number, AccountVote>;
 }): JSX.Element {
+  const { connectedAccount } = useAccount();
   return (
     <div className="flex flex-col">
       <div className="flex max-h-[60vh] w-[30vw] flex-col items-center overflow-auto">
@@ -96,7 +110,7 @@ function VotesTable({
         })}
       </div>
       <Spacer y={1} />
-      {connectedAccount ? (
+      {api && connectedAccount ? (
         <Button
           color="primary"
           label="vote"
@@ -104,15 +118,17 @@ function VotesTable({
             await submitBatchVotes(api, connectedAccount, accountVotes);
 
             // Clear user votes
-            const accountVotesStore = await Store.storeFor<AccountVote>(
-              Stores.AccountVote
+            const db = await open(
+              dbNameFor(networkFor(api)),
+              [{ name: VOTE_STORE_NAME }],
+              DB_VERSION
             );
-            await accountVotesStore.clear();
+            await clear(db, VOTE_STORE_NAME);
           }}
         >
           Submit votes
         </Button>
-      ) : (
+      ) : api ? (
         <Text
           color="secondary"
           css={{
@@ -121,9 +137,89 @@ function VotesTable({
         >
           Connect to submit your votes
         </Text>
+      ) : (
+        <Text
+          color="secondary"
+          css={{
+            textAlign: 'center',
+          }}
+        >
+          Connection with chain lost
+        </Text>
       )}
     </div>
   );
 }
 
-export default VotesTable;
+export function VoteActionBar({
+  left,
+  onAccept,
+  onRefuse,
+}: {
+  left: number;
+  onAccept: () => void;
+  onRefuse: () => void;
+}): JSX.Element {
+  return (
+    <div className="flex items-center">
+      <Button
+        label="Refuse"
+        color="error"
+        onPress={onRefuse}
+        icon={<CloseSquareIcon />}
+      />
+      <Spacer x={1} />
+      <Text>{left} left</Text>
+      <Spacer x={1} />
+      <Button
+        label="Accept"
+        color="success"
+        onPress={onAccept}
+        icon={<HeartIcon />}
+      />
+    </div>
+  );
+}
+
+export function VotingPanel({
+  tracks,
+  referenda,
+  details,
+  voteHandler,
+}: {
+  tracks: Map<number, Track>;
+  referenda: Map<number, ReferendumOngoing>;
+  details: Map<number, ReferendumDetails>;
+  voteHandler: (index: number, vote: AccountVote) => void;
+}): JSX.Element {
+  // The referenda currently visible to the user
+  const referendaWithIndex = Array.from(referenda).map(([index, referenda]) => {
+    return { index, ...referenda };
+  });
+  const topReferenda = referendaWithIndex[0].index;
+  return (
+    <>
+      <div className="flex flex-auto items-center justify-center">
+        <ReferendaDeck
+          referenda={referendaWithIndex}
+          tracks={tracks}
+          details={details}
+          voteHandler={voteHandler}
+        />
+      </div>
+      {topReferenda && (
+        <VoteActionBar
+          left={referendaWithIndex.length}
+          onAccept={() =>
+            topReferenda &&
+            voteHandler(topReferenda, createStandardAccountVote(true))
+          }
+          onRefuse={() =>
+            topReferenda &&
+            voteHandler(topReferenda, createStandardAccountVote(false))
+          }
+        />
+      )}
+    </>
+  );
+}
