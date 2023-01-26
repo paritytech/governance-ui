@@ -43,7 +43,7 @@ export type ScheduledWakeUp = {
 export type ReferendumOngoing = {
   type: 'ongoing';
   /// The track of this referendum.
-  track: number;
+  trackIndex: number;
   /// The origin for this referendum.
   //  origin: RuntimeOrigin,
   /// The hash of the proposal up for referendum.
@@ -95,6 +95,15 @@ export type Referendum =
   | ReferendumTimedOut
   | ReferendumKilled
   | Unknown;
+
+export type Post = {
+  title: string;
+  content: string;
+};
+
+export type ReferendumDetails = {
+  posts: Array<Post>;
+};
 
 export type PriorLock = {
   block: number;

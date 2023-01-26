@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { Network } from '../network';
-import { AccountVote, Referendum, Track } from '../types';
+import { AccountVote, Referendum, ReferendumDetails, Track } from '../types';
 
 export type ChainState = {
   tracks: Map<number, Track>;
@@ -44,6 +44,7 @@ export type ConnectedState = BaseRestoredState & {
   type: 'ConnectedState';
   block: number;
   chain: ChainState;
+  details: Map<number, ReferendumDetails>;
 };
 
 export type State = InitialState | RestoredState | ConnectedState;
@@ -75,6 +76,11 @@ export type NewFinalizedBlockAction = BaseConnected & {
   type: 'NewFinalizedBlockAction';
   block: number;
   chain: ChainState;
+};
+
+export type StoreReferendumDetailsAction = {
+  type: 'StoreReferendumDetailsAction';
+  details: Map<number, ReferendumDetails>;
 };
 
 type Offline = {
@@ -122,4 +128,5 @@ export type Action =
   | SetRestoredAction
   | UpdateConnectivityAction
   | NewFinalizedBlockAction
+  | StoreReferendumDetailsAction
   | CastVoteAction;

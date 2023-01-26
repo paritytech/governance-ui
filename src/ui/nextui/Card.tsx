@@ -27,7 +27,7 @@ export function Card({
   return (
     <NextUICard className={className} variant={variant || 'bordered'}>
       <HeaderWrapper header={header} />
-      <NextUICard.Body>{children}</NextUICard.Body>
+      <NextUICard.Body className='flex flex-auto flex-col items-center justify-center'>{children}</NextUICard.Body>
     </NextUICard>
   );
 }

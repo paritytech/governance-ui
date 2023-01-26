@@ -1,3 +1,7 @@
+.deck {
+  display: grid;
+}
+
 .card[role="section"] {
   padding: 2em;
 }
@@ -20,17 +24,6 @@
   text-align: end;
   margin-right: 1em;
   margin-bottom: 1em;
-}
-
-.deck {
-  display: grid;
-  place-items: center;
-  grid-template-areas: inner-div;
-}
-
-.deck div {
-  width: 100%;
-  grid-area: inner-div;
 }
 
 .header {

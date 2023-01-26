@@ -84,7 +84,7 @@ function toReferendum(
     const alarm = ongoing.alarm.unwrapOr(undefined);
     return {
       type: 'ongoing',
-      track: ongoing.track.toNumber(),
+      trackIndex: ongoing.track.toNumber(),
       proposal: toCall(ongoing.proposal),
       enactment: toDispatchTime(ongoing.enactment),
       inQueue: ongoing.inQueue.toPrimitive(),

@@ -11,8 +11,13 @@ import {
   Text,
 } from '../ui/nextui';
 import { SigningAccount, useAccount } from '../contexts';
-import { Network, networkFor } from '../network';
-import { AccountVote, ReferendumOngoing, Track } from '../types';
+import { networkFor } from '../network';
+import {
+  AccountVote,
+  ReferendumDetails,
+  ReferendumOngoing,
+  Track,
+} from '../types';
 import { clear, open } from '../utils/indexeddb';
 
 function createBatchVotes(
@@ -177,31 +182,34 @@ export function VoteActionBar({
 }
 
 export function VotingPanel({
-  network,
   tracks,
   referenda,
+  details,
   voteHandler,
 }: {
-  network: Network;
   tracks: Map<number, Track>;
-  referenda: [number, ReferendumOngoing][];
+  referenda: Map<number, ReferendumOngoing>;
+  details: Map<number, ReferendumDetails>;
   voteHandler: (index: number, vote: AccountVote) => void;
 }): JSX.Element {
   // The referenda currently visible to the user
-  const topReferenda = referenda.at(0)?.[0];
+  const referendaWithIndex = Array.from(referenda).map(([index, referenda]) => {
+    return { index, ...referenda };
+  });
+  const topReferenda = referendaWithIndex[0].index;
   return (
     <>
       <div className="flex flex-auto items-center justify-center">
         <ReferendaDeck
-          network={network}
-          referenda={referenda}
+          referenda={referendaWithIndex}
           tracks={tracks}
+          details={details}
           voteHandler={voteHandler}
         />
       </div>
-      {referenda.length > 0 && (
+      {topReferenda && (
         <VoteActionBar
-          left={referenda.length}
+          left={referendaWithIndex.length}
           onAccept={() =>
             topReferenda &&
             voteHandler(topReferenda, createStandardAccountVote(true))

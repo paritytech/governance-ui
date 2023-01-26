@@ -22,6 +22,11 @@ function isVotingComplete(
   return referendumKeys.size > 0 && areEquals(referendumKeys, voteKeys);
 }
 
+/**
+ * @param votes
+ * @param referenda
+ * @returns filter away `votes` that do not map to `referenda`
+ */
 function filterOldVotes(
   votes: Map<number, AccountVote>,
   referenda: Map<number, ReferendumOngoing>
@@ -60,8 +65,8 @@ export function App(): JSX.Element {
     case 'InitialState':
       return <LoadingPanel message={`Get ready to vote!`} />;
     case 'ConnectedState': {
-      const { connectivity, network, chain, votes } = state;
-      const { /*votings, */ referenda, tracks } = chain;
+      const { connectivity, chain, votes, details } = state;
+      const { /*votings, */ tracks, referenda } = chain;
       const ongoingReferenda = filterOngoingReferenda(referenda);
       const currentVotes = filterOldVotes(votes, ongoingReferenda);
       // TODO Restore on chain votings for connected user
@@ -80,10 +85,10 @@ export function App(): JSX.Element {
         );
         return (
           <VotingPanel
-            network={network}
-            voteHandler={(index, vote) => updater.castVote(index, vote)}
             tracks={tracks}
-            referenda={Array.from(referendaToBeVotedOn)}
+            referenda={referendaToBeVotedOn}
+            details={details}
+            voteHandler={(index, vote) => updater.castVote(index, vote)}
           />
         );
       }

@@ -7,6 +7,7 @@ import { err, ok, Result } from '../utils';
 import { all, open, save } from '../utils/indexeddb';
 import { measured } from '../utils/performance';
 import { newApi } from '../utils/polkadot-api';
+import { fetchReferenda } from '../utils/polkassembly';
 import { timeout } from '../utils/promise';
 import {
   Action,
@@ -63,19 +64,19 @@ export function filterToBeVotedReferenda(
   return new Map([...referenda].filter(([index]) => !votes.has(index)));
 }
 
+function incorrectTransitionError(previousState: State): Report {
+  return {
+    type: 'Error',
+    message: `Incorrect transition: ${previousState.type}`,
+  };
+}
+
 function withNewReport(previousState: State, report: Report): State {
   const previousReports = previousState.reports || [];
   return {
     ...previousState,
     reports: [report, ...previousReports],
   };
-}
-
-function withFailedTransition(previousState: State): State {
-  return withNewReport(previousState, {
-    type: 'Error',
-    message: `Incorrect transition: ${previousState.type}`,
-  });
 }
 
 function reducer(previousState: State, action: Action): State {
@@ -107,7 +108,7 @@ function reducer(previousState: State, action: Action): State {
           connectivity,
         };
       } else {
-        return withFailedTransition(previousState);
+        return withNewReport(previousState, incorrectTransitionError(previousState));
       }
     }
     case 'NewReportAction': {
@@ -131,9 +132,22 @@ function reducer(previousState: State, action: Action): State {
           type: 'ConnectedState',
           block,
           chain,
+          details: new Map(),
         };
       } else {
-        return withFailedTransition(previousState);
+        return withNewReport(previousState, incorrectTransitionError(previousState));
+      }
+    }
+    case 'StoreReferendumDetailsAction': {
+      const { details } = action;
+      if ('details' in previousState) {
+        const previousDetails = previousState.details;
+        return {
+          ...previousState,
+          details: new Map([...previousDetails, ...details]),
+        };
+      } else {
+        return withNewReport(previousState, incorrectTransitionError(previousState));
       }
     }
     case 'CastVoteAction':
@@ -145,7 +159,7 @@ function reducer(previousState: State, action: Action): State {
           votes: new Map(newVotes),
         };
       } else {
-        return withFailedTransition(previousState);
+        return withNewReport(previousState, incorrectTransitionError(previousState));
       }
   }
 }
@@ -226,7 +240,7 @@ export class Updater {
     if (this.#state.type == 'ConnectedState') {
       await save(this.#state.db, VOTE_STORE_NAME, index, vote);
     } else {
-      await this.newReport({ type: 'Error', message: '' });
+      await this.newReport(incorrectTransitionError(this.#state));
     }
   }
 
@@ -243,6 +257,7 @@ export class Updater {
       report,
     });
   }
+
 }
 
 // When needs to dif data
@@ -322,6 +337,17 @@ async function dispatchEndpointsParamChange(
   }
 }
 
+async function loadAndDispatchReferendaDetails(dispatch: Dispatch<Action>, referenda: Map<number, Referendum>, network: Network) {
+  const indexes = Array.from(referenda.keys());
+  indexes.forEach(async index => {
+    const details = await fetchReferenda(network, index);
+    dispatch({
+      type: 'StoreReferendumDetailsAction',
+      details: new Map([[index, details]]),
+    });
+  });
+}
+
 async function dispatchEndpointsChange(
   dispatch: Dispatch<Action>,
   network: Network,
@@ -349,6 +375,8 @@ async function dispatchEndpointsChange(
         block: header.number.toNumber(),
         chain,
       });
+
+      await loadAndDispatchReferendaDetails(dispatch, chain.referenda, network);
     });
   } else {
     dispatchNewReport(dispatch, {
