@@ -33,6 +33,7 @@ export function Text(props: TextProps): JSX.Element {
     color,
     size,
     css,
+    className,
     children,
   } = props;
   return (
@@ -47,6 +48,7 @@ export function Text(props: TextProps): JSX.Element {
       h6={h6}
       color={color}
       size={size}
+      className={className}
       css={css}
     >
       {children}
