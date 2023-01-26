@@ -1,8 +1,9 @@
 import { Dispatch, useEffect, useReducer } from 'react';
 import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
+import { getVotingFor } from '../chain/conviction-voting';
 import { getAllReferenda, getAllTracks } from '../chain/referenda';
 import { DEFAULT_NETWORK, endpointsFor, Network, networkFor } from '../network';
-import { AccountVote, Referendum, ReferendumOngoing } from '../types';
+import { AccountVote, Referendum, ReferendumOngoing, Voting } from '../types';
 import { err, ok, Result } from '../utils';
 import { all, open, save } from '../utils/indexeddb';
 import { measured } from '../utils/performance';
@@ -11,6 +12,7 @@ import { fetchReferenda } from '../utils/polkassembly';
 import { timeout } from '../utils/promise';
 import {
   Action,
+  Address,
   ChainState,
   PersistedDataContext,
   Report,
@@ -108,7 +110,10 @@ function reducer(previousState: State, action: Action): State {
           connectivity,
         };
       } else {
-        return withNewReport(previousState, incorrectTransitionError(previousState));
+        return withNewReport(
+          previousState,
+          incorrectTransitionError(previousState)
+        );
       }
     }
     case 'NewReportAction': {
@@ -135,7 +140,10 @@ function reducer(previousState: State, action: Action): State {
           details: new Map(),
         };
       } else {
-        return withNewReport(previousState, incorrectTransitionError(previousState));
+        return withNewReport(
+          previousState,
+          incorrectTransitionError(previousState)
+        );
       }
     }
     case 'StoreReferendumDetailsAction': {
@@ -147,7 +155,10 @@ function reducer(previousState: State, action: Action): State {
           details: new Map([...previousDetails, ...details]),
         };
       } else {
-        return withNewReport(previousState, incorrectTransitionError(previousState));
+        return withNewReport(
+          previousState,
+          incorrectTransitionError(previousState)
+        );
       }
     }
     case 'CastVoteAction':
@@ -159,7 +170,10 @@ function reducer(previousState: State, action: Action): State {
           votes: new Map(newVotes),
         };
       } else {
-        return withNewReport(previousState, incorrectTransitionError(previousState));
+        return withNewReport(
+          previousState,
+          incorrectTransitionError(previousState)
+        );
       }
   }
 }
@@ -206,14 +220,20 @@ async function restorePersisted(
   };
 }
 
-export async function fetchChainState(api: {
-  consts: QueryableConsts<'promise'>;
-  query: QueryableStorage<'promise'>;
-}): Promise<ChainState> {
+export async function fetchChainState(
+  api: {
+    consts: QueryableConsts<'promise'>;
+    query: QueryableStorage<'promise'>;
+  },
+  connectedAccount?: Address
+): Promise<ChainState> {
   const tracks = getAllTracks(api);
   const referenda = await getAllReferenda(api);
-  // TODO add votings
-  return { tracks, referenda };
+  const allVotings = new Map<Address, Map<number, Voting>>();
+  if (connectedAccount) {
+    allVotings.set(connectedAccount, await getVotingFor(api, connectedAccount));
+  }
+  return { tracks, referenda, allVotings };
 }
 
 export class Updater {
@@ -244,7 +264,7 @@ export class Updater {
     }
   }
 
-  async setConnectedAccount(connectedAccount: string) {
+  async setConnectedAccount(connectedAccount: Address) {
     this.#dispatch({
       type: 'SetConnectedAccountAction',
       connectedAccount,
@@ -257,7 +277,6 @@ export class Updater {
       report,
     });
   }
-
 }
 
 // When needs to dif data
@@ -337,9 +356,13 @@ async function dispatchEndpointsParamChange(
   }
 }
 
-async function loadAndDispatchReferendaDetails(dispatch: Dispatch<Action>, referenda: Map<number, Referendum>, network: Network) {
+async function loadAndDispatchReferendaDetails(
+  dispatch: Dispatch<Action>,
+  referenda: Map<number, Referendum>,
+  network: Network
+) {
   const indexes = Array.from(referenda.keys());
-  indexes.forEach(async index => {
+  indexes.forEach(async (index) => {
     const details = await fetchReferenda(network, index);
     dispatch({
       type: 'StoreReferendumDetailsAction',

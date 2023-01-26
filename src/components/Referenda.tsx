@@ -68,7 +68,7 @@ const ReferendumCard = memo(
           className={styles.card}
           header={<Header index={index} track={track} />}
         >
-          <div className='flex flex-auto flex-col items-center justify-center w-[32rem]'>
+          <div className="flex w-[32rem] flex-auto flex-col items-center justify-center">
             <Loading />
           </div>
         </Card>

@@ -1,14 +1,28 @@
 import { ApiPromise } from '@polkadot/api';
 import { Network } from '../network';
-import { AccountVote, Referendum, ReferendumDetails, Track } from '../types';
+import {
+  AccountVote,
+  Referendum,
+  ReferendumDetails,
+  Track,
+  Voting,
+} from '../types';
+
+export type Address = string;
 
 export type ChainState = {
   tracks: Map<number, Track>;
   referenda: Map<number, Referendum>;
+  allVotings: Map<Address, Map<number, Voting>>;
 };
 
 export type PersistedDataContext = {
   votes: Map<number, AccountVote>;
+};
+
+export type Warning = {
+  type: 'Warning';
+  message: string;
 };
 
 export type Error = {
@@ -16,7 +30,7 @@ export type Error = {
   message: string;
 };
 
-export type Report = Error;
+export type Report = Warning | Error;
 
 // States
 
@@ -64,7 +78,7 @@ export type SetRestoredAction = PersistedDataContext & {
 
 export type SetConnectedAccountAction = {
   type: 'SetConnectedAccountAction';
-  connectedAccount?: string;
+  connectedAccount?: Address;
 };
 
 export type UpdateConnectivityAction = {

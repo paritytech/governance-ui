@@ -6,7 +6,7 @@ import {
 import { LoadingPanel, VotesSummaryTable, VotingPanel } from './components';
 import { AccountVote, Referendum, ReferendumOngoing, Voting } from './types';
 import { areEquals } from './utils/set';
-import { apiFromConnectivity } from './lifecycle/types';
+import { Address, apiFromConnectivity } from './lifecycle/types';
 
 /**
  * @param referenda
@@ -40,21 +40,44 @@ function filterOldVotes(
  * @returns
  */
 function extractUserVotes(
-  votings: Map<number, Voting>,
+  address: Address,
+  allVotings: Map<Address, Map<number, Voting>>,
   referenda: Map<number, Referendum>
 ): Map<number, AccountVote> {
   // Go through user votes and restore the ones relevant to `referenda`
   const votes = new Map<number, AccountVote>();
-  votings.forEach((voting) => {
-    if (voting.type === 'casting') {
-      voting.votes.forEach((accountVote, index) => {
-        if (referenda.has(index)) {
-          votes.set(index, accountVote);
-        }
-      });
-    }
-  });
+  const votings = allVotings.get(address);
+  if (votings) {
+    votings.forEach((voting) => {
+      if (voting.type === 'casting') {
+        voting.votes.forEach((accountVote, index) => {
+          if (referenda.has(index)) {
+            votes.set(index, accountVote);
+          }
+        });
+      }
+    });
+  }
   return votes;
+}
+
+function getAllVotes(
+  votes: Map<number, AccountVote>,
+  allVotings: Map<Address, Map<number, Voting>>,
+  referenda: Map<number, ReferendumOngoing>,
+  connectedAccount?: Address
+): Map<number, AccountVote> {
+  const currentVotes = filterOldVotes(votes, referenda);
+  if (connectedAccount) {
+    const onChainVotes = extractUserVotes(
+      connectedAccount,
+      allVotings,
+      referenda
+    );
+    return new Map([...currentVotes, ...onChainVotes]);
+  } else {
+    return currentVotes;
+  }
 }
 
 export function App(): JSX.Element {
@@ -65,13 +88,15 @@ export function App(): JSX.Element {
     case 'InitialState':
       return <LoadingPanel message={`Get ready to vote!`} />;
     case 'ConnectedState': {
-      const { connectivity, chain, votes, details } = state;
-      const { /*votings, */ tracks, referenda } = chain;
+      const { connectivity, chain, votes, details, connectedAccount } = state;
+      const { allVotings, tracks, referenda } = chain;
       const ongoingReferenda = filterOngoingReferenda(referenda);
-      const currentVotes = filterOldVotes(votes, ongoingReferenda);
-      // TODO Restore on chain votings for connected user
-      //const onChainVotes = extractUserVotes(votings, referenda);
-      const allVotes = new Map([...currentVotes /*, ...onChainVotes */]);
+      const allVotes = getAllVotes(
+        votes,
+        allVotings,
+        ongoingReferenda,
+        connectedAccount
+      );
       if (isVotingComplete(ongoingReferenda, allVotes)) {
         // User went through all referenda
         const api = apiFromConnectivity(connectivity);
