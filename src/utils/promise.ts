@@ -1,15 +1,21 @@
-export function wait(ms: number, reason = 'timeout'): Promise<any> {
-  return new Promise(function (_, reject) {
-    setTimeout(function () {
-      reject(new Error(reason));
-    }, ms);
+export function resolveAfter<T>(timeout: number, result: T): Promise<T> {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(result), timeout);
   });
 }
+
+export function rejectAfter(timeout: number, reason: any): Promise<any> {
+  return new Promise((_, reject) => {
+    setTimeout(() => reject(reason), timeout);
+  });
+}
+
+export const DEFAULT_REASON = new Error('timeout');
 
 export function timeout<T>(
   promise: Promise<T>,
   ms: number,
-  reason = 'timeout'
+  reason: any = DEFAULT_REASON
 ): Promise<T> {
-  return Promise.race([wait(ms, reason), promise]);
+  return Promise.race([rejectAfter(ms, reason), promise]);
 }
