@@ -9,11 +9,12 @@ import { apiFromConnectivity } from './lifecycle/types';
 
 export function App(): JSX.Element {
   const [state, updater] = useLifeCycle();
-
+  let component: JSX.Element | undefined;
   switch (state.type) {
     case 'RestoredState':
     case 'InitialState':
-      return <LoadingPanel message={`Get ready to vote!`} />;
+      component = <LoadingPanel message={`Get ready to vote!`} />;
+      break;
     case 'ConnectedState': {
       const { connectivity, chain, votes, details, connectedAccount } = state;
       const { allVotings, tracks, referenda } = chain;
@@ -31,9 +32,9 @@ export function App(): JSX.Element {
       if (referendaToBeVotedOn.size == 0) {
         // User went through all referenda
         const api = apiFromConnectivity(connectivity);
-        return <VotesSummaryTable api={api} accountVotes={allVotes} />;
+        component = <VotesSummaryTable api={api} accountVotes={allVotes} />;
       } else {
-        return (
+        component = (
           <VotingPanel
             tracks={tracks}
             referenda={referendaToBeVotedOn}
@@ -41,9 +42,16 @@ export function App(): JSX.Element {
             voteHandler={(index, vote) => updater.castVote(index, vote)}
           />
         );
+        break;
       }
     }
   }
+  return (
+    <>
+      <div data-app-state={state.type} hidden />
+      {component}
+    </>
+  );
 }
 
 export default App;
