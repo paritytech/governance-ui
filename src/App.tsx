@@ -46,11 +46,7 @@ export function App(): JSX.Element {
       }
     }
   }
-  return (
-    <div data-testid={`${state.type}`}>
-      {component}
-    </div>
-  );
+  return <div data-testid={`${state.type}`}>{component}</div>;
 }
 
 export default App;
