@@ -178,6 +178,7 @@ function reducer(previousState: State, action: Action): State {
       }
     }
     case 'NewReportAction': {
+      console.error(action.report);
       return withNewReport(previousState, action.report);
     }
     case 'NewFinalizedBlockAction': {
@@ -448,7 +449,7 @@ async function dispatchEndpointsChange(
   } else {
     dispatchNewReport(dispatch, {
       type: 'Error',
-      message: `Provided Enpoints do not point to ${network}`,
+      message: `Provided Enpoints do not point to ${network} but to ${connectedNetwork}`,
     });
   }
 }
