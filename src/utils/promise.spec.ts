@@ -1,5 +1,10 @@
 import { expect, test } from '@jest/globals';
-import { DEFAULT_REASON, rejectAfter, resolveAfter, timeout } from './promise';
+import {
+  DEFAULT_REASON,
+  rejectAfter,
+  resolveAfter,
+  timeout,
+} from './promise.js';
 
 test('resolve resolves', async () => {
   const result = 'result';

@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals';
-import { extractSearchParams } from './search-params';
+import { extractSearchParams } from './search-params.js';
 
 test('extract empty returns undefined', async () => {
   expect(await extractSearchParams('', [''])).toStrictEqual([null]);

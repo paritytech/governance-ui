@@ -1,5 +1,5 @@
 import { Navbar as NextUINavbar } from '@nextui-org/react';
-import { Text } from '.';
+import { Text } from './Text.js';
 
 export function Navbar({
   title,

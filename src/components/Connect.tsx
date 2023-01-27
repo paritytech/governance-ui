@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { BaseWallet } from '@polkadot-onboard/core';
-import { Button, Colors, Modal } from '../ui/nextui';
-import { useAccount, useWallets } from '../contexts';
-import type { SigningAccount } from '../contexts/Account';
-import { WalletState } from '../contexts/Wallets';
-import Account from './Account';
-import Wallet from './Wallet';
+import { Button, Colors, Modal } from '../ui/nextui/index.js';
+import { useAccount, useWallets } from '../contexts/index.js';
+import type { SigningAccount } from '../contexts/Account.js';
+import { WalletState } from '../contexts/Wallets.js';
+import Account from './Account.js';
+import Wallet from './Wallet.js';
 
 export interface IWalletsListProps {
   wallets: Array<BaseWallet>;

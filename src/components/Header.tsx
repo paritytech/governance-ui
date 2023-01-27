@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
-import { NotificationType, useNotifications } from '../contexts/Notification';
-import { Button, HeartIcon, Navbar } from '../ui/nextui';
-import ConnectButton from './Connect';
+import {
+  NotificationType,
+  useNotifications,
+} from '../contexts/Notification.js';
+import { Button, HeartIcon, Navbar } from '../ui/nextui/index.js';
+import ConnectButton from './Connect.js';
 import {
   areNotificationsGranted,
   requestNotificationPermission,
-} from '../utils/permissions';
+} from '../utils/permissions.js';
 
 function Header(): JSX.Element {
   const { notify } = useNotifications();

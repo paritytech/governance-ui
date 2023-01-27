@@ -1,5 +1,8 @@
-import { Card } from '../ui/nextui';
-import { NotificationType, useNotifications } from '../contexts/Notification';
+import { Card } from '../ui/nextui/index.js';
+import {
+  NotificationType,
+  useNotifications,
+} from '../contexts/Notification.js';
 
 const TRANSIENT_DISPLAY_TIME_MS = 3000; //milliseconds
 

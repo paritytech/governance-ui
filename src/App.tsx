@@ -3,9 +3,13 @@ import {
   filterToBeVotedReferenda,
   getAllVotes,
   useLifeCycle,
-} from './lifecycle';
-import { LoadingPanel, VotesSummaryTable, VotingPanel } from './components';
-import { apiFromConnectivity } from './lifecycle/types';
+} from './lifecycle/index.js';
+import {
+  LoadingPanel,
+  VotesSummaryTable,
+  VotingPanel,
+} from './components/index.js';
+import { apiFromConnectivity } from './lifecycle/types.js';
 
 export function App(): JSX.Element {
   const [state, updater] = useLifeCycle();

@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals';
-import { areEquals } from './set';
+import { areEquals } from './set.js';
 
 test('empty sets are equals', () => {
   const s1 = new Set([]);

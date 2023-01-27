@@ -1,7 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
-import { ReferendaDeck } from './Referenda';
-import { createStandardAccountVote, vote } from '../chain/conviction-voting';
-import { dbNameFor, DB_VERSION, VOTE_STORE_NAME } from '../lifecycle';
+import { ReferendaDeck } from './Referenda.js';
+import { createStandardAccountVote, vote } from '../chain/conviction-voting.js';
+import { dbNameFor, DB_VERSION, VOTE_STORE_NAME } from '../lifecycle/index.js';
 import {
   Button,
   Card,
@@ -9,16 +9,16 @@ import {
   HeartIcon,
   Spacer,
   Text,
-} from '../ui/nextui';
-import { SigningAccount, useAccount } from '../contexts';
-import { networkFor } from '../network';
+} from '../ui/nextui/index.js';
+import { SigningAccount, useAccount } from '../contexts/index.js';
+import { networkFor } from '../network.js';
 import {
   AccountVote,
   ReferendumDetails,
   ReferendumOngoing,
   Track,
-} from '../types';
-import { clear, open } from '../utils/indexeddb';
+} from '../types.js';
+import { clear, open } from '../utils/indexeddb.js';
 
 function createBatchVotes(
   api: ApiPromise,

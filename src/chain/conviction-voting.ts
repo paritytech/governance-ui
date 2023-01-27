@@ -8,8 +8,8 @@ import type {
   PalletConvictionVotingVoteVoting,
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
-import { Address } from '../lifecycle/types';
-import { AccountVote, Conviction, Voting } from '../types';
+import { Address } from '../lifecycle/types.js';
+import { AccountVote, Conviction, Voting } from '../types.js';
 
 export function createStandardAccountVote(
   aye: boolean,

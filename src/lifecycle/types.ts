@@ -1,12 +1,12 @@
 import { ApiPromise } from '@polkadot/api';
-import { Network } from '../network';
+import { Network } from '../network.js';
 import {
   AccountVote,
   Referendum,
   ReferendumDetails,
   Track,
   Voting,
-} from '../types';
+} from '../types.js';
 
 export type Address = string;
 

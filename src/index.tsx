@@ -5,15 +5,15 @@ import '@polkadot/types-augment';
 
 import React from 'react';
 import * as ReactDOMClient from 'react-dom/client';
-import App from './App';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import WalletProvider from './contexts/Wallets';
-import AccountProvider from './contexts/Account';
-import Header from './components/Header';
-import NotificationProvider from './contexts/Notification';
-import NotificationBox from './components/NotificationBox';
-import { registerServiceWorker } from './utils/service-worker';
-import { UIProvider } from './ui/nextui';
+import App from './App.js';
+import { ErrorBoundary } from './components/ErrorBoundary.js';
+import WalletProvider from './contexts/Wallets.js';
+import AccountProvider from './contexts/Account.js';
+import Header from './components/Header.js';
+import NotificationProvider from './contexts/Notification.js';
+import NotificationBox from './components/NotificationBox.js';
+import { registerServiceWorker } from './utils/service-worker.js';
+import { UIProvider } from './ui/nextui/index.js';
 
 const container = document.getElementById('root');
 if (container) {

@@ -1,4 +1,4 @@
-import { isPeriodicBackgroundSyncGranted } from './permissions';
+import { isPeriodicBackgroundSyncGranted } from './permissions.js';
 
 export const REFERENDA_UPDATES_TAG = 'fetch-referenda-updates';
 

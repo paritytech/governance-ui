@@ -1,2 +1,2 @@
-export { LoadingPanel } from './Loading';
-export { VoteActionBar, VotesSummaryTable, VotingPanel } from './Voting';
+export { LoadingPanel } from './Loading.js';
+export { VoteActionBar, VotesSummaryTable, VotingPanel } from './Voting.js';

@@ -1,16 +1,26 @@
 import { Dispatch, useEffect, useReducer } from 'react';
 import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
-import { getVotingFor } from '../chain/conviction-voting';
-import { getAllReferenda, getAllTracks } from '../chain/referenda';
-import { DEFAULT_NETWORK, endpointsFor, Network, networkFor } from '../network';
-import { AccountVote, Referendum, ReferendumOngoing, Voting } from '../types';
-import { err, ok, Result } from '../utils';
-import { all, open, save } from '../utils/indexeddb';
-import { measured } from '../utils/performance';
-import { newApi } from '../utils/polkadot-api';
-import { fetchReferenda } from '../utils/polkassembly';
-import { timeout } from '../utils/promise';
-import { extractSearchParams } from '../utils/search-params';
+import { getVotingFor } from '../chain/conviction-voting.js';
+import { getAllReferenda, getAllTracks } from '../chain/referenda.js';
+import {
+  DEFAULT_NETWORK,
+  endpointsFor,
+  Network,
+  networkFor,
+} from '../network.js';
+import {
+  AccountVote,
+  Referendum,
+  ReferendumOngoing,
+  Voting,
+} from '../types.js';
+import { err, ok, Result } from '../utils/index.js';
+import { all, open, save } from '../utils/indexeddb.js';
+import { measured } from '../utils/performance.js';
+import { newApi } from '../utils/polkadot-api.js';
+import { fetchReferenda } from '../utils/polkassembly.js';
+import { timeout } from '../utils/promise.js';
+import { extractSearchParams } from '../utils/search-params.js';
 import {
   Action,
   Address,
@@ -18,7 +28,7 @@ import {
   PersistedDataContext,
   Report,
   State,
-} from './types';
+} from './types.js';
 
 // Auto follow chain updates? Only if user settings? Show notif? Only if impacting change?
 // Revisit if/when ChainState is persisted
@@ -333,13 +343,6 @@ export class Updater {
   }
 }
 
-// When needs to dif data
-// https://news.ycombinator.com/item?id=29130661
-// https://dev.to/asyncbanana/building-the-fastest-object-and-array-differ-2l6f
-// https://github.com/AsyncBanana/microdiff
-
-// https://polkadot.js.org/docs/api/start/api.query.subs/
-
 export function useLifeCycle(): [State, Updater] {
   const [state, dispatch] = useReducer(reducer, {
     type: 'InitialState',
@@ -445,6 +448,7 @@ async function dispatchEndpointsChange(
   if (network == connectedNetwork) {
     return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
       const apiAt = await api.at(header.hash);
+      // Rely on subs? https://polkadot.js.org/docs/api/start/api.query.subs/
       const chain = await fetchChainState(apiAt);
       dispatch({
         type: 'NewFinalizedBlockAction',

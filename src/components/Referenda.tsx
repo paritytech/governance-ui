@@ -2,14 +2,14 @@ import { memo, useState } from 'react';
 import { Remark } from 'react-remark';
 import { useSprings, animated } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
-import { createStandardAccountVote } from '../chain/conviction-voting';
-import { Card, Loading, Text } from '../ui/nextui';
+import { createStandardAccountVote } from '../chain/conviction-voting.js';
+import { Card, Loading, Text } from '../ui/nextui/index.js';
 import {
   AccountVote,
   ReferendumDetails,
   ReferendumOngoing,
   Track,
-} from '../types';
+} from '../types.js';
 import * as styles from './Referenda.module.css';
 
 function Header({

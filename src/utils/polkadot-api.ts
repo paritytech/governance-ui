@@ -1,5 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
-import { WsReconnectProvider } from './ws-reconnect-provider';
+import { WsReconnectProvider } from './ws-reconnect-provider.js';
 
 export function newApi(endpoints: string[]): Promise<ApiPromise> {
   const provider = new WsReconnectProvider(endpoints);

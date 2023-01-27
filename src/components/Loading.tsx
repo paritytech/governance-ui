@@ -1,4 +1,4 @@
-import { Loading, Spacer, Text } from '../ui/nextui';
+import { Loading, Spacer, Text } from '../ui/nextui/index.js';
 
 export function LoadingPanel({ message }: { message: string }): JSX.Element {
   return (
