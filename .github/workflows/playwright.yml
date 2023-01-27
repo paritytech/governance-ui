@@ -17,13 +17,44 @@ jobs:
         run: |
           npm install -g yarn
           yarn install
-      - name: podman
-        run: sudo apt-get -y update
+
+      #- name: podman
+      #  run: sudo apt-get -y update
       # zombinet
-      - name: podman install
-        run: sudo apt-get -y install podman
-      - name: Run zombienet
-        run: npm run zombienet:podman
+      #- name: podman install
+      #  run: sudo apt-get -y install podman
+      #- name: Run zombienet
+      #  run: yarn zombienet:podman
+
+      - name: download polkadot
+        run: |
+          curl -L https://github.com/paritytech/polkadot/releases/download/v0.9.37/polkadot -o "${GITHUB_WORKSPACE}/polkadot"
+          chmod 777 "${GITHUB_WORKSPACE}/polkadot"
+          echo PATH=$PATH:"${GITHUB_WORKSPACE}" >> $GITHUB_ENV
+      - name: check polkadot
+        run: polkadot --version
+
+      - name: Background Zombienet Server
+        uses: BerniWittmann/background-server-action@v1
+        with:
+          start: yarn zombienet:native
+          wait-on: "http://127.0.0.1:9996/metrics"
+
+      # deploy
+      - name: Background App Server
+        uses: BerniWittmann/background-server-action@v1
+        with:
+          start: yarn dev
+          wait-on: "http://localhost:1234"
+
+      #- name: Run App
+      #  run: |
+      #    yarn dev &
+      #    echo waiting!
+      #    sleep 100
+      #    curl 'http://localhost:1234'
+      #    echo deployed!
+
       # tests
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
