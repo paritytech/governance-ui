@@ -429,30 +429,21 @@ async function dispatchEndpointsChange(
     connectivity: { type: 'Connected', api, endpoints },
   });
 
-  const connectedNetwork = networkFor(api);
-  // TODO move away from hard network constrain, drop typoe augmentation
-  if (true/* TODO fix network == connectedNetwork*/) {
-    return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
-      const apiAt = await api.at(header.hash);
-      const chain = await measured('fetch-chain-state', () =>
-        fetchChainState(apiAt)
-      );
-      dispatch({
-        type: 'NewFinalizedBlockAction',
-        api,
-        endpoints,
-        block: header.number.toNumber(),
-        chain,
-      });
+  return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
+    const apiAt = await api.at(header.hash);
+    const chain = await measured('fetch-chain-state', () =>
+      fetchChainState(apiAt)
+    );
+    dispatch({
+      type: 'NewFinalizedBlockAction',
+      api,
+      endpoints,
+      block: header.number.toNumber(),
+      chain,
+    });
 
-      await loadAndDispatchReferendaDetails(dispatch, chain.referenda, network);
-    });
-  } else {
-    dispatchNewReport(dispatch, {
-      type: 'Error',
-      message: `Provided Enpoints do not point to ${network} but to ${connectedNetwork}`,
-    });
-  }
+    await loadAndDispatchReferendaDetails(dispatch, chain.referenda, network);
+  });
 }
 
 function isValidEnpoint(endpoint: string): boolean {
@@ -530,25 +521,32 @@ export async function updateChainState(
     if (state.type == 'ConnectedState') {
       // Only consider ConnectedState
       const { networkParam, rpcParam } = currentParams();
-      if (networkParam) {
-        // `network` param is set and takes precedence, `endpoints` might
-        const network = parse(networkParam);
-        if (network.type == 'ok') {
-          if (state.network != network.value) {
-            // Only react to network changes
-            await dispatchNetworkChange(dispatch, network.value, rpcParam);
-          }
-        } else {
-          dispatchNewReport(dispatch, {
-            type: 'Error',
-            message: `Invalid 'network' param ${networkParam}: ${network.error}`,
-          });
-        }
-      } else if (rpcParam) {
-        // Only `rpc` param is set, reconnect using those
-        dispatchEndpointsParamChange(dispatch, state.network, rpcParam);
+      if (networkParam && rpcParam) {
+        dispatchNewReport(dispatch, {
+          type: 'Error',
+          message: `Both rpc and network params can't be set at the same time`,
+        });
       } else {
-        // No network provided; noop
+        if (networkParam) {
+          // `network` param is set and takes precedence, `endpoints` might
+          const network = parse(networkParam);
+          if (network.type == 'ok') {
+            if (state.network != network.value) {
+              // Only react to network changes
+              await dispatchNetworkChange(dispatch, network.value, rpcParam);
+            }
+          } else {
+            dispatchNewReport(dispatch, {
+              type: 'Error',
+              message: `Invalid 'network' param ${networkParam}: ${network.error}`,
+            });
+          }
+        } else if (rpcParam) {
+          // Only `rpc` param is set, reconnect using those
+          dispatchEndpointsParamChange(dispatch, state.network, rpcParam);
+        } else {
+          // No network provided; noop
+        }
       }
     }
   });
