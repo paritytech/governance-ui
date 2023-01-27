@@ -16,8 +16,8 @@
     "test": "jest --detectOpenHandles",
     "test:e2e": "yarn playwright test",
     "zombienet:setup": "zombienet setup polkadot",
-    "zombienet:native": "zombienet --provider native spawn ./e2e/zombienet/small-network.toml",
-    "zombienet:podman": "zombienet --provider podman spawn ./e2e/zombienet/small-network.toml"
+    "zombienet:native": "zombienet --provider native spawn ./test/e2e/zombienet/small-network.toml",
+    "zombienet:podman": "zombienet --provider podman spawn ./test/e2e/zombienet/small-network.toml"
   },
   "source": "src/index.tsx",
   "app": "dist/index.html",
