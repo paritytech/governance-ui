@@ -486,11 +486,12 @@ export function validateEnpoints(endpoints: string[]): Result<string[]> {
   return ok(endpoints);
 }
 
-function getSearchParams(search: string, params: string[]): string[] {
+function getSearchParams(
+  search: string,
+  params: string[]
+): Array<string | undefined> {
   const searchParams = new URLSearchParams(search);
-  return Array.from(searchParams.entries())
-    .filter(([key]) => params.includes(key))
-    .map(([, value]) => value);
+  return params.map((param) => searchParams.get(param) || undefined);
 }
 
 export type NetworkParams = {
