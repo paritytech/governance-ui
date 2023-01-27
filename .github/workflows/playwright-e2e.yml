@@ -1,9 +1,9 @@
 name: Playwright Tests
 on:
   push:
-    branches: [main, master, hamid/e2e]
+    branches: [main]
   pull_request:
-    branches: [main, master]
+    branches: [main]
 jobs:
   test:
     timeout-minutes: 60
@@ -18,6 +18,9 @@ jobs:
           npm install -g yarn
           yarn install
 
+      # Spawn a zomboienet chain in background
+      # ToDo: switch to zombienet podman when static ports are supported
+      # podman is preferred but currently it is not possible to set static ports
       #- name: podman
       #  run: sudo apt-get -y update
       # zombinet
@@ -25,7 +28,6 @@ jobs:
       #  run: sudo apt-get -y install podman
       #- name: Run zombienet
       #  run: yarn zombienet:podman
-
       - name: download polkadot
         run: |
           curl -L https://github.com/paritytech/polkadot/releases/download/v0.9.37/polkadot -o "${GITHUB_WORKSPACE}/polkadot"
@@ -40,20 +42,12 @@ jobs:
           start: yarn zombienet:native
           wait-on: "http://127.0.0.1:9996/metrics"
 
-      # deploy
+      # Start the web app in background
       - name: Background App Server
         uses: BerniWittmann/background-server-action@v1
         with:
           start: yarn dev
           wait-on: "http://localhost:1234"
-
-      #- name: Run App
-      #  run: |
-      #    yarn dev &
-      #    echo waiting!
-      #    sleep 100
-      #    curl 'http://localhost:1234'
-      #    echo deployed!
 
       # tests
       - name: Install Playwright Browsers
