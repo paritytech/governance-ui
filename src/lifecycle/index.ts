@@ -492,9 +492,7 @@ export function currentParams(): NetworkParams {
   };
 }
 
-export function addParamsChangeListener(
-  onChange: () => void
-) {
+export function addParamsChangeListener(onChange: () => void) {
   window.addEventListener('popstate', onChange);
   window.addEventListener('pushstate', onChange);
   window.addEventListener('replacestate', onChange);
@@ -523,37 +521,35 @@ export async function updateChainState(
     // Updated votings whenever selected accounts are updated
   });*/
 
-  addParamsChangeListener(
-    async () => {
-      // Track changes to network related query parameters
-      // Only consider values set, absent values are not consider (keep unchanged)
-      // If `network` is set, `endpoints` if unset will default to Network default
-      if (state.type == 'ConnectedState') {
-        // Only consider ConnectedState
-        const { networkParam, rpcParam } = currentParams();
-        if (networkParam) {
-          // `network` param is set and takes precedence, `endpoints` might
-          const network = parse(networkParam);
-          if (network.type == 'ok') {
-            if (state.network != network.value) {
-              // Only react to network changes
-              await dispatchNetworkChange(dispatch, network.value, rpcParam);
-            }
-          } else {
-            dispatchNewReport(dispatch, {
-              type: 'Error',
-              message: `Invalid 'network' param ${networkParam}: ${network.error}`,
-            });
+  addParamsChangeListener(async () => {
+    // Track changes to network related query parameters
+    // Only consider values set, absent values are not consider (keep unchanged)
+    // If `network` is set, `endpoints` if unset will default to Network default
+    if (state.type == 'ConnectedState') {
+      // Only consider ConnectedState
+      const { networkParam, rpcParam } = currentParams();
+      if (networkParam) {
+        // `network` param is set and takes precedence, `endpoints` might
+        const network = parse(networkParam);
+        if (network.type == 'ok') {
+          if (state.network != network.value) {
+            // Only react to network changes
+            await dispatchNetworkChange(dispatch, network.value, rpcParam);
           }
-        } else if (rpcParam) {
-          // Only `rpc` param is set, reconnect using those
-          dispatchEndpointsParamChange(dispatch, state.network, rpcParam);
         } else {
-          // No network provided; noop
+          dispatchNewReport(dispatch, {
+            type: 'Error',
+            message: `Invalid 'network' param ${networkParam}: ${network.error}`,
+          });
         }
+      } else if (rpcParam) {
+        // Only `rpc` param is set, reconnect using those
+        dispatchEndpointsParamChange(dispatch, state.network, rpcParam);
+      } else {
+        // No network provided; noop
       }
     }
-  );
+  });
 
   window.addEventListener('online', async () => {
     dispatch({
