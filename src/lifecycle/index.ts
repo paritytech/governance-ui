@@ -142,6 +142,7 @@ function withNewReport(previousState: State, report: Report): State {
 }
 
 function reducer(previousState: State, action: Action): State {
+  console.debug(`Applying ${action.type} to state ${previousState.type}`);
   // Note that unlucky timing might lead to overstepping changes (triggered via listeners registered just above)
   // So applying changes must be indempotent
   switch (action.type) {
@@ -492,19 +493,11 @@ export function currentParams(): NetworkParams {
 }
 
 export function addParamsChangeListener(
-  onChange: (rpcParam: string | null, networkParam: string | null) => void
+  onChange: () => void
 ) {
-  function onChangeWrapper(
-    onChange: (rpcParam: string | null, networkParam: string | null) => void
-  ): EventListenerOrEventListenerObject {
-    const { networkParam, rpcParam } = currentParams();
-    return () => onChange(rpcParam, networkParam);
-  }
-  const wrapper = onChangeWrapper(onChange);
-  window.addEventListener('popstate', wrapper);
-  window.addEventListener('pushstate', wrapper);
-  window.addEventListener('replacestate', wrapper);
-  return wrapper;
+  window.addEventListener('popstate', onChange);
+  window.addEventListener('pushstate', onChange);
+  window.addEventListener('replacestate', onChange);
 }
 
 export function removeQueryParamsChangeListener(
@@ -531,11 +524,13 @@ export async function updateChainState(
   });*/
 
   addParamsChangeListener(
-    async (rpcParam: string | null, networkParam: string | null) => {
+    async () => {
       // Track changes to network related query parameters
       // Only consider values set, absent values are not consider (keep unchanged)
       // If `network` is set, `endpoints` if unset will default to Network default
       if (state.type == 'ConnectedState') {
+        // Only consider ConnectedState
+        const { networkParam, rpcParam } = currentParams();
         if (networkParam) {
           // `network` param is set and takes precedence, `endpoints` might
           const network = parse(networkParam);
@@ -556,8 +551,6 @@ export async function updateChainState(
         } else {
           // No network provided; noop
         }
-      } else {
-        // Transition impossible; noop
       }
     }
   );
