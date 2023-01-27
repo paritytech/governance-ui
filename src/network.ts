@@ -12,11 +12,9 @@ export const DEFAULT_NETWORK = DEFAULT_NETWORK_ENV
   ? (capitalizeFirstLetter(DEFAULT_NETWORK_ENV) as Network)
   : Network.Kusama;
 
-export namespace Network {
-  export function parse(s: string): Result<Network> {
-    const network = capitalizeFirstLetter(s) as Network;
-    return network ? ok(network) : err(new Error(`Unrecognized network ${s}`));
-  }
+export function parse(s: string): Result<Network> {
+  const network = capitalizeFirstLetter(s) as Network;
+  return network ? ok(network) : err(new Error(`Unrecognized network ${s}`));
 }
 
 export function networkFor(api: ApiPromise): Network {

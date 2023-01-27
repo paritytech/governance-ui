@@ -2,14 +2,20 @@ import { Dispatch, useEffect, useReducer } from 'react';
 import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
 import { getVotingFor } from '../chain/conviction-voting';
 import { getAllReferenda, getAllTracks } from '../chain/referenda';
-import { DEFAULT_NETWORK, endpointsFor, Network, networkFor } from '../network';
+import {
+  DEFAULT_NETWORK,
+  endpointsFor,
+  Network,
+  networkFor,
+  parse,
+} from '../network';
 import { AccountVote, Referendum, ReferendumOngoing, Voting } from '../types';
 import { err, ok, Result } from '../utils';
+import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db';
 import { all, open, save } from '../utils/indexeddb';
 import { measured } from '../utils/performance';
 import { newApi } from '../utils/polkadot-api';
 import { fetchReferenda } from '../utils/polkassembly';
-import { timeout } from '../utils/promise';
 import { extractSearchParams } from '../utils/search-params';
 import {
   Action,
@@ -234,34 +240,6 @@ function reducer(previousState: State, action: Action): State {
 
 // Persisted data
 
-export const CHAINSTATE_STORE_NAME = `chain`;
-export const VOTE_STORE_NAME = `votes`;
-export const DB_VERSION = 1;
-export const STORES = [
-  { name: CHAINSTATE_STORE_NAME },
-  { name: VOTE_STORE_NAME },
-];
-
-const BASE_DB_NAME = 'polkadot/governance';
-
-export function dbNameFor(network: Network): string {
-  return `${BASE_DB_NAME}/${network.toString()}`;
-}
-
-export async function networksFromPersistence(): Promise<Network[]> {
-  const databases = await indexedDB.databases();
-  const names = databases
-    .filter((database) => database.name?.startsWith(BASE_DB_NAME))
-    .map((database) => database.name) as string[];
-  return names
-    .map(Network.parse)
-    .filter(
-      (network): network is { type: 'ok'; value: Network } =>
-        network.type == 'ok'
-    )
-    .map((network) => network.value);
-}
-
 async function restorePersisted(
   db: IDBDatabase
 ): Promise<PersistedDataContext> {
@@ -346,7 +324,9 @@ const DEFAULT_INITIAL_STATE: State = {
   connectedAccount: null,
 };
 
-export function useLifeCycle(initialState: State = DEFAULT_INITIAL_STATE): [State, Updater] {
+export function useLifeCycle(
+  initialState: State = DEFAULT_INITIAL_STATE
+): [State, Updater] {
   const [state, dispatch] = useReducer(reducer, initialState);
   const updater = new Updater(state, dispatch);
 
@@ -375,7 +355,9 @@ async function dispatchNetworkChange(
   rpcParam: string | null
 ) {
   const db = await open(dbNameFor(network), STORES, DB_VERSION);
-  const { votes } = await measured('fetch-restored-state', () => restorePersisted(db));
+  const { votes } = await measured('fetch-restored-state', () =>
+    restorePersisted(db)
+  );
   dispatch({
     type: 'SetRestoredAction',
     db,
@@ -420,7 +402,9 @@ async function loadAndDispatchReferendaDetails(
 ) {
   const indexes = Array.from(referenda.keys());
   indexes.forEach(async (index) => {
-    const details = await measured('fetch-referenda', () => fetchReferenda(network, index));
+    const details = await measured('fetch-referenda', () =>
+      fetchReferenda(network, index)
+    );
     dispatch({
       type: 'StoreReferendumDetailsAction',
       details: new Map([[index, details]]),
@@ -447,7 +431,9 @@ async function dispatchEndpointsChange(
   if (network == connectedNetwork) {
     return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
       const apiAt = await api.at(header.hash);
-      const chain = await measured('fetch-chain-state', () => fetchChainState(apiAt));
+      const chain = await measured('fetch-chain-state', () =>
+        fetchChainState(apiAt)
+      );
       dispatch({
         type: 'NewFinalizedBlockAction',
         api,
@@ -552,7 +538,7 @@ export async function updateChainState(
       if (state.type == 'ConnectedState') {
         if (networkParam) {
           // `network` param is set and takes precedence, `endpoints` might
-          const network = Network.parse(networkParam);
+          const network = parse(networkParam);
           if (network.type == 'ok') {
             if (state.network != network.value) {
               // Only react to network changes
@@ -599,7 +585,7 @@ export async function updateChainState(
 
   const { networkParam, rpcParam } = currentParams();
   if (networkParam) {
-    const network = Network.parse(networkParam);
+    const network = parse(networkParam);
     if (network.type == 'ok') {
       await dispatchNetworkChange(dispatch, network.value, rpcParam);
     } else {

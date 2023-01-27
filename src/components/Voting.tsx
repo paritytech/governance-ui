@@ -1,7 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
 import { ReferendaDeck } from './Referenda';
 import { createStandardAccountVote, vote } from '../chain/conviction-voting';
-import { dbNameFor, DB_VERSION, VOTE_STORE_NAME } from '../lifecycle';
 import {
   Button,
   Card,
@@ -18,6 +17,7 @@ import {
   ReferendumOngoing,
   Track,
 } from '../types';
+import { dbNameFor, DB_VERSION, VOTE_STORE_NAME } from '../utils/db';
 import { clear, open } from '../utils/indexeddb';
 
 function createBatchVotes(

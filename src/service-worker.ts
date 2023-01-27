@@ -1,18 +1,20 @@
 import { manifest, version } from '@parcel/service-worker';
 import { AccountStorage } from './contexts';
 import {
-  DB_VERSION,
-  STORES,
-  VOTE_STORE_NAME,
   filterOngoingReferenda,
   filterToBeVotedReferenda,
   fetchChainState,
-  dbNameFor,
-  networksFromPersistence,
   getAllVotes,
 } from './lifecycle';
 import { endpointsFor, Network } from './network';
 import { AccountVote, Referendum } from './types';
+import {
+  dbNameFor,
+  DB_VERSION,
+  networksFromPersistence,
+  STORES,
+  VOTE_STORE_NAME,
+} from './utils/db';
 import { all, open } from './utils/indexeddb';
 import { newApi } from './utils/polkadot-api';
 import { REFERENDA_UPDATES_TAG } from './utils/service-worker';
