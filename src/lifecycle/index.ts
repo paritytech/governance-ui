@@ -340,12 +340,14 @@ export class Updater {
 
 // https://polkadot.js.org/docs/api/start/api.query.subs/
 
-export function useLifeCycle(): [State, Updater] {
-  const [state, dispatch] = useReducer(reducer, {
-    type: 'InitialState',
-    connectivity: { type: navigator.onLine ? 'Online' : 'Offline' },
-    connectedAccount: null,
-  });
+const DEFAULT_INITIAL_STATE: State = {
+  type: 'InitialState',
+  connectivity: { type: navigator.onLine ? 'Online' : 'Offline' },
+  connectedAccount: null,
+};
+
+export function useLifeCycle(initialState: State = DEFAULT_INITIAL_STATE): [State, Updater] {
+  const [state, dispatch] = useReducer(reducer, initialState);
   const updater = new Updater(state, dispatch);
 
   useEffect(() => {
@@ -373,7 +375,7 @@ async function dispatchNetworkChange(
   rpcParam: string | null
 ) {
   const db = await open(dbNameFor(network), STORES, DB_VERSION);
-  const { votes } = await restorePersisted(db);
+  const { votes } = await measured('fetch-restored-state', () => restorePersisted(db));
   dispatch({
     type: 'SetRestoredAction',
     db,
@@ -418,7 +420,7 @@ async function loadAndDispatchReferendaDetails(
 ) {
   const indexes = Array.from(referenda.keys());
   indexes.forEach(async (index) => {
-    const details = await fetchReferenda(network, index);
+    const details = await measured('fetch-referenda', () => fetchReferenda(network, index));
     dispatch({
       type: 'StoreReferendumDetailsAction',
       details: new Map([[index, details]]),
@@ -431,7 +433,7 @@ async function dispatchEndpointsChange(
   network: Network,
   endpoints: string[]
 ) {
-  const api = await measured('api', () => timeout(newApi(endpoints), 5000));
+  const api = await measured('api', () => newApi(endpoints));
   //  api.on('disconnected', () => console.log('api', 'disconnected'));
   //  api.on('connected', () => console.log('api', 'connected'));
   //  api.on('error', (error) => console.log('api', 'error', error));
@@ -445,7 +447,7 @@ async function dispatchEndpointsChange(
   if (network == connectedNetwork) {
     return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
       const apiAt = await api.at(header.hash);
-      const chain = await fetchChainState(apiAt);
+      const chain = await measured('fetch-chain-state', () => fetchChainState(apiAt));
       dispatch({
         type: 'NewFinalizedBlockAction',
         api,
