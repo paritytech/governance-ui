@@ -47,10 +47,9 @@ export function App(): JSX.Element {
     }
   }
   return (
-    <>
-      <div data-app-state={state.type} hidden />
+    <div data-testid={`${state.type}`}>
       {component}
-    </>
+    </div>
   );
 }
 

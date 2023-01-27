@@ -8,9 +8,8 @@ test("has title", async ({ page }) => {
   await expect(page).toHaveTitle(/Swipealot/);
 });
 
-/*test("get started link", async ({ page }) => {
+test("Is connected", async ({ page }) => {
   await page.goto(endpoint);
-
   // Click the get started link.
-  await page.getByRole("link", { name: "Get started" }).click();
-});*/
+  await expect(page.getByTestId("ConnectedState")).toHaveCount(1);
+});
