@@ -430,7 +430,8 @@ async function dispatchEndpointsChange(
   });
 
   const connectedNetwork = networkFor(api);
-  if (network == connectedNetwork) {
+  // TODO move away from hard network constrain, drop typoe augmentation
+  if (true/* TODO fix network == connectedNetwork*/) {
     return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
       const apiAt = await api.at(header.hash);
       const chain = await measured('fetch-chain-state', () =>
