@@ -38,6 +38,7 @@ type BaseState = {
   reports?: Report[];
   connectedAccount: string | null;
   connectivity: Connectivity;
+  details: Map<number, ReferendumDetails>;
 };
 
 type BaseRestoredState = BaseState &
@@ -58,7 +59,6 @@ export type ConnectedState = BaseRestoredState & {
   type: 'ConnectedState';
   block: number;
   chain: ChainState;
-  details: Map<number, ReferendumDetails>;
 };
 
 export type State = InitialState | RestoredState | ConnectedState;

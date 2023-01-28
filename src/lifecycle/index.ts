@@ -1,14 +1,8 @@
-import { Dispatch, useEffect, useReducer } from 'react';
+import { Dispatch, useCallback, useEffect, useReducer, useRef } from 'react';
 import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
 import { getVotingFor } from '../chain/conviction-voting';
 import { getAllReferenda, getAllTracks } from '../chain/referenda';
-import {
-  DEFAULT_NETWORK,
-  endpointsFor,
-  Network,
-  networkFor,
-  parse,
-} from '../network';
+import { DEFAULT_NETWORK, endpointsFor, Network, parse } from '../network';
 import { AccountVote, Referendum, ReferendumOngoing, Voting } from '../types';
 import { err, ok, Result } from '../utils';
 import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db';
@@ -141,7 +135,22 @@ function withNewReport(previousState: State, report: Report): State {
   };
 }
 
+/*
+function loggedMethod(originalMethod: any, _context: any) {
+
+  function replacementMethod(this: any, ...args: any[]) {
+      console.log("LOG: Entering method.")
+      const result = originalMethod.call(this, ...args);
+      console.log("LOG: Exiting method.")
+      return result;
+  }
+
+  return replacementMethod;
+}*/
+
+//@logged
 function reducer(previousState: State, action: Action): State {
+  // TODO replace with decorator once supported in parcel
   console.debug(`Applying ${action.type} to state ${previousState.type}`);
   // Note that unlucky timing might lead to overstepping changes (triggered via listeners registered just above)
   // So applying changes must be indempotent
@@ -210,18 +219,12 @@ function reducer(previousState: State, action: Action): State {
     }
     case 'StoreReferendumDetailsAction': {
       const { details } = action;
-      if ('details' in previousState) {
-        const previousDetails = previousState.details;
-        return {
-          ...previousState,
-          details: new Map([...previousDetails, ...details]),
-        };
-      } else {
-        return withNewReport(
-          previousState,
-          incorrectTransitionError(previousState)
-        );
-      }
+      const previousDetails = previousState.details;
+
+      return {
+        ...previousState,
+        details: new Map([...previousDetails, ...details]),
+      };
     }
     case 'CastVoteAction':
       if ('votes' in previousState) {
@@ -271,16 +274,16 @@ export async function fetchChainState(
 }
 
 export class Updater {
-  readonly #state;
+  readonly #stateAccessor;
   readonly #dispatch;
 
-  constructor(state: State, dispatch: Dispatch<Action>) {
-    this.#state = state;
+  constructor(stateAccessor: () => State, dispatch: Dispatch<Action>) {
+    this.#stateAccessor = stateAccessor;
     this.#dispatch = dispatch;
   }
 
   async start() {
-    await updateChainState(this.#state, this.#dispatch);
+    await updateChainState(this.#stateAccessor, this.#dispatch);
   }
 
   async castVote(index: number, vote: AccountVote) {
@@ -291,10 +294,11 @@ export class Updater {
     });
 
     // Persist votes before they are broadcasted on chain
-    if (this.#state.type == 'ConnectedState') {
-      await save(this.#state.db, VOTE_STORE_NAME, index, vote);
+    const state = this.#stateAccessor();
+    if (state.type == 'ConnectedState') {
+      await save(state.db, VOTE_STORE_NAME, index, vote);
     } else {
-      await this.newReport(incorrectTransitionError(this.#state));
+      await this.newReport(incorrectTransitionError(state));
     }
   }
 
@@ -313,24 +317,24 @@ export class Updater {
   }
 }
 
-// When needs to dif data
-// https://news.ycombinator.com/item?id=29130661
-// https://dev.to/asyncbanana/building-the-fastest-object-and-array-differ-2l6f
-// https://github.com/AsyncBanana/microdiff
-
-// https://polkadot.js.org/docs/api/start/api.query.subs/
-
 const DEFAULT_INITIAL_STATE: State = {
   type: 'InitialState',
   connectivity: { type: navigator.onLine ? 'Online' : 'Offline' },
   connectedAccount: null,
+  details: new Map(),
 };
 
 export function useLifeCycle(
   initialState: State = DEFAULT_INITIAL_STATE
 ): [State, Updater] {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const updater = new Updater(state, dispatch);
+  const lastState = useRef(state);
+  useEffect(() => {
+    lastState.current = state;
+  }, [state]);
+  // Allows to access current State
+  const stateAccessor = useCallback(() => lastState.current, []);
+  const updater = new Updater(stateAccessor, dispatch);
 
   useEffect(() => {
     async function start() {
@@ -352,6 +356,7 @@ export function useLifeCycle(
  * @param dispatch
  */
 async function dispatchNetworkChange(
+  stateAccessor: () => State,
   dispatch: Dispatch<Action>,
   network: Network,
   rpcParam: string | null
@@ -367,7 +372,7 @@ async function dispatchNetworkChange(
     votes,
   });
 
-  dispatchEndpointsParamChange(dispatch, network, rpcParam);
+  dispatchEndpointsParamChange(stateAccessor, dispatch, network, rpcParam);
 }
 
 function dispatchNewReport(dispatch: Dispatch<Action>, report: Report) {
@@ -378,6 +383,7 @@ function dispatchNewReport(dispatch: Dispatch<Action>, report: Report) {
 }
 
 async function dispatchEndpointsParamChange(
+  stateAccessor: () => State,
   dispatch: Dispatch<Action>,
   network: Network,
   rpcParam: string | null
@@ -385,7 +391,12 @@ async function dispatchEndpointsParamChange(
   if (rpcParam) {
     const endpoints = extractEndpointsFromParam(rpcParam);
     if (endpoints.type == 'ok') {
-      await dispatchEndpointsChange(dispatch, network, endpoints.value);
+      await dispatchEndpointsChange(
+        stateAccessor,
+        dispatch,
+        network,
+        endpoints.value
+      );
     } else {
       dispatchNewReport(dispatch, {
         type: 'Error',
@@ -393,16 +404,21 @@ async function dispatchEndpointsParamChange(
       });
     }
   } else {
-    await dispatchEndpointsChange(dispatch, network, endpointsFor(network));
+    await dispatchEndpointsChange(
+      stateAccessor,
+      dispatch,
+      network,
+      endpointsFor(network)
+    );
   }
 }
 
 async function loadAndDispatchReferendaDetails(
   dispatch: Dispatch<Action>,
-  referenda: Map<number, Referendum>,
+  referendaIndexes: Array<number>,
   network: Network
 ) {
-  const indexes = Array.from(referenda.keys());
+  const indexes = Array.from(referendaIndexes);
   indexes.forEach(async (index) => {
     const details = await measured('fetch-referenda', () =>
       fetchReferenda(network, index)
@@ -415,6 +431,7 @@ async function loadAndDispatchReferendaDetails(
 }
 
 async function dispatchEndpointsChange(
+  stateAccessor: () => State,
   dispatch: Dispatch<Action>,
   network: Network,
   endpoints: string[]
@@ -442,7 +459,20 @@ async function dispatchEndpointsChange(
       chain,
     });
 
-    await loadAndDispatchReferendaDetails(dispatch, chain.referenda, network);
+    // Trigger load of details for new referenda
+    const state = stateAccessor();
+    const previousReferendaIndexes = Array.from(state.details.keys());
+    const newReferendaIndexes = Array.from(
+      filterOngoingReferenda(chain.referenda).keys()
+    );
+    const missingReferendaIndexes = newReferendaIndexes.filter(
+      (index) => !previousReferendaIndexes.includes(index)
+    );
+    await loadAndDispatchReferendaDetails(
+      dispatch,
+      missingReferendaIndexes,
+      network
+    );
   });
 }
 
@@ -503,8 +533,15 @@ function extractEndpointsFromParam(s: string): Result<string[]> {
   return validateEnpoints(s.split('|'));
 }
 
-export async function updateChainState(
-  state: State,
+/**
+ * It's assumed that provided state and dependencies are fully initialized.
+ * e.g. a 'ConnectedState' should provide a connected `api`
+ *
+ * @param state
+ * @param dispatch
+ */
+async function updateChainState(
+  stateAccessor: () => State,
   dispatch: Dispatch<Action>
 ) {
   // First setup listeners
@@ -518,6 +555,7 @@ export async function updateChainState(
     // Track changes to network related query parameters
     // Only consider values set, absent values are not consider (keep unchanged)
     // If `network` is set, `endpoints` if unset will default to Network default
+    const state = stateAccessor();
     if (state.type == 'ConnectedState') {
       // Only consider ConnectedState
       const { networkParam, rpcParam } = currentParams();
@@ -533,7 +571,12 @@ export async function updateChainState(
           if (network.type == 'ok') {
             if (state.network != network.value) {
               // Only react to network changes
-              await dispatchNetworkChange(dispatch, network.value, rpcParam);
+              await dispatchNetworkChange(
+                stateAccessor,
+                dispatch,
+                network.value,
+                rpcParam
+              );
             }
           } else {
             dispatchNewReport(dispatch, {
@@ -543,7 +586,12 @@ export async function updateChainState(
           }
         } else if (rpcParam) {
           // Only `rpc` param is set, reconnect using those
-          dispatchEndpointsParamChange(dispatch, state.network, rpcParam);
+          dispatchEndpointsParamChange(
+            stateAccessor,
+            dispatch,
+            state.network,
+            rpcParam
+          );
         } else {
           // No network provided; noop
         }
@@ -572,18 +620,32 @@ export async function updateChainState(
     })
   );
 
-  const { networkParam, rpcParam } = currentParams();
-  if (networkParam) {
-    const network = parse(networkParam);
-    if (network.type == 'ok') {
-      await dispatchNetworkChange(dispatch, network.value, rpcParam);
+  function getNetwork(networkParam: string | null): Result<Network> {
+    if (networkParam) {
+      const network = parse(networkParam);
+      if (network.type == 'ok') {
+        return ok(network.value);
+      } else {
+        return network;
+      }
     } else {
-      dispatchNewReport(dispatch, {
-        type: 'Error',
-        message: network.error.message,
-      });
+      return ok(DEFAULT_NETWORK);
     }
+  }
+
+  const { networkParam, rpcParam } = currentParams();
+  const network = getNetwork(networkParam);
+  if (network.type == 'ok') {
+    await dispatchNetworkChange(
+      stateAccessor,
+      dispatch,
+      network.value,
+      rpcParam
+    );
   } else {
-    await dispatchNetworkChange(dispatch, DEFAULT_NETWORK, rpcParam);
+    dispatchNewReport(dispatch, {
+      type: 'Error',
+      message: network.error.message,
+    });
   }
 }
