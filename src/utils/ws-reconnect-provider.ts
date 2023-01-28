@@ -42,7 +42,7 @@ export class WsReconnectProvider extends WsProvider {
 
   #checker() {
     const { bytesRecv, errors, timeout } = this.stats.total;
-    console.log('CHECKING', this.#currentEndpoint, bytesRecv, errors, timeout);
+    console.debug('CHECKING', this.#currentEndpoint, bytesRecv, errors, timeout);
   }
 
   async connect(): Promise<void> {

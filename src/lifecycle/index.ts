@@ -135,23 +135,7 @@ function withNewReport(previousState: State, report: Report): State {
   };
 }
 
-/*
-function loggedMethod(originalMethod: any, _context: any) {
-
-  function replacementMethod(this: any, ...args: any[]) {
-      console.log("LOG: Entering method.")
-      const result = originalMethod.call(this, ...args);
-      console.log("LOG: Exiting method.")
-      return result;
-  }
-
-  return replacementMethod;
-}*/
-
-//@logged
 function reducer(previousState: State, action: Action): State {
-  // TODO replace with decorator once supported in parcel
-  console.debug(`Applying ${action.type} to state ${previousState.type}`);
   // Note that unlucky timing might lead to overstepping changes (triggered via listeners registered just above)
   // So applying changes must be indempotent
   switch (action.type) {
@@ -324,10 +308,21 @@ const DEFAULT_INITIAL_STATE: State = {
   details: new Map(),
 };
 
+type Reducer = (previousState: State, action: Action) => State;
+
+function useReducerLogger(reducer: Reducer): Reducer {
+  return useCallback((previousState: State, action: Action) => {
+    console.debug(`Applying ${action.type} to state ${previousState.type}`);
+    const newState = reducer(previousState, action);
+    console.debug(`New state: ${newState.type}`);
+    return newState;
+  }, [reducer]);
+}
+
 export function useLifeCycle(
   initialState: State = DEFAULT_INITIAL_STATE
 ): [State, Updater] {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(useReducerLogger(reducer), initialState);
   const lastState = useRef(state);
   useEffect(() => {
     lastState.current = state;
