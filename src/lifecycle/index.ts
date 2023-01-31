@@ -311,12 +311,15 @@ const DEFAULT_INITIAL_STATE: State = {
 type Reducer = (previousState: State, action: Action) => State;
 
 function useReducerLogger(reducer: Reducer): Reducer {
-  return useCallback((previousState: State, action: Action) => {
-    console.debug(`Applying ${action.type} to state ${previousState.type}`);
-    const newState = reducer(previousState, action);
-    console.debug(`New state: ${newState.type}`);
-    return newState;
-  }, [reducer]);
+  return useCallback(
+    (previousState: State, action: Action) => {
+      console.debug(`Applying ${action.type} to state ${previousState.type}`);
+      const newState = reducer(previousState, action);
+      console.debug(`New state: ${newState.type}`);
+      return newState;
+    },
+    [reducer]
+  );
 }
 
 export function useLifeCycle(
