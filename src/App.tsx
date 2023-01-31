@@ -9,7 +9,6 @@ import { apiFromConnectivity } from './lifecycle/types';
 
 export function App(): JSX.Element {
   const [state, updater] = useLifeCycle();
-
   switch (state.type) {
     case 'RestoredState':
     case 'InitialState':
