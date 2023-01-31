@@ -2,7 +2,7 @@ import { Loading, Spacer, Text } from '../ui/nextui';
 
 export function LoadingPanel({ message }: { message: string }): JSX.Element {
   return (
-    <div className='flex flex-col' role='progressbar' aria-busy='true'>
+    <div className="flex flex-col" role="progressbar" aria-busy="true">
       <Loading />
       <Spacer y={2} />
       <Text
