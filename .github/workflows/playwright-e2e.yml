@@ -10,30 +10,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-      - name: Install dependencies
-        run: |
-          npm install -g yarn
-          yarn install
 
-      # Spawn a zomboienet chain in background
+      - name: Setup node
+        uses: actions/setup-node@v3
+
+      - name: Install
+        run:  yarn install --immutable --immutable-cache --check-cache
+
+      # Spawn a zombienet chain in background
       # ToDo: switch to zombienet podman when static ports are supported
       # podman is preferred but currently it is not possible to set static ports
       #- name: podman
       #  run: sudo apt-get -y update
-      # zombinet
+      # zombienet
       #- name: podman install
       #  run: sudo apt-get -y install podman
       #- name: Run zombienet
       #  run: yarn zombienet:podman
-      - name: download polkadot
+      - name: Download polkadot
         run: |
-          curl -L https://github.com/paritytech/polkadot/releases/download/v0.9.37/polkadot -o "${GITHUB_WORKSPACE}/polkadot"
+          curl -L https://github.com/paritytech/polkadot/releases/latest/download/polkadot -o "${GITHUB_WORKSPACE}/polkadot"
           chmod 777 "${GITHUB_WORKSPACE}/polkadot"
           echo PATH=$PATH:"${GITHUB_WORKSPACE}" >> $GITHUB_ENV
-      - name: check polkadot
+
+      - name: Display polkadot version
         run: polkadot --version
 
       - name: Background Zombienet Server
@@ -49,11 +49,14 @@ jobs:
           start: yarn dev
           wait-on: "http://localhost:1234"
 
-      # tests
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
+
       - name: Run Playwright tests
-        run: yarn playwright test
+        run: yarn test:e2e
+        env:
+          URL: http://127.0.0.1:1234/?rpc=ws://127.0.0.1:9984
+
       - uses: actions/upload-artifact@v3
         if: always()
         with:
