@@ -3079,15 +3079,16 @@
   dependencies:
     "@use-gesture/core" "10.2.23"
 
-"@zombienet/cli@1.3.29":
-  version "1.3.29"
-  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.29.tgz#1e8cdf162e2c0d5bd80772a571d15194bc5e9c6b"
-  integrity sha512-mXYeOPaRaJFYPWzH7tYSzDrV5Ltr2KFU6VoiNMBv+ZNv2le+f2S35Ytfd9cLq/VXweEE9ZocjMD/VpgVBZ+dog==
+"@zombienet/cli@1.3.30":
+  version "1.3.30"
+  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.30.tgz#511a81722055b1f5119e94052fd3ca639ada951b"
+  integrity sha512-IMj3vhZO1BybofjfzGviSyjFgzvnVws9YLKvoEt9SK+eg3Lq6+DNomtryOwnM5S2YVUJkhvBh6/0qURPzEM/9Q==
   dependencies:
     "@zombienet/dsl-parser-wrapper" "^0.1.7"
-    "@zombienet/orchestrator" "^0.0.21"
-    "@zombienet/utils" "^0.0.13"
+    "@zombienet/orchestrator" "^0.0.22"
+    "@zombienet/utils" "^0.0.14"
     axios "^0.27.2"
+    commander "^10.0.0"
     debug "^4.3.2"
     nunjucks "^3.2.3"
     progress "^2.0.3"
@@ -3098,15 +3099,15 @@
   resolved "https://registry.yarnpkg.com/@zombienet/dsl-parser-wrapper/-/dsl-parser-wrapper-0.1.7.tgz#ed3a1e25081732b188d2fefbd78517c7709ca3bf"
   integrity sha512-pJqo1LZbNqnL6Of1h67eYtTTu0BLcf+U/nGQtj8pYr0V4XVDWdCYvT4C9kXkrh5964nKz3KGB7Eky43NqRJZqg==
 
-"@zombienet/orchestrator@^0.0.21":
-  version "0.0.21"
-  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.21.tgz#82cbae3a1a25c05fb8970236d1b3c0d88e430795"
-  integrity sha512-c1osFmESdteMAqqVFwnzNZgEM4SXHwOQLu1HJxiCF9g7J1fXfQ1yDO8YAmWrWMMnNU37dR2SRzZWBKCUy48JIg==
+"@zombienet/orchestrator@^0.0.22":
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.22.tgz#042e4324b19ecff86ed577f318b320ae00c5e616"
+  integrity sha512-KlPn+wIh31ElTiJAZxAKgqaf+WnwPwFyHgr+mvH7j7TsjIOrpOzd3IMCHCx/rVAKFmMz5dDfw8e83z88u45Nhw==
   dependencies:
     "@polkadot/api" "^9.2.4"
     "@polkadot/keyring" "^10.1.6"
     "@polkadot/util-crypto" "^10.1.6"
-    "@zombienet/utils" "^0.0.13"
+    "@zombienet/utils" "^0.0.14"
     JSONStream "^1.3.5"
     axios "^0.27.2"
     chai "^4.3.4"
@@ -3124,14 +3125,13 @@
     typescript "^4.8.2"
     yaml "^2.0.0-9"
 
-"@zombienet/utils@^0.0.13":
-  version "0.0.13"
-  resolved "https://registry.yarnpkg.com/@zombienet/utils/-/utils-0.0.13.tgz#94d10bb77a2f99afd7e17216fdf5afa2eded792a"
-  integrity sha512-6rBjhkk7f7r2vLn19h8zFKz1XbMWd7oJEwIhG2rZ+SNeYKyZRBay/fNsVjahOtDnZDGy/uGmiH1bxPSOJByAAA==
+"@zombienet/utils@^0.0.14":
+  version "0.0.14"
+  resolved "https://registry.yarnpkg.com/@zombienet/utils/-/utils-0.0.14.tgz#ea80f64ba3d37f496c5983f699ce04720935e932"
+  integrity sha512-bDYXAja3BoV55/UqEm5wX/B0QKoz/Fqd4/EZvK8CQ3qrwmrkPyISQ0EB9OSJoW014g1mxTLeR8eS/bqzH2rhkA==
   dependencies:
     axios "^0.27.2"
     cli-table3 "^0.6.2"
-    commander "^9.4.0"
     debug "^4.3.2"
     nunjucks "^3.2.3"
     toml "^3.0.0"
@@ -3767,6 +3767,11 @@ comma-separated-tokens@^1.0.0:
   resolved "https://registry.yarnpkg.com/comma-separated-tokens/-/comma-separated-tokens-1.0.8.tgz#632b80b6117867a158f1080ad498b2fbe7e3f5ea"
   integrity sha512-GHuDRO12Sypu2cV70d1dkA2EUmXHgntrzbpvOB+Qy+49ypNfGgFQIC2fhhXbnyrJRynDCAARsT7Ou0M6hirpfw==
 
+commander@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-10.0.0.tgz#71797971162cd3cf65f0b9d24eb28f8d303acdf1"
+  integrity sha512-zS5PnTI22FIRM6ylNW8G4Ap0IEOyk62fhLSD0+uHRT9McRCLGpkVNvao4bjimpK/GShynyQkFFxHhwMcETmduA==
+
 commander@^2.20.0:
   version "2.20.3"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
@@ -3781,11 +3786,6 @@ commander@^7.0.0, commander@^7.2.0:
   version "7.2.0"
   resolved "https://registry.yarnpkg.com/commander/-/commander-7.2.0.tgz#a36cb57d0b501ce108e4d20559a150a391d97ab7"
   integrity sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==
-
-commander@^9.4.0:
-  version "9.5.0"
-  resolved "https://registry.yarnpkg.com/commander/-/commander-9.5.0.tgz#bc08d1eb5cedf7ccb797a96199d41c7bc3e60d30"
-  integrity sha512-KRs7WVDKg86PWiuAqhDrAQnTXZKraVcCc6vFdL14qrZ/DcWwuRo7VoiYXalXO7S5GKpqYiVEwCbgFDfxNHKJBQ==
 
 concat-map@0.0.1:
   version "0.0.1"
