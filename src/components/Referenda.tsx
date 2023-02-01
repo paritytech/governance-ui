@@ -92,12 +92,12 @@ export function ReferendaDeck({
   tracks,
   referenda,
   details,
-  voteHandler,
+  onCastVote,
 }: {
   tracks: Map<number, Track>;
   referenda: Array<ReferendumOngoing & { index: number }>;
   details: Map<number, ReferendumDetails>;
-  voteHandler: (index: number, accountVote: AccountVote) => void;
+  onCastVote: (index: number, accountVote: AccountVote) => void;
 }): JSX.Element {
   const [gone] = useState(() => new Set()); // The set flags all the cards that are flicked out
   const [sProps, sApi] = useSprings(referenda.length, (i) => ({
@@ -119,7 +119,7 @@ export function ReferendaDeck({
         if (index !== i) return; // We're only interested in changing spring-data for the current spring
         const isGone = gone.has(index);
         if (isGone) {
-          voteHandler(referenda[i].index, createStandardAccountVote(xDir == 1));
+          onCastVote(referenda[i].index, createStandardAccountVote(xDir == 1));
         }
         const x = isGone ? (200 + window.innerWidth) * xDir : active ? mx : 0; // When a card is gone it flys out left or right, otherwise goes back to zero
         const rot = mx / 100 + (isGone ? xDir * 10 * vx : 0); // How much the card tilts, flicking it harder makes it rotate faster

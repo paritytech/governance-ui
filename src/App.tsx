@@ -5,7 +5,6 @@ import {
   useLifeCycle,
 } from './lifecycle';
 import { LoadingPanel, VotesSummaryTable, VotingPanel } from './components';
-import { apiFromConnectivity } from './lifecycle/types';
 
 export function App(): JSX.Element {
   const [state, updater] = useLifeCycle();
@@ -14,7 +13,7 @@ export function App(): JSX.Element {
     case 'InitialState':
       return <LoadingPanel message={`Get ready to vote!`} />;
     case 'ConnectedState': {
-      const { connectivity, chain, votes, details, connectedAccount } = state;
+      const { chain, votes, details, connectedAccount } = state;
       const { allVotings, tracks, referenda } = chain;
       const ongoingReferenda = filterOngoingReferenda(referenda);
       const allVotes = getAllVotes(
@@ -29,15 +28,21 @@ export function App(): JSX.Element {
       );
       if (referendaToBeVotedOn.size == 0) {
         // User went through all referenda
-        const api = apiFromConnectivity(connectivity);
-        return <VotesSummaryTable api={api} accountVotes={allVotes} />;
+        return (
+          <VotesSummaryTable
+            accountVotes={allVotes}
+            onSubmitVotes={(signingAccount, accountVotes) =>
+              updater.signAndSendVotes(signingAccount, accountVotes)
+            }
+          />
+        );
       } else {
         return (
           <VotingPanel
             tracks={tracks}
             referenda={referendaToBeVotedOn}
             details={details}
-            voteHandler={(index, vote) => updater.castVote(index, vote)}
+            onCastVote={(index, vote) => updater.castVote(index, vote)}
           />
         );
       }
