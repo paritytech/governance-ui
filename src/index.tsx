@@ -13,30 +13,27 @@ import Header from './components/Header';
 import NotificationProvider from './contexts/Notification';
 import NotificationBox from './components/NotificationBox';
 import { registerServiceWorker } from './utils/service-worker';
-import { UIProvider } from './ui/nextui';
 
 const container = document.getElementById('root');
 if (container) {
   const root = ReactDOMClient.createRoot(container);
   root.render(
     <React.StrictMode>
-      <UIProvider>
-        <main>
-          <ErrorBoundary>
-            <NotificationProvider>
-              <WalletProvider>
-                <AccountProvider>
-                  <NotificationBox />
-                  <Header />
-                  <div className="flex flex-auto flex-col items-center justify-center">
-                    <App />
-                  </div>
-                </AccountProvider>
-              </WalletProvider>
-            </NotificationProvider>
-          </ErrorBoundary>
-        </main>
-      </UIProvider>
+      <main>
+        <ErrorBoundary>
+          <NotificationProvider>
+            <WalletProvider>
+              <AccountProvider>
+                <NotificationBox />
+                <Header />
+                <div className="flex flex-auto flex-col items-center justify-center">
+                  <App />
+                </div>
+              </AccountProvider>
+            </WalletProvider>
+          </NotificationProvider>
+        </ErrorBoundary>
+      </main>
     </React.StrictMode>
   );
 

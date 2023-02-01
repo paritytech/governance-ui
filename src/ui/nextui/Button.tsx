@@ -11,9 +11,12 @@ export function Button({
   onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
   style?: React.CSSProperties | undefined;
 }): JSX.Element {
-  const cn = `appearance-none flex justify-center w-9 min-w-min w-auto rounded-full py-2 px-4 ${className}`;
   return (
-    <button className={cn} style={{ ...style }} onClick={onClick}>
+    <button
+      className={`flex w-9 w-auto min-w-min appearance-none justify-center rounded-full border-primary py-2 px-4 ${className}`}
+      style={{ ...style }}
+      onClick={onClick}
+    >
       {children}
     </button>
   );
