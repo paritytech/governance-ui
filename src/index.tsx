@@ -1,7 +1,7 @@
 // Must be loaded before anything else
 // See https://polkadot.js.org/docs/api/FAQ/#since-upgrading-to-the-7x-series-typescript-augmentation-is-missing
-import '@polkadot/api-augment';
-import '@polkadot/types-augment';
+import '@polkadot/api-augment/kusama';
+import '@polkadot/types-augment/kusama';
 
 import React from 'react';
 import * as ReactDOMClient from 'react-dom/client';
