@@ -1,6 +1,4 @@
-export interface Constructable<T, U> {
-  new (params: U): Readyable<T>;
-}
+type Constructable<T, U> = new (params: U) => Readyable<T>;
 
 export interface Destroyable {
   destroy(): Promise<void>;
