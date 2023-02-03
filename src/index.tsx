@@ -19,7 +19,7 @@ if (container) {
   const root = ReactDOMClient.createRoot(container);
   root.render(
     <React.StrictMode>
-      <main>
+      <main className="container mx-auto">
         <ErrorBoundary>
           <NotificationProvider>
             <WalletProvider>

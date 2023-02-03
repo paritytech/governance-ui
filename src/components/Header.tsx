@@ -1,11 +1,21 @@
 import { useEffect, useState } from 'react';
 import { NotificationType, useNotifications } from '../contexts/Notification';
-import { Button, HeartIcon, Navbar } from '../ui/nextui';
+import { Button, HeartIcon } from '../ui/nextui';
+import Navbar from '../ui/nextui/Navbar';
 import ConnectButton from './Connect';
 import {
   areNotificationsGranted,
   requestNotificationPermission,
 } from '../utils/permissions';
+
+const tokenUrl = new URL(
+  '../../assets/images/polkadot-token.svg',
+  import.meta.url
+);
+const logoUrl = new URL(
+  '../../assets/images/polkadot-logo.svg',
+  import.meta.url
+);
 
 function Header(): JSX.Element {
   const { notify } = useNotifications();
@@ -18,31 +28,48 @@ function Header(): JSX.Element {
 
     fetch();
   }, []);
-
+  console.log(Navbar);
   return (
-    <Navbar title="Open Gov">
-      <>
-        {!notificationGranted && (
-          <Button
-            color="secondary"
-            rounded
-            onPress={async () => {
-              const permission = await requestNotificationPermission();
-              if (permission !== 'granted') {
-                notify({
-                  type: NotificationType.Notification,
-                  message: 'Notification permission has been denied',
-                });
-              } else {
-                setNotificationGranted(true);
-              }
-            }}
-            label="Request notification"
-            icon={<HeartIcon />}
+    <Navbar>
+      <Navbar.Brand>
+        <div className="h-8">
+          <img
+            className="h-full md:hidden"
+            src={tokenUrl}
+            alt="polkadot logo"
           />
-        )}
-        <ConnectButton color="secondary" bordered />
-      </>
+          <img
+            className="hiden h-full md:inline"
+            src={logoUrl}
+            alt="polkadot logo"
+          />
+          <span>| Open Governance</span>
+        </div>
+      </Navbar.Brand>
+      <Navbar.Content className="w-full">
+        <Navbar.Item className="w-full">
+          <div className="flex w-full justify-start md:justify-end">
+            {!notificationGranted && (
+              <Button
+                onClick={async () => {
+                  const permission = await requestNotificationPermission();
+                  if (permission !== 'granted') {
+                    notify({
+                      type: NotificationType.Notification,
+                      message: 'Notification permission has been denied',
+                    });
+                  } else {
+                    setNotificationGranted(true);
+                  }
+                }}
+              >
+                <HeartIcon />
+              </Button>
+            )}
+            <ConnectButton />
+          </div>
+        </Navbar.Item>
+      </Navbar.Content>
     </Navbar>
   );
 }
