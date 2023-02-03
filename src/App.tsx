@@ -1,13 +1,27 @@
 import {
+  ErrorBoundary,
+  Header,
+  LoadingPanel,
+  NotificationBox,
+  VotesSummaryTable,
+  VotingPanel,
+} from './components';
+import {
+  Updater,
   filterOngoingReferenda,
   filterToBeVotedReferenda,
   getAllVotes,
   useLifeCycle,
 } from './lifecycle';
-import { LoadingPanel, VotesSummaryTable, VotingPanel } from './components';
+import type { State } from './lifecycle/types';
 
-export function App(): JSX.Element {
-  const [state, updater] = useLifeCycle();
+function Panel({
+  state,
+  updater,
+}: {
+  state: State;
+  updater: Updater;
+}): JSX.Element {
   switch (state.type) {
     case 'RestoredState':
     case 'InitialState':
@@ -50,4 +64,25 @@ export function App(): JSX.Element {
   }
 }
 
-export default App;
+export function App(): JSX.Element {
+  const [state, updater] = useLifeCycle();
+  return (
+    <ErrorBoundary>
+      <NotificationBox
+        reports={state.reports}
+        removeReport={updater.removeReport}
+      />
+      <Header
+        onPermissionDenied={() =>
+          updater.addReport({
+            type: 'Warning',
+            message: 'Notification permission has been denied',
+          })
+        }
+      />
+      <main className="flex flex-auto flex-col items-center justify-center">
+        <Panel state={state} updater={updater} />
+      </main>
+    </ErrorBoundary>
+  );
+}

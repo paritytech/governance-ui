@@ -50,6 +50,7 @@
     "@playwright/test": "1.30.0",
     "@types/bn.js": "5.1.1",
     "@types/jest": "29.4.0",
+    "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
     "@types/serviceworker": "0.0.62",
     "@typescript-eslint/eslint-plugin": "5.50.0",

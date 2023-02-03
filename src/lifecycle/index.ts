@@ -14,7 +14,7 @@ import { measured } from '../utils/performance';
 import { newApi } from '../utils/polkadot-api';
 import { fetchReferenda } from '../utils/polkassembly';
 import { extractSearchParams } from '../utils/search-params';
-import {
+import type {
   Action,
   Address,
   ChainState,
@@ -172,11 +172,17 @@ function reducer(previousState: State, action: Action): State {
         );
       }
     }
-    case 'NewReportAction': {
-      console.error(action.report);
+    case 'AddReportAction': {
       return withNewReport(previousState, action.report);
     }
-    case 'NewFinalizedBlockAction': {
+    case 'RemoveReportAction': {
+      const previousReports = previousState.reports || [];
+      return {
+        ...previousState,
+        reports: [...previousReports.splice(action.index, 1)],
+      };
+    }
+    case 'AddFinalizedBlockAction': {
       const { endpoints, block, chain } = action;
       if (previousState.type == 'ConnectedState') {
         // Already connected, update connectivity
@@ -317,7 +323,7 @@ export class Updater {
       const db = await DB_CACHE.getOrCreate(dbNameFor(state.network));
       await save(db, VOTE_STORE_NAME, index, vote);
     } else {
-      await this.newReport(incorrectTransitionError(state));
+      await this.addReport(incorrectTransitionError(state));
     }
   }
 
@@ -341,7 +347,7 @@ export class Updater {
         type: 'ClearVotesAction',
       });
     } else {
-      await this.newReport(incorrectTransitionError(state));
+      await this.addReport(incorrectTransitionError(state));
     }
   }
 
@@ -352,10 +358,17 @@ export class Updater {
     });
   }
 
-  async newReport(report: Report) {
+  async addReport(report: Report) {
     this.#dispatch({
-      type: 'NewReportAction',
+      type: 'AddReportAction',
       report,
+    });
+  }
+
+  async removeReport(index: number) {
+    this.#dispatch({
+      type: 'RemoveReportAction',
+      index,
     });
   }
 }
@@ -369,12 +382,23 @@ const DEFAULT_INITIAL_STATE: State = {
 
 type Reducer = (previousState: State, action: Action) => State;
 
-function useReducerLogger(reducer: Reducer): Reducer {
+type StateUpdate = {
+  when: Date;
+  action: Action;
+  previousState: State;
+  newState: State;
+};
+
+const history = new Array<StateUpdate>();
+
+function useReducerWithHistory(
+  reducer: Reducer,
+  history: Array<StateUpdate>
+): Reducer {
   return useCallback(
     (previousState: State, action: Action) => {
-      console.debug(`Applying ${action.type} to state ${previousState.type}`);
       const newState = reducer(previousState, action);
-      console.debug(`New state: ${newState.type}`);
+      history.push({ when: new Date(), action, previousState, newState });
       return newState;
     },
     [reducer]
@@ -384,7 +408,10 @@ function useReducerLogger(reducer: Reducer): Reducer {
 export function useLifeCycle(
   initialState: State = DEFAULT_INITIAL_STATE
 ): [State, Updater] {
-  const [state, dispatch] = useReducer(useReducerLogger(reducer), initialState);
+  const [state, dispatch] = useReducer(
+    useReducerWithHistory(reducer, history),
+    initialState
+  );
   const lastState = useRef(state);
   useEffect(() => {
     lastState.current = state;
@@ -431,9 +458,9 @@ async function dispatchNetworkChange(
   dispatchEndpointsParamChange(stateAccessor, dispatch, network, rpcParam);
 }
 
-function dispatchNewReport(dispatch: Dispatch<Action>, report: Report) {
+function dispatchAddReport(dispatch: Dispatch<Action>, report: Report) {
   dispatch({
-    type: 'NewReportAction',
+    type: 'AddReportAction',
     report,
   });
 }
@@ -454,7 +481,7 @@ async function dispatchEndpointsParamChange(
         endpoints.value
       );
     } else {
-      dispatchNewReport(dispatch, {
+      dispatchAddReport(dispatch, {
         type: 'Error',
         message: `Invalid 'rpc' param ${rpcParam}: ${endpoints.error}`,
       });
@@ -500,11 +527,12 @@ async function dispatchEndpointsChange(
   const api = await API_CACHE.getOrCreate(endpoints);
   return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
     const apiAt = await api.at(header.hash);
+    // TODO rely on subs, do not re-fetch whole state each block
     const chain = await measured('fetch-chain-state', () =>
       fetchChainState(apiAt)
     );
     dispatch({
-      type: 'NewFinalizedBlockAction',
+      type: 'AddFinalizedBlockAction',
       endpoints,
       block: header.number.toNumber(),
       chain,
@@ -611,7 +639,7 @@ async function updateChainState(
       // Only consider ConnectedState
       const { networkParam, rpcParam } = currentParams();
       if (networkParam && rpcParam) {
-        dispatchNewReport(dispatch, {
+        dispatchAddReport(dispatch, {
           type: 'Error',
           message: `Both rpc and network params can't be set at the same time`,
         });
@@ -630,7 +658,7 @@ async function updateChainState(
               );
             }
           } else {
-            dispatchNewReport(dispatch, {
+            dispatchAddReport(dispatch, {
               type: 'Error',
               message: `Invalid 'network' param ${networkParam}: ${network.error}`,
             });
@@ -665,7 +693,7 @@ async function updateChainState(
   );
 
   window.addEventListener('unhandledrejection', (event) =>
-    dispatchNewReport(dispatch, {
+    dispatchAddReport(dispatch, {
       type: 'Error',
       message: `Unhandled promise rejection for ${event.promise}: ${event.reason}`,
     })
@@ -694,7 +722,7 @@ async function updateChainState(
       rpcParam
     );
   } else {
-    dispatchNewReport(dispatch, {
+    dispatchAddReport(dispatch, {
       type: 'Error',
       message: network.error.message,
     });

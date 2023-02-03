@@ -1,3 +1,4 @@
+// TODO listen to changes
 async function isPermissionGranted(name: PermissionName): Promise<boolean> {
   return (await navigator.permissions.query({ name })).state === 'granted';
 }

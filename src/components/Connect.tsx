@@ -72,7 +72,7 @@ const AccountList = ({
 
 type ConnectViews = 'wallets' | 'accounts';
 
-const ConnectButton = (
+export const ConnectButton = (
   props: JSX.IntrinsicAttributes & {
     color?: keyof typeof Colors;
     bordered?: boolean;
@@ -151,5 +151,3 @@ const ConnectButton = (
     </>
   );
 };
-
-export default ConnectButton;

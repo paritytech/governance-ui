@@ -71,9 +71,14 @@ export type State = InitialState | RestoredState | ConnectedState;
 
 // Actions
 
-export type NewReportAction = {
-  type: 'NewReportAction';
+export type AddReportAction = {
+  type: 'AddReportAction';
   report: Report;
+};
+
+export type RemoveReportAction = {
+  type: 'RemoveReportAction';
+  index: number;
 };
 
 export type SetRestoredAction = PersistedDataContext & {
@@ -91,8 +96,8 @@ export type UpdateConnectivityAction = {
   connectivity: Connectivity;
 };
 
-export type NewFinalizedBlockAction = BaseConnected & {
-  type: 'NewFinalizedBlockAction';
+export type AddFinalizedBlockAction = BaseConnected & {
+  type: 'AddFinalizedBlockAction';
   block: number;
   chain: ChainState;
 };
@@ -135,11 +140,12 @@ export type ClearVotesAction = {
 };
 
 export type Action =
-  | NewReportAction
+  | AddReportAction
+  | RemoveReportAction
   | SetConnectedAccountAction
   | SetRestoredAction
   | UpdateConnectivityAction
-  | NewFinalizedBlockAction
+  | AddFinalizedBlockAction
   | StoreReferendumDetailsAction
   | CastVoteAction
   | ClearVotesAction;

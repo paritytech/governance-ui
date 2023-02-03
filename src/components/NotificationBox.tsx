@@ -1,17 +1,26 @@
+import { Report } from '../lifecycle/types';
 import { Card } from '../ui/nextui';
-import { NotificationType, useNotifications } from '../contexts/Notification';
 
 const TRANSIENT_DISPLAY_TIME_MS = 3000; //milliseconds
 
-const NotificationBox = () => {
-  const { notifications, markAsRead } = useNotifications();
-  const current = notifications.at(0);
-  const closeHandler = () => markAsRead();
-  const isTransient = current?.type === NotificationType.Notification;
+export function NotificationBox({
+  reports,
+  removeReport,
+}: {
+  reports?: Report[];
+  removeReport: (index: number) => void;
+}): JSX.Element {
+  const current = reports?.at(0);
+  const removeCurrent = () => {
+    if (current) {
+      removeReport(0);
+    }
+  };
+  const isTransient = false;
 
   if (isTransient) {
     setTimeout(() => {
-      markAsRead();
+      removeCurrent();
     }, TRANSIENT_DISPLAY_TIME_MS);
   }
 
@@ -22,7 +31,7 @@ const NotificationBox = () => {
           {!isTransient && (
             <div
               className="absolute right-px top-1  z-50 flex h-4 w-4 cursor-pointer justify-center"
-              onClick={closeHandler}
+              onClick={removeCurrent}
             >
               x
             </div>
@@ -34,6 +43,4 @@ const NotificationBox = () => {
       )}
     </>
   );
-};
-
-export default NotificationBox;
+}
