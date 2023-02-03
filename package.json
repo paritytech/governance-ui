@@ -54,7 +54,7 @@
     "@types/serviceworker": "0.0.62",
     "@typescript-eslint/eslint-plugin": "5.50.0",
     "@typescript-eslint/parser": "5.50.0",
-    "@zombienet/cli": "1.3.30",
+    "@zombienet/cli": "1.3.32",
     "buffer": "5.5.0",
     "eslint": "8.33.0",
     "eslint-config-prettier": "8.6.0",
