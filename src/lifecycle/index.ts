@@ -7,7 +7,7 @@ import { SigningAccount } from '../contexts';
 import { DEFAULT_NETWORK, endpointsFor, Network, parse } from '../network';
 import { AccountVote, Referendum, ReferendumOngoing, Voting } from '../types';
 import { err, ok, Result } from '../utils';
-import { Cache, Readyable } from '../utils/cache';
+import { Cache, Destroyable, Readyable } from '../utils/cache';
 import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db';
 import { all, clear, open, save } from '../utils/indexeddb';
 import { measured } from '../utils/performance';
@@ -278,14 +278,18 @@ export async function fetchChainState(
   return { tracks, referenda, allVotings };
 }
 
-class DBReady implements Readyable<IDBDatabase> {
+class DBReady implements Readyable<IDBDatabase>, Destroyable {
   ready: Promise<IDBDatabase>;
   constructor(name: string) {
     this.ready = open(name, STORES, DB_VERSION);
   }
+  async destroy(): Promise<void> {
+    const db = await this.ready;
+    db.close();
+  }
 }
 
-class ApiReady implements Readyable<ApiPromise> {
+class ApiReady implements Readyable<ApiPromise>, Destroyable {
   ready: Promise<ApiPromise>;
   constructor(endpoints: string[]) {
     this.ready = measured(
@@ -293,14 +297,19 @@ class ApiReady implements Readyable<ApiPromise> {
       async () => (await newApi(endpoints)).isReadyOrError
     );
   }
+  async destroy(): Promise<void> {
+    const api = await this.ready;
+    await api.disconnect();
+  }
 }
 
-const DB_CACHE = new Cache(DBReady);
-const API_CACHE = new Cache(ApiReady);
+export const DB_CACHE = new Cache(DBReady);
+export const API_CACHE = new Cache(ApiReady);
 
 export class Updater {
   readonly #stateAccessor;
   readonly #dispatch;
+  unsub: VoidFunction | undefined;
 
   constructor(stateAccessor: () => State, dispatch: Dispatch<Action>) {
     this.#stateAccessor = stateAccessor;
@@ -308,7 +317,11 @@ export class Updater {
   }
 
   async start() {
-    await updateChainState(this.#stateAccessor, this.#dispatch);
+    this.unsub = await updateChainState(this.#stateAccessor, this.#dispatch);
+  }
+
+  stop() {
+    this.unsub?.();
   }
 
   async castVote(index: number, vote: AccountVote) {
@@ -427,6 +440,10 @@ export function useLifeCycle(
     }
 
     start();
+
+    return () => {
+      updater.stop();
+    }
   }, []);
 
   return [state, updater];
@@ -445,7 +462,7 @@ async function dispatchNetworkChange(
   dispatch: Dispatch<Action>,
   network: Network,
   rpcParam: string | null
-) {
+): Promise<VoidFunction | undefined> {
   const db = await open(dbNameFor(network), STORES, DB_VERSION);
   const { votes } = await measured('fetch-restored-state', () =>
     restorePersisted(db)
@@ -456,7 +473,7 @@ async function dispatchNetworkChange(
     votes,
   });
 
-  dispatchEndpointsParamChange(stateAccessor, dispatch, network, rpcParam);
+  return dispatchEndpointsParamChange(stateAccessor, dispatch, network, rpcParam);
 }
 
 function dispatchAddReport(dispatch: Dispatch<Action>, report: Report) {
@@ -471,11 +488,11 @@ async function dispatchEndpointsParamChange(
   dispatch: Dispatch<Action>,
   network: Network,
   rpcParam: string | null
-) {
+): Promise<VoidFunction | undefined> {
   if (rpcParam) {
     const endpoints = extractEndpointsFromParam(rpcParam);
     if (endpoints.type == 'ok') {
-      await dispatchEndpointsChange(
+      return await dispatchEndpointsChange(
         stateAccessor,
         dispatch,
         network,
@@ -488,7 +505,7 @@ async function dispatchEndpointsParamChange(
       });
     }
   } else {
-    await dispatchEndpointsChange(
+    return await dispatchEndpointsChange(
       stateAccessor,
       dispatch,
       network,
@@ -519,7 +536,7 @@ async function dispatchEndpointsChange(
   dispatch: Dispatch<Action>,
   network: Network,
   endpoints: string[]
-) {
+): Promise<VoidFunction> {
   dispatch({
     type: 'UpdateConnectivityAction',
     connectivity: { type: 'Connected', endpoints },
@@ -623,8 +640,19 @@ function extractEndpointsFromParam(s: string): Result<string[]> {
 async function updateChainState(
   stateAccessor: () => State,
   dispatch: Dispatch<Action>
-) {
+): Promise<VoidFunction> {
   // First setup listeners
+
+  var currentUnsub: VoidFunction | undefined;
+
+  function updateUnsub(unsub: VoidFunction | undefined) {
+    console.log("updateUnsub:", updateUnsub)
+    if (currentUnsub) {
+      console.log("Unsub")
+      currentUnsub();
+    }
+    currentUnsub = unsub;
+  }
 
   /*addAccountListener((accounts) => {
     // TODO
@@ -651,12 +679,12 @@ async function updateChainState(
           if (network.type == 'ok') {
             if (state.network != network.value) {
               // Only react to network changes
-              await dispatchNetworkChange(
+              updateUnsub(await dispatchNetworkChange(
                 stateAccessor,
                 dispatch,
                 network.value,
                 rpcParam
-              );
+              ));
             }
           } else {
             dispatchAddReport(dispatch, {
@@ -666,12 +694,12 @@ async function updateChainState(
           }
         } else if (rpcParam) {
           // Only `rpc` param is set, reconnect using those
-          dispatchEndpointsParamChange(
+          updateUnsub(await dispatchEndpointsParamChange(
             stateAccessor,
             dispatch,
             state.network,
             rpcParam
-          );
+          ));
         } else {
           // No network provided; noop
         }
@@ -716,16 +744,21 @@ async function updateChainState(
   const { networkParam, rpcParam } = currentParams();
   const network = getNetwork(networkParam);
   if (network.type == 'ok') {
-    await dispatchNetworkChange(
+    updateUnsub(await dispatchNetworkChange(
       stateAccessor,
       dispatch,
       network.value,
       rpcParam
-    );
+    ));
   } else {
     dispatchAddReport(dispatch, {
       type: 'Error',
       message: network.error.message,
     });
   }
+
+  return () => {
+    console.log("Unsub")
+    currentUnsub?.();
+  };
 }

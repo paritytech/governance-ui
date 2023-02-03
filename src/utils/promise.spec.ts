@@ -7,7 +7,7 @@ test('resolve resolves', async () => {
 });
 
 test('reject rejects', async () => {
-  const reason = 'reason';
+  const reason = 'rejects';
   try {
     await rejectAfter(1000, reason);
     // TODO replace with fail
@@ -24,7 +24,7 @@ test('timeout returns', async () => {
 });
 
 test('timeout throws', async () => {
-  const reason = 'reason';
+  const reason = 'timeout throws';
   try {
     await timeout(Promise.reject(reason), 1000);
     throw new Error('Should not pass');
@@ -51,7 +51,7 @@ test('timeout timeouts', async () => {
     expect(e).toBe(DEFAULT_REASON);
   }
 
-  const reason = 'reason';
+  const reason = 'timeout timeouts';
   try {
     await timeout(resolveAfter(timeoutInMs * 2, result), timeoutInMs, reason);
     throw new Error('Should not pass');
@@ -62,7 +62,7 @@ test('timeout timeouts', async () => {
 
 test('timeout rejects', async () => {
   const timeoutInMs = 1000;
-  const reason = 'reason';
+  const reason = 'timeout rejects';
   try {
     await timeout(rejectAfter(timeoutInMs, reason), timeoutInMs * 2);
     throw new Error('Should not pass');
