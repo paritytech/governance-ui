@@ -32,18 +32,14 @@ function Header(): JSX.Element {
   return (
     <Navbar>
       <Navbar.Brand>
-        <div className="h-8">
-          <img
-            className="h-full md:hidden"
-            src={tokenUrl}
-            alt="polkadot logo"
-          />
-          <img
-            className="hiden h-full md:inline"
-            src={logoUrl}
-            alt="polkadot logo"
-          />
-          <span>| Open Governance</span>
+        <div>
+          <div className="h-8 md:hidden">
+            <img className="inline h-full" src={tokenUrl} alt="polkadot logo" />
+          </div>
+          <div className="hidden h-8 md:block">
+            <img className="inline h-full" src={logoUrl} alt="polkadot logo" />
+            <span className="align-middle">| Open Governance</span>
+          </div>
         </div>
       </Navbar.Brand>
       <Navbar.Content className="w-full">
