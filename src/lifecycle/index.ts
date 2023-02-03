@@ -177,9 +177,10 @@ function reducer(previousState: State, action: Action): State {
     }
     case 'RemoveReportAction': {
       const previousReports = previousState.reports || [];
+      previousReports.splice(action.index, 1);
       return {
         ...previousState,
-        reports: [...previousReports.splice(action.index, 1)],
+        reports: [...previousReports],
       };
     }
     case 'AddFinalizedBlockAction': {
