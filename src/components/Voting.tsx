@@ -1,14 +1,7 @@
 import { ApiPromise } from '@polkadot/api';
 import { ReferendaDeck } from './Referenda';
 import { createStandardAccountVote, vote } from '../chain/conviction-voting';
-import {
-  Button,
-  Card,
-  CloseSquareIcon,
-  HeartIcon,
-  Spacer,
-  Text,
-} from '../ui/nextui';
+import { Button, Card, CloseSquareIcon, HeartIcon, Spacer } from '../ui/nextui';
 import { SigningAccount, useAccount } from '../contexts';
 import { networkFor } from '../network';
 import {
@@ -72,14 +65,10 @@ function VoteDetails({
     case 'standard': {
       const isAye = accountVote.vote.aye;
       const color = isAye ? 'success' : 'warning';
-      return (
-        <Text h4 color={color}>
-          {isAye ? 'Aye' : 'Naye'}
-        </Text>
-      );
+      return <div>{isAye ? 'Aye' : 'Naye'}</div>;
     }
     default: {
-      return <Text h4>TODO</Text>;
+      return <div>TODO</div>;
     }
   }
 }
@@ -99,22 +88,16 @@ export function VotesSummaryTable({
           return (
             <div key={index} className="w-full">
               <Card>
-                <Text h3 b>
-                  #{index}
-                </Text>
-                <Spacer y={2} />
+                <div>#{index}</div>
                 <VoteDetails accountVote={accountVote} />
               </Card>
             </div>
           );
         })}
       </div>
-      <Spacer y={1} />
       {api && connectedAccount ? (
         <Button
-          color="primary"
-          label="vote"
-          onPress={async () => {
+          onClick={async () => {
             await submitBatchVotes(api, connectedAccount, accountVotes);
 
             // Clear user votes
@@ -129,23 +112,9 @@ export function VotesSummaryTable({
           Submit votes
         </Button>
       ) : api ? (
-        <Text
-          color="secondary"
-          css={{
-            textAlign: 'center',
-          }}
-        >
-          Connect to submit your votes
-        </Text>
+        <div className="text-center">Connect to submit your votes</div>
       ) : (
-        <Text
-          color="secondary"
-          css={{
-            textAlign: 'center',
-          }}
-        >
-          Connection with chain lost
-        </Text>
+        <div className="text-center">Connection with chain lost</div>
       )}
     </div>
   );
@@ -162,21 +131,13 @@ export function VoteActionBar({
 }): JSX.Element {
   return (
     <div className="flex items-center">
-      <Button
-        label="Refuse"
-        color="error"
-        onPress={onRefuse}
-        icon={<CloseSquareIcon />}
-      />
-      <Spacer x={1} />
-      <Text>{left} left</Text>
-      <Spacer x={1} />
-      <Button
-        label="Accept"
-        color="success"
-        onPress={onAccept}
-        icon={<HeartIcon />}
-      />
+      <Button onClick={onRefuse}>
+        <CloseSquareIcon />
+      </Button>
+      <div>{left} left</div>
+      <Button onClick={onAccept}>
+        <HeartIcon />
+      </Button>
     </div>
   );
 }

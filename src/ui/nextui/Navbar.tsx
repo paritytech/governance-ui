@@ -1,22 +1,18 @@
+import type { BaseElementProps, ClickableProps } from './types';
 import { useState, createContext, useContext, forwardRef } from 'react';
-
-const Brand = ({ children, className }) => {
-  return (
-    <div className={`flex items-center ${className || ''}`}> {children}</div>
-  );
-};
 
 interface INavbarContext {
   collapsed: boolean;
   toggle: () => void;
 }
+
 const navbarContext = createContext<INavbarContext>({
   collapsed: false,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   toggle: () => {},
 });
 const useNavbar = () => useContext(navbarContext);
-const NavbarContextProvider = ({ children }) => {
+const NavbarContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [collapsed, setCollapsed] = useState(true);
   const toggle = () => {
     setCollapsed((collapsed) => !collapsed);
@@ -28,7 +24,13 @@ const NavbarContextProvider = ({ children }) => {
   );
 };
 
-const Item = ({ children, className, onClick }) => {
+const Brand = ({ children, className }: BaseElementProps) => {
+  return (
+    <div className={`flex items-center ${className || ''}`}> {children}</div>
+  );
+};
+
+const Item = ({ children, className, onClick }: ClickableProps) => {
   return (
     <li
       onClick={onClick}
@@ -71,7 +73,7 @@ const Toggle = () => {
   );
 };
 
-const Content = ({ children, className, collapsable }) => {
+const Content = ({ children, className }: BaseElementProps) => {
   const { collapsed } = useNavbar();
   return (
     <div
@@ -89,20 +91,23 @@ const Content = ({ children, className, collapsable }) => {
   );
 };
 
-const Navbar = forwardRef<HTMLElement>(({ className, children }, ref) => {
-  return (
-    <nav
-      className={`relative rounded border-gray-200  bg-white px-2 py-2.5 sm:px-4 ${className}`}
-      ref={ref}
-    >
-      <div className="mx-auto flex flex-wrap items-center justify-between md:container">
-        <NavbarContextProvider>
-          {children}
-          <Toggle />
-        </NavbarContextProvider>
-      </div>
-    </nav>
-  );
-});
+const Component = forwardRef<HTMLElement, BaseElementProps>(
+  ({ className, children }, ref) => {
+    return (
+      <nav
+        className={`relative rounded border-gray-200  bg-white px-2 py-2.5 sm:px-4 ${className}`}
+        ref={ref}
+      >
+        <div className="mx-auto flex flex-wrap items-center justify-between md:container">
+          <NavbarContextProvider>
+            {children}
+            <Toggle />
+          </NavbarContextProvider>
+        </div>
+      </nav>
+    );
+  }
+);
+const Navbar = Object.assign(Component, { Item, Brand, Content });
 
-export default Object.assign(Navbar, { Item, Brand, Content });
+export { Navbar };

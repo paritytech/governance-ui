@@ -1,11 +1,10 @@
-import { Spacer as NextUISpacer } from '@nextui-org/react';
+import { BaseElementProps } from './types';
 
-export function Spacer({
-  x = 1,
-  y = 1,
-}: {
-  x?: number;
-  y?: number;
-}): JSX.Element {
-  return <NextUISpacer x={x} y={y} />;
+export function Spacer({ className, style }: BaseElementProps): JSX.Element {
+  return (
+    <hr
+      className={`my-8 h-px border-0 bg-gray-200 dark:bg-gray-700 ${className}`}
+      style={style}
+    />
+  );
 }

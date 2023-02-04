@@ -1,14 +1,8 @@
+import type { BaseElementProps } from './types';
 type LoadingSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
+type LoadindProps = BaseElementProps & { size?: LoadingSize };
 
-export function Loading({
-  className,
-  size,
-  style,
-}: {
-  className?: string | undefined;
-  size?: LoadingSize;
-  style?: React.CSSProperties | undefined;
-}): JSX.Element {
+export function Loading({ className, size, style }: LoadindProps): JSX.Element {
   const sizeClasses = {
     xs: 'h-4 w-4',
     sm: 'h-8 w-8',

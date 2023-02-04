@@ -27,7 +27,8 @@ html {
   height: 100%;
 }
 
-.font-brand {
+/* prettier-ignore */
+.font-brand .h1, .h2, .h3, .h4, .h5, h1, h2, h3, h4, h5 {
   font-family: Unbounded, Helvetica Neue, Helvetica, Arial, sans-serif;
 }
 

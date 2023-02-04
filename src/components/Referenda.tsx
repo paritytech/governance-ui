@@ -3,14 +3,13 @@ import { Remark } from 'react-remark';
 import { useSprings, animated } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
 import { createStandardAccountVote } from '../chain/conviction-voting';
-import { Card, Loading, Text } from '../ui/nextui';
+import { Card, Loading } from '../ui/nextui';
 import {
   AccountVote,
   ReferendumDetails,
   ReferendumOngoing,
   Track,
 } from '../types';
-import * as styles from './Referenda.module.css';
 
 function Header({
   index,
@@ -22,15 +21,11 @@ function Header({
   track?: Track;
 }): JSX.Element {
   return (
-    <div className={styles.header}>
-      <Text h3 color="primary" className="block-ellipsis" css={{ m: '$8' }}>
+    <div>
+      <div>
         #{index} {title}
-      </Text>
-      {track && (
-        <Text className={styles.track} color="secondary">
-          #{track.name}
-        </Text>
-      )}
+      </div>
+      {track && <div>#{track.name}</div>}
     </div>
   );
 }
@@ -49,13 +44,12 @@ const ReferendumCard = memo(
       const { title, content } = details.posts[0];
       const isHTML = content.startsWith('<p'); // A bug in polkascan made some posts in HTML. They should always be markdown.
       return (
-        <Card
-          className={styles.card}
-          header={<Header index={index} title={title} track={track} />}
-        >
+        <Card>
+          <Header index={index} title={title} track={track} />
           <div>
             {isHTML ? (
-              <Text dangerouslySetInnerHTML={{ __html: content }} />
+              // ToDo: This should be removed, after making sure it does not break the UX, or we should find a new source to pull this info.
+              <div dangerouslySetInnerHTML={{ __html: content }} />
             ) : (
               <Remark>{content}</Remark>
             )}
@@ -64,10 +58,8 @@ const ReferendumCard = memo(
       );
     } else {
       return (
-        <Card
-          className={styles.card}
-          header={<Header index={index} track={track} />}
-        >
+        <Card>
+          <Header index={index} track={track} />
           <div className="flex w-[32rem] flex-auto flex-col items-center justify-center">
             <Loading />
           </div>
@@ -141,11 +133,11 @@ export function ReferendaDeck({
   );
 
   if (referenda.length == 0) {
-    return <Text>No new referenda to vote on</Text>;
+    return <div>No new referenda to vote on</div>;
   } else {
     // Now we're just mapping the animated values to our view, that's it. Btw, this component only renders once. :-)
     return (
-      <div className={styles.deck}>
+      <div className={'deck'}>
         {sProps.map(({ x, y }, i) => {
           const { index, trackIndex } = referenda[i];
           const track = tracks.get(trackIndex);

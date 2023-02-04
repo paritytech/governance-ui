@@ -1,7 +1,7 @@
+import Token from 'jsx:assets/images/polkadot-token.svg';
 import { useEffect, useState } from 'react';
 import { NotificationType, useNotifications } from '../contexts/Notification';
-import { Button, HeartIcon } from '../ui/nextui';
-import Navbar from '../ui/nextui/Navbar';
+import { Button, HeartIcon, Navbar } from '../ui/nextui';
 import ConnectButton from './Connect';
 import {
   areNotificationsGranted,
@@ -11,11 +11,11 @@ import {
 const tokenUrl = new URL(
   '../../assets/images/polkadot-token.svg',
   import.meta.url
-);
+).toString();
 const logoUrl = new URL(
   '../../assets/images/polkadot-logo.svg',
   import.meta.url
-);
+).toString();
 
 function Header(): JSX.Element {
   const { notify } = useNotifications();
@@ -28,7 +28,6 @@ function Header(): JSX.Element {
 
     fetch();
   }, []);
-  console.log(Navbar);
   return (
     <Navbar>
       <Navbar.Brand>
