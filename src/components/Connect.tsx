@@ -131,7 +131,7 @@ const ConnectButton = () => {
           <div className="text-sm">{btnTitle}</div>
         </div>
       </Button>
-      <Modal visible={visible} width="600px" onClose={() => closeModal()}>
+      <Modal open={visible} onClose={() => closeModal()}>
         <div onClick={() => toggleView()}>{`${
           currentView === 'accounts'
             ? '< wallets'

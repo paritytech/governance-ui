@@ -34,7 +34,7 @@ const Item = ({ children, className, onClick }: ClickableProps) => {
   return (
     <li
       onClick={onClick}
-      className={`block rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100  md:p-0 md:hover:bg-transparent md:hover:text-blue-700 ${
+      className={`block rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100  hover:bg-transparent md:p-0  ${
         className || ''
       }`}
     >

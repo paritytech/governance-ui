@@ -1,29 +1,37 @@
-import React from 'react';
-import { Modal as NextUIModal } from '@nextui-org/react';
-
-export function Modal({
-  children,
-  visible,
-  width,
-  onClose,
-}: {
-  children: React.ReactNode;
-  visible: boolean;
-  width: string;
+import type { BaseElementProps } from './types';
+type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
+type ModalProps = BaseElementProps & {
+  size?: ModalSize;
+  open: boolean;
   onClose: () => void;
-}): JSX.Element {
+};
+const sizeClasses = {
+  sm: 'w-[416px]',
+  md: 'w-[640px]',
+  lg: 'w-[864px]',
+  xl: 'w-[1248px]',
+  full: 'w-full',
+};
+
+const Modal = ({ className, children, size, open, onClose }: ModalProps) => {
+  size = size || 'md';
+  const display = open ? 'block' : 'hidden';
   return (
-    <div>
-      <NextUIModal
-        scroll
-        width={width}
-        aria-labelledby="modal-title"
-        aria-describedby="modal-description"
-        open={visible}
-        onClose={onClose}
+    <div
+      tabIndex={-1}
+      className={`fixed top-0 left-0 right-0 z-50  flex h-full w-full overflow-y-auto overflow-x-hidden p-4 backdrop-blur  md:inset-0 ${display}`}
+      onClick={() => onClose()}
+    >
+      <div
+        className={`relative  mx-auto max-w-full self-center rounded-lg bg-white p-2 shadow  dark:bg-gray-700 ${sizeClasses[size]} ${className}`}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
       >
-        <NextUIModal.Body>{children}</NextUIModal.Body>
-      </NextUIModal>
+        {children}
+      </div>
     </div>
   );
-}
+};
+
+export { Modal };
