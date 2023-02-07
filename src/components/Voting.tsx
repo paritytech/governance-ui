@@ -1,6 +1,6 @@
 import { ReferendaDeck } from './Referenda';
 import { createStandardAccountVote } from '../chain/conviction-voting';
-import { Button, Card, CloseSquareIcon, HeartIcon, Spacer } from '../ui/nextui';
+import { Button, Card, CloseSquareIcon, HeartIcon } from '../ui/nextui';
 import { SigningAccount, useAccount } from '../contexts';
 import {
   AccountVote,
