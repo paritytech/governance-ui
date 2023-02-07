@@ -5,7 +5,7 @@ import { useWallets } from './Wallets';
 
 export type SigningAccount = {
   account: Account;
-  signer: Signer | undefined;
+  signer: Signer;
   sourceMetadata: WalletMetadata;
 };
 

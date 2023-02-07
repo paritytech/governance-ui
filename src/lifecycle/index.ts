@@ -1,17 +1,20 @@
 import { Dispatch, useCallback, useEffect, useReducer, useRef } from 'react';
+import { ApiPromise } from '@polkadot/api';
 import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
-import { getVotingFor } from '../chain/conviction-voting';
+import { getVotingFor, submitBatchVotes } from '../chain/conviction-voting';
 import { getAllReferenda, getAllTracks } from '../chain/referenda';
+import { SigningAccount } from '../contexts';
 import { DEFAULT_NETWORK, endpointsFor, Network, parse } from '../network';
 import { AccountVote, Referendum, ReferendumOngoing, Voting } from '../types';
 import { err, ok, Result } from '../utils';
+import { Cache, Readyable } from '../utils/cache';
 import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db';
-import { all, open, save } from '../utils/indexeddb';
+import { all, clear, open, save } from '../utils/indexeddb';
 import { measured } from '../utils/performance';
 import { newApi } from '../utils/polkadot-api';
 import { fetchReferenda } from '../utils/polkassembly';
 import { extractSearchParams } from '../utils/search-params';
-import {
+import type {
   Action,
   Address,
   ChainState,
@@ -147,11 +150,10 @@ function reducer(previousState: State, action: Action): State {
       };
     }
     case 'SetRestoredAction': {
-      const { db, network, votes } = action;
+      const { network, votes } = action;
       return {
         ...previousState,
         type: 'RestoredState',
-        db,
         network,
         votes,
       };
@@ -170,18 +172,24 @@ function reducer(previousState: State, action: Action): State {
         );
       }
     }
-    case 'NewReportAction': {
-      console.error(action.report);
+    case 'AddReportAction': {
       return withNewReport(previousState, action.report);
     }
-    case 'NewFinalizedBlockAction': {
-      const { api, endpoints, block, chain } = action;
+    case 'RemoveReportAction': {
+      const previousReports = previousState.reports || [];
+      return {
+        ...previousState,
+        reports: [...previousReports.splice(action.index, 1)],
+      };
+    }
+    case 'AddFinalizedBlockAction': {
+      const { endpoints, block, chain } = action;
       if (previousState.type == 'ConnectedState') {
         // Already connected, update connectivity
         // But do not update chain details
         return {
           ...previousState,
-          connectivity: { type: 'Following', api, endpoints },
+          connectivity: { type: 'Following', endpoints },
           block: previousState.block,
           chain: previousState.chain,
         };
@@ -224,6 +232,18 @@ function reducer(previousState: State, action: Action): State {
           incorrectTransitionError(previousState)
         );
       }
+    case 'ClearVotesAction':
+      if ('votes' in previousState) {
+        return {
+          ...previousState,
+          votes: new Map(),
+        };
+      } else {
+        return withNewReport(
+          previousState,
+          incorrectTransitionError(previousState)
+        );
+      }
   }
 }
 
@@ -257,6 +277,26 @@ export async function fetchChainState(
   return { tracks, referenda, allVotings };
 }
 
+class DBReady implements Readyable<IDBDatabase> {
+  ready: Promise<IDBDatabase>;
+  constructor(name: string) {
+    this.ready = open(name, STORES, DB_VERSION);
+  }
+}
+
+class ApiReady implements Readyable<ApiPromise> {
+  ready: Promise<ApiPromise>;
+  constructor(endpoints: string[]) {
+    this.ready = measured(
+      'api',
+      async () => (await newApi(endpoints)).isReadyOrError
+    );
+  }
+}
+
+const DB_CACHE = new Cache(DBReady);
+const API_CACHE = new Cache(ApiReady);
+
 export class Updater {
   readonly #stateAccessor;
   readonly #dispatch;
@@ -280,9 +320,34 @@ export class Updater {
     // Persist votes before they are broadcasted on chain
     const state = this.#stateAccessor();
     if (state.type == 'ConnectedState') {
-      await save(state.db, VOTE_STORE_NAME, index, vote);
+      const db = await DB_CACHE.getOrCreate(dbNameFor(state.network));
+      await save(db, VOTE_STORE_NAME, index, vote);
     } else {
-      await this.newReport(incorrectTransitionError(state));
+      await this.addReport(incorrectTransitionError(state));
+    }
+  }
+
+  async signAndSendVotes(
+    { account, signer }: SigningAccount,
+    accountVotes: Map<number, AccountVote>
+  ) {
+    const state = this.#stateAccessor();
+    if (
+      state.type == 'ConnectedState' &&
+      state.connectivity.type == 'Connected'
+    ) {
+      const db = await DB_CACHE.getOrCreate(dbNameFor(state.network));
+      const api = await API_CACHE.getOrCreate(state.connectivity.endpoints);
+      await submitBatchVotes(api, account.address, signer, accountVotes);
+
+      // Clear user votes
+      await clear(db, VOTE_STORE_NAME);
+
+      this.#dispatch({
+        type: 'ClearVotesAction',
+      });
+    } else {
+      await this.addReport(incorrectTransitionError(state));
     }
   }
 
@@ -293,10 +358,17 @@ export class Updater {
     });
   }
 
-  async newReport(report: Report) {
+  async addReport(report: Report) {
     this.#dispatch({
-      type: 'NewReportAction',
+      type: 'AddReportAction',
       report,
+    });
+  }
+
+  async removeReport(index: number) {
+    this.#dispatch({
+      type: 'RemoveReportAction',
+      index,
     });
   }
 }
@@ -310,12 +382,23 @@ const DEFAULT_INITIAL_STATE: State = {
 
 type Reducer = (previousState: State, action: Action) => State;
 
-function useReducerLogger(reducer: Reducer): Reducer {
+type StateUpdate = {
+  when: Date;
+  action: Action;
+  previousState: State;
+  newState: State;
+};
+
+const history = new Array<StateUpdate>();
+
+function useReducerWithHistory(
+  reducer: Reducer,
+  history: Array<StateUpdate>
+): Reducer {
   return useCallback(
     (previousState: State, action: Action) => {
-      console.debug(`Applying ${action.type} to state ${previousState.type}`);
       const newState = reducer(previousState, action);
-      console.debug(`New state: ${newState.type}`);
+      history.push({ when: new Date(), action, previousState, newState });
       return newState;
     },
     [reducer]
@@ -325,7 +408,10 @@ function useReducerLogger(reducer: Reducer): Reducer {
 export function useLifeCycle(
   initialState: State = DEFAULT_INITIAL_STATE
 ): [State, Updater] {
-  const [state, dispatch] = useReducer(useReducerLogger(reducer), initialState);
+  const [state, dispatch] = useReducer(
+    useReducerWithHistory(reducer, history),
+    initialState
+  );
   const lastState = useRef(state);
   useEffect(() => {
     lastState.current = state;
@@ -365,7 +451,6 @@ async function dispatchNetworkChange(
   );
   dispatch({
     type: 'SetRestoredAction',
-    db,
     network,
     votes,
   });
@@ -373,9 +458,9 @@ async function dispatchNetworkChange(
   dispatchEndpointsParamChange(stateAccessor, dispatch, network, rpcParam);
 }
 
-function dispatchNewReport(dispatch: Dispatch<Action>, report: Report) {
+function dispatchAddReport(dispatch: Dispatch<Action>, report: Report) {
   dispatch({
-    type: 'NewReportAction',
+    type: 'AddReportAction',
     report,
   });
 }
@@ -396,7 +481,7 @@ async function dispatchEndpointsParamChange(
         endpoints.value
       );
     } else {
-      dispatchNewReport(dispatch, {
+      dispatchAddReport(dispatch, {
         type: 'Error',
         message: `Invalid 'rpc' param ${rpcParam}: ${endpoints.error}`,
       });
@@ -434,24 +519,20 @@ async function dispatchEndpointsChange(
   network: Network,
   endpoints: string[]
 ) {
-  const api = await measured('api', () => newApi(endpoints));
-  //  api.on('disconnected', () => console.log('api', 'disconnected'));
-  //  api.on('connected', () => console.log('api', 'connected'));
-  //  api.on('error', (error) => console.log('api', 'error', error));
-
   dispatch({
     type: 'UpdateConnectivityAction',
-    connectivity: { type: 'Connected', api, endpoints },
+    connectivity: { type: 'Connected', endpoints },
   });
 
+  const api = await API_CACHE.getOrCreate(endpoints);
   return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
     const apiAt = await api.at(header.hash);
+    // TODO rely on subs, do not re-fetch whole state each block
     const chain = await measured('fetch-chain-state', () =>
       fetchChainState(apiAt)
     );
     dispatch({
-      type: 'NewFinalizedBlockAction',
-      api,
+      type: 'AddFinalizedBlockAction',
       endpoints,
       block: header.number.toNumber(),
       chain,
@@ -558,7 +639,7 @@ async function updateChainState(
       // Only consider ConnectedState
       const { networkParam, rpcParam } = currentParams();
       if (networkParam && rpcParam) {
-        dispatchNewReport(dispatch, {
+        dispatchAddReport(dispatch, {
           type: 'Error',
           message: `Both rpc and network params can't be set at the same time`,
         });
@@ -577,7 +658,7 @@ async function updateChainState(
               );
             }
           } else {
-            dispatchNewReport(dispatch, {
+            dispatchAddReport(dispatch, {
               type: 'Error',
               message: `Invalid 'network' param ${networkParam}: ${network.error}`,
             });
@@ -612,7 +693,7 @@ async function updateChainState(
   );
 
   window.addEventListener('unhandledrejection', (event) =>
-    dispatchNewReport(dispatch, {
+    dispatchAddReport(dispatch, {
       type: 'Error',
       message: `Unhandled promise rejection for ${event.promise}: ${event.reason}`,
     })
@@ -641,7 +722,7 @@ async function updateChainState(
       rpcParam
     );
   } else {
-    dispatchNewReport(dispatch, {
+    dispatchAddReport(dispatch, {
       type: 'Error',
       message: network.error.message,
     });

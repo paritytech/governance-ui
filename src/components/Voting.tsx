@@ -1,60 +1,13 @@
-import { ApiPromise } from '@polkadot/api';
 import { ReferendaDeck } from './Referenda';
-import { createStandardAccountVote, vote } from '../chain/conviction-voting';
+import { createStandardAccountVote } from '../chain/conviction-voting';
 import { Button, Card, CloseSquareIcon, HeartIcon, Spacer } from '../ui/nextui';
 import { SigningAccount, useAccount } from '../contexts';
-import { networkFor } from '../network';
 import {
   AccountVote,
   ReferendumDetails,
   ReferendumOngoing,
   Track,
 } from '../types';
-import { dbNameFor, DB_VERSION, VOTE_STORE_NAME } from '../utils/db';
-import { clear, open } from '../utils/indexeddb';
-
-function createBatchVotes(
-  api: ApiPromise,
-  accountVotes: Map<number, AccountVote>
-) {
-  const txs = [...accountVotes].map(([index, accountVote]) =>
-    vote(api, index, accountVote)
-  );
-  return api.tx.utility.batchAll([...txs]);
-}
-
-async function submitBatchVotes(
-  api: ApiPromise,
-  connectedAccount: SigningAccount,
-  accountVotes: Map<number, AccountVote>
-) {
-  const {
-    account: { address },
-    signer,
-  } = connectedAccount;
-  if (api && address && signer) {
-    const batchVoteTx = createBatchVotes(api, accountVotes);
-    const unsub = await batchVoteTx.signAndSend(
-      address,
-      { signer },
-      (callResult) => {
-        const { status } = callResult;
-        console.log(callResult.toHuman());
-        if (status.isInBlock) {
-          console.log('Transaction is in block.');
-        } else if (status.isBroadcast) {
-          console.log('Transaction broadcasted.');
-        } else if (status.isFinalized) {
-          unsub();
-        } else if (status.isReady) {
-          console.log('Transaction isReady.');
-        } else {
-          console.log(`Other status ${status}`);
-        }
-      }
-    );
-  }
-}
 
 function VoteDetails({
   accountVote,
@@ -64,7 +17,6 @@ function VoteDetails({
   switch (accountVote.type) {
     case 'standard': {
       const isAye = accountVote.vote.aye;
-      const color = isAye ? 'success' : 'warning';
       return <div>{isAye ? 'Aye' : 'Naye'}</div>;
     }
     default: {
@@ -74,11 +26,14 @@ function VoteDetails({
 }
 
 export function VotesSummaryTable({
-  api,
   accountVotes,
+  onSubmitVotes,
 }: {
-  api: ApiPromise | null;
   accountVotes: Map<number, AccountVote>;
+  onSubmitVotes: (
+    connectedAccount: SigningAccount,
+    accountVotes: Map<number, AccountVote>
+  ) => void;
 }): JSX.Element {
   const { connectedAccount } = useAccount();
   return (
@@ -95,26 +50,12 @@ export function VotesSummaryTable({
           );
         })}
       </div>
-      {api && connectedAccount ? (
-        <Button
-          onClick={async () => {
-            await submitBatchVotes(api, connectedAccount, accountVotes);
-
-            // Clear user votes
-            const db = await open(
-              dbNameFor(networkFor(api)),
-              [{ name: VOTE_STORE_NAME }],
-              DB_VERSION
-            );
-            await clear(db, VOTE_STORE_NAME);
-          }}
-        >
+      {connectedAccount ? (
+        <Button onClick={() => onSubmitVotes(connectedAccount, accountVotes)}>
           Submit votes
         </Button>
-      ) : api ? (
-        <div className="text-center">Connect to submit your votes</div>
       ) : (
-        <div className="text-center">Connection with chain lost</div>
+        <div className="text-center">Connect to submit your votes</div>
       )}
     </div>
   );
@@ -146,12 +87,12 @@ export function VotingPanel({
   tracks,
   referenda,
   details,
-  voteHandler,
+  onCastVote,
 }: {
   tracks: Map<number, Track>;
   referenda: Map<number, ReferendumOngoing>;
   details: Map<number, ReferendumDetails>;
-  voteHandler: (index: number, vote: AccountVote) => void;
+  onCastVote: (index: number, vote: AccountVote) => void;
 }): JSX.Element {
   // The referenda currently visible to the user
   const referendaWithIndex = Array.from(referenda).map(([index, referenda]) => {
@@ -165,7 +106,7 @@ export function VotingPanel({
           referenda={referendaWithIndex}
           tracks={tracks}
           details={details}
-          voteHandler={voteHandler}
+          onCastVote={onCastVote}
         />
       </div>
       {topReferenda && (
@@ -173,11 +114,11 @@ export function VotingPanel({
           left={referendaWithIndex.length}
           onAccept={() =>
             topReferenda &&
-            voteHandler(topReferenda, createStandardAccountVote(true))
+            onCastVote(topReferenda, createStandardAccountVote(true))
           }
           onRefuse={() =>
             topReferenda &&
-            voteHandler(topReferenda, createStandardAccountVote(false))
+            onCastVote(topReferenda, createStandardAccountVote(false))
           }
         />
       )}

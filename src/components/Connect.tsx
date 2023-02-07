@@ -73,7 +73,7 @@ const AccountList = ({
 
 type ConnectViews = 'wallets' | 'accounts';
 
-const ConnectButton = () => {
+export const ConnectButton = () => {
   const [visible, setVisible] = useState(false);
   const [currentView, setCurrentView] = useState<ConnectViews>();
   const { wallets, walletState, setWalletState } = useWallets();
@@ -157,5 +157,3 @@ const ConnectButton = () => {
     </>
   );
 };
-
-export default ConnectButton;

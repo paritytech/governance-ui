@@ -1,4 +1,3 @@
-import { ApiPromise } from '@polkadot/api';
 import { Network } from '../network';
 import {
   AccountVote,
@@ -7,6 +6,14 @@ import {
   Track,
   Voting,
 } from '../types';
+
+export type Defaults = {
+  network: Network;
+};
+
+export type Settings = {
+  readonly default: Defaults;
+};
 
 export type Address = string;
 
@@ -43,7 +50,6 @@ type BaseState = {
 
 type BaseRestoredState = BaseState &
   PersistedDataContext & {
-    db: IDBDatabase;
     network: Network;
   };
 
@@ -65,14 +71,18 @@ export type State = InitialState | RestoredState | ConnectedState;
 
 // Actions
 
-export type NewReportAction = {
-  type: 'NewReportAction';
+export type AddReportAction = {
+  type: 'AddReportAction';
   report: Report;
+};
+
+export type RemoveReportAction = {
+  type: 'RemoveReportAction';
+  index: number;
 };
 
 export type SetRestoredAction = PersistedDataContext & {
   type: 'SetRestoredAction';
-  db: IDBDatabase;
   network: Network;
 };
 
@@ -86,8 +96,8 @@ export type UpdateConnectivityAction = {
   connectivity: Connectivity;
 };
 
-export type NewFinalizedBlockAction = BaseConnected & {
-  type: 'NewFinalizedBlockAction';
+export type AddFinalizedBlockAction = BaseConnected & {
+  type: 'AddFinalizedBlockAction';
   block: number;
   chain: ChainState;
 };
@@ -106,7 +116,6 @@ type Online = {
 };
 
 type BaseConnected = {
-  api: ApiPromise;
   endpoints: string[];
 };
 
@@ -120,27 +129,23 @@ type Following = BaseConnected & {
 
 export type Connectivity = Offline | Online | Connected | Following;
 
-export function apiFromConnectivity(
-  connectivity: Connectivity
-): ApiPromise | null {
-  const { type } = connectivity;
-  if (type == 'Connected' || type == 'Following') {
-    return connectivity.api;
-  }
-  return null;
-}
-
 export type CastVoteAction = {
   type: 'CastVoteAction';
   index: number;
   vote: AccountVote;
 };
 
+export type ClearVotesAction = {
+  type: 'ClearVotesAction';
+};
+
 export type Action =
-  | NewReportAction
+  | AddReportAction
+  | RemoveReportAction
   | SetConnectedAccountAction
   | SetRestoredAction
   | UpdateConnectivityAction
-  | NewFinalizedBlockAction
+  | AddFinalizedBlockAction
   | StoreReferendumDetailsAction
-  | CastVoteAction;
+  | CastVoteAction
+  | ClearVotesAction;

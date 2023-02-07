@@ -78,3 +78,5 @@ export class WsReconnectProvider extends WsProvider {
 // TODO rotate URL based on those:
 // https://paritytech.github.io/polkadot_network_directory/chains.json
 // https://paritytech.github.io/polkadot_network_directory/registry.json
+
+// https://github.com/Skepfyr/little-loadshedder

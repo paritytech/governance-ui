@@ -1,8 +1,6 @@
-import Token from 'jsx:assets/images/polkadot-token.svg';
 import { useEffect, useState } from 'react';
-import { NotificationType, useNotifications } from '../contexts/Notification';
+import { ConnectButton } from './';
 import { Button, HeartIcon, Navbar } from '../ui/nextui';
-import ConnectButton from './Connect';
 import {
   areNotificationsGranted,
   requestNotificationPermission,
@@ -17,8 +15,11 @@ const logoUrl = new URL(
   import.meta.url
 ).toString();
 
-function Header(): JSX.Element {
-  const { notify } = useNotifications();
+export function Header({
+  onPermissionDenied,
+}: {
+  onPermissionDenied: () => void;
+}): JSX.Element {
   const [notificationGranted, setNotificationGranted] = useState(true);
 
   useEffect(() => {
@@ -49,10 +50,7 @@ function Header(): JSX.Element {
                 onClick={async () => {
                   const permission = await requestNotificationPermission();
                   if (permission !== 'granted') {
-                    notify({
-                      type: NotificationType.Notification,
-                      message: 'Notification permission has been denied',
-                    });
+                    onPermissionDenied();
                   } else {
                     setNotificationGranted(true);
                   }
@@ -68,5 +66,3 @@ function Header(): JSX.Element {
     </Navbar>
   );
 }
-
-export default Header;

@@ -1,4 +1,8 @@
-import { QueryableStorage, SubmittableExtrinsics } from '@polkadot/api/types';
+import {
+  QueryableStorage,
+  Signer,
+  SubmittableExtrinsics,
+} from '@polkadot/api/types';
 import { StorageKey } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
 import { u16 } from '@polkadot/types-codec';
@@ -7,9 +11,11 @@ import type {
   PalletConvictionVotingVoteAccountVote,
   PalletConvictionVotingVoteVoting,
 } from '@polkadot/types/lookup';
+import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
 import { Address } from '../lifecycle/types';
 import { AccountVote, Conviction, Voting } from '../types';
+import { batchAll } from '../utils/polkadot-api';
 
 export function createStandardAccountVote(
   aye: boolean,
@@ -178,4 +184,43 @@ export function vote(
   accountVote: AccountVote
 ) {
   return api.tx.convictionVoting.vote(index, fromAccountVote(accountVote));
+}
+
+export function createBatchVotes(
+  api: { tx: SubmittableExtrinsics<'promise'> },
+  accountVotes: Map<number, AccountVote>
+) {
+  const txs = [...accountVotes].map(([index, accountVote]) =>
+    vote(api, index, accountVote)
+  );
+  return batchAll(api, txs);
+}
+
+export async function submitBatchVotes(
+  api: ApiPromise,
+  address: string,
+  signer: Signer,
+  accountVotes: Map<number, AccountVote>
+) {
+  const batchVoteTx = createBatchVotes(api, accountVotes);
+  const unsub = await batchVoteTx.signAndSend(
+    address,
+    { signer },
+    (callResult) => {
+      const { status } = callResult;
+      // TODO handle result better
+      console.log(callResult.toHuman());
+      if (status.isInBlock) {
+        console.log('Transaction is in block.');
+      } else if (status.isBroadcast) {
+        console.log('Transaction broadcasted.');
+      } else if (status.isFinalized) {
+        unsub();
+      } else if (status.isReady) {
+        console.log('Transaction isReady.');
+      } else {
+        console.log(`Other status ${status}`);
+      }
+    }
+  );
 }
