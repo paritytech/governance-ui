@@ -21,11 +21,22 @@ function Header({
   track?: Track;
 }): JSX.Element {
   return (
-    <div>
-      <div>
-        #{index} {title}
+    <div className="flex flex-col gap-2">
+      <div className="flex w-full columns-2 flex-row justify-between">
+        <div className="font-title text-lg font-medium">
+          #{index} {title}
+        </div>
+        <div className="flex items-center justify-center">
+          <hr className="w-2" />
+          <div className="rounded-full border px-2 py-1 text-center align-middle text-xs font-bold uppercase">
+            deciding
+          </div>
+          <hr className="w-2" />
+        </div>
       </div>
-      {track && <div>#{track.name}</div>}
+      <div className="flex w-full columns-2 justify-between text-sm font-bold uppercase text-primary">
+        <div>{track?.name || ''}</div>
+      </div>
     </div>
   );
 }
@@ -44,9 +55,9 @@ const ReferendumCard = memo(
       const { title, content } = details.posts[0];
       const isHTML = content.startsWith('<p'); // A bug in polkascan made some posts in HTML. They should always be markdown.
       return (
-        <Card>
+        <Card className="flex h-[640px] w-screen flex-col gap-8 md:w-[640px]">
           <Header index={index} title={title} track={track} />
-          <div>
+          <div className="w-full overflow-y-scroll break-words">
             {isHTML ? (
               // ToDo: This should be removed, after making sure it does not break the UX, or we should find a new source to pull this info.
               <div dangerouslySetInnerHTML={{ __html: content }} />
@@ -137,7 +148,7 @@ export function ReferendaDeck({
   } else {
     // Now we're just mapping the animated values to our view, that's it. Btw, this component only renders once. :-)
     return (
-      <div className={'deck'}>
+      <div className="grid">
         {sProps.map(({ x, y }, i) => {
           const { index, trackIndex } = referenda[i];
           const track = tracks.get(trackIndex);

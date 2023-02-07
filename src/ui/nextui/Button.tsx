@@ -8,7 +8,7 @@ export function Button({
 }: ClickableProps): JSX.Element {
   return (
     <button
-      className={`flex w-9 w-auto min-w-min appearance-none justify-center rounded-full border-primary py-2 px-4 ${className}`}
+      className={`flex w-9 w-auto min-w-min appearance-none justify-center rounded-full border border-solid border-primary py-2 px-4 ${className}`}
       style={{ ...style }}
       onClick={onClick}
     >

@@ -125,7 +125,7 @@ const ConnectButton = () => {
 
   return (
     <>
-      <Button className="border-[1px] border-solid" onClick={btnClickHandler}>
+      <Button onClick={btnClickHandler}>
         <div className="flex flex-nowrap items-center gap-1">
           {address && <Identicon value={address} theme="polkadot" size={18} />}
           <div className="text-sm">{btnTitle}</div>

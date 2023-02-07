@@ -12,7 +12,7 @@ const Account = ({ name, address, clickHandler, state }: AccountProps) => {
   const { isConnected } = state;
   return (
     <div
-      className="mx-1 flex flex-nowrap rounded-lg border-2 border-solid"
+      className="mx-1 flex flex-nowrap rounded-lg border border-solid"
       onClick={() => clickHandler()}
     >
       <div className="m-1 flex items-center justify-center">
