@@ -15,18 +15,9 @@ jobs:
         uses: actions/setup-node@v3
 
       - name: Install
-        run:  yarn install --immutable --immutable-cache --check-cache
+        run: yarn install --immutable --immutable-cache --check-cache
 
-      # Spawn a zombienet chain in background
-      # ToDo: switch to zombienet podman when static ports are supported
-      # podman is preferred but currently it is not possible to set static ports
-      #- name: podman
-      #  run: sudo apt-get -y update
-      # zombienet
-      #- name: podman install
-      #  run: sudo apt-get -y install podman
-      #- name: Run zombienet
-      #  run: yarn zombienet:podman
+      # Start zombienet in background
       - name: Download polkadot
         run: |
           curl -L https://github.com/paritytech/polkadot/releases/latest/download/polkadot -o "${GITHUB_WORKSPACE}/polkadot"
