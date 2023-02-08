@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { BaseWallet } from '@polkadot-onboard/core';
-import { Button, Modal } from '../ui/nextui';
-import { useAccount, useWallets } from '../contexts';
-import type { SigningAccount } from '../contexts/Account';
-import { WalletState } from '../contexts/Wallets';
+import { Button, Modal } from '../lib';
+import { useAccount, useWallets } from '../../contexts';
+import type { SigningAccount } from '../../contexts/Account';
+import { WalletState } from '../../contexts/Wallets';
 import Account from './Account';
 import Wallet from './Wallet';
 import Identicon from '@polkadot/react-identicon';

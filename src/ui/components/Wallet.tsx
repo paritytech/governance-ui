@@ -1,4 +1,4 @@
-import { WalletState } from '../contexts/Wallets';
+import { WalletState } from '../../contexts/Wallets';
 
 export interface IWalletProps {
   name: string;

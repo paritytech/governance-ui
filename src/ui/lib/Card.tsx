@@ -1,4 +1,4 @@
-import { BaseElementProps } from './types';
+import type { BaseElementProps } from './types';
 
 export function Card({
   className,

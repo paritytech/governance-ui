@@ -1,5 +1,5 @@
-import { Report } from '../lifecycle/types';
-import { Card } from '../ui/nextui';
+import { Report } from '../../lifecycle/types';
+import { Card } from '../lib';
 
 const TRANSIENT_DISPLAY_TIME_MS = 3000; //milliseconds
 

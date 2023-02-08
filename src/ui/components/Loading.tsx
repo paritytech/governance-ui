@@ -1,4 +1,4 @@
-import { Loading } from '../ui/nextui';
+import { Loading } from '../lib';
 
 export function LoadingPanel({ message }: { message: string }): JSX.Element {
   return (

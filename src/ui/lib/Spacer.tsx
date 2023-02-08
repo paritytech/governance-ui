@@ -1,4 +1,4 @@
-import { BaseElementProps } from './types';
+import type { BaseElementProps } from './types';
 
 export function Spacer({ className, style }: BaseElementProps): JSX.Element {
   return (

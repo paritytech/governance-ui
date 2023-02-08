@@ -1,13 +1,14 @@
-import { ReferendaDeck } from './Referenda';
-import { createStandardAccountVote } from '../chain/conviction-voting';
-import { Button, Card, CloseSquareIcon, HeartIcon } from '../ui/nextui';
-import { SigningAccount, useAccount } from '../contexts';
-import {
+import type {
   AccountVote,
   ReferendumDetails,
   ReferendumOngoing,
   Track,
-} from '../types';
+} from '../../types';
+
+import { ReferendaDeck } from './Referenda';
+import { createStandardAccountVote } from '../../chain/conviction-voting';
+import { Button, Card, CloseSquareIcon, HeartIcon } from '../lib';
+import { SigningAccount, useAccount } from '../../contexts';
 
 function VoteDetails({
   accountVote,

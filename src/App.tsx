@@ -5,7 +5,7 @@ import {
   NotificationBox,
   VotesSummaryTable,
   VotingPanel,
-} from './components';
+} from './ui/components';
 import {
   Updater,
   filterOngoingReferenda,

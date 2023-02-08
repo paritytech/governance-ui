@@ -1,17 +1,17 @@
 import { useEffect, useState } from 'react';
-import { ConnectButton } from './';
-import { Button, HeartIcon, Navbar } from '../ui/nextui';
+import { ConnectButton } from './Connect';
+import { Button, HeartIcon, Navbar } from '../lib';
 import {
   areNotificationsGranted,
   requestNotificationPermission,
-} from '../utils/permissions';
+} from '../../utils/permissions';
 
 const tokenUrl = new URL(
-  '../../assets/images/polkadot-token.svg',
+  '../../../assets/images/polkadot-token.svg',
   import.meta.url
 ).toString();
 const logoUrl = new URL(
-  '../../assets/images/polkadot-logo.svg',
+  '../../../assets/images/polkadot-logo.svg',
   import.meta.url
 ).toString();
 
