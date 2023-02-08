@@ -71,13 +71,13 @@ export function VoteActionBar({
   onRefuse: () => void;
 }): JSX.Element {
   return (
-    <div className="flex items-center">
+    <div className="m-4 flex items-center gap-2">
       <Button onClick={onRefuse}>
-        <CloseSquareIcon />
+        <CloseSquareIcon className="fill-red-400" />
       </Button>
       <div>{left} left</div>
       <Button onClick={onAccept}>
-        <HeartIcon />
+        <HeartIcon className="fill-green-400" />
       </Button>
     </div>
   );

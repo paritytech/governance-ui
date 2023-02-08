@@ -23,7 +23,9 @@ const Modal = ({ className, children, size, open, onClose }: ModalProps) => {
       onClick={() => onClose()}
     >
       <div
-        className={`relative  mx-auto max-w-full self-center rounded-lg bg-white p-2 shadow ${sizeClasses[size]} ${className}`}
+        className={`relative  mx-auto max-w-full self-center rounded-lg bg-white p-2 shadow ${
+          sizeClasses[size]
+        } ${className || ''}`}
         onClick={(e) => {
           e.stopPropagation();
         }}

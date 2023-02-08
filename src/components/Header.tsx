@@ -44,7 +44,7 @@ export function Header({
       </Navbar.Brand>
       <Navbar.Content className="w-full">
         <Navbar.Item className="w-full">
-          <div className="flex w-full justify-start md:justify-end">
+          <div className="flex w-full  justify-start gap-2 md:justify-end">
             {!notificationGranted && (
               <Button
                 onClick={async () => {
@@ -56,7 +56,7 @@ export function Header({
                   }
                 }}
               >
-                <HeartIcon />
+                <HeartIcon className="fill-primary" />
               </Button>
             )}
             <ConnectButton />

@@ -15,7 +15,9 @@ export function Loading({ className, size, style }: LoadindProps): JSX.Element {
     <div className="flex items-center">
       <svg
         aria-hidden="true"
-        className={`inline ${sizeClasses[size]} m-auto animate-spin fill-primary text-gray-200 ${className}`}
+        className={`inline ${
+          sizeClasses[size]
+        } m-auto animate-spin fill-primary text-gray-200 ${className || ''}`}
         style={style}
         viewBox="0 0 100 101"
         fill="none"

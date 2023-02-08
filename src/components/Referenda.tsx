@@ -23,7 +23,7 @@ function Header({
   return (
     <div className="flex flex-col gap-2">
       <div className="flex w-full columns-2 flex-row justify-between">
-        <div className="font-title text-lg font-medium">
+        <div className="font-brand text-base font-medium">
           #{index} {title}
         </div>
         <div className="flex items-center justify-center">
@@ -69,7 +69,7 @@ const ReferendumCard = memo(
       );
     } else {
       return (
-        <Card>
+        <Card className="flex h-[640px] w-screen flex-col gap-8 md:w-[640px]">
           <Header index={index} track={track} />
           <div className="flex w-[32rem] flex-auto flex-col items-center justify-center">
             <Loading />
