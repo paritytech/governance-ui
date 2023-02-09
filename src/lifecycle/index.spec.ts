@@ -1,6 +1,6 @@
 import { expect, test } from '@jest/globals';
 import { renderHook } from '@testing-library/react';
-import "fake-indexeddb/auto";
+import 'fake-indexeddb/auto';
 import { API_CACHE, DB_CACHE, useLifeCycle } from './index';
 import { act } from 'react-dom/test-utils';
 
@@ -9,11 +9,11 @@ window.performance.mark = jest.fn();
 window.performance.measure = jest.fn();
 
 test('reports', async () => {
-  const {result} = renderHook(() => useLifeCycle());
+  const { result } = renderHook(() => useLifeCycle());
   expect(result.current[0].reports).toBe(undefined);
 
   act(() => {
-    result.current[1].addReport({type: 'Error', message: ''});
+    result.current[1].addReport({ type: 'Error', message: '' });
   });
 
   expect(result.current[0].reports?.length).toBe(1);

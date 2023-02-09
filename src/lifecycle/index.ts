@@ -443,7 +443,7 @@ export function useLifeCycle(
 
     return () => {
       updater.stop();
-    }
+    };
   }, []);
 
   return [state, updater];
@@ -473,7 +473,12 @@ async function dispatchNetworkChange(
     votes,
   });
 
-  return dispatchEndpointsParamChange(stateAccessor, dispatch, network, rpcParam);
+  return dispatchEndpointsParamChange(
+    stateAccessor,
+    dispatch,
+    network,
+    rpcParam
+  );
 }
 
 function dispatchAddReport(dispatch: Dispatch<Action>, report: Report) {
@@ -646,9 +651,9 @@ async function updateChainState(
   var currentUnsub: VoidFunction | undefined;
 
   function updateUnsub(unsub: VoidFunction | undefined) {
-    console.log("updateUnsub:", updateUnsub)
+    console.log('updateUnsub:', updateUnsub);
     if (currentUnsub) {
-      console.log("Unsub")
+      console.log('Unsub');
       currentUnsub();
     }
     currentUnsub = unsub;
@@ -679,12 +684,14 @@ async function updateChainState(
           if (network.type == 'ok') {
             if (state.network != network.value) {
               // Only react to network changes
-              updateUnsub(await dispatchNetworkChange(
-                stateAccessor,
-                dispatch,
-                network.value,
-                rpcParam
-              ));
+              updateUnsub(
+                await dispatchNetworkChange(
+                  stateAccessor,
+                  dispatch,
+                  network.value,
+                  rpcParam
+                )
+              );
             }
           } else {
             dispatchAddReport(dispatch, {
@@ -694,12 +701,14 @@ async function updateChainState(
           }
         } else if (rpcParam) {
           // Only `rpc` param is set, reconnect using those
-          updateUnsub(await dispatchEndpointsParamChange(
-            stateAccessor,
-            dispatch,
-            state.network,
-            rpcParam
-          ));
+          updateUnsub(
+            await dispatchEndpointsParamChange(
+              stateAccessor,
+              dispatch,
+              state.network,
+              rpcParam
+            )
+          );
         } else {
           // No network provided; noop
         }
@@ -744,12 +753,14 @@ async function updateChainState(
   const { networkParam, rpcParam } = currentParams();
   const network = getNetwork(networkParam);
   if (network.type == 'ok') {
-    updateUnsub(await dispatchNetworkChange(
-      stateAccessor,
-      dispatch,
-      network.value,
-      rpcParam
-    ));
+    updateUnsub(
+      await dispatchNetworkChange(
+        stateAccessor,
+        dispatch,
+        network.value,
+        rpcParam
+      )
+    );
   } else {
     dispatchAddReport(dispatch, {
       type: 'Error',
@@ -758,7 +769,7 @@ async function updateChainState(
   }
 
   return () => {
-    console.log("Unsub")
+    console.log('Unsub');
     currentUnsub?.();
   };
 }
