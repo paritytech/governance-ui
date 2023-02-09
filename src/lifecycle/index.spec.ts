@@ -1,7 +1,7 @@
 import { expect, test } from '@jest/globals';
 import { renderHook } from '@testing-library/react';
 import 'fake-indexeddb/auto';
-import { API_CACHE, DB_CACHE, useLifeCycle } from './index';
+import { useLifeCycle } from './index';
 import { act } from 'react-dom/test-utils';
 
 // Mock performance object, somehow undefined when running jest

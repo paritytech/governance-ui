@@ -648,12 +648,10 @@ async function updateChainState(
 ): Promise<VoidFunction> {
   // First setup listeners
 
-  var currentUnsub: VoidFunction | undefined;
+  let currentUnsub: VoidFunction | undefined;
 
   function updateUnsub(unsub: VoidFunction | undefined) {
-    console.log('updateUnsub:', updateUnsub);
     if (currentUnsub) {
-      console.log('Unsub');
       currentUnsub();
     }
     currentUnsub = unsub;

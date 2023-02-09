@@ -7,7 +7,7 @@ Swipealot is a [PWA](https://web.dev/learn/pwa/) - or Progressive Web App - with
 
 ## Testing
 
-Unit tests can be run via `yarn test`.
+Unit tests can be run via `yarn test:unit`.
 
 Run end-to-end tests via the following steps:
 
