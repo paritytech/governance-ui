@@ -1,5 +1,5 @@
-import { Report } from '../lifecycle/types';
-import { Card } from '../ui/nextui';
+import { Report } from '../../lifecycle/types';
+import { Card } from '../lib';
 
 const TRANSIENT_DISPLAY_TIME_MS = 3000; //milliseconds
 
@@ -36,9 +36,7 @@ export function NotificationBox({
               x
             </div>
           )}
-          <Card className="pl-2 pr-2" variant="shadow">
-            {current.message}
-          </Card>
+          <Card className="pl-2 pr-2">{current.message}</Card>
         </div>
       )}
     </>

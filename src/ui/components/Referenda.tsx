@@ -1,16 +1,16 @@
-import { memo, useState } from 'react';
-import { Remark } from 'react-remark';
-import { useSprings, animated } from '@react-spring/web';
-import { useDrag } from '@use-gesture/react';
-import { createStandardAccountVote } from '../chain/conviction-voting';
-import { Card, Loading, Text } from '../ui/nextui';
-import {
+import type {
   AccountVote,
   ReferendumDetails,
   ReferendumOngoing,
   Track,
-} from '../types';
-import * as styles from './Referenda.module.css';
+} from '../../types';
+
+import { memo, useState } from 'react';
+import { Remark } from 'react-remark';
+import { useSprings, animated } from '@react-spring/web';
+import { useDrag } from '@use-gesture/react';
+import { createStandardAccountVote } from '../../chain/conviction-voting';
+import { Card, Loading } from '../lib';
 
 function Header({
   index,
@@ -22,15 +22,22 @@ function Header({
   track?: Track;
 }): JSX.Element {
   return (
-    <div className={styles.header}>
-      <Text h3 color="primary" className="block-ellipsis" css={{ m: '$8' }}>
-        #{index} {title}
-      </Text>
-      {track && (
-        <Text className={styles.track} color="secondary">
-          #{track.name}
-        </Text>
-      )}
+    <div className="flex flex-col gap-2">
+      <div className="flex w-full columns-2 flex-row justify-between">
+        <div className="font-brand text-base font-medium">
+          #{index} {title}
+        </div>
+        <div className="flex items-center justify-center">
+          <hr className="w-2" />
+          <div className="rounded-full border px-2 py-1 text-center align-middle text-xs font-bold uppercase">
+            deciding
+          </div>
+          <hr className="w-2" />
+        </div>
+      </div>
+      <div className="flex w-full columns-2 justify-between text-sm font-bold uppercase text-primary">
+        <div>{track?.name || ''}</div>
+      </div>
     </div>
   );
 }
@@ -49,13 +56,12 @@ const ReferendumCard = memo(
       const { title, content } = details.posts[0];
       const isHTML = content.startsWith('<p'); // A bug in polkascan made some posts in HTML. They should always be markdown.
       return (
-        <Card
-          className={styles.card}
-          header={<Header index={index} title={title} track={track} />}
-        >
-          <div>
+        <Card className="flex h-[640px] w-screen flex-col gap-8 md:w-[640px]">
+          <Header index={index} title={title} track={track} />
+          <div className="w-full overflow-y-scroll break-words">
             {isHTML ? (
-              <Text dangerouslySetInnerHTML={{ __html: content }} />
+              // ToDo: This should be removed, after making sure it does not break the UX, or we should find a new source to pull this info.
+              <div dangerouslySetInnerHTML={{ __html: content }} />
             ) : (
               <Remark>{content}</Remark>
             )}
@@ -64,10 +70,8 @@ const ReferendumCard = memo(
       );
     } else {
       return (
-        <Card
-          className={styles.card}
-          header={<Header index={index} track={track} />}
-        >
+        <Card className="flex h-[640px] w-screen flex-col gap-8 md:w-[640px]">
+          <Header index={index} track={track} />
           <div className="flex w-[32rem] flex-auto flex-col items-center justify-center">
             <Loading />
           </div>
@@ -141,11 +145,11 @@ export function ReferendaDeck({
   );
 
   if (referenda.length == 0) {
-    return <Text>No new referenda to vote on</Text>;
+    return <div>No new referenda to vote on</div>;
   } else {
     // Now we're just mapping the animated values to our view, that's it. Btw, this component only renders once. :-)
     return (
-      <div className={styles.deck}>
+      <div className="grid">
         {sProps.map(({ x, y }, i) => {
           const { index, trackIndex } = referenda[i];
           const track = tracks.get(trackIndex);

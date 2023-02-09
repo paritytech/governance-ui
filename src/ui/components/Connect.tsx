@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { BaseWallet } from '@polkadot-onboard/core';
-import { Button, Colors, Modal } from '../ui/nextui';
-import { useAccount, useWallets } from '../contexts';
-import type { SigningAccount } from '../contexts/Account';
-import { WalletState } from '../contexts/Wallets';
+import { Button, Modal } from '../lib';
+import { useAccount, useWallets } from '../../contexts';
+import type { SigningAccount } from '../../contexts/Account';
+import { WalletState } from '../../contexts/Wallets';
 import Account from './Account';
 import Wallet from './Wallet';
+import Identicon from '@polkadot/react-identicon';
 
 export interface IWalletsListProps {
   wallets: Array<BaseWallet>;
@@ -72,12 +73,7 @@ const AccountList = ({
 
 type ConnectViews = 'wallets' | 'accounts';
 
-export const ConnectButton = (
-  props: JSX.IntrinsicAttributes & {
-    color?: keyof typeof Colors;
-    bordered?: boolean;
-  }
-) => {
+export const ConnectButton = () => {
   const [visible, setVisible] = useState(false);
   const [currentView, setCurrentView] = useState<ConnectViews>();
   const { wallets, walletState, setWalletState } = useWallets();
@@ -94,6 +90,7 @@ export const ConnectButton = (
       oldView === 'wallets' ? 'accounts' : 'wallets'
     );
   };
+
   const walletConnectHandler = async (wallet: BaseWallet) => {
     if (walletState.get(wallet?.metadata.title) == 'connected') {
       await wallet.disconnect();
@@ -103,29 +100,38 @@ export const ConnectButton = (
       setWalletState(wallet?.metadata.title, 'connected');
     }
   };
+
   const accountConnectHandler = async (signingAccount: SigningAccount) => {
     setConnectedAccount(signingAccount);
     closeModal();
   };
+
   const closeModal = () => {
     setVisible(false);
   };
+
   const openModal = () => {
     setCurrentView(initialView);
     setVisible(true);
   };
+
   useEffect(() => {
     setCurrentView(initialView);
   }, [initialView]);
-  const onPress = () => openModal();
+
+  const btnClickHandler = () => openModal();
+  const { name, address } = connectedAccount?.account || {};
+  const btnTitle = connectedAccount?.account ? name || address : 'Connect';
+
   return (
     <>
-      <Button label="connect" {...{ ...props, onPress }}>
-        {connectedAccount
-          ? `Connected - ${connectedAccount.account.name}`
-          : 'Connect'}
+      <Button onClick={btnClickHandler}>
+        <div className="flex flex-nowrap items-center gap-1">
+          {address && <Identicon value={address} theme="polkadot" size={18} />}
+          <div className="text-sm">{btnTitle}</div>
+        </div>
       </Button>
-      <Modal visible={visible} width="600px" onClose={() => closeModal()}>
+      <Modal open={visible} onClose={() => closeModal()}>
         <div onClick={() => toggleView()}>{`${
           currentView === 'accounts'
             ? '< wallets'

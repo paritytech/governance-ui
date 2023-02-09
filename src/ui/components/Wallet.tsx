@@ -1,4 +1,4 @@
-import { WalletState } from '../contexts/Wallets';
+import { WalletState } from '../../contexts/Wallets';
 
 export interface IWalletProps {
   name: string;
@@ -11,7 +11,7 @@ const Wallet = ({ name, state, iconUrl, clickHandler }: IWalletProps) => {
   const isConnected = state === 'connected';
   return (
     <div
-      className="my-1 flex flex-nowrap rounded-lg border-2 border-solid"
+      className="my-1 flex flex-nowrap rounded-lg border border-solid"
       onClick={() => clickHandler()}
     >
       <div className="m-1 flex items-center justify-center">

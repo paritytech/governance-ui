@@ -21,14 +21,18 @@
 }
 
 html {
-  font-family: Unbounded, Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-family: Inter, Helvetica Neue, Helvetica, Arial, sans-serif;
   font-style: normal;
   font-weight: 400;
   height: 100%;
 }
 
+/* prettier-ignore */
+.font-brand, .h1, .h2, .h3, .h4, .h5, h1, h2, h3, h4, h5 {
+  font-family: Unbounded, Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+
 main {
   display: flex;
   flex-direction: column;
-  height: 100vh;
 }

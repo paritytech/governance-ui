@@ -1,20 +1,14 @@
-import { ReferendaDeck } from './Referenda';
-import { createStandardAccountVote } from '../chain/conviction-voting';
-import {
-  Button,
-  Card,
-  CloseSquareIcon,
-  HeartIcon,
-  Spacer,
-  Text,
-} from '../ui/nextui';
-import { SigningAccount, useAccount } from '../contexts';
-import {
+import type {
   AccountVote,
   ReferendumDetails,
   ReferendumOngoing,
   Track,
-} from '../types';
+} from '../../types';
+
+import { ReferendaDeck } from './Referenda';
+import { createStandardAccountVote } from '../../chain/conviction-voting';
+import { Button, Card, CloseSquareIcon, HeartIcon } from '../lib';
+import { SigningAccount, useAccount } from '../../contexts';
 
 function VoteDetails({
   accountVote,
@@ -24,15 +18,10 @@ function VoteDetails({
   switch (accountVote.type) {
     case 'standard': {
       const isAye = accountVote.vote.aye;
-      const color = isAye ? 'success' : 'warning';
-      return (
-        <Text h4 color={color}>
-          {isAye ? 'Aye' : 'Naye'}
-        </Text>
-      );
+      return <div>{isAye ? 'Aye' : 'Naye'}</div>;
     }
     default: {
-      return <Text h4>TODO</Text>;
+      return <div>TODO</div>;
     }
   }
 }
@@ -55,34 +44,19 @@ export function VotesSummaryTable({
           return (
             <div key={index} className="w-full">
               <Card>
-                <Text h3 b>
-                  #{index}
-                </Text>
-                <Spacer y={2} />
+                <div>#{index}</div>
                 <VoteDetails accountVote={accountVote} />
               </Card>
             </div>
           );
         })}
       </div>
-      <Spacer y={1} />
       {connectedAccount ? (
-        <Button
-          color="primary"
-          label="vote"
-          onPress={() => onSubmitVotes(connectedAccount, accountVotes)}
-        >
+        <Button onClick={() => onSubmitVotes(connectedAccount, accountVotes)}>
           Submit votes
         </Button>
       ) : (
-        <Text
-          color="secondary"
-          css={{
-            textAlign: 'center',
-          }}
-        >
-          Connect to submit your votes
-        </Text>
+        <div className="text-center">Connect to submit your votes</div>
       )}
     </div>
   );
@@ -98,22 +72,14 @@ export function VoteActionBar({
   onRefuse: () => void;
 }): JSX.Element {
   return (
-    <div className="flex items-center">
-      <Button
-        label="Refuse"
-        color="error"
-        onPress={onRefuse}
-        icon={<CloseSquareIcon />}
-      />
-      <Spacer x={1} />
-      <Text>{left} left</Text>
-      <Spacer x={1} />
-      <Button
-        label="Accept"
-        color="success"
-        onPress={onAccept}
-        icon={<HeartIcon />}
-      />
+    <div className="m-4 flex items-center gap-2">
+      <Button onClick={onRefuse}>
+        <CloseSquareIcon className="fill-red-400" />
+      </Button>
+      <div>{left} left</div>
+      <Button onClick={onAccept}>
+        <HeartIcon className="fill-green-400" />
+      </Button>
     </div>
   );
 }

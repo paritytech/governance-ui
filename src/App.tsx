@@ -5,7 +5,7 @@ import {
   NotificationBox,
   VotesSummaryTable,
   VotingPanel,
-} from './components';
+} from './ui/components';
 import {
   Updater,
   filterOngoingReferenda,
@@ -72,17 +72,19 @@ export function App(): JSX.Element {
         reports={state.reports}
         removeReport={updater.removeReport}
       />
-      <Header
-        onPermissionDenied={() =>
-          updater.addReport({
-            type: 'Warning',
-            message: 'Notification permission has been denied',
-          })
-        }
-      />
-      <main className="flex flex-auto flex-col items-center justify-center">
-        <Panel state={state} updater={updater} />
-      </main>
+      <div className="m-auto flex h-screen flex-col md:container">
+        <Header
+          onPermissionDenied={() =>
+            updater.addReport({
+              type: 'Warning',
+              message: 'Notification permission has been denied',
+            })
+          }
+        />
+        <main className="flex h-full flex-auto flex-col items-center justify-center gap-2">
+          <Panel state={state} updater={updater} />
+        </main>
+      </div>
     </ErrorBoundary>
   );
 }
