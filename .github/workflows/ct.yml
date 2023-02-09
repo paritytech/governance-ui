@@ -10,24 +10,27 @@ on:
 jobs:
   tests:
     timeout-minutes: 10
+    name: 'E2E Tests - ${{ matrix.project }} - Shard ${{ matrix.shardIndex }} of ${{ matrix.shardTotal }}'
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.30.0-focal
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium, webkit]
+        shardIndex: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        shardTotal: [10]
     steps:
       - uses: actions/checkout@v3
-
-      - name: Setup node
-        uses: actions/setup-node@v3
-
-      - name: Install
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install dependencies
         run: yarn install --immutable --immutable-cache --check-cache
-
-      - name: Install playwright browsers
-        run: npx playwright install --with-deps
-
       - name: Run tests
-        run: npx playwright test
+        run: npx playwright test --project=${{ matrix.project }} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         env:
           URL: https://main--stirring-alfajores-b573c7.netlify.app/
-
       - uses: actions/upload-artifact@v3
         if: always()
         with:
