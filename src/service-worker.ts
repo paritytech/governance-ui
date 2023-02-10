@@ -18,6 +18,7 @@ import {
 import { all, open } from './utils/indexeddb';
 import { newApi } from './utils/polkadot-api';
 import { REFERENDA_UPDATES_TAG } from './utils/service-worker';
+import { WsReconnectProvider } from './utils/ws-reconnect-provider';
 
 const ASSETS_CACHE = `assets-version-${version}`;
 const ALL_CACHES = [ASSETS_CACHE];
@@ -117,7 +118,9 @@ self.addEventListener('periodicsync', async (event: SyncEvent) => {
     const connectedAccount = AccountStorage.getConnectedAddress();
     // Retrieve referenda updates
     for (const network of await networks()) {
-      const api = await newApi(endpointsFor(network));
+      const api = await newApi({
+        provider: new WsReconnectProvider(endpointsFor(network)),
+      });
       const db = await open(dbNameFor(network), STORES, DB_VERSION);
       const number = (await api.query.system.number()).toNumber();
 

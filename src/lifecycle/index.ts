@@ -2,6 +2,7 @@ import { Dispatch, useCallback, useEffect, useReducer, useRef } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
 import { getVotingFor, submitBatchVotes } from '../chain/conviction-voting';
+import { getAllMembers } from '../chain/fellowship-collective';
 import { getAllReferenda, getAllTracks } from '../chain/referenda';
 import { SigningAccount } from '../contexts';
 import { DEFAULT_NETWORK, endpointsFor, Network, parse } from '../network';
@@ -22,6 +23,7 @@ import type {
   Report,
   State,
 } from './types';
+import { WsReconnectProvider } from '../utils/ws-reconnect-provider';
 
 // Auto follow chain updates? Only if user settings? Show notif? Only if impacting change?
 // Revisit if/when ChainState is persisted
@@ -271,11 +273,12 @@ export async function fetchChainState(
 ): Promise<ChainState> {
   const tracks = getAllTracks(api);
   const referenda = await getAllReferenda(api);
+  const fellows = await getAllMembers(api);
   const allVotings = new Map<Address, Map<number, Voting>>();
   if (connectedAccount) {
     allVotings.set(connectedAccount, await getVotingFor(api, connectedAccount));
   }
-  return { tracks, referenda, allVotings };
+  return { tracks, referenda, allVotings, fellows };
 }
 
 class DBReady implements Readyable<IDBDatabase>, Destroyable {
@@ -294,7 +297,9 @@ class ApiReady implements Readyable<ApiPromise>, Destroyable {
   constructor(endpoints: string[]) {
     this.ready = measured(
       'api',
-      async () => (await newApi(endpoints)).isReadyOrError
+      async () =>
+        (await newApi({ provider: new WsReconnectProvider(endpoints) }))
+          .isReadyOrError
     );
   }
   async destroy(): Promise<void> {

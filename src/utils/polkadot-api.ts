@@ -1,15 +1,16 @@
 import { ApiPromise } from '@polkadot/api';
-import { SubmittableExtrinsics } from '@polkadot/api/types';
+import { ApiOptions, SubmittableExtrinsics } from '@polkadot/api/types';
 import { IMethod } from '@polkadot/types-codec/types/interfaces';
-import { WsReconnectProvider } from './ws-reconnect-provider';
 
-export function newApi(endpoints: string[]): Promise<ApiPromise> {
-  const provider = new WsReconnectProvider(endpoints);
-  // TODO handle some failure/reconnection?
+const DEFAULT_OPTIONS = {
+  noInitWarn: true,
+  throwOnConnect: false,
+};
+
+export function newApi(options?: ApiOptions): Promise<ApiPromise> {
   return ApiPromise.create({
-    provider,
-    noInitWarn: true,
-    throwOnConnect: false,
+    ...DEFAULT_OPTIONS,
+    ...options,
   });
 }
 

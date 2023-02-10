@@ -17,9 +17,14 @@ export type Settings = {
 
 export type Address = string;
 
+export type Fellow = {
+  rank: number;
+};
+
 export type ChainState = {
   tracks: Map<number, Track>;
   referenda: Map<number, Referendum>;
+  fellows: Map<Address, Fellow>;
   allVotings: Map<Address, Map<number, Voting>>;
 };
 
