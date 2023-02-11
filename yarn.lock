@@ -2341,13 +2341,13 @@
   dependencies:
     "@use-gesture/core" "10.2.24"
 
-"@zombienet/cli@1.3.33":
-  version "1.3.33"
-  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.33.tgz#10ac4dd85de1e5d9b235c89acc910c328466567f"
-  integrity sha512-exj/pwRxd/j1wi6eQmvEY90CmwB4mpnXrfjQZ5b1wNoY+x+UGPP7zjI4YiKjaYD5j0kHr6ZxADlwIE4KZT0hhA==
+"@zombienet/cli@1.3.34":
+  version "1.3.34"
+  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.34.tgz#681b3fb3f0312cfba55b14fead0c668ec1eeb73e"
+  integrity sha512-fv0Ujt96M6bsuaBD0fDYho7ry5EyZ3Ag6hk7NmcaZFzX0wl41qrbn/55VYWweHOd08HAAqcVV7r2zEwN+9Imiw==
   dependencies:
     "@zombienet/dsl-parser-wrapper" "^0.1.7"
-    "@zombienet/orchestrator" "^0.0.24"
+    "@zombienet/orchestrator" "^0.0.25"
     "@zombienet/utils" "^0.0.14"
     axios "^0.27.2"
     commander "^10.0.0"
@@ -2361,10 +2361,10 @@
   resolved "https://registry.yarnpkg.com/@zombienet/dsl-parser-wrapper/-/dsl-parser-wrapper-0.1.7.tgz#ed3a1e25081732b188d2fefbd78517c7709ca3bf"
   integrity sha512-pJqo1LZbNqnL6Of1h67eYtTTu0BLcf+U/nGQtj8pYr0V4XVDWdCYvT4C9kXkrh5964nKz3KGB7Eky43NqRJZqg==
 
-"@zombienet/orchestrator@^0.0.24":
-  version "0.0.24"
-  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.24.tgz#3f9ba7275017561951c6ebb82702aa20149ab1e2"
-  integrity sha512-8hklcSRi4VC10DM/2MWNmdJENbgELKihlF7m0hnP2MIg8u6dkOSOhPHBa9H2k0ornKW0IZazkRY+ouXEJKYJMQ==
+"@zombienet/orchestrator@^0.0.25":
+  version "0.0.25"
+  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.25.tgz#55849252c8e65680aec75c2f47f1a5f219e20c6a"
+  integrity sha512-p89OrbUlq8BxsFFNXtmJUPJU7jS60794+8RkU1+jwI3bBOxJZlAd7xSdPUVwpMN4CF1LJo2Jil1YidJVrMm4Kg==
   dependencies:
     "@polkadot/api" "^9.2.4"
     "@polkadot/keyring" "^10.1.6"
