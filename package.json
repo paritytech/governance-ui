@@ -17,6 +17,7 @@
     "check:all": "yarn check:tsc && yarn check:format && yarn check:lint",
     "test:unit": "jest --detectOpenHandles",
     "test:e2e": "yarn playwright test",
+    "script:test": "tsc && node out/scripts/test-db.js",
     "zombienet:setup": "zombienet setup polkadot",
     "zombienet:native": "zombienet --provider native spawn ./test/e2e/zombienet/small-network.toml",
     "zombienet:podman": "zombienet --provider podman spawn ./test/e2e/zombienet/small-network.toml"
