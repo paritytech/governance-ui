@@ -1,4 +1,4 @@
-import type { ClickableProps } from './types';
+import type { ClickableProps } from './types.js';
 
 export function Button({
   children,

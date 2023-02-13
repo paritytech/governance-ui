@@ -1,5 +1,5 @@
-import { Report } from '../../lifecycle/types';
-import { Card } from '../lib';
+import { Report } from '../../lifecycle/types.js';
+import { Card } from '../lib/index.js';
 
 const TRANSIENT_DISPLAY_TIME_MS = 3000; //milliseconds
 

@@ -1,6 +1,6 @@
 import { ApiPromise } from '@polkadot/api';
-import { err, ok, Result } from './utils';
-import { capitalizeFirstLetter } from './utils/string';
+import { err, ok, Result } from './utils/index.js';
+import { capitalizeFirstLetter } from './utils/string.js';
 
 export enum Network {
   Kusama = 'Kusama',

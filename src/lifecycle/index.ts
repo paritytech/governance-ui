@@ -1,20 +1,26 @@
 import { Dispatch, useCallback, useEffect, useReducer, useRef } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
-import { getVotingFor, submitBatchVotes } from '../chain/conviction-voting';
-import { getAllMembers } from '../chain/fellowship-collective';
-import { getAllReferenda, getAllTracks } from '../chain/referenda';
-import { SigningAccount } from '../contexts';
-import { DEFAULT_NETWORK, endpointsFor, Network, parse } from '../network';
-import { AccountVote, Referendum, ReferendumOngoing, Voting } from '../types';
-import { err, ok, Result } from '../utils';
-import { Cache, Destroyable, Readyable } from '../utils/cache';
-import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db';
-import { all, clear, open, save } from '../utils/indexeddb';
-import { measured } from '../utils/performance';
-import { newApi } from '../utils/polkadot-api';
-import { fetchReferenda } from '../utils/polkassembly';
-import { extractSearchParams } from '../utils/search-params';
+import { getVotingFor, submitBatchVotes } from '../chain/conviction-voting.js';
+import { getAllMembers } from '../chain/fellowship-collective.js';
+import { getAllReferenda, getAllTracks } from '../chain/referenda.js';
+import { SigningAccount } from '../contexts/index.js';
+import { DEFAULT_NETWORK, endpointsFor, Network, parse } from '../network.js';
+import {
+  AccountVote,
+  Referendum,
+  ReferendumOngoing,
+  Voting,
+} from '../types.js';
+import { err, ok, Result } from '../utils/index.js';
+import { Cache, Destroyable, Readyable } from '../utils/cache.js';
+import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db.js';
+import { all, clear, open, save } from '../utils/indexeddb.js';
+import { measured } from '../utils/performance.js';
+import { newApi } from '../utils/polkadot-api.js';
+import { fetchReferenda } from '../utils/polkassembly.js';
+import { extractSearchParams } from '../utils/search-params.js';
+import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
 import type {
   Action,
   Address,
@@ -22,8 +28,7 @@ import type {
   PersistedDataContext,
   Report,
   State,
-} from './types';
-import { WsReconnectProvider } from '../utils/ws-reconnect-provider';
+} from './types.js';
 
 // Auto follow chain updates? Only if user settings? Show notif? Only if impacting change?
 // Revisit if/when ChainState is persisted

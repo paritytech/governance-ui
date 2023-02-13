@@ -6,10 +6,10 @@ import '@polkadot/types-augment';
 
 import React from 'react';
 import * as ReactDOMClient from 'react-dom/client';
-import { App } from './App';
-import AccountProvider from './contexts/Account';
-import WalletProvider from './contexts/Wallets';
-import { registerServiceWorker } from './utils/service-worker';
+import { App } from './App.js';
+import AccountProvider from './contexts/Account.js';
+import WalletProvider from './contexts/Wallets.js';
+import { registerServiceWorker } from './utils/service-worker.js';
 
 const container = document.createElement('div');
 document.body.appendChild(container);

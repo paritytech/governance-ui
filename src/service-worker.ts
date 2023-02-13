@@ -1,24 +1,24 @@
 import { manifest, version } from '@parcel/service-worker';
-import { AccountStorage } from './contexts';
+import { AccountStorage } from './contexts/index.js';
 import {
   filterOngoingReferenda,
   filterToBeVotedReferenda,
   fetchChainState,
   getAllVotes,
-} from './lifecycle';
-import { endpointsFor, Network } from './network';
-import { AccountVote, Referendum } from './types';
+} from './lifecycle/index.js';
+import { endpointsFor, Network } from './network.js';
+import { AccountVote, Referendum } from './types.js';
 import {
   dbNameFor,
   DB_VERSION,
   networksFromPersistence,
   STORES,
   VOTE_STORE_NAME,
-} from './utils/db';
-import { all, open } from './utils/indexeddb';
-import { newApi } from './utils/polkadot-api';
-import { REFERENDA_UPDATES_TAG } from './utils/service-worker';
-import { WsReconnectProvider } from './utils/ws-reconnect-provider';
+} from './utils/db.js';
+import { all, open } from './utils/indexeddb.js';
+import { newApi } from './utils/polkadot-api.js';
+import { REFERENDA_UPDATES_TAG } from './utils/service-worker.js';
+import { WsReconnectProvider } from './utils/ws-reconnect-provider.js';
 
 const ASSETS_CACHE = `assets-version-${version}`;
 const ALL_CACHES = [ASSETS_CACHE];

@@ -5,15 +5,15 @@ import {
   NotificationBox,
   VotesSummaryTable,
   VotingPanel,
-} from './ui/components';
+} from './ui/components/index.js';
 import {
   Updater,
   filterOngoingReferenda,
   filterToBeVotedReferenda,
   getAllVotes,
   useLifeCycle,
-} from './lifecycle';
-import type { State } from './lifecycle/types';
+} from './lifecycle/index.js';
+import type { State } from './lifecycle/types.js';
 
 function Panel({
   state,

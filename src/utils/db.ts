@@ -1,4 +1,4 @@
-import { Network, parse } from '../network';
+import { Network, parse } from '../network.js';
 
 export const CHAINSTATE_STORE_NAME = `chain`;
 export const VOTE_STORE_NAME = `votes`;

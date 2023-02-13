@@ -1,7 +1,7 @@
-export { ConnectButton } from './Connect';
-export { ErrorBoundary } from './ErrorBoundary';
-export { Header } from './Header';
-export { LoadingPanel } from './Loading';
-export { NotificationBox } from './NotificationBox';
-export { ReferendaDeck } from './Referenda';
-export { VoteActionBar, VotesSummaryTable, VotingPanel } from './Voting';
+export { ConnectButton } from './Connect.js';
+export { ErrorBoundary } from './ErrorBoundary.js';
+export { Header } from './Header.js';
+export { LoadingPanel } from './Loading.js';
+export { NotificationBox } from './NotificationBox.js';
+export { ReferendaDeck } from './Referenda.js';
+export { VoteActionBar, VotesSummaryTable, VotingPanel } from './Voting.js';

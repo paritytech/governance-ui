@@ -10,5 +10,6 @@
   "transformers": {
     "jsx:*.svg": ["@parcel/transformer-svg-react"],
     "jsx:*": ["..."]
-  }
+  },
+  "resolvers": ["parcel-resolver-fix-ts-esm-shit", "..."]
 }

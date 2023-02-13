@@ -1,5 +1,5 @@
 import { expect, test } from '@jest/globals';
-import { Cache, Destroyable, Evictable, Readyable } from './cache';
+import { Cache, Destroyable, Evictable, Readyable } from './cache.js';
 
 class DummyReadyable implements Readyable<string> {
   ready: Promise<string>;

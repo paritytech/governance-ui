@@ -20,7 +20,7 @@ import {
   ReferendumSubmitted,
   ScheduledWakeUp,
   Track,
-} from '../types';
+} from '../types.js';
 
 function toReferendumSubmitted(referendum: any): ReferendumSubmitted {
   return {

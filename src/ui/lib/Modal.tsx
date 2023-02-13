@@ -1,4 +1,4 @@
-import type { BaseElementProps } from './types';
+import type { BaseElementProps } from './types.js';
 type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 type ModalProps = BaseElementProps & {
   size?: ModalSize;

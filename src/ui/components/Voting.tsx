@@ -3,12 +3,12 @@ import type {
   ReferendumDetails,
   ReferendumOngoing,
   Track,
-} from '../../types';
+} from '../../types.js';
 
-import { ReferendaDeck } from './Referenda';
-import { createStandardAccountVote } from '../../chain/conviction-voting';
-import { Button, Card, CloseSquareIcon, HeartIcon } from '../lib';
-import { SigningAccount, useAccount } from '../../contexts';
+import { ReferendaDeck } from './Referenda.js';
+import { createStandardAccountVote } from '../../chain/conviction-voting.js';
+import { Button, Card, CloseSquareIcon, HeartIcon } from '../lib/index.js';
+import { SigningAccount, useAccount } from '../../contexts/index.js';
 
 function VoteDetails({
   accountVote,

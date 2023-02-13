@@ -1,8 +1,8 @@
 import { expect, test } from '@jest/globals';
 import { renderHook } from '@testing-library/react';
 import 'fake-indexeddb/auto';
-import { useLifeCycle } from './index';
 import { act } from 'react-dom/test-utils';
+import { useLifeCycle } from './index.js';
 
 // Mock performance object, somehow undefined when running jest
 window.performance.mark = jest.fn();

@@ -2,7 +2,7 @@ import { QueryableStorage } from '@polkadot/api/types';
 import { Option, StorageKey } from '@polkadot/types';
 import type { AccountId32 } from '@polkadot/types/interfaces/runtime';
 import type { PalletRankedCollectiveMemberRecord } from '@polkadot/types/lookup';
-import { Address, Fellow } from '../lifecycle/types';
+import { Address, Fellow } from '../lifecycle/types.js';
 
 export async function getAllMembers(api: {
   query: QueryableStorage<'promise'>;

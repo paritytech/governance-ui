@@ -1,7 +1,7 @@
-export { Button } from './Button';
-export { Card } from './Card';
-export * from './Icons';
-export { Loading } from './Loading';
-export { Modal } from './Modal';
-export { Navbar } from './Navbar';
-export { Spacer } from './Spacer';
+export { Button } from './Button.js';
+export { Card } from './Card.js';
+export * from './Icons.js';
+export { Loading } from './Loading.js';
+export { Modal } from './Modal.js';
+export { Navbar } from './Navbar.js';
+export { Spacer } from './Spacer.js';

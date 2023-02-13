@@ -1,6 +1,6 @@
-import { fetchQuery } from './graphql';
-import { Network } from '../network';
-import { ReferendumDetails } from 'src/types';
+import { fetchQuery } from './graphql.js';
+import { Network } from '../network.js';
+import { ReferendumDetails } from '../types.js';
 
 const referendum_posts_query = `
 query getReferendum($id: Int) {

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { ConnectButton } from './Connect';
-import { Button, HeartIcon, Navbar } from '../lib';
+import { ConnectButton } from './Connect.js';
+import { Button, HeartIcon, Navbar } from '../lib/index.js';
 import {
   areNotificationsGranted,
   requestNotificationPermission,
-} from '../../utils/permissions';
+} from '../../utils/permissions.js';
 
 const tokenUrl = new URL(
   '../../../assets/images/polkadot-token.svg',

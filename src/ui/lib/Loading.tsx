@@ -1,4 +1,4 @@
-import type { BaseElementProps } from './types';
+import type { BaseElementProps } from './types.js';
 type LoadingSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 type LoadindProps = BaseElementProps & { size?: LoadingSize };
 

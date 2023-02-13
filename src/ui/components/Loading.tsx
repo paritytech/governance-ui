@@ -1,4 +1,4 @@
-import { Loading } from '../lib';
+import { Loading } from '../lib/index.js';
 
 export function LoadingPanel({ message }: { message: string }): JSX.Element {
   return (

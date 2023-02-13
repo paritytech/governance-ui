@@ -1,5 +1,5 @@
-import type { BaseElementProps, ClickableProps } from './types';
 import { useState, createContext, useContext, forwardRef } from 'react';
+import type { BaseElementProps, ClickableProps } from './types.js';
 
 interface INavbarContext {
   collapsed: boolean;

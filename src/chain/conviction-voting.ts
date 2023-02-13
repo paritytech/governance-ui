@@ -13,9 +13,9 @@ import type {
 } from '@polkadot/types/lookup';
 import { ApiPromise } from '@polkadot/api';
 import { BN } from '@polkadot/util';
-import { Address } from '../lifecycle/types';
-import { AccountVote, Conviction, Voting } from '../types';
-import { batchAll } from '../utils/polkadot-api';
+import { Address } from '../lifecycle/types.js';
+import { AccountVote, Conviction, Voting } from '../types.js';
+import { batchAll } from '../utils/polkadot-api.js';
 
 export function createStandardAccountVote(
   aye: boolean,
@@ -50,7 +50,7 @@ function toConviction(o: PalletConvictionVotingConviction): Conviction {
   }
 }
 
-function toVote(o: PalletConvictionVotingVoteAccountVote): AccountVote {
+export function toVote(o: PalletConvictionVotingVoteAccountVote): AccountVote {
   if (o.isStandard) {
     const standard = o.asStandard;
     return {

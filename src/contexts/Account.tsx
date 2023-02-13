@@ -1,7 +1,7 @@
 import { Account, WalletMetadata } from '@polkadot-onboard/core';
 import type { Signer } from '@polkadot/types/types';
 import React, { useContext, createContext, useState, useEffect } from 'react';
-import { useWallets } from './Wallets';
+import { useWallets } from './Wallets.js';
 
 export type SigningAccount = {
   account: Account;

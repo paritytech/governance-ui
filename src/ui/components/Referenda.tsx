@@ -3,14 +3,14 @@ import type {
   ReferendumDetails,
   ReferendumOngoing,
   Track,
-} from '../../types';
+} from '../../types.js';
 
 import { memo, useState } from 'react';
 import { Remark } from 'react-remark';
 import { useSprings, animated } from '@react-spring/web';
 import { useDrag } from '@use-gesture/react';
-import { createStandardAccountVote } from '../../chain/conviction-voting';
-import { Card, Loading } from '../lib';
+import { createStandardAccountVote } from '../../chain/conviction-voting.js';
+import { Card, Loading } from '../lib/index.js';
 
 function Header({
   index,
