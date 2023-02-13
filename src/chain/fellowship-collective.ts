@@ -28,7 +28,8 @@ function toAllFellows(
 }
 
 function toFellow(member: PalletRankedCollectiveMemberRecord): Fellow {
+  // TODO fix: member.rank fails, rank is undefined
   return {
-    rank: member.rank.toNumber(),
+    rank: Number.parseInt(member.toJSON().rank as string),
   };
 }
