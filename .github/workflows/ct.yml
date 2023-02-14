@@ -32,7 +32,8 @@ jobs:
         run: npx playwright test --project=${{ matrix.project }} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         working-directory: test
         env:
-          URL: ${{ github.jobs.tests.environment.url }}
+          # TODO extract this URL from context
+          URL: https://jeluard.github.io/swipealot
       - uses: actions/upload-artifact@v3
         if: always()
         with:
