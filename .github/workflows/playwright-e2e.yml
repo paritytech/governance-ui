@@ -19,6 +19,7 @@ jobs:
 
       # Start zombienet in background
       - name: Download polkadot
+        working-directory: test
         run: |
           curl -L https://github.com/paritytech/polkadot/releases/latest/download/polkadot -o "${GITHUB_WORKSPACE}/polkadot"
           chmod 777 "${GITHUB_WORKSPACE}/polkadot"
@@ -30,7 +31,7 @@ jobs:
       - name: Background Zombienet Server
         uses: BerniWittmann/background-server-action@v1
         with:
-          start: yarn zombienet:native
+          start: cd test; yarn zombienet:native
           wait-on: "http://127.0.0.1:9996/metrics"
 
       # Start the web app in background
