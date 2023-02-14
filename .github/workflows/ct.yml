@@ -28,6 +28,7 @@ jobs:
           node-version: '18'
       - name: Install dependencies
         run: yarn install --immutable --immutable-cache --check-cache
+        working-directory: test
       - name: Run tests
         run: npx playwright test --project=${{ matrix.project }} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
         working-directory: test
