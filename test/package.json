@@ -6,7 +6,7 @@
   "scripts": {
     "clean": "rm -rf node_modules yarn.lock",
     "test:e2e": "playwright test",
-    "zombienet:native": "zombienet --provider native spawn ./e2e/zombienet/small-network.toml"
+    "zombienet:native": "yarn zombienet --provider native spawn ./e2e/zombienet/small-network.toml"
   },
   "devDependencies": {
     "@playwright/test": "1.30.0",
