@@ -1,4 +1,4 @@
-# Continuously tests the staging env
+# Continuously tests the development env
 name: Continuous Testing
 
 on:
@@ -12,6 +12,7 @@ jobs:
     timeout-minutes: 10
     name: 'E2E Tests - ${{ matrix.project }} - Shard ${{ matrix.shardIndex }} of ${{ matrix.shardTotal }}'
     runs-on: ubuntu-latest
+    environment: github-pages
     container:
       image: mcr.microsoft.com/playwright:v1.30.0-focal
     strategy:
@@ -29,8 +30,9 @@ jobs:
         run: yarn install --immutable --immutable-cache --check-cache
       - name: Run tests
         run: npx playwright test --project=${{ matrix.project }} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        working-directory: test
         env:
-          URL: https://main--stirring-alfajores-b573c7.netlify.app/
+          URL: ${{ github.jobs.tests.environment.url }}
       - uses: actions/upload-artifact@v3
         if: always()
         with:

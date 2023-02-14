@@ -18,6 +18,8 @@ npx playwright install
 # Run webapp in a dedicated tab
 yarn dev
 
+cd test/
+
 # Run chain in a dedicated tab
 yarn zombienet:native
 

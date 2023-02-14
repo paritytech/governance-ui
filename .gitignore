@@ -4,9 +4,6 @@ dist/
 node_modules/
 TODO
 .DS_Store
-/test-results/
-/playwright-report/
-/playwright/.cache/
-/test-results/
-/playwright-report/
-/playwright/.cache/
+/test/test-results/
+/test/playwright-report/
+/test/playwright/.cache/
