@@ -6,7 +6,7 @@ on:
     branches:
       - main
 jobs:
-  build:
+  check:
     runs-on: ubuntu-latest
     environment: development
     if: "! contains(github.event.head_commit.message, '[CI Skip]')"
@@ -25,40 +25,44 @@ jobs:
       - name: Audit
         run: yarn audit
 
-      # Ensures `build` runs fine but do not use it, any PUBLIC_URL would do
+  # Continuously deploys the content of main branch
+  deploy:
+    runs-on: ubuntu-latest
+    needs: check
+    if: github.event_name == 'push'
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Setup Pages
+        id: pages
+        uses: actions/configure-pages@v3
+
       - name: Build
         run: yarn build
         env:
-          PUBLIC_URL: dummy
-
-      # Netlify picks up changes from PR and on main branch and deploy them
-      # Lighthouse is then run on them
-
-      # Netlify monitors both main and PRs, wait for the deployment to end
-      - name: Wait for the Netlify Preview
-        uses: jakepartusch/wait-for-netlify-action@v1
-        if: github.event_name == 'pull_request'
-        id: wait-for-netlify
+          PUBLIC_URL: ${{ steps.pages.outputs.base_path }}
+      
+      - name: Upload artifact
+        # Automatically uploads an artifact from the './_site' directory by default
+        uses: actions/upload-pages-artifact@v1
         with:
-          site_name: "stirring-alfajores-b573c7"
+          path: dist/
+          retention-days: 10
 
-      - name: Wait for the Netlify
-        if: github.event_name != 'pull_request'
-        run: sleep 60
-
-      - name: Set netlify URL
-        id: netlify
-        run: echo "url=${PR_URL:-https://main--stirring-alfajores-b573c7.netlify.app/}" >> $GITHUB_OUTPUT
-        env:
-          EVENT_NAME: ${{ github.event_name }}
-          PR_URL: ${{ steps.wait-for-netlify.outputs.url }}
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
 
       - name: Audit URLs using Lighthouse
         uses: treosh/lighthouse-ci-action@v9
         id: lighthouse
         with:
           urls: |
-            ${{ steps.netlify.outputs.url }}
+            ${{ steps.pages.outputs.base_path }}
           # See https://github.com/GoogleChrome/budget.json
           budgetPath: .github/workflows/budget.json
           temporaryPublicStorage: true
@@ -69,7 +73,6 @@ jobs:
         if: ${{ success() }}
         run: |
           echo '### Successfully published :white_check_mark:' >> $GITHUB_STEP_SUMMARY
-          echo "Changes went live under: ${{ steps.netlify.outputs.url }}" >> $GITHUB_STEP_SUMMARY
           vaultValues=(${{join(fromJson(steps.lighthouse.outputs.links).*, ' ')}})
           echo "Lighthouse report went live under: ${vaultValues[0]}" >> $GITHUB_STEP_SUMMARY
           for index in ${!vaultValues[@]}
