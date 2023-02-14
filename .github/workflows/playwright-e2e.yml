@@ -47,6 +47,7 @@ jobs:
 
       - name: Install Playwright Browsers
         run: yarn playwright install --with-deps
+        working-directory: test
 
       - name: Run Playwright tests
         run: yarn test:e2e
