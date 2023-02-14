@@ -17,6 +17,10 @@ jobs:
       - name: Install
         run: yarn install --immutable --immutable-cache --check-cache
 
+      - name: Install
+        run: yarn install --immutable --immutable-cache --check-cache
+        working-directory: test
+
       # Start zombienet in background
       - name: Download polkadot
         working-directory: test
