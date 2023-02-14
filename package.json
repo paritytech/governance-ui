@@ -54,7 +54,7 @@
     "@types/react": "18.0.27",
     "@types/react-dom": "18.0.10",
     "@types/serviceworker": "0.0.62",
-    "@typescript-eslint/eslint-plugin": "5.51.0",
+    "@typescript-eslint/eslint-plugin": "5.52.0",
     "@typescript-eslint/parser": "5.51.0",
     "buffer": "5.5.0",
     "eslint": "8.34.0",
