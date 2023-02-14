@@ -73,22 +73,33 @@ jobs:
           # See https://github.com/GoogleChrome/budget.json
           budgetPath: .github/workflows/budget.json
 
-      - name: Success summary
-        if: ${{ success() }}
-        run: |
-          echo '### Successfully published :white_check_mark:' >> $GITHUB_STEP_SUMMARY
-          vaultValues=(${{join(fromJson(steps.lighthouse.outputs.links).*, ' ')}})
-          echo "Lighthouse report went live under: ${vaultValues[0]}" >> $GITHUB_STEP_SUMMARY
-          for index in ${!vaultValues[@]}
-          do
-            echo "${vaultKeys[$index]}"
-            echo "${vaultValues[$index]}"
-          done
-          echo "Triggered by **${{ github.actor }}** ∙ deployed from **${{ github.ref_name    }}**" >> $GITHUB_STEP_SUMMARY
-          echo ' ' >> $GITHUB_STEP_SUMMARY
-          echo "**Lighthouse results:**" >> $GITHUB_STEP_SUMMARY
-          echo "Performance: ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.performance }}" >> $GITHUB_STEP_SUMMARY
-          echo "Accessibility: ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.accessibility }}" >> $GITHUB_STEP_SUMMARY
-          echo "Best-practices: ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.best-practices }}" >> $GITHUB_STEP_SUMMARY
-          echo "SEO: ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.seo }}" >> $GITHUB_STEP_SUMMARY
-          echo "PWA: ${{ fromJSON(steps.lighthouse.outputs.manifest)[0].summary.pwa }}" >> $GITHUB_STEP_SUMMARY
+      - name: Format lighthouse score
+        id: lighthouse-score
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const result = ${{ steps.lighthouse_audit.outputs.manifest }}[0].summary
+            const links = ${{ steps.lighthouse_audit.outputs.links }}
+            const formatResult = (res) => Math.round((res * 100))
+            Object.keys(result).forEach(key => result[key] = formatResult(result[key]))
+            const score = res => res >= 90 ? '🟢' : res >= 50 ? '🟠' : '🔴'
+            const comment = [
+                `⚡️ [Lighthouse report](${Object.values(links)[0]}) for the changes in this PR:`,
+                '| Category | Score |',
+                '| --- | --- |',
+                `| ${score(result.performance)} Performance | ${result.performance} |`,
+                `| ${score(result.accessibility)} Accessibility | ${result.accessibility} |`,
+                `| ${score(result['best-practices'])} Best practices | ${result['best-practices']} |`,
+                `| ${score(result.seo)} SEO | ${result.seo} |`,
+                `| ${score(result.pwa)} PWA | ${result.pwa} |`,
+                ' ',
+                `*Lighthouse ran on [${Object.keys(links)[0]}](${Object.keys(links)[0]})*`
+            ].join('\n')
+             core.setOutput("comment", comment);
+
+      - name: Add comment to PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: lighthouse
+          message: |
+            ${{ steps.lighthouse-score.outputs.comment }}
