@@ -51,7 +51,7 @@ jobs:
       - name: Build
         run: yarn build
         env:
-          PUBLIC_URL: ${{ steps.pages.outputs.base_path }}
+          PUBLIC_URL: ${{ steps.pages.outputs.base_url }}
       
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
@@ -69,7 +69,7 @@ jobs:
         id: lighthouse
         with:
           urls: |
-            ${{ steps.pages.outputs.base_path }}
+            ${{ steps.pages.outputs.base_url }}
           # See https://github.com/GoogleChrome/budget.json
           budgetPath: .github/workflows/budget.json
 
