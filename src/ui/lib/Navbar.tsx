@@ -95,7 +95,7 @@ const Component = forwardRef<HTMLElement, BaseElementProps>(
   ({ className, children }, ref) => {
     return (
       <nav
-        className={`relative rounded px-2 py-2.5 sm:px-4 ${className || ''}`}
+        className={`relative rounded px-2 py-2.5 md:px-4 ${className || ''}`}
         ref={ref}
       >
         <div className="mx-auto flex flex-wrap items-center justify-between">
