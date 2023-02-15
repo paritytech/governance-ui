@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Button, Card } from '../lib';
 import { Accounticon } from './Accounticon';
+import { DelegateModal } from './DelegateModal';
 
 type DelegateRoleType = 'nominator' | 'validator' | 'fellow';
 const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
@@ -28,6 +30,30 @@ export function CardStat({ stat }: { stat: { title: string; value: string } }) {
     </div>
   );
 }
+
+export function DelegateButton(delegate) {
+  const [visible, setVisible] = useState(false);
+  const closeModal = () => {
+    setVisible(false);
+  };
+
+  const openModal = () => {
+    setVisible(true);
+  };
+
+  return (
+    <>
+      <Button onClick={() => openModal()}>
+        <div className="flex w-full flex-nowrap justify-between">
+          <div>{'>'}</div>
+          <div>Delegate Votes</div>
+        </div>
+      </Button>
+      <DelegateModal open={visible} onClose={() => closeModal()} />
+    </>
+  );
+}
+
 export function DelegateCard({ delegate }) {
   const {
     account: { name, address },
@@ -41,12 +67,7 @@ export function DelegateCard({ delegate }) {
         <div className="flex flex-col">
           <div className="flex flex-row items-center justify-between">
             <h2 className="text-xl">{name}</h2>
-            <Button>
-              <div className="flex w-full flex-nowrap justify-between">
-                <div>{'>'}</div>
-                <div>Delegate Votes</div>
-              </div>
-            </Button>
+            <DelegateButton delegate={delegate} />
           </div>
           <Accounticon address={address} />
         </div>
