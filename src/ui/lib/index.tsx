@@ -1,4 +1,4 @@
-export { Button } from './Button.js';
+export { Button, ButtonOutline } from './Button.js';
 export { Card } from './Card.js';
 export * from './Icons.js';
 export { Loading } from './Loading.js';

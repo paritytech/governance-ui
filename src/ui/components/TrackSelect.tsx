@@ -22,7 +22,7 @@ export function CheckBox({ title }) {
 export function TrackCheckableCard({ track, expanded }) {
   return (
     <Card>
-      <div className="flex flex-col gap-2 p-4">
+      <div className={`flex flex-col gap-2 ${expanded ? 'p-4' : 'p-2'}`}>
         <CheckBox title={track.title} />
         {expanded && (
           <div className="text-sm leading-tight">{track.description}</div>
@@ -40,7 +40,7 @@ export function TrackSelect({ tracks, className, expanded }) {
       {tracks.map((track, idx) => (
         <div key={idx} className=" flex w-full flex-col gap-2 md:w-1/4">
           <div className="border-b px-2 uppercase">{track.title}</div>
-          <div className="flex flex-row md:flex-col">
+          <div className="flex flex-col">
             {track.subtracks.map((subtrack, idx) => (
               <TrackCheckableCard
                 key={idx}

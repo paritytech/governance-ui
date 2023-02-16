@@ -1,5 +1,7 @@
+import { useState } from 'react';
 import { Button } from '../lib';
 import { DelegateCard } from '../components/DelegateCard';
+import { DelegateModal } from '../components/DelegateModal';
 import { TrackSelect, CheckBox } from '../components/TrackSelect';
 import { tracksMock, delegatesMock } from '../../chain/mocks';
 
@@ -28,6 +30,14 @@ function Headline() {
 }
 
 export function DelegatesBar({ delegates }) {
+  // ToDo : Move Modal to a context
+  const [visible, setVisible] = useState(false);
+  const closeModal = () => {
+    setVisible(false);
+  };
+  const openModal = () => {
+    setVisible(true);
+  };
   return (
     <div className="flex w-full flex-col items-center justify-center py-6">
       <div className="prose prose-sm max-w-none pb-4 text-center">
@@ -39,9 +49,14 @@ export function DelegatesBar({ delegates }) {
       </div>
       <div className="flex max-w-full gap-x-7 overflow-x-scroll pb-1 ">
         {delegates?.map((delegate, idx) => (
-          <DelegateCard key={idx} delegate={delegate} />
+          <DelegateCard
+            key={idx}
+            delegate={delegate}
+            delegateHandler={() => openModal()}
+          />
         ))}
       </div>
+      <DelegateModal open={visible} onClose={() => closeModal()} />
     </div>
   );
 }
@@ -58,7 +73,7 @@ export function TrackSelectSection({ tracks }) {
         <CheckBox title="All tracks" />
         <Button>Delegate Tracks</Button>
       </div>
-      <TrackSelect tracks={tracks} />
+      <TrackSelect tracks={tracks} expanded />
     </div>
   );
 }

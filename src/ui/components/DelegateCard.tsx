@@ -31,43 +31,26 @@ export function CardStat({ stat }: { stat: { title: string; value: string } }) {
   );
 }
 
-export function DelegateButton(delegate) {
-  const [visible, setVisible] = useState(false);
-  const closeModal = () => {
-    setVisible(false);
-  };
-
-  const openModal = () => {
-    setVisible(true);
-  };
-
-  return (
-    <>
-      <Button onClick={() => openModal()}>
-        <div className="flex w-full flex-nowrap justify-between">
-          <div>{'>'}</div>
-          <div>Delegate Votes</div>
-        </div>
-      </Button>
-      <DelegateModal open={visible} onClose={() => closeModal()} />
-    </>
-  );
-}
-
-export function DelegateCard({ delegate }) {
+export function DelegateCard({ delegate, delegateHandler }) {
   const {
     account: { name, address },
     roles,
     bio,
     stats,
   } = delegate;
+
   return (
     <>
       <Card className="flex w-[500px] shrink-0 grow-0 flex-col gap-4 p-6 shadow-md">
         <div className="flex flex-col">
           <div className="flex flex-row items-center justify-between">
             <h2 className="text-xl">{name}</h2>
-            <DelegateButton delegate={delegate} />
+            <Button onClick={() => delegateHandler()}>
+              <div className="flex w-full flex-nowrap justify-between">
+                <div>{'>'}</div>
+                <div>Delegate Votes</div>
+              </div>
+            </Button>
           </div>
           <Accounticon address={address} />
         </div>
