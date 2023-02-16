@@ -17,14 +17,14 @@ jobs:
       - name: Run update
         run: yarn && yarn script:update-data
         working-directory: ./scripts
+        continue-on-error: true
         timeout-minutes: 45
 
       - name: Commit
-        if: ${{ always() }}
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add scripts/data
+          git add data
           git commit -m "Updated indexes"
           git pull --rebase
           git push
