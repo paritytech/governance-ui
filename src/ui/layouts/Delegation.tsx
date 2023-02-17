@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '../lib';
-import { DelegateCard } from '../components/DelegateCard';
-import { DelegateModal } from '../components/DelegateModal';
+import { DelegateCard, DelegateAllCard } from '../components/DelegateCard';
+import { DelegateModal } from '../components/DelegateModal/summary';
 import { TrackSelect, CheckBox } from '../components/TrackSelect';
 import { tracksMock, delegatesMock } from '../../chain/mocks';
 
@@ -32,6 +32,7 @@ function Headline() {
 export function DelegatesBar({ delegates }) {
   // ToDo : Move Modal to a context
   const [visible, setVisible] = useState(false);
+  const allTracks = tracksMock.map((track) => track.subtracks).flat();
   const closeModal = () => {
     setVisible(false);
   };
@@ -49,14 +50,19 @@ export function DelegatesBar({ delegates }) {
       </div>
       <div className="flex max-w-full gap-x-7 overflow-x-scroll pb-1 ">
         {delegates?.map((delegate, idx) => (
-          <DelegateCard
+          <DelegateAllCard
             key={idx}
             delegate={delegate}
             delegateHandler={() => openModal()}
           />
         ))}
       </div>
-      <DelegateModal open={visible} onClose={() => closeModal()} />
+      <DelegateModal
+        open={visible}
+        onClose={() => closeModal()}
+        delegate={delegates[0]}
+        tracks={allTracks}
+      />
     </div>
   );
 }

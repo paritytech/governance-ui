@@ -1,7 +1,6 @@
-import { useState } from 'react';
 import { Button, Card } from '../lib';
 import { Accounticon } from './Accounticon';
-import { DelegateModal } from './DelegateModal';
+import { DelegateModal } from './DelegateModal/advanced';
 
 type DelegateRoleType = 'nominator' | 'validator' | 'fellow';
 const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
@@ -31,7 +30,19 @@ export function CardStat({ stat }: { stat: { title: string; value: string } }) {
   );
 }
 
-export function DelegateCard({ delegate, delegateHandler }) {
+export function StateBar({ stats }) {
+  return (
+    <>
+      <div className="prose prose-sm flex flex-row gap-6">
+        {stats.map((stat) => (
+          <CardStat stat={stat} />
+        ))}
+      </div>
+    </>
+  );
+}
+
+export function DelegateAllCard({ delegate, delegateHandler }) {
   const {
     account: { name, address },
     roles,
@@ -42,17 +53,15 @@ export function DelegateCard({ delegate, delegateHandler }) {
   return (
     <>
       <Card className="flex w-[500px] shrink-0 grow-0 flex-col gap-4 p-6 shadow-md">
-        <div className="flex flex-col">
-          <div className="flex flex-row items-center justify-between">
-            <h2 className="text-xl">{name}</h2>
-            <Button onClick={() => delegateHandler()}>
-              <div className="flex w-full flex-nowrap justify-between">
-                <div>{'>'}</div>
-                <div>Delegate Votes</div>
-              </div>
-            </Button>
+        <div className="flex items-start justify-between">
+          <div className="flex flex-col items-start">
+            <h2 className="text-xl capitalize">{name}</h2>
+            <Accounticon
+              address={address}
+              size={24}
+              textClassName="font-semibold my-2"
+            />
           </div>
-          <Accounticon address={address} />
         </div>
         <div className="flex gap-2">
           {roles.map((role) => (
@@ -64,11 +73,56 @@ export function DelegateCard({ delegate, delegateHandler }) {
           <div className="">{bio}</div>
         </div>
         <hr />
-        <div className="prose prose-sm flex flex-row gap-6">
-          {stats.map((stat) => (
-            <CardStat stat={stat} />
+        <StateBar stats={stats} />
+        <Button onClick={() => delegateHandler()}>
+          <div className="flex w-full flex-nowrap justify-center">
+            <div>{'>'}</div>
+            <div>Delegate All Votes</div>
+          </div>
+        </Button>
+      </Card>
+    </>
+  );
+}
+
+export function DelegateCard({ delegate, delegateHandler }) {
+  const {
+    account: { name, address },
+    roles,
+    bio,
+    stats,
+  } = delegate;
+
+  return (
+    <>
+      <Card className="flex w-[500px] shrink-0 grow-0 flex-col gap-4 p-6 shadow-md">
+        <div className="flex items-start justify-between">
+          <div className="flex flex-col items-start">
+            <h2 className="text-xl capitalize">{name}</h2>
+            <Accounticon
+              address={address}
+              size={24}
+              textClassName="font-semibold my-2"
+            />
+          </div>
+          <Button onClick={() => delegateHandler()}>
+            <div className="flex w-full flex-nowrap justify-between">
+              <div>{'>'}</div>
+              <div>Delegate Votes</div>
+            </div>
+          </Button>
+        </div>
+        <div className="flex gap-2">
+          {roles.map((role) => (
+            <RoleTag key={role} role={role} />
           ))}
         </div>
+        <div className="prose prose-sm leading-tight">
+          <div className="uppercase leading-tight">About</div>
+          <div className="">{bio}</div>
+        </div>
+        <hr />
+        <StateBar stats={stats} />
       </Card>
     </>
   );
