@@ -45,7 +45,7 @@
     "@parcel/packager-raw-url": "2.8.3",
     "@parcel/transformer-svg-react": "2.8.3",
     "@parcel/transformer-webmanifest": "2.8.3",
-    "@testing-library/react": "13.4.0",
+    "@testing-library/react": "14.0.0",
     "@types/bn.js": "5.1.1",
     "@types/jest": "29.4.0",
     "@types/react": "18.0.28",
