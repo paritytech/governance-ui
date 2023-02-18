@@ -15,8 +15,7 @@
     "check:lint": "eslint ./src",
     "check:tsc": "tsc --noEmit",
     "check:all": "yarn check:tsc && yarn check:format && yarn check:lint",
-    "test:unit": "jest --detectOpenHandles",
-    "script:update-data": "tsc && node out/scripts/test-db.js"
+    "test:unit": "jest --detectOpenHandles"
   },
   "source": "src/index.tsx",
   "app": "dist/index.html",

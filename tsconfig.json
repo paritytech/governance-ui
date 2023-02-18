@@ -15,6 +15,6 @@
     "jsx": "react-jsx",
     "outDir": "out"
   },
-  "include": ["src", "scripts"],
+  "include": ["src"],
   "exclude": ["node_modules"]
 }
