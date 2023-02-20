@@ -85,13 +85,10 @@ export function TrackSelectSection({ tracks, delegateHandler }) {
   );
 }
 
-export const DelegateSection = React.forwardRef(({ delegates }, sectionRef) => {
+export const DelegateSection = ({ delegates }) => {
   return (
     <>
-      <div
-        ref={sectionRef}
-        className="flex w-full flex-col gap-y-4 px-2 pb-6 md:px-4"
-      >
+      <div className="flex w-full flex-col gap-y-4 px-2 pb-6 md:px-4">
         <div className="prose prose-sm max-w-none">
           <h2 className="mb-2">Select Delegates</h2>
           <div className="text-base">
@@ -140,12 +137,12 @@ export const DelegateSection = React.forwardRef(({ delegates }, sectionRef) => {
       </div>
     </>
   );
-});
+};
 
 export function DelegationPanel({ state, updater }) {
   const delegateSectionRef = useRef(null);
   const gotoDelegateSection = () => {
-    delegateSectionRef?.current?.scrollIntoView();
+    delegateSectionRef?.current?.scrollIntoView({ behavior: 'smooth' });
   };
   return (
     <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20">
@@ -155,7 +152,9 @@ export function DelegationPanel({ state, updater }) {
         tracks={tracksMock}
         delegateHandler={() => gotoDelegateSection()}
       />
-      <DelegateSection delegates={delegatesMock} ref={delegateSectionRef} />
+      <div ref={delegateSectionRef}>
+        <DelegateSection delegates={delegatesMock} />
+      </div>
     </main>
   );
 }
