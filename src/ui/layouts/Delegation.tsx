@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Button } from '../lib';
+import React, { useRef, useState } from 'react';
+import { Button, ButtonOutline } from '../lib';
 import { DelegateCard, DelegateAllCard } from '../components/DelegateCard';
 import { DelegateModal } from '../components/DelegateModal/summary';
 import { TrackSelect, CheckBox } from '../components/TrackSelect';
@@ -40,7 +40,7 @@ export function DelegatesBar({ delegates }) {
     setVisible(true);
   };
   return (
-    <div className="flex w-full flex-col items-center justify-center py-6">
+    <section className="flex w-full flex-col items-center justify-center bg-gray-200 py-6">
       <div className="prose prose-sm max-w-none pb-4 text-center">
         <h3 className="m-0">It’s on you</h3>
         <div className="text-base">
@@ -63,10 +63,11 @@ export function DelegatesBar({ delegates }) {
         delegate={delegates[0]}
         tracks={allTracks}
       />
-    </div>
+    </section>
   );
 }
-export function TrackSelectSection({ tracks }) {
+
+export function TrackSelectSection({ tracks, delegateHandler }) {
   return (
     <div className="flex w-full flex-col px-2 md:px-4">
       <div className="prose prose-sm max-w-none pb-4">
@@ -77,19 +78,84 @@ export function TrackSelectSection({ tracks }) {
       </div>
       <div className="flex flex-row justify-between px-2">
         <CheckBox title="All tracks" />
-        <Button>Delegate Tracks</Button>
+        <Button onClick={() => delegateHandler()}>Delegate Tracks</Button>
       </div>
       <TrackSelect tracks={tracks} expanded />
     </div>
   );
 }
 
+export const DelegateSection = React.forwardRef(({ delegates }, sectionRef) => {
+  return (
+    <>
+      <div
+        ref={sectionRef}
+        className="flex w-full flex-col gap-y-4 px-2 pb-6 md:px-4"
+      >
+        <div className="prose prose-sm max-w-none">
+          <h2 className="mb-2">Select Delegates</h2>
+          <div className="text-base">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
+            auctor sodales ex sed mollis. Aenean congue lacus quis cursus
+            interdum. Donec eleifend rhoncus lacus
+          </div>
+        </div>
+        <div className="flex flex-row items-center justify-between px-2">
+          <div className="flex flex-row items-center justify-between gap-2">
+            <ButtonOutline>
+              <div className="flex flex-row">
+                <div>+</div>
+                <div>Aggregate Best</div>
+              </div>
+            </ButtonOutline>
+            <ButtonOutline>
+              <div className="flex flex-row">
+                <div>+</div>
+                <div>Status</div>
+              </div>
+            </ButtonOutline>
+          </div>
+          <div className="flex flex-row items-center justify-between gap-2">
+            <ButtonOutline>
+              <div className="flex flex-row">
+                <div>+</div>
+                <div>Add Address</div>
+              </div>
+            </ButtonOutline>
+            <input
+              placeholder="Search"
+              className="w-[200px] self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70"
+            />
+          </div>
+        </div>
+        <div className="flex flex-row flex-wrap items-center justify-start gap-y-4 gap-x-7">
+          {delegates?.map((delegate, idx) => (
+            <DelegateCard
+              key={idx}
+              delegate={delegate}
+              delegateHandler={() => {}}
+            />
+          ))}
+        </div>
+      </div>
+    </>
+  );
+});
+
 export function DelegationPanel({ state, updater }) {
+  const delegateSectionRef = useRef(null);
+  const gotoDelegateSection = () => {
+    delegateSectionRef?.current?.scrollIntoView();
+  };
   return (
     <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20">
       <Headline />
       <DelegatesBar delegates={delegatesMock} />
-      <TrackSelectSection tracks={tracksMock} />
+      <TrackSelectSection
+        tracks={tracksMock}
+        delegateHandler={() => gotoDelegateSection()}
+      />
+      <DelegateSection delegates={delegatesMock} ref={delegateSectionRef} />
     </main>
   );
 }

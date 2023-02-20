@@ -38,7 +38,10 @@ export function TrackSelect({ tracks, className, expanded }) {
       className={`flex w-full flex-col justify-between md:flex-row ${className}`}
     >
       {tracks.map((track, idx) => (
-        <div key={idx} className=" flex w-full flex-col gap-2 md:w-1/4">
+        <div
+          key={idx}
+          className=" flex w-full flex-col gap-2 border-b md:w-1/4"
+        >
           <div className="border-b px-2 uppercase">{track.title}</div>
           <div className="flex flex-col">
             {track.subtracks.map((subtrack, idx) => (
