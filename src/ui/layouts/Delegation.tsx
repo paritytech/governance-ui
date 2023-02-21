@@ -1,8 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { Button, ButtonOutline } from '../lib';
-import { DelegateCard, DelegateAllCard } from '../components/DelegateCard';
-import { DelegateModal } from '../components/DelegateModal/summary';
-import { TrackSelect, CheckBox } from '../components/TrackSelect';
+import {
+  DelegateCard,
+  DelegateAllCard,
+} from '../components/delegation/DelegateCard';
+import { DelegateModal } from '../components/delegation/delegateModal/summary';
+import { TrackSelect, CheckBox } from '../components/delegation/TrackSelect';
 import { tracksMock, delegatesMock } from '../../chain/mocks';
 import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
 

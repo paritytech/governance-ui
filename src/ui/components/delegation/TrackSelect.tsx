@@ -1,4 +1,4 @@
-import { Card } from '../lib';
+import { Card } from '../../lib';
 
 export function CheckBox({ title }) {
   const checkboxId = `${title}-checkbox`;
@@ -53,7 +53,7 @@ export function TrackSelect({ tracks, className, expanded }) {
             ))}
           </div>
         </div>
-      ))}{' '}
+      ))}
     </div>
   );
 }

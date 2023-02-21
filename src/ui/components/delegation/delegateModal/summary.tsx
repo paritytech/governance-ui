@@ -1,5 +1,5 @@
-import { Modal, Button } from '../../lib';
-import { Accounticon } from '../Accounticon';
+import { Modal, Button } from '../../../lib';
+import { Accounticon } from '../../Accounticon';
 
 export function DelegateModal({ delegate, tracks, open, onClose }) {
   const { account } = delegate;

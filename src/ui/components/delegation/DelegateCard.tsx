@@ -1,6 +1,6 @@
-import { DelegateIcon } from '../icons';
-import { Button, Card } from '../lib';
-import { Accounticon } from './Accounticon';
+import { DelegateIcon } from '../../icons';
+import { Button, Card } from '../../lib';
+import { Accounticon } from '../Accounticon';
 
 type DelegateRoleType = 'nominator' | 'validator' | 'fellow';
 const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
@@ -30,7 +30,7 @@ export function CardStat({ stat }: { stat: { title: string; value: string } }) {
   );
 }
 
-export function StateBar({ stats }) {
+export function StatBar({ stats }) {
   return (
     <>
       <div className="prose prose-sm flex flex-row gap-6">
@@ -73,7 +73,7 @@ export function DelegateAllCard({ delegate, delegateHandler }) {
           <div className="">{bio}</div>
         </div>
         <hr />
-        <StateBar stats={stats} />
+        <StatBar stats={stats} />
         <Button onClick={() => delegateHandler()}>
           <div className="flex w-full flex-nowrap items-center justify-center gap-1">
             <DelegateIcon />
@@ -122,7 +122,7 @@ export function DelegateCard({ delegate, delegateHandler }) {
           <div className="">{bio}</div>
         </div>
         <hr />
-        <StateBar stats={stats} />
+        <StatBar stats={stats} />
       </Card>
     </>
   );
