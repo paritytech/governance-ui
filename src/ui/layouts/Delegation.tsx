@@ -4,6 +4,7 @@ import { DelegateCard, DelegateAllCard } from '../components/DelegateCard';
 import { DelegateModal } from '../components/DelegateModal/summary';
 import { TrackSelect, CheckBox } from '../components/TrackSelect';
 import { tracksMock, delegatesMock } from '../../chain/mocks';
+import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -78,7 +79,12 @@ export function TrackSelectSection({ tracks, delegateHandler }) {
       </div>
       <div className="flex flex-row justify-between px-2">
         <CheckBox title="All tracks" />
-        <Button onClick={() => delegateHandler()}>Delegate Tracks</Button>
+        <Button onClick={() => delegateHandler()}>
+          <div className="flex flex-row items-center justify-center gap-1">
+            <div>Delegate Tracks</div>
+            <CaretRightIcon />
+          </div>
+        </Button>
       </div>
       <TrackSelect tracks={tracks} expanded />
     </div>
@@ -100,23 +106,23 @@ export const DelegateSection = ({ delegates }) => {
         <div className="flex flex-row items-center justify-between px-2">
           <div className="flex flex-row items-center justify-between gap-2">
             <ButtonOutline>
-              <div className="flex flex-row">
-                <div>+</div>
+              <div className="flex flex-row items-center justify-center gap-1">
                 <div>Aggregate Best</div>
+                <CaretDownIcon />
               </div>
             </ButtonOutline>
             <ButtonOutline>
-              <div className="flex flex-row">
-                <div>+</div>
+              <div className="flex flex-row items-center justify-center gap-1">
                 <div>Status</div>
+                <CaretDownIcon />
               </div>
             </ButtonOutline>
           </div>
           <div className="flex flex-row items-center justify-between gap-2">
             <ButtonOutline>
-              <div className="flex flex-row">
-                <div>+</div>
-                <div>Add Address</div>
+              <div className="flex flex-row items-center justify-center gap-1">
+                <PlusIcon />
+                <div>Add address</div>
               </div>
             </ButtonOutline>
             <input

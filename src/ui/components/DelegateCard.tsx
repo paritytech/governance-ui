@@ -1,6 +1,6 @@
+import { DelegateIcon } from '../icons';
 import { Button, Card } from '../lib';
 import { Accounticon } from './Accounticon';
-import { DelegateModal } from './DelegateModal/advanced';
 
 type DelegateRoleType = 'nominator' | 'validator' | 'fellow';
 const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
@@ -75,8 +75,8 @@ export function DelegateAllCard({ delegate, delegateHandler }) {
         <hr />
         <StateBar stats={stats} />
         <Button onClick={() => delegateHandler()}>
-          <div className="flex w-full flex-nowrap justify-center">
-            <div>{'>'}</div>
+          <div className="flex w-full flex-nowrap items-center justify-center gap-1">
+            <DelegateIcon />
             <div>Delegate All Votes</div>
           </div>
         </Button>
@@ -106,8 +106,8 @@ export function DelegateCard({ delegate, delegateHandler }) {
             />
           </div>
           <Button onClick={() => delegateHandler()}>
-            <div className="flex w-full flex-nowrap justify-between">
-              <div>{'>'}</div>
+            <div className="flex w-full flex-nowrap items-center justify-center gap-1">
+              <DelegateIcon />
               <div>Delegate Votes</div>
             </div>
           </Button>
