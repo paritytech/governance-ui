@@ -1,7 +1,7 @@
 import { useState } from 'React';
 import { Card, Modal, ButtonOutline } from '../../../lib';
 import { TrackSelect } from '../TrackSelect';
-import { tracksMock, delegatesMock } from '../../../../chain/mocks';
+import { tracksMetadata, delegatesMock } from '../../../../chain/mocks';
 import { DelegateCard } from '../DelegateCard';
 import { Accounticon } from '../../Accounticon';
 
@@ -27,7 +27,7 @@ export function TrackSelection({ isCollapsed }) {
           <div>Small Tipper</div>
         ) : (
           <>
-            <TrackSelect tracks={tracksMock} />
+            <TrackSelect tracks={tracksMetadata} />
             <ButtonOutline onClick={() => setCollapsed(true)}>
               Save
             </ButtonOutline>
