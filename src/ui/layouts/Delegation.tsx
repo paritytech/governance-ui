@@ -4,7 +4,7 @@ import {
   DelegateCard,
   DelegateAllCard,
 } from '../components/delegation/DelegateCard';
-import { DelegateModal } from '../components/delegation/delegateModal/summary';
+import { DelegateModal } from '../components/delegation/delegateModal/Summary';
 import { TrackSelect, CheckBox } from '../components/delegation/TrackSelect';
 import { tracksMetadata, delegatesMock } from '../../chain/mocks';
 import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';

@@ -37,16 +37,14 @@ export function DelegateModal({ delegate, tracks, open, onClose }) {
               <div className="font-semibold">{tracksCaption}</div>
             </div>
           </div>
-          <div className="flex w-full flex-row justify-end">
+          <div className="flex w-full flex-row justify-end gap-4">
             <Button onClick={() => cancelHandler()}>
               <div className="flex w-full flex-nowrap items-center justify-center">
-                <div>{'<'}</div>
                 <div>Cancel</div>
               </div>
             </Button>
             <Button onClick={() => delegateHandler()}>
               <div className="flex w-full flex-nowrap items-center justify-center">
-                <div>{'>'}</div>
                 <div>Delegate Now</div>
               </div>
             </Button>
