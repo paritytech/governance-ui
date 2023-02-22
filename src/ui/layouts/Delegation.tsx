@@ -9,6 +9,7 @@ import { TrackSelect, CheckBox } from '../components/delegation/TrackSelect';
 import { tracksMetadata, delegatesMock } from '../../chain/mocks';
 import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
+import { DelegateType } from '../components/delegation/types';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -34,7 +35,7 @@ function Headline() {
   );
 }
 
-export function DelegatesBar({ delegates }) {
+export function DelegatesBar({ delegates }: { delegates: DelegateType[] }) {
   // ToDo : Move Modal to a context
   const [visible, setVisible] = useState(false);
   const allTracks = tracksMetadata.map((track) => track.subtracks).flat();
@@ -72,7 +73,11 @@ export function DelegatesBar({ delegates }) {
   );
 }
 
-export function TrackSelectSection({ delegateHandler }) {
+export function TrackSelectSection({
+  delegateHandler,
+}: {
+  delegateHandler: () => void;
+}) {
   return (
     <div className="flex w-full flex-col px-2 md:px-4">
       <div className="prose prose-sm max-w-none pb-4">
@@ -95,7 +100,11 @@ export function TrackSelectSection({ delegateHandler }) {
   );
 }
 
-export const DelegateSection = ({ delegates }) => {
+export const DelegateSection = ({
+  delegates,
+}: {
+  delegates: DelegateType[];
+}) => {
   // ToDo : Move Modal to a context
   const [visible, setVisible] = useState(false);
   const { selectedTracks } = useDelegation();
@@ -168,7 +177,7 @@ export const DelegateSection = ({ delegates }) => {
   );
 };
 
-export function DelegationPanel({ state, updater }) {
+export function DelegationPanel() {
   const delegateSectionRef = useRef(null);
   const gotoDelegateSection = () => {
     delegateSectionRef?.current?.scrollIntoView({ behavior: 'smooth' });

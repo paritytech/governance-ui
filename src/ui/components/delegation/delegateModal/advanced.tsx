@@ -1,11 +1,11 @@
 import { useState } from 'React';
 import { Card, Modal, ButtonOutline } from '../../../lib';
 import { TrackSelect } from '../TrackSelect';
-import { tracksMetadata, delegatesMock } from '../../../../chain/mocks';
+import { delegatesMock } from '../../../../chain/mocks';
 import { DelegateCard } from '../DelegateCard';
 import { Accounticon } from '../../Accounticon';
 
-export function TrackSelection({ isCollapsed }) {
+export function TrackSelection({ isCollapsed }: { isCollapsed: boolean }) {
   const [collapsed, setCollapsed] = useState(!!isCollapsed);
   return (
     <>
@@ -27,7 +27,7 @@ export function TrackSelection({ isCollapsed }) {
           <div>Small Tipper</div>
         ) : (
           <>
-            <TrackSelect tracks={tracksMetadata} />
+            <TrackSelect />
             <ButtonOutline onClick={() => setCollapsed(true)}>
               Save
             </ButtonOutline>
@@ -38,7 +38,7 @@ export function TrackSelection({ isCollapsed }) {
   );
 }
 
-export function DelegateSelection({ isCollapsed }) {
+export function DelegateSelection({ isCollapsed }: { isCollapsed: boolean }) {
   const [collapsed, setCollapsed] = useState(!!isCollapsed);
   const [selectedDelegate, setSelectedDelegate] = useState(delegatesMock[0]);
   const delegates = delegatesMock;
@@ -91,7 +91,11 @@ export function DelegateSelection({ isCollapsed }) {
   );
 }
 
-export function DelegateModal({ open, onClose }) {
+interface IDelegateModalProps {
+  open: boolean;
+  onClose: () => void;
+}
+export function DelegateModal({ open, onClose }: IDelegateModalProps) {
   return (
     <Modal size="xl" open={open} onClose={onClose}>
       <div className="h-[700px] max-h-screen w-full">

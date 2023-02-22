@@ -1,7 +1,19 @@
 import { Modal, Button } from '../../../lib';
 import { Accounticon } from '../../Accounticon';
+import type { DelegateType, TrackType } from '../types';
 
-export function DelegateModal({ delegate, tracks, open, onClose }) {
+interface IDelegateModalProps {
+  delegate: DelegateType;
+  tracks: TrackType[];
+  open: boolean;
+  onClose: () => void;
+}
+export function DelegateModal({
+  delegate,
+  tracks,
+  open,
+  onClose,
+}: IDelegateModalProps) {
   const { account } = delegate;
   const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();

@@ -1,15 +1,15 @@
+import type { DelegateRoleType, DelegateType, StatType } from './types';
 import { DelegateIcon } from '../../icons';
 import { Button, Card } from '../../lib';
 import { Accounticon } from '../Accounticon';
 
-type DelegateRoleType = 'nominator' | 'validator' | 'fellow';
 const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
   nominator: { title: 'nominator', twColor: 'bg-green-300' },
   validator: { title: 'validator', twColor: 'bg-lime-300' },
   fellow: { title: 'fellowship', twColor: 'bg-yellow-300' },
 };
 export function RoleTag({ role }: { role: DelegateRoleType }) {
-  if (!tag[role]) return;
+  if (!tag[role]) return <></>;
   const { title, twColor } = tag[role];
   return (
     <div
@@ -20,7 +20,7 @@ export function RoleTag({ role }: { role: DelegateRoleType }) {
   );
 }
 
-export function CardStat({ stat }: { stat: { title: string; value: string } }) {
+export function CardStat({ stat }: { stat: StatType }) {
   const { title, value } = stat;
   return (
     <div className="flex flex-col items-start justify-start gap-y-1">
@@ -30,19 +30,25 @@ export function CardStat({ stat }: { stat: { title: string; value: string } }) {
   );
 }
 
-export function StatBar({ stats }) {
+export function StatBar({ stats }: { stats: StatType[] }) {
   return (
     <>
       <div className="prose prose-sm flex flex-row gap-6">
-        {stats.map((stat) => (
-          <CardStat stat={stat} />
+        {stats.map((stat, idx) => (
+          <CardStat key={idx} stat={stat} />
         ))}
       </div>
     </>
   );
 }
 
-export function DelegateAllCard({ delegate, delegateHandler }) {
+export function DelegateAllCard({
+  delegate,
+  delegateHandler,
+}: {
+  delegate: DelegateType;
+  delegateHandler: () => void;
+}) {
   const {
     account: { name, address },
     roles,
@@ -85,7 +91,13 @@ export function DelegateAllCard({ delegate, delegateHandler }) {
   );
 }
 
-export function DelegateCard({ delegate, delegateHandler }) {
+export function DelegateCard({
+  delegate,
+  delegateHandler,
+}: {
+  delegate: DelegateType;
+  delegateHandler: () => void;
+}) {
   const {
     account: { name, address },
     roles,

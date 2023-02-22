@@ -2,7 +2,12 @@ import { tracksMetadata } from '../../../chain/mocks';
 import { useDelegation } from '../../../contexts/Delegation';
 import { Card } from '../../lib';
 
-export function CheckBox({ title, checked, onChange }) {
+interface ICheckBoxProps {
+  title?: string;
+  checked?: boolean;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+}
+export function CheckBox({ title, checked, onChange }: ICheckBoxProps) {
   const checkboxId = `${title}-checkbox`;
   return (
     <div className="flex items-center">
@@ -22,7 +27,20 @@ export function CheckBox({ title, checked, onChange }) {
     </div>
   );
 }
-export function TrackCheckableCard({ track, checked, onChange, expanded }) {
+
+interface ITrackCheckableCardProps {
+  track: TrackType;
+  checked: boolean;
+  onChange: React.ChangeEventHandler<HTMLInputElement>;
+  expanded: boolean;
+}
+
+export function TrackCheckableCard({
+  track,
+  checked,
+  onChange,
+  expanded,
+}: ITrackCheckableCardProps) {
   return (
     <Card>
       <div className={`flex flex-col gap-2 ${expanded ? 'p-4' : 'p-2'}`}>
@@ -35,7 +53,11 @@ export function TrackCheckableCard({ track, checked, onChange, expanded }) {
   );
 }
 
-export function TrackSelect({ className, expanded }) {
+interface ITrackSelectProps {
+  className?: string;
+  expanded?: boolean;
+}
+export function TrackSelect({ className, expanded }: ITrackSelectProps) {
   const availableTracks = tracksMetadata;
   const { selectedTracks, setTrackSelection } = useDelegation();
   return (

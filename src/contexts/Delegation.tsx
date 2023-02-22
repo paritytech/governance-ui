@@ -8,7 +8,11 @@ interface IDelegationContext {
 const DelegationContext = createContext<IDelegationContext>({});
 export const useDelegation = () => useContext(DelegationContext);
 
-export function DelegationProvider({ children }) {
+export function DelegationProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [selectedTracks, _setSelectedTracks] = useState<Set<number>>(new Set());
   const setTrackSelection = (id: number, selection: boolean) => {
     _setSelectedTracks((oldSelection) => {

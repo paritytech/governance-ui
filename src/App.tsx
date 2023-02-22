@@ -4,7 +4,6 @@ import {
   NotificationBox,
 } from './ui/components/index.js';
 import { useLifeCycle } from './lifecycle/index.js';
-import type { State } from './lifecycle/types.js';
 import { DelegationPanel } from './ui/layouts/Delegation.js';
 
 export function App(): JSX.Element {
