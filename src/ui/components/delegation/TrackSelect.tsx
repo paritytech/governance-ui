@@ -1,3 +1,4 @@
+import type { TrackType } from './types';
 import { tracksMetadata } from '../../../chain/mocks';
 import { useDelegation } from '../../../contexts/Delegation';
 import { Card } from '../../lib';
@@ -29,10 +30,10 @@ export function CheckBox({ title, checked, onChange }: ICheckBoxProps) {
 }
 
 interface ITrackCheckableCardProps {
-  track: TrackType;
-  checked: boolean;
-  onChange: React.ChangeEventHandler<HTMLInputElement>;
-  expanded: boolean;
+  track?: TrackType;
+  checked?: boolean;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  expanded?: boolean;
 }
 
 export function TrackCheckableCard({
@@ -44,9 +45,9 @@ export function TrackCheckableCard({
   return (
     <Card>
       <div className={`flex flex-col gap-2 ${expanded ? 'p-4' : 'p-2'}`}>
-        <CheckBox title={track.title} checked={checked} onChange={onChange} />
+        <CheckBox title={track?.title} checked={checked} onChange={onChange} />
         {expanded && (
-          <div className="text-sm leading-tight">{track.description}</div>
+          <div className="text-sm leading-tight">{track?.description}</div>
         )}
       </div>
     </Card>
