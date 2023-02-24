@@ -23,7 +23,7 @@ export function App(): JSX.Element {
             })
           }
         />
-        <DelegationPanel state={state} updater={updater} />
+        <DelegationPanel />
       </div>
     </ErrorBoundary>
   );
