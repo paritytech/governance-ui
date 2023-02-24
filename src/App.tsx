@@ -12,7 +12,7 @@ export function App(): JSX.Element {
     <ErrorBoundary>
       <NotificationBox
         reports={state.reports}
-        removeReport={updater.removeReport}
+        removeReport={(index) => updater.removeReport(index)}
       />
       <div className="m-auto flex h-screen flex-col md:container">
         <Header

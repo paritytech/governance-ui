@@ -252,6 +252,11 @@ function reducer(previousState: State, action: Action): State {
           incorrectTransitionError(previousState)
         );
       }
+    case 'SetIndexes':
+      return {
+        ...previousState,
+        indexes: action.data,
+      };
   }
 }
 
@@ -327,11 +332,39 @@ export class Updater {
   }
 
   async start() {
-    this.unsub = await updateChainState(this.#stateAccessor, this.#dispatch);
+    try {
+      this.unsub = await updateChainState(this.#stateAccessor, this.#dispatch);
+      await this.fetchIndexes();
+    } catch (e: any) {
+      await this.addReport({ type: 'Error', message: e.toString() });
+    }
   }
 
   stop() {
     this.unsub?.();
+  }
+
+  async fetchIndexes() {
+    const reqIndexIndexes = await fetch(
+      'https://jeluard.github.io/panoptidot/data/indexes/index.json'
+    );
+    const { data } = (await reqIndexIndexes.json()) as {
+      data: Array<string>;
+    };
+    const resps = await Promise.all(
+      data.map((index) =>
+        fetch(`https://jeluard.github.io/panoptidot/data/indexes/${index}.json`)
+      )
+    );
+    const indexes = await Promise.all(resps.map((resp) => resp.json()));
+    const map = Object.fromEntries(
+      data.map((datum, index) => [datum, indexes[index].data])
+    );
+
+    this.#dispatch({
+      type: 'SetIndexes',
+      data: map,
+    });
   }
 
   async castVote(index: number, vote: AccountVote) {
@@ -402,6 +435,7 @@ const DEFAULT_INITIAL_STATE: State = {
   connectivity: { type: navigator.onLine ? 'Online' : 'Offline' },
   connectedAccount: null,
   details: new Map(),
+  indexes: {},
 };
 
 type Reducer = (previousState: State, action: Action) => State;

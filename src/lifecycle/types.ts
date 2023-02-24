@@ -51,6 +51,7 @@ type BaseState = {
   connectedAccount: string | null;
   connectivity: Connectivity;
   details: Map<number, ReferendumDetails>;
+  indexes: Record<string, object>;
 };
 
 type BaseRestoredState = BaseState &
@@ -144,6 +145,11 @@ export type ClearVotesAction = {
   type: 'ClearVotesAction';
 };
 
+export type SetIndexes = {
+  type: 'SetIndexes';
+  data: Record<string, object>;
+};
+
 export type Action =
   | AddReportAction
   | RemoveReportAction
@@ -153,4 +159,5 @@ export type Action =
   | AddFinalizedBlockAction
   | StoreReferendumDetailsAction
   | CastVoteAction
-  | ClearVotesAction;
+  | ClearVotesAction
+  | SetIndexes;
