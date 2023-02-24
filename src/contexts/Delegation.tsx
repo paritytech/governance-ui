@@ -4,8 +4,18 @@ interface IDelegationContext {
   selectedTracks: Set<number>;
   setTrackSelection: (id: number, selection: boolean) => void;
 }
+const delegationContextDefault = {
+  selectedTracks: new Set([]),
+  setTrackSelection: () => {
+    console.error(
+      'DelegationContext is used outside of its provider boundary.'
+    );
+  },
+};
+const DelegationContext = createContext<IDelegationContext>(
+  delegationContextDefault
+);
 
-const DelegationContext = createContext<IDelegationContext>({});
 export const useDelegation = () => useContext(DelegationContext);
 
 export function DelegationProvider({

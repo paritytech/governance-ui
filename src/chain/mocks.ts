@@ -1,10 +1,12 @@
-export const delegatesMock = [
+import { DelegateType } from 'src/ui/components/delegation/types';
+
+export const delegatesMock: DelegateType[] = [
   {
     account: {
       name: 'hamid',
       address: '128iGaUF4zV1L2bXtAH9UmocvqpSLrJFL5TxZYZkjoSf16Hv',
     },
-    roles: ['nominatoe', 'fellow', 'validator'],
+    roles: ['nominator', 'fellow', 'validator'],
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel facilisis augue. Praesent nec imperdiet diam. Etiam tempus convallis sollicitudin. Read more',
     stats: [
       { title: 'Most active track', value: 'Staking admin' },
@@ -18,7 +20,7 @@ export const delegatesMock = [
       name: 'hamid',
       address: '128iGaUF4zV1L2bXtAH9UmocvqpSLrJFL5TxZYZkjoSf16Hv',
     },
-    roles: ['nominatoe', 'fellow', 'validator'],
+    roles: ['nominator', 'fellow', 'validator'],
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel facilisis augue. Praesent nec imperdiet diam. Etiam tempus convallis sollicitudin. Read more',
     stats: [
       { title: 'Most active track', value: 'Staking admin' },
@@ -32,7 +34,7 @@ export const delegatesMock = [
       name: 'hamid',
       address: '128iGaUF4zV1L2bXtAH9UmocvqpSLrJFL5TxZYZkjoSf16Hv',
     },
-    roles: ['nominatoe', 'fellow', 'validator'],
+    roles: ['nominator', 'fellow', 'validator'],
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel facilisis augue. Praesent nec imperdiet diam. Etiam tempus convallis sollicitudin. Read more',
     stats: [
       { title: 'Most active track', value: 'Staking admin' },
@@ -46,7 +48,7 @@ export const delegatesMock = [
       name: 'hamid',
       address: '128iGaUF4zV1L2bXtAH9UmocvqpSLrJFL5TxZYZkjoSf16Hv',
     },
-    roles: ['nominatoe', 'fellow', 'validator'],
+    roles: ['nominator', 'fellow', 'validator'],
     bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel facilisis augue. Praesent nec imperdiet diam. Etiam tempus convallis sollicitudin. Read more',
     stats: [
       { title: 'Most active track', value: 'Staking admin' },

@@ -178,7 +178,8 @@ export const DelegateSection = ({
 };
 
 export function DelegationPanel() {
-  const delegateSectionRef = useRef(null);
+  const delegateSectionRef: React.MutableRefObject<HTMLDivElement | null> =
+    useRef(null);
   const gotoDelegateSection = () => {
     delegateSectionRef?.current?.scrollIntoView({ behavior: 'smooth' });
   };
