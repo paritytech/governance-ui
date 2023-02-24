@@ -34,7 +34,7 @@ const Item = ({ children, className, onClick }: ClickableProps) => {
   return (
     <li
       onClick={onClick}
-      className={`block rounded py-2 pl-3 pr-4 text-gray-700 hover:bg-gray-100  hover:bg-transparent md:p-0  ${
+      className={`block rounded py-2 pl-3 pr-4 text-gray-700 md:p-0  ${
         className || ''
       }`}
     >
@@ -79,11 +79,11 @@ const Content = ({ children, className }: BaseElementProps) => {
     <div
       className={`${
         collapsed ? 'hidden' : 'flex'
-      } absolute top-full left-0 z-20 order-last h-full min-h-screen w-full basis-full flex-col items-center justify-between overflow-y-auto overflow-x-hidden bg-white md:static md:order-none md:flex md:h-auto md:min-h-min md:w-auto md:basis-auto md:flex-row`}
+      } absolute top-full left-0 z-20 order-last h-full min-h-screen w-full basis-full flex-col items-center justify-between overflow-y-auto overflow-x-hidden bg-white  md:static md:order-none md:flex md:h-auto md:min-h-min md:w-auto md:basis-auto md:flex-row md:bg-inherit`}
       id="navbar-content"
     >
       <ul
-        className={`mt-4 flex flex-col md:mt-0 md:flex-row md:space-x-8 md:border-0 md:bg-white md:text-sm md:font-medium ${className}`}
+        className={`mt-4 flex flex-col md:mt-0 md:flex-row md:space-x-8 md:border-0  md:text-sm md:font-medium ${className}`}
       >
         {children}
       </ul>
@@ -95,9 +95,7 @@ const Component = forwardRef<HTMLElement, BaseElementProps>(
   ({ className, children }, ref) => {
     return (
       <nav
-        className={`relative rounded border-gray-200  bg-white px-2 py-2.5 sm:px-4 ${
-          className || ''
-        }`}
+        className={`relative rounded px-2 py-2.5 md:px-4 ${className || ''}`}
         ref={ref}
       >
         <div className="mx-auto flex flex-wrap items-center justify-between">

@@ -22,8 +22,6 @@
 
 html {
   font-family: Inter, Helvetica Neue, Helvetica, Arial, sans-serif;
-  font-style: normal;
-  font-weight: 400;
   height: 100%;
 }
 
@@ -32,7 +30,6 @@ html {
   font-family: Unbounded, Helvetica Neue, Helvetica, Arial, sans-serif;
 }
 
-main {
-  display: flex;
-  flex-direction: column;
+body {
+  background-color: #f5f4f4;
 }
