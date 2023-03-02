@@ -58,7 +58,7 @@ export function DelegateAllCard({
 
   return (
     <>
-      <Card className="flex w-[500px] shrink-0 grow-0 flex-col gap-4 rounded-2xl p-6 shadow-md">
+      <Card className="flex w-[500px] shrink-0 grow-0 flex-col gap-4 p-6 shadow-md">
         <div className="flex items-start justify-between">
           <div className="flex flex-col items-start">
             <h2 className="text-xl capitalize">{name}</h2>
