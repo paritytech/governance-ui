@@ -14,7 +14,7 @@ export const WalletsList = ({
   walletConnectHandler,
 }: IWalletsListProps) => {
   return (
-    <div className="my-2">
+    <div className="my-2 flex flex-col gap-2">
       {wallets?.map((wallet, index) => {
         const name = wallet?.metadata.title;
         const iconUrl = wallet?.metadata.iconUrl;

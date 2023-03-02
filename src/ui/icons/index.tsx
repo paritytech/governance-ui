@@ -2,8 +2,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAngleDown,
   faAngleRight,
+  faAnglesRight,
   faPlus,
   faShareFromSquare,
+  faWallet,
+  faRightFromBracket,
 } from '@fortawesome/free-solid-svg-icons';
 
 export function CaretDownIcon() {
@@ -20,4 +23,16 @@ export function PlusIcon() {
 
 export function DelegateIcon() {
   return <FontAwesomeIcon icon={faShareFromSquare} fixedWidth />;
+}
+
+export function WalletIcon() {
+  return <FontAwesomeIcon icon={faWallet} fixedWidth />;
+}
+
+export function DisconnectIcon() {
+  return <FontAwesomeIcon icon={faRightFromBracket} fixedWidth />;
+}
+
+export function NextIcon() {
+  return <FontAwesomeIcon icon={faAnglesRight} fixedWidth />;
 }

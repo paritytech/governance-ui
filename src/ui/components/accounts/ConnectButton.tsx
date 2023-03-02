@@ -1,4 +1,5 @@
 import type { SigningAccount } from '../../../contexts/Account.js';
+
 import { useEffect, useState } from 'react';
 import { BaseWallet } from '@polkadot-onboard/core';
 import Identicon from '@polkadot/react-identicon';
@@ -8,6 +9,7 @@ import { useAccount, useWallets } from '../../../contexts/index.js';
 import { AccountList } from './AccountList.js';
 import { WalletsList } from './WalletList.js';
 import { ConnectCard } from './ConnectCard.js';
+import { NextIcon, WalletIcon } from '../../icons/index.js';
 
 type ConnectViews = 'wallets' | 'accounts';
 
@@ -28,11 +30,11 @@ const WalletView = ({
         <div className="font-brand">Wallet</div>
 
         <ConnectCard
-          className="my-2 flex w-full flex-row justify-between p-2"
+          className="my-2 flex w-full flex-row items-center justify-between p-2"
           onClick={() => gotoAccountsView()}
         >
           <div>{`${loadedAccountsCount} Imported Accounts`}</div>
-          <div>{'>>'}</div>
+          <NextIcon />
         </ConnectCard>
       </div>
       <WalletsList
@@ -49,16 +51,21 @@ const AccountView = ({
   accountConnectHandler,
 }: {
   gotoWalletsView: () => void;
-  accountConnectHandler: (signingAccount: SigningAccount) => Promise<void>;
+  accountConnectHandler: (
+    signingAccount: SigningAccount | undefined
+  ) => Promise<void>;
 }) => {
   const { connectedAccount, walletsAccounts } = useAccount();
-
   return (
     <>
       <div className="p-yborder-b flex flex-row items-center justify-between">
         <div className="font-brand uppercase">Accounts</div>
-        <div className="" onClick={() => gotoWalletsView()}>
-          Wallets
+        <div
+          className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-2xl border border-solid px-4 py-1 "
+          onClick={() => gotoWalletsView()}
+        >
+          <WalletIcon />
+          <div className="text-xs font-semibold">Wallets</div>
         </div>
       </div>
       <AccountList
@@ -88,7 +95,9 @@ export const ConnectButton = () => {
     );
   };
 
-  const accountConnectHandler = async (signingAccount: SigningAccount) => {
+  const accountConnectHandler = async (
+    signingAccount: SigningAccount | undefined
+  ) => {
     setConnectedAccount(signingAccount);
     closeModal();
   };

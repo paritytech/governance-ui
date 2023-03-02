@@ -12,7 +12,7 @@ export type SigningAccount = {
 export interface IAccountContext {
   connectedAccount: SigningAccount | undefined;
   walletsAccounts: Map<string, SigningAccount>;
-  setConnectedAccount: (signingAccount: SigningAccount) => void;
+  setConnectedAccount: (signingAccount: SigningAccount | undefined) => void;
 }
 // account context
 const accountContext = createContext({} as IAccountContext);
@@ -30,7 +30,9 @@ export class AccountStorage {
 }
 
 const AccountProvider = ({ children }: { children: React.ReactNode }) => {
-  const [_connectedAccount, _setConnectedAccount] = useState<SigningAccount>();
+  const [_connectedAccount, _setConnectedAccount] = useState<
+    SigningAccount | undefined
+  >();
   const { wallets, walletState } = useWallets();
   const [walletsAccounts, setWalletsAccounts] = useState<
     Map<string, SigningAccount>
@@ -83,8 +85,8 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     return walletState.get(title) === 'connected';
   };
 
-  const setConnectedAccount = (signingAccount: SigningAccount) => {
-    AccountStorage.setConnectedAddress(signingAccount.account.address);
+  const setConnectedAccount = (signingAccount: SigningAccount | undefined) => {
+    AccountStorage.setConnectedAddress(signingAccount?.account.address || '');
     _setConnectedAccount(signingAccount);
   };
 

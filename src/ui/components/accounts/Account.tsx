@@ -1,29 +1,38 @@
 import Identicon from '@polkadot/react-identicon';
 import { stringShorten } from '@polkadot/util';
+import { DisconnectIcon } from '../../icons';
 import { ConnectCard } from './ConnectCard';
 
-export interface AccountProps {
+const Account = ({
+  name,
+  address,
+  clickHandler,
+  state,
+}: {
   name: string;
   address: string;
-  clickHandler: () => void;
-  state: { isConnected: boolean };
-}
-
-const Account = ({ name, address, clickHandler, state }: AccountProps) => {
-  const { isConnected } = state;
+  clickHandler?: () => void;
+  state?: { isConnected: boolean };
+}) => {
+  const { isConnected } = state || {};
   return (
     <ConnectCard
       className="flex flex-nowrap p-1"
-      onClick={() => clickHandler()}
+      onClick={() => clickHandler && clickHandler()}
     >
       <div className="m-1 flex items-center justify-center">
         <Identicon value={address} theme="polkadot" size={24} />
       </div>
       <div className="m-1 flex flex-auto flex-col text-xs">
-        <div>{stringShorten(name, 10)}</div>
+        <div className="uppercase ">{name}</div>
         <div>{stringShorten(address, 10)}</div>
       </div>
-      <div className="m-1">{isConnected ? 'connected' : ''}</div>
+      {isConnected && (
+        <div className="nowrap m-1 flex flex-row items-center justify-center gap-1 text-xs text-primary">
+          <div>Disconnect</div>
+          <DisconnectIcon />
+        </div>
+      )}
     </ConnectCard>
   );
 };
