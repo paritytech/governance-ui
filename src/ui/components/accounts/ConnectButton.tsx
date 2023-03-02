@@ -26,8 +26,8 @@ const WalletView = ({
   console.log(loadedAccountsCount);
   return (
     <>
-      <div className="flex flex-col items-start border-b">
-        <div className="font-brand">Wallet</div>
+      <div className="flex flex-col items-start gap-4 border-b">
+        <div className="font-brand font-semibold">Wallet</div>
 
         <ConnectCard
           className="my-2 flex w-full flex-row items-center justify-between p-2"
@@ -58,7 +58,7 @@ const AccountView = ({
   const { connectedAccount, walletsAccounts } = useAccount();
   return (
     <>
-      <div className="p-yborder-b flex flex-row items-center justify-between">
+      <div className="flex flex-row items-center justify-between">
         <div className="font-brand uppercase">Accounts</div>
         <div
           className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-2xl border border-solid px-4 py-1 "

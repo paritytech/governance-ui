@@ -7,7 +7,9 @@ import {
   faShareFromSquare,
   faWallet,
   faRightFromBracket,
+  faCircle,
 } from '@fortawesome/free-solid-svg-icons';
+import { SizeProp } from '@fortawesome/fontawesome-svg-core';
 
 export function CaretDownIcon() {
   return <FontAwesomeIcon icon={faAngleDown} fixedWidth />;
@@ -35,4 +37,8 @@ export function DisconnectIcon() {
 
 export function NextIcon() {
   return <FontAwesomeIcon icon={faAnglesRight} fixedWidth />;
+}
+
+export function CircleIcon({ size }: { size?: SizeProp }) {
+  return <FontAwesomeIcon icon={faCircle} fixedWidth size={size} />;
 }
