@@ -11,7 +11,13 @@ import { ConnectCard } from './ConnectCard.js';
 
 type ConnectViews = 'wallets' | 'accounts';
 
-const WalletView = ({ gotoAccountsView, walletConnectHandler }) => {
+const WalletView = ({
+  gotoAccountsView,
+  walletConnectHandler,
+}: {
+  gotoAccountsView: () => void;
+  walletConnectHandler: (wallet: BaseWallet) => Promise<void>;
+}) => {
   const { wallets, walletState } = useWallets();
   const { walletsAccounts } = useAccount();
   const loadedAccountsCount = walletsAccounts ? walletsAccounts.size : 0;
@@ -38,10 +44,14 @@ const WalletView = ({ gotoAccountsView, walletConnectHandler }) => {
   );
 };
 
-const AccountView = ({ gotoWalletsView, accountConnectHandler }) => {
-  const { wallets, walletState, setWalletState } = useWallets();
-  const { connectedAccount, setConnectedAccount, walletsAccounts } =
-    useAccount();
+const AccountView = ({
+  gotoWalletsView,
+  accountConnectHandler,
+}: {
+  gotoWalletsView: () => void;
+  accountConnectHandler: (signingAccount: SigningAccount) => Promise<void>;
+}) => {
+  const { connectedAccount, walletsAccounts } = useAccount();
 
   return (
     <>
@@ -63,7 +73,7 @@ const AccountView = ({ gotoWalletsView, accountConnectHandler }) => {
 export const ConnectButton = () => {
   const [visible, setVisible] = useState(false);
   const [currentView, setCurrentView] = useState<ConnectViews>();
-  const { wallets, walletState, setWalletState } = useWallets();
+  const { walletState, setWalletState } = useWallets();
   const { connectedAccount, setConnectedAccount, walletsAccounts } =
     useAccount();
 
@@ -77,15 +87,6 @@ export const ConnectButton = () => {
       oldView === 'wallets' ? 'accounts' : 'wallets'
     );
   };
-
-  let [title, alternateTitle] = ['', ''];
-  if (currentView === 'wallets') {
-    title = 'wallets';
-    alternateTitle = loadedAccountsCount ? 'accounts' : '';
-  } else if (currentView === 'accounts') {
-    title = 'accounts';
-    alternateTitle = 'wallets';
-  }
 
   const accountConnectHandler = async (signingAccount: SigningAccount) => {
     setConnectedAccount(signingAccount);
