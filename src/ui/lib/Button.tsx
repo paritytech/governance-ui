@@ -8,7 +8,7 @@ export function ButtonOutline({
 }: ClickableProps): JSX.Element {
   return (
     <button
-      className={`flex w-9 w-auto min-w-min appearance-none items-center justify-center justify-center rounded-full border border-solid py-2 px-4 hover:border-primary ${
+      className={`flex min-w-min appearance-none items-center justify-center rounded-full border border-solid py-2 px-4 hover:border-primary ${
         className || ''
       }`}
       style={{ ...style }}
@@ -27,7 +27,7 @@ export function Button({
 }: ClickableProps): JSX.Element {
   return (
     <button
-      className={`flex w-9 w-auto min-w-min appearance-none items-center justify-center justify-center rounded-full bg-primary py-2 px-4 text-white hover:scale-[1.01] ${
+      className={`flex min-w-min appearance-none items-center justify-center rounded-full bg-[#321D47] py-2 px-4 text-sm text-white  hover:scale-[1.01] ${
         className || ''
       }`}
       style={{ ...style }}

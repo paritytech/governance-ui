@@ -14,7 +14,7 @@ export function App(): JSX.Element {
         reports={state.reports}
         removeReport={(index) => updater.removeReport(index)}
       />
-      <div className="m-auto flex h-screen flex-col md:container">
+      <div className="m-auto flex h-screen flex-col">
         <Header
           onPermissionDenied={() =>
             updater.addReport({

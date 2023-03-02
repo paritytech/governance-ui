@@ -10,6 +10,7 @@ import { tracksMetadata, delegatesMock } from '../../chain/mocks';
 import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import { DelegateType } from '../components/delegation/types';
+import ProgressStepper from '../components/ProgressStepper';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -46,15 +47,15 @@ export function DelegatesBar({ delegates }: { delegates: DelegateType[] }) {
     setVisible(true);
   };
   return (
-    <section className="flex w-full flex-col items-center justify-center bg-gray-200 py-6">
-      <div className="prose prose-sm max-w-none pb-4 text-center">
-        <h3 className="m-0">It’s on you</h3>
-        <div className="text-base">
+    <section className="flex w-full flex-col items-center justify-center bg-gray-200 py-12">
+      <div className="prose prose-lg max-w-none pb-4 text-center">
+        <h2 className="m-0">It’s on you</h2>
+        <div className="mb-4 text-base">
           Contribute without the hassle: delegate your votes to experts. More
           options
         </div>
       </div>
-      <div className="flex max-w-full gap-x-7 overflow-x-scroll pb-1 ">
+      <div className="flex max-w-full gap-x-7 overflow-x-scroll px-6 pb-1">
         {delegates?.map((delegate, idx) => (
           <DelegateAllCard
             key={idx}
@@ -79,15 +80,18 @@ export function TrackSelectSection({
   delegateHandler: () => void;
 }) {
   return (
-    <div className="flex w-full flex-col px-2 md:px-4">
-      <div className="prose prose-sm max-w-none pb-4">
-        <h2 className="mb-2">Delegate by track</h2>
-        <div className="text-base">
-          There are currently 11 active proposals on 5 tracks.
+    <div className="mb-16 flex w-full flex-col gap-4 px-2 md:px-8">
+      <div className="items-top flex justify-between">
+        <div className="prose prose-sm max-w-none pb-4">
+          <h2 className="mb-2">Delegate by track</h2>
+          <div className="text-base">
+            There are currently 11 active proposals on 5 tracks.
+          </div>
         </div>
+        <ProgressStepper step={0} />
       </div>
-      <div className="flex flex-row justify-between px-2">
-        <CheckBox title="All tracks" />
+      <div className="mb-4 flex flex-row justify-between">
+        <CheckBox background title="All tracks" />
         <Button onClick={() => delegateHandler()}>
           <div className="flex flex-row items-center justify-center gap-1">
             <div>Delegate Tracks</div>
@@ -120,17 +124,18 @@ export const DelegateSection = ({
   };
   return (
     <>
-      <div className="flex w-full flex-col gap-y-4 px-2 pb-6 md:px-4">
-        <div className="prose prose-sm max-w-none">
-          <h2 className="mb-2">Select Delegates</h2>
-          <div className="text-base">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
-            auctor sodales ex sed mollis. Aenean congue lacus quis cursus
-            interdum. Donec eleifend rhoncus lacus
+      <div className="flex w-full flex-col gap-y-6 px-2 pb-6 md:px-8">
+        <div className="items-top flex justify-between">
+          <div className="prose prose-sm  pb-4">
+            <h2 className="mb-2">Select Delegates</h2>
+            <div className="text-base">
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            </div>
           </div>
+          <ProgressStepper step={1} />
         </div>
-        <div className="flex flex-row items-center justify-between px-2">
-          <div className="flex flex-row items-center justify-between gap-2">
+        <div className="flex flex-row items-center justify-between">
+          <div className="flex flex-row items-center justify-between gap-4">
             <ButtonOutline>
               <div className="flex flex-row items-center justify-center gap-1">
                 <div>Aggregate Best</div>
@@ -144,7 +149,7 @@ export const DelegateSection = ({
               </div>
             </ButtonOutline>
           </div>
-          <div className="flex flex-row items-center justify-between gap-2">
+          <div className="flex flex-row items-center justify-between gap-4">
             <ButtonOutline>
               <div className="flex flex-row items-center justify-center gap-1">
                 <PlusIcon />
