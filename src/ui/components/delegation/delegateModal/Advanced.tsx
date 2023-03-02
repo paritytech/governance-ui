@@ -3,7 +3,7 @@ import { Card, Modal, ButtonOutline } from '../../../lib';
 import { TrackSelect } from '../TrackSelect';
 import { delegatesMock } from '../../../../chain/mocks';
 import { DelegateCard } from '../DelegateCard';
-import { Accounticon } from '../../Accounticon';
+import { Accounticon } from '../../accounts/Accounticon';
 
 export function TrackSelection({ isCollapsed }: { isCollapsed: boolean }) {
   const [collapsed, setCollapsed] = useState(!!isCollapsed);

@@ -1,7 +1,7 @@
 import type { DelegateRoleType, DelegateType, StatType } from './types';
 import { DelegateIcon } from '../../icons';
 import { Button, Card } from '../../lib';
-import { Accounticon } from '../Accounticon';
+import { Accounticon } from '../accounts/Accounticon';
 
 const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
   nominator: { title: 'nominator', twColor: 'bg-green-300' },
@@ -58,7 +58,7 @@ export function DelegateAllCard({
 
   return (
     <>
-      <Card className="flex w-[500px] shrink-0 grow-0 flex-col gap-4 p-6 shadow-md">
+      <Card className="flex w-[500px] shrink-0 grow-0 flex-col gap-4 rounded-2xl p-6 shadow-md">
         <div className="flex items-start justify-between">
           <div className="flex flex-col items-start">
             <h2 className="text-xl capitalize">{name}</h2>

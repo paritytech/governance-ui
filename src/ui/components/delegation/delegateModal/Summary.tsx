@@ -1,5 +1,5 @@
 import { Modal, Button } from '../../../lib';
-import { Accounticon } from '../../Accounticon';
+import { Accounticon } from '../../accounts/Accounticon';
 import type { DelegateType, TrackType } from '../types';
 
 interface IDelegateModalProps {

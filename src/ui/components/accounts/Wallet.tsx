@@ -1,4 +1,5 @@
-import { WalletState } from '../../contexts/Wallets.js';
+import { WalletState } from '../../../contexts/Wallets.js';
+import { ConnectCard } from './ConnectCard.js';
 
 export interface IWalletProps {
   name: string;
@@ -10,18 +11,18 @@ export interface IWalletProps {
 const Wallet = ({ name, state, iconUrl, clickHandler }: IWalletProps) => {
   const isConnected = state === 'connected';
   return (
-    <div
-      className="my-1 flex flex-nowrap rounded-lg border border-solid"
+    <ConnectCard
+      className="flex flex-nowrap gap-2 p-2"
       onClick={() => clickHandler()}
     >
-      <div className="m-1 flex items-center justify-center">
+      <div className=" flex items-center justify-center">
         {iconUrl ? <img src={iconUrl} /> : null}
       </div>
-      <div className="m-1 flex-auto">
+      <div className="flex-auto">
         <div>{name}</div>
       </div>
-      <div className="m-1">{isConnected ? 'connected' : 'not connected'}</div>
-    </div>
+      <div>{isConnected ? 'connected' : 'not connected'}</div>
+    </ConnectCard>
   );
 };
 
