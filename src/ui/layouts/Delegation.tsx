@@ -11,6 +11,7 @@ import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import { DelegateType } from '../components/delegation/types';
 import ProgressStepper from '../components/ProgressStepper';
+import SectionTitle from '../components/SectionTitle';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -80,26 +81,22 @@ export function TrackSelectSection({
   delegateHandler: () => void;
 }) {
   return (
-    <div className="mb-16 flex w-full flex-col gap-4 px-2 md:px-8">
-      <div className="items-top flex justify-between">
-        <div className="prose prose-sm max-w-none pb-4">
-          <h2 className="mb-2">Delegate by track</h2>
-          <div className="text-base">
-            There are currently 11 active proposals on 5 tracks.
-          </div>
+    <div className="mb-16 flex w-full flex-col gap-16 px-2 md:px-8">
+      <SectionTitle title="Delegate by Track" step={0}>
+        Lorem ipsum dolor sit amet
+      </SectionTitle>
+      <div className="flex flex-col gap-4">
+        <div className="mb-4 flex flex-row justify-between">
+          <CheckBox background title="All tracks" />
+          <Button onClick={() => delegateHandler()}>
+            <div className="flex flex-row items-center justify-center gap-1">
+              <div>Delegate Tracks</div>
+              <CaretRightIcon />
+            </div>
+          </Button>
         </div>
-        <ProgressStepper step={0} />
+        <TrackSelect expanded />
       </div>
-      <div className="mb-4 flex flex-row justify-between">
-        <CheckBox background title="All tracks" />
-        <Button onClick={() => delegateHandler()}>
-          <div className="flex flex-row items-center justify-center gap-1">
-            <div>Delegate Tracks</div>
-            <CaretRightIcon />
-          </div>
-        </Button>
-      </div>
-      <TrackSelect expanded />
     </div>
   );
 }
@@ -124,52 +121,48 @@ export const DelegateSection = ({
   };
   return (
     <>
-      <div className="flex w-full flex-col gap-y-6 px-2 pb-6 md:px-8">
-        <div className="items-top flex justify-between">
-          <div className="prose prose-sm  pb-4">
-            <h2 className="mb-2">Select Delegates</h2>
-            <div className="text-base">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      <div className="flex w-full flex-col gap-16 px-2 pb-6 md:px-8">
+        <SectionTitle title="Browse Delegates" step={1}>
+          Lorem ipsum dolor sit amet
+        </SectionTitle>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-row items-center justify-between">
+            <div className="flex flex-row items-center justify-between gap-4">
+              <ButtonOutline>
+                <div className="flex flex-row items-center justify-center gap-1">
+                  <div>Aggregate Best</div>
+                  <CaretDownIcon />
+                </div>
+              </ButtonOutline>
+              <ButtonOutline>
+                <div className="flex flex-row items-center justify-center gap-1">
+                  <div>Status</div>
+                  <CaretDownIcon />
+                </div>
+              </ButtonOutline>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-4">
+              <ButtonOutline>
+                <div className="flex flex-row items-center justify-center gap-1">
+                  <PlusIcon />
+                  <div>Add address</div>
+                </div>
+              </ButtonOutline>
+              <input
+                placeholder="Search"
+                className="w-[200px] self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70"
+              />
             </div>
           </div>
-          <ProgressStepper step={1} />
-        </div>
-        <div className="flex flex-row items-center justify-between">
-          <div className="flex flex-row items-center justify-between gap-4">
-            <ButtonOutline>
-              <div className="flex flex-row items-center justify-center gap-1">
-                <div>Aggregate Best</div>
-                <CaretDownIcon />
-              </div>
-            </ButtonOutline>
-            <ButtonOutline>
-              <div className="flex flex-row items-center justify-center gap-1">
-                <div>Status</div>
-                <CaretDownIcon />
-              </div>
-            </ButtonOutline>
+          <div className="flex flex-row flex-wrap items-center justify-start gap-y-4 gap-x-7">
+            {delegates?.map((delegate, idx) => (
+              <DelegateCard
+                key={idx}
+                delegate={delegate}
+                delegateHandler={() => openModal()}
+              />
+            ))}
           </div>
-          <div className="flex flex-row items-center justify-between gap-4">
-            <ButtonOutline>
-              <div className="flex flex-row items-center justify-center gap-1">
-                <PlusIcon />
-                <div>Add address</div>
-              </div>
-            </ButtonOutline>
-            <input
-              placeholder="Search"
-              className="w-[200px] self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70"
-            />
-          </div>
-        </div>
-        <div className="flex flex-row flex-wrap items-center justify-start gap-y-4 gap-x-7">
-          {delegates?.map((delegate, idx) => (
-            <DelegateCard
-              key={idx}
-              delegate={delegate}
-              delegateHandler={() => openModal()}
-            />
-          ))}
         </div>
         <DelegateModal
           open={visible}
