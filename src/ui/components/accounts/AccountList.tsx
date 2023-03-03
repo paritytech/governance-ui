@@ -16,8 +16,9 @@ export const AccountList = ({
       ({ account }) => account?.address !== connectedAccount?.account?.address
     );
   }, [accounts, connectedAccount]);
+
   return (
-    <>
+    <div className="flex flex-col overflow-hidden">
       <div className="my-4 border-b pb-2">
         {connectedAccount?.account && (
           <Account
@@ -31,7 +32,7 @@ export const AccountList = ({
           />
         )}
       </div>
-      <div className="my-2 flex flex-col gap-2">
+      <div className="my-2 flex flex-col gap-2 overflow-scroll">
         {otherAccounts.map((signingAccount) => {
           const { account } = signingAccount;
           return (
@@ -45,6 +46,6 @@ export const AccountList = ({
           );
         })}
       </div>
-    </>
+    </div>
   );
 };

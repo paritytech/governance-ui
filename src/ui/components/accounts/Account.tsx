@@ -1,7 +1,7 @@
 import Identicon from '@polkadot/react-identicon';
 import { stringShorten } from '@polkadot/util';
 import { DisconnectIcon } from '../../icons';
-import { ConnectCard } from './ConnectCard';
+import { ConnectCard } from './ConnectCard.js';
 
 const Account = ({
   name,

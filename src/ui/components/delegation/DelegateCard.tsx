@@ -1,7 +1,7 @@
 import type { DelegateRoleType, DelegateType, StatType } from './types';
 import { DelegateIcon } from '../../icons';
 import { Button, Card } from '../../lib';
-import { Accounticon } from '../accounts/Accounticon';
+import { Accounticon } from '../accounts/Accounticon.js';
 
 const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
   nominator: { title: 'nominator', twColor: 'bg-green-300' },
