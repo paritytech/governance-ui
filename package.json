@@ -80,5 +80,6 @@
     "@polkadot/x-ws": "./node_modules/@polkadot/x-ws/browser.js",
     "@polkadot/x-textencoder": "./node_modules/@polkadot/x-textencoder/browser.js",
     "@polkadot/x-textdecoder": "./node_modules/@polkadot/x-textdecoder/browser.js"
-  }
+  },
+  "packageManager": "yarn@1.22.19"
 }

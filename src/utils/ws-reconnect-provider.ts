@@ -30,25 +30,9 @@ export class WsReconnectProvider extends WsProvider {
   // can disconnect manually
   // Rely on stats
 
-  get #currentEndpoint() {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const endpoints = this['__private_14_endpoints'] as string[];
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const endpointIndex: number = this['__private_22_endpointIndex'] as number;
-    return endpoints[endpointIndex];
-  }
-
   #checker() {
     const { bytesRecv, errors, timeout } = this.stats.total;
-    console.debug(
-      'CHECKING',
-      this.#currentEndpoint,
-      bytesRecv,
-      errors,
-      timeout
-    );
+    console.debug('CHECKING', this.endpoint, bytesRecv, errors, timeout);
   }
 
   async connect(): Promise<void> {
