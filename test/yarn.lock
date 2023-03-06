@@ -485,14 +485,14 @@
   dependencies:
     "@types/node" "*"
 
-"@zombienet/cli@1.3.34":
-  version "1.3.34"
-  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.34.tgz#681b3fb3f0312cfba55b14fead0c668ec1eeb73e"
-  integrity sha512-fv0Ujt96M6bsuaBD0fDYho7ry5EyZ3Ag6hk7NmcaZFzX0wl41qrbn/55VYWweHOd08HAAqcVV7r2zEwN+9Imiw==
+"@zombienet/cli@1.3.37":
+  version "1.3.37"
+  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.37.tgz#d795ab8e274f918140c0ecec58240e1e370ddbf9"
+  integrity sha512-YVZgsbgIoQTkiLJWjTwmbHUj+qRKNvEYjeFT9Y/kYHPcDM7kTX9f+qg2dKDGxrff85Ix71Aiy5Fd2Ve7rOSkXQ==
   dependencies:
     "@zombienet/dsl-parser-wrapper" "^0.1.7"
-    "@zombienet/orchestrator" "^0.0.25"
-    "@zombienet/utils" "^0.0.14"
+    "@zombienet/orchestrator" "^0.0.28"
+    "@zombienet/utils" "^0.0.15"
     axios "^0.27.2"
     commander "^10.0.0"
     debug "^4.3.2"
@@ -505,15 +505,15 @@
   resolved "https://registry.yarnpkg.com/@zombienet/dsl-parser-wrapper/-/dsl-parser-wrapper-0.1.7.tgz#ed3a1e25081732b188d2fefbd78517c7709ca3bf"
   integrity sha512-pJqo1LZbNqnL6Of1h67eYtTTu0BLcf+U/nGQtj8pYr0V4XVDWdCYvT4C9kXkrh5964nKz3KGB7Eky43NqRJZqg==
 
-"@zombienet/orchestrator@^0.0.25":
-  version "0.0.25"
-  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.25.tgz#55849252c8e65680aec75c2f47f1a5f219e20c6a"
-  integrity sha512-p89OrbUlq8BxsFFNXtmJUPJU7jS60794+8RkU1+jwI3bBOxJZlAd7xSdPUVwpMN4CF1LJo2Jil1YidJVrMm4Kg==
+"@zombienet/orchestrator@^0.0.28":
+  version "0.0.28"
+  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.28.tgz#3b35ba35d63f81045e5fb380e56ed4ecb9a90045"
+  integrity sha512-/p+5uBIyzPZMiKEVXdNdU6wwCMxsGt+nQgXvDzd7IQxX+rWGFYWz+YXjV5GgMNDJ5wPrB+QZfe2vIbwquxoRJg==
   dependencies:
     "@polkadot/api" "^9.2.4"
     "@polkadot/keyring" "^10.1.6"
     "@polkadot/util-crypto" "^10.1.6"
-    "@zombienet/utils" "^0.0.14"
+    "@zombienet/utils" "^0.0.15"
     JSONStream "^1.3.5"
     axios "^0.27.2"
     chai "^4.3.4"
@@ -531,10 +531,10 @@
     typescript "^4.8.2"
     yaml "^2.0.0-9"
 
-"@zombienet/utils@^0.0.14":
-  version "0.0.14"
-  resolved "https://registry.yarnpkg.com/@zombienet/utils/-/utils-0.0.14.tgz#ea80f64ba3d37f496c5983f699ce04720935e932"
-  integrity sha512-bDYXAja3BoV55/UqEm5wX/B0QKoz/Fqd4/EZvK8CQ3qrwmrkPyISQ0EB9OSJoW014g1mxTLeR8eS/bqzH2rhkA==
+"@zombienet/utils@^0.0.15":
+  version "0.0.15"
+  resolved "https://registry.yarnpkg.com/@zombienet/utils/-/utils-0.0.15.tgz#14e7a30cc358b349523b9ac24e455ae22cdaf75a"
+  integrity sha512-Wv/bB79muSeR4DGYZHfmXSQF6xuNgQJf+kqSwoCsKemFxa/PeSHQUG62WvF89DDxpdMUHdhc8H+j7//gekSKvA==
   dependencies:
     axios "^0.27.2"
     cli-table3 "^0.6.2"
