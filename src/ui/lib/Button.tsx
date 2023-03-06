@@ -27,7 +27,26 @@ export function Button({
 }: ClickableProps): JSX.Element {
   return (
     <button
-      className={`flex min-w-min appearance-none items-center justify-center rounded-full bg-[#321D47] py-2 px-4 text-sm text-white  hover:scale-[1.01] ${
+      className={`hover: flex min-w-min appearance-none items-center justify-center rounded-full bg-primary py-2 px-4 text-sm  text-white transition-transform duration-150 hover:scale-[1.01] ${
+        className || ''
+      }`}
+      style={{ ...style }}
+      onClick={onClick}
+    >
+      {children}
+    </button>
+  );
+}
+
+export function ButtonSecondary({
+  children,
+  className,
+  style,
+  onClick,
+}: ClickableProps): JSX.Element {
+  return (
+    <button
+      className={`hover: flex min-w-min appearance-none items-center justify-center rounded-full bg-secondary py-2 px-4 text-sm  text-white transition-transform duration-150 hover:scale-[1.01] ${
         className || ''
       }`}
       style={{ ...style }}

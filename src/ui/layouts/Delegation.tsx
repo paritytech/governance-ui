@@ -11,6 +11,7 @@ import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import { DelegateType } from '../components/delegation/types';
 import SectionTitle from '../components/SectionTitle';
+import { ButtonSecondary } from '../lib/Button';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -87,12 +88,12 @@ export function TrackSelectSection({
       <div className="flex flex-col gap-4">
         <div className="mb-4 flex flex-row justify-between">
           <CheckBox background title="All tracks" />
-          <Button onClick={() => delegateHandler()}>
+          <ButtonSecondary onClick={() => delegateHandler()}>
             <div className="flex flex-row items-center justify-center gap-1">
               <div>Delegate Tracks</div>
               <CaretRightIcon />
             </div>
-          </Button>
+          </ButtonSecondary>
         </div>
         <TrackSelect expanded />
       </div>
