@@ -1,11 +1,13 @@
+import type { DelegateType } from '../components/delegation/types.js';
+
 import React, { useRef, useState } from 'react';
 import { Button, ButtonOutline } from '../lib';
 import {
   DelegateCard,
   DelegateAllCard,
 } from '../components/delegation/DelegateCard';
-import { DelegateModal } from '../components/delegation/delegateModal/Summary';
-import { TrackSelect, CheckBox } from '../components/delegation/TrackSelect';
+import { DelegateModal } from '../components/delegation/delegateModal/Summary.js';
+import { TrackSelect, CheckBox } from '../components/delegation/TrackSelect.js';
 import { tracksMetadata, delegatesMock } from '../../chain/mocks';
 import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';

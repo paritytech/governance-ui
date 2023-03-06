@@ -1,9 +1,9 @@
 {
-  "id": "swipealot",
-  "name": "Swipealot",
+  "id": "governance-ui",
+  "name": "Governance UI",
   "dir": "ltr",
   "lang": "en",
-  "short_name": "Swipealot",
+  "short_name": "Governance UI",
   "description": "An intuitive governance DApp for Polkadot.",
   "start_url": "/?utm_source=pwa",
   "display": "minimal-ui",
@@ -41,6 +41,6 @@
   "categories": ["polkadot", "governance", "dapp", "social"],
   "related_applications": [{
     "platform": "webapp",
-    "url": "https://jeluard.github.io/swipealot/manifest.webmanifest"
+    "url": "https://jeluard.github.io/governance-ui/manifest.webmanifest"
   }]
 }

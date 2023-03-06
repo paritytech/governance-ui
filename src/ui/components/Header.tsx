@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ConnectButton } from './Connect.js';
+import { ConnectButton } from './accounts/ConnectButton.js';
 import { Button, HeartIcon, Navbar } from '../lib/index.js';
 import {
   areNotificationsGranted,

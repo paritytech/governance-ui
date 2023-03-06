@@ -4,9 +4,14 @@ import {
   faAngleRight,
   faCheck,
   faEllipsisH,
+  faAnglesRight,
   faPlus,
   faShareFromSquare,
+  faWallet,
+  faRightFromBracket,
+  faCircle,
 } from '@fortawesome/free-solid-svg-icons';
+import { SizeProp } from '@fortawesome/fontawesome-svg-core';
 
 export function CaretDownIcon() {
   return <FontAwesomeIcon icon={faAngleDown} fixedWidth />;
@@ -30,4 +35,19 @@ export function MoreHorizontalIcon() {
 
 export function CheckIcon() {
   return <FontAwesomeIcon icon={faCheck} fixedWidth />;
+
+export function WalletIcon() {
+  return <FontAwesomeIcon icon={faWallet} fixedWidth />;
+}
+
+export function DisconnectIcon() {
+  return <FontAwesomeIcon icon={faRightFromBracket} fixedWidth />;
+}
+
+export function NextIcon() {
+  return <FontAwesomeIcon icon={faAnglesRight} fixedWidth />;
+}
+
+export function CircleIcon({ size }: { size?: SizeProp }) {
+  return <FontAwesomeIcon icon={faCircle} fixedWidth size={size} />;
 }
