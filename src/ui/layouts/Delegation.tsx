@@ -10,7 +10,6 @@ import { tracksMetadata, delegatesMock } from '../../chain/mocks';
 import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import { DelegateType } from '../components/delegation/types';
-import ProgressStepper from '../components/ProgressStepper';
 import SectionTitle from '../components/SectionTitle';
 
 const placeholderUrl = new URL(
