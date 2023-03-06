@@ -1,7 +1,7 @@
 import type { DelegateType } from '../components/delegation/types.js';
 
 import React, { useRef, useState } from 'react';
-import { Button, ButtonOutline } from '../lib';
+import { ButtonOutline } from '../lib';
 import {
   DelegateCard,
   DelegateAllCard,
@@ -11,7 +11,7 @@ import { TrackSelect, CheckBox } from '../components/delegation/TrackSelect.js';
 import { tracksMetadata, delegatesMock } from '../../chain/mocks';
 import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
-import { DelegateType } from '../components/delegation/types';
+// import { DelegateType } from '../components/delegation/types';
 import SectionTitle from '../components/SectionTitle';
 import { ButtonSecondary } from '../lib/Button';
 

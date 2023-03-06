@@ -35,6 +35,7 @@ export function MoreHorizontalIcon() {
 
 export function CheckIcon() {
   return <FontAwesomeIcon icon={faCheck} fixedWidth />;
+}
 
 export function WalletIcon() {
   return <FontAwesomeIcon icon={faWallet} fixedWidth />;
