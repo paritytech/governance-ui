@@ -24,6 +24,9 @@ jobs:
       - name: Audit
         run: yarn audit
 
+      - name: Test
+        run: yarn test:unit
+
   # Continuously deploys the content of main branch
   deploy:
     runs-on: ubuntu-latest
