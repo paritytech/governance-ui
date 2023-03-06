@@ -1,7 +1,7 @@
 import type { DelegateType } from '../components/delegation/types.js';
 
 import React, { useRef, useState } from 'react';
-import { Button, ButtonOutline } from '../lib';
+import { ButtonOutline } from '../lib';
 import {
   DelegateCard,
   DelegateAllCard,
@@ -10,10 +10,10 @@ import { DelegateModal } from '../components/delegation/delegateModal/Summary.js
 import { TrackSelect, CheckBox } from '../components/delegation/TrackSelect.js';
 import { tracksMetadata, delegatesMock } from '../../chain/mocks';
 import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
-import {
-  DelegationProvider,
-  useDelegation,
-} from '../../contexts/Delegation.js';
+import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
+// import { DelegateType } from '../components/delegation/types';
+import SectionTitle from '../components/SectionTitle';
+import { ButtonSecondary } from '../lib/Button';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -50,15 +50,15 @@ export function DelegatesBar({ delegates }: { delegates: DelegateType[] }) {
     setVisible(true);
   };
   return (
-    <section className="flex w-full flex-col items-center justify-center bg-gray-200 py-6">
-      <div className="prose prose-sm max-w-none pb-4 text-center">
-        <h3 className="m-0">It’s on you</h3>
-        <div className="text-base">
+    <section className="flex w-full flex-col items-center justify-center bg-gray-200 py-12">
+      <div className="prose prose-lg max-w-none pb-4 text-center">
+        <h2 className="m-0">It’s on you</h2>
+        <div className="mb-4 text-base">
           Contribute without the hassle: delegate your votes to experts. More
           options
         </div>
       </div>
-      <div className="flex max-w-full gap-x-7 overflow-x-scroll pb-1 ">
+      <div className="flex max-w-full gap-x-7 overflow-x-scroll px-6 pb-1">
         {delegates?.map((delegate, idx) => (
           <DelegateAllCard
             key={idx}
@@ -83,23 +83,22 @@ export function TrackSelectSection({
   delegateHandler: () => void;
 }) {
   return (
-    <div className="flex w-full flex-col px-2 md:px-4">
-      <div className="prose prose-sm max-w-none pb-4">
-        <h2 className="mb-2">Delegate by track</h2>
-        <div className="text-base">
-          There are currently 11 active proposals on 5 tracks.
+    <div className="mb-16 flex w-full flex-col gap-16 px-2 md:px-8">
+      <SectionTitle title="Delegate by Track" step={0}>
+        Lorem ipsum dolor sit amet
+      </SectionTitle>
+      <div className="flex flex-col gap-4">
+        <div className="mb-4 flex flex-row justify-between">
+          <CheckBox background title="All tracks" />
+          <ButtonSecondary onClick={() => delegateHandler()}>
+            <div className="flex flex-row items-center justify-center gap-1">
+              <div>Delegate Tracks</div>
+              <CaretRightIcon />
+            </div>
+          </ButtonSecondary>
         </div>
+        <TrackSelect expanded />
       </div>
-      <div className="flex flex-row justify-between px-2">
-        <CheckBox title="All tracks" />
-        <Button onClick={() => delegateHandler()}>
-          <div className="flex flex-row items-center justify-center gap-1">
-            <div>Delegate Tracks</div>
-            <CaretRightIcon />
-          </div>
-        </Button>
-      </div>
-      <TrackSelect expanded />
     </div>
   );
 }
@@ -124,51 +123,48 @@ export const DelegateSection = ({
   };
   return (
     <>
-      <div className="flex w-full flex-col gap-y-4 px-2 pb-6 md:px-4">
-        <div className="prose prose-sm max-w-none">
-          <h2 className="mb-2">Select Delegates</h2>
-          <div className="text-base">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin
-            auctor sodales ex sed mollis. Aenean congue lacus quis cursus
-            interdum. Donec eleifend rhoncus lacus
+      <div className="flex w-full flex-col gap-16 px-2 pb-6 md:px-8">
+        <SectionTitle title="Browse Delegates" step={1}>
+          Lorem ipsum dolor sit amet
+        </SectionTitle>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-row items-center justify-between">
+            <div className="flex flex-row items-center justify-between gap-4">
+              <ButtonOutline>
+                <div className="flex flex-row items-center justify-center gap-1">
+                  <div>Aggregate Best</div>
+                  <CaretDownIcon />
+                </div>
+              </ButtonOutline>
+              <ButtonOutline>
+                <div className="flex flex-row items-center justify-center gap-1">
+                  <div>Status</div>
+                  <CaretDownIcon />
+                </div>
+              </ButtonOutline>
+            </div>
+            <div className="flex flex-row items-center justify-between gap-4">
+              <ButtonOutline>
+                <div className="flex flex-row items-center justify-center gap-1">
+                  <PlusIcon />
+                  <div>Add address</div>
+                </div>
+              </ButtonOutline>
+              <input
+                placeholder="Search"
+                className="w-[200px] self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70"
+              />
+            </div>
           </div>
-        </div>
-        <div className="flex flex-row items-center justify-between px-2">
-          <div className="flex flex-row items-center justify-between gap-2">
-            <ButtonOutline>
-              <div className="flex flex-row items-center justify-center gap-1">
-                <div>Aggregate Best</div>
-                <CaretDownIcon />
-              </div>
-            </ButtonOutline>
-            <ButtonOutline>
-              <div className="flex flex-row items-center justify-center gap-1">
-                <div>Status</div>
-                <CaretDownIcon />
-              </div>
-            </ButtonOutline>
+          <div className="flex flex-row flex-wrap items-center justify-start gap-y-4 gap-x-7">
+            {delegates?.map((delegate, idx) => (
+              <DelegateCard
+                key={idx}
+                delegate={delegate}
+                delegateHandler={() => openModal()}
+              />
+            ))}
           </div>
-          <div className="flex flex-row items-center justify-between gap-2">
-            <ButtonOutline>
-              <div className="flex flex-row items-center justify-center gap-1">
-                <PlusIcon />
-                <div>Add address</div>
-              </div>
-            </ButtonOutline>
-            <input
-              placeholder="Search"
-              className="w-[200px] self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70"
-            />
-          </div>
-        </div>
-        <div className="flex flex-row flex-wrap items-center justify-start gap-y-4 gap-x-7">
-          {delegates?.map((delegate, idx) => (
-            <DelegateCard
-              key={idx}
-              delegate={delegate}
-              delegateHandler={() => openModal()}
-            />
-          ))}
         </div>
         <DelegateModal
           open={visible}

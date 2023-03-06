@@ -2,6 +2,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faAngleDown,
   faAngleRight,
+  faCheck,
+  faEllipsisH,
   faAnglesRight,
   faPlus,
   faShareFromSquare,
@@ -25,6 +27,14 @@ export function PlusIcon() {
 
 export function DelegateIcon() {
   return <FontAwesomeIcon icon={faShareFromSquare} fixedWidth />;
+}
+
+export function MoreHorizontalIcon() {
+  return <FontAwesomeIcon icon={faEllipsisH} fixedWidth />;
+}
+
+export function CheckIcon() {
+  return <FontAwesomeIcon icon={faCheck} fixedWidth />;
 }
 
 export function WalletIcon() {

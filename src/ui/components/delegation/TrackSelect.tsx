@@ -7,11 +7,21 @@ interface ICheckBoxProps {
   title?: string;
   checked?: boolean;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  background?: boolean;
 }
-export function CheckBox({ title, checked, onChange }: ICheckBoxProps) {
+export function CheckBox({
+  title,
+  checked,
+  onChange,
+  background,
+}: ICheckBoxProps) {
   const checkboxId = `${title}-checkbox`;
   return (
-    <div className="flex items-center">
+    <div
+      className={`flex items-center rounded-md ${
+        background ? `border border-gray-300 bg-gray-200 px-4 py-2` : ''
+      } `}
+    >
       <input
         id={checkboxId}
         type="checkbox"
@@ -63,15 +73,12 @@ export function TrackSelect({ className, expanded }: ITrackSelectProps) {
   const { selectedTracks, setTrackSelection } = useDelegation();
   return (
     <div
-      className={`flex w-full flex-col justify-between md:flex-row ${className}`}
+      className={`flex w-full flex-col justify-between md:flex-row md:gap-4 ${className}`}
     >
       {availableTracks.map((track, idx) => (
-        <div
-          key={idx}
-          className=" flex w-full flex-col gap-2 border-b md:w-1/4"
-        >
-          <div className="border-b px-2 uppercase">{track.title}</div>
-          <div className="flex flex-col">
+        <div key={idx} className=" flex w-full flex-col gap-2 md:w-1/4">
+          <div className="px-2 text-sm">{track.title}</div>
+          <div className="flex flex-col gap-4">
             {track.subtracks.map((subtrack, idx) => (
               <TrackCheckableCard
                 key={idx}
