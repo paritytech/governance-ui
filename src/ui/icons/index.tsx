@@ -56,6 +56,27 @@ export function AddIcon({ size }: IconProps) {
   );
 }
 
+export function CloseIcon({ size }: IconProps) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size ? size : '16'}
+      height={size ? size : '16'}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 29 29"
+    >
+      <path
+        d="M4.893 4.231l19.799 19.8M24.692 4.231l-19.8 19.8"
+        data-nofill="true"
+      ></path>
+    </svg>
+  );
+}
+
 export function DelegateIcon({ size }: IconProps) {
   return (
     <svg

@@ -51,13 +51,12 @@ export function DelegatesBar({ delegates }: { delegates: DelegateType[] }) {
     <section className="flex w-full flex-col items-center justify-center bg-gray-200 py-12">
       <div className="prose prose-lg max-w-none pb-4 text-center">
         <h2 className="m-0">It’s on you</h2>
-        <ChevronDownIcon />
         <div className="mb-4 text-base">
           Contribute without the hassle: delegate your votes to experts. More
           options
         </div>
       </div>
-      <div className="flex max-w-full gap-x-7 overflow-x-scroll px-6 pb-1">
+      <div className="flex max-w-full gap-7 overflow-x-scroll px-6 pb-1	">
         {delegates?.map((delegate, idx) => (
           <DelegateAllCard
             key={idx}
