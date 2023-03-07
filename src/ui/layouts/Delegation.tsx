@@ -81,9 +81,9 @@ export function TrackSelectSection({
   delegateHandler: () => void;
 }) {
   return (
-    <div className="mb-16 flex w-full flex-col gap-16 px-2 md:px-8">
+    <div className="mb-16 flex w-full flex-col gap-12 px-2 md:px-8">
       <SectionTitle title="Delegate by Track" step={0}>
-        Lorem ipsum dolor sit amet
+        Select the tracks you&lsquo;d like to delegate.
       </SectionTitle>
       <div className="flex flex-col gap-4">
         <div className="mb-4 flex flex-row justify-between">
@@ -177,11 +177,11 @@ export function DelegationPanel() {
   };
   return (
     <DelegationProvider>
-      <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20">
+      <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-16 pt-14 md:pt-20">
         <Headline />
         <DelegatesBar delegates={delegatesMock} />
         <TrackSelectSection delegateHandler={() => gotoDelegateSection()} />
-        <div ref={delegateSectionRef}>
+        <div ref={delegateSectionRef} className="pt-8">
           <DelegateSection delegates={delegatesMock} />
         </div>
       </main>
