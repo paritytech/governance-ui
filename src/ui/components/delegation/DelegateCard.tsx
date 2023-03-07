@@ -1,6 +1,6 @@
 import type { DelegateRoleType, DelegateType, StatType } from './types';
-import { DelegateIcon } from '../../icons';
-import { Button, Card } from '../../lib';
+import { ChevronRightIcon, DelegateIcon } from '../../icons';
+import { Button, ButtonSecondary, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
 
 const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
@@ -81,10 +81,8 @@ export function DelegateAllCard({
         <hr />
         <StatBar stats={stats} />
         <Button onClick={() => delegateHandler()}>
-          <div className="flex w-full flex-nowrap items-center justify-center gap-1">
-            <DelegateIcon />
-            <div>Delegate All Votes</div>
-          </div>
+          <div>Delegate All Votes</div>
+          <DelegateIcon />
         </Button>
       </Card>
     </>
@@ -117,12 +115,10 @@ export function DelegateCard({
               textClassName="font-semibold my-2"
             />
           </div>
-          <Button onClick={() => delegateHandler()}>
-            <div className="flex w-full flex-nowrap items-center justify-center gap-1">
-              <DelegateIcon />
-              <div>Delegate Votes</div>
-            </div>
-          </Button>
+          <ButtonSecondary onClick={() => delegateHandler()}>
+            <div>Delegate Votes</div>
+            <ChevronRightIcon />
+          </ButtonSecondary>
         </div>
         <div className="flex gap-2">
           {roles.map((role) => (

@@ -1,6 +1,6 @@
 import { WalletState } from '../../../contexts/Wallets.js';
 import { ConnectCard } from './ConnectCard.js';
-import { CircleIcon, PlusIcon } from '../../icons/index.js';
+import { AddIcon, ConnectedIcon } from '../../icons/index.js';
 
 export interface IWalletProps {
   name: string;
@@ -25,11 +25,11 @@ const Wallet = ({ name, state, iconUrl, clickHandler }: IWalletProps) => {
       <div className="flex min-w-[1.5rem] items-center justify-center">
         {isConnected ? (
           <div className="text-[0.5rem] text-green-500">
-            <CircleIcon />
+            <ConnectedIcon />
           </div>
         ) : (
           <div className="text-gray-500">
-            <PlusIcon />
+            <AddIcon />
           </div>
         )}
       </div>

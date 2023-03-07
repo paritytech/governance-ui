@@ -1,7 +1,7 @@
 import type { DelegateType } from '../components/delegation/types.js';
 
 import React, { useRef, useState } from 'react';
-import { ButtonOutline } from '../lib';
+import { ButtonOutline, ButtonSecondary } from '../lib';
 import {
   DelegateCard,
   DelegateAllCard,
@@ -9,11 +9,9 @@ import {
 import { DelegateModal } from '../components/delegation/delegateModal/Summary.js';
 import { TrackSelect, CheckBox } from '../components/delegation/TrackSelect.js';
 import { tracksMetadata, delegatesMock } from '../../chain/mocks';
-import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
+import { AddIcon, ChevronDownIcon, ChevronRightIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
-// import { DelegateType } from '../components/delegation/types';
 import SectionTitle from '../components/SectionTitle';
-import { ButtonSecondary } from '../lib/Button';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -53,6 +51,7 @@ export function DelegatesBar({ delegates }: { delegates: DelegateType[] }) {
     <section className="flex w-full flex-col items-center justify-center bg-gray-200 py-12">
       <div className="prose prose-lg max-w-none pb-4 text-center">
         <h2 className="m-0">It’s on you</h2>
+        <ChevronDownIcon />
         <div className="mb-4 text-base">
           Contribute without the hassle: delegate your votes to experts. More
           options
@@ -93,7 +92,7 @@ export function TrackSelectSection({
           <ButtonSecondary onClick={() => delegateHandler()}>
             <div className="flex flex-row items-center justify-center gap-1">
               <div>Delegate Tracks</div>
-              <CaretRightIcon />
+              <ChevronRightIcon />
             </div>
           </ButtonSecondary>
         </div>
@@ -131,24 +130,18 @@ export const DelegateSection = ({
           <div className="flex flex-row items-center justify-between">
             <div className="flex flex-row items-center justify-between gap-4">
               <ButtonOutline>
-                <div className="flex flex-row items-center justify-center gap-1">
-                  <div>Aggregate Best</div>
-                  <CaretDownIcon />
-                </div>
+                <div>Aggregate Best</div>
+                <ChevronDownIcon />
               </ButtonOutline>
               <ButtonOutline>
-                <div className="flex flex-row items-center justify-center gap-1">
-                  <div>Status</div>
-                  <CaretDownIcon />
-                </div>
+                <div>Status</div>
+                <ChevronDownIcon />
               </ButtonOutline>
             </div>
             <div className="flex flex-row items-center justify-between gap-4">
               <ButtonOutline>
-                <div className="flex flex-row items-center justify-center gap-1">
-                  <PlusIcon />
-                  <div>Add address</div>
-                </div>
+                <AddIcon />
+                <div>Add address</div>
               </ButtonOutline>
               <input
                 placeholder="Search"

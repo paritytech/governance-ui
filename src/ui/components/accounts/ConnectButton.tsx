@@ -9,7 +9,7 @@ import { useAccount, useWallets } from '../../../contexts/index.js';
 import { AccountList } from './AccountList.js';
 import { WalletsList } from './WalletList.js';
 import { ConnectCard } from './ConnectCard.js';
-import { NextIcon, WalletIcon } from '../../icons/index.js';
+import { ChevronRightIcon, WalletIcon } from '../../icons/index.js';
 
 type ConnectViews = 'wallets' | 'accounts';
 
@@ -34,7 +34,7 @@ const WalletView = ({
           onClick={() => gotoAccountsView()}
         >
           <div>{`${loadedAccountsCount} Imported Accounts`}</div>
-          <NextIcon />
+          <ChevronRightIcon />
         </ConnectCard>
       </div>
       <WalletsList

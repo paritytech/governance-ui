@@ -20,17 +20,17 @@ export default function ProgressStepper({ step, steps }: ProgressStepperProps) {
     <div className="flex w-1/2 flex-col gap-2">
       <div className="flex h-[32px] rounded-full bg-gray-200 p-1">
         <div
-          className={`flex w-[24px] items-center justify-center ${
-            step < 1 ? 'rounded-full' : 'rounded-l-full'
+          className={`flex items-center justify-center px-2 ${
+            step < 1 ? 'rounded-full' : ' rounded-l-full'
           } bg-primary text-white`}
         >
           {lefIcon}
         </div>
         <div className={`grow ${step < 1 ? `` : `bg-primary`}`} />
         <div
-          className={`w-[24px] ${
+          className={`flex items-center justify-center px-2 ${
             step < 1
-              ? `rounded-full bg-white`
+              ? `w-[24px] rounded-full bg-white `
               : step < 2
               ? 'rounded-r-full bg-primary'
               : 'rounded-none bg-primary'
@@ -40,8 +40,10 @@ export default function ProgressStepper({ step, steps }: ProgressStepperProps) {
         </div>
         <div className={`grow ${step < 2 ? `` : `bg-primary`}`} />
         <div
-          className={`w-[24px] ${
-            step < 2 ? 'rounded-full bg-white' : 'rounded-r-full bg-primary'
+          className={`flex items-center justify-center px-2 ${
+            step < 2
+              ? 'w-[24px] rounded-full bg-white '
+              : 'rounded-r-full bg-primary'
           } text-white`}
         >
           {rightIcon}
