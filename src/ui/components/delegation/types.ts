@@ -4,12 +4,6 @@ export type DelegateAccountType = {
   name: string;
   address: string;
 };
-export type DelegateType = {
-  account: DelegateAccountType;
-  roles: DelegateRoleType[];
-  bio: string;
-  stats: StatType[];
-};
 
 export type TrackType = {
   id: number;

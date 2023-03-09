@@ -25,6 +25,7 @@ import type {
   Action,
   Address,
   ChainState,
+  Delegate,
   PersistedDataContext,
   Report,
   State,
@@ -257,6 +258,11 @@ function reducer(previousState: State, action: Action): State {
         ...previousState,
         indexes: action.data,
       };
+    case 'SetDelegates':
+      return {
+        ...previousState,
+        delegates: action.data || [],
+      };
   }
 }
 
@@ -335,6 +341,18 @@ export class Updater {
     try {
       this.unsub = await updateChainState(this.#stateAccessor, this.#dispatch);
       await this.fetchIndexes();
+      const delegates = await this.fetchDelegates();
+      if (delegates.type == 'ok') {
+        this.#dispatch({
+          type: 'SetDelegates',
+          data: delegates.value,
+        });
+      } else {
+        await this.addReport({
+          type: 'Warning',
+          message: delegates.error.message,
+        });
+      }
     } catch (e: any) {
       await this.addReport({ type: 'Error', message: e.toString() });
     }
@@ -365,6 +383,19 @@ export class Updater {
       type: 'SetIndexes',
       data: map,
     });
+  }
+
+  async fetchDelegates(): Promise<Result<Delegate[]>> {
+    const url = 'https://jeluard.github.io/governance-ui/data/delegates.json';
+    const delegates = await fetch(url);
+    if (delegates.ok) {
+      const { data } = (await delegates.json()) as {
+        data: Array<Delegate>;
+      };
+      return ok(data);
+    } else {
+      return err(new Error(`Can't access ${url}`));
+    }
   }
 
   async castVote(index: number, vote: AccountVote) {
@@ -436,6 +467,7 @@ const DEFAULT_INITIAL_STATE: State = {
   connectedAccount: null,
   details: new Map(),
   indexes: {},
+  delegates: [],
 };
 
 type Reducer = (previousState: State, action: Action) => State;

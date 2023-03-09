@@ -46,12 +46,18 @@ export type Report = Warning | Error;
 
 // States
 
+export type Delegate = {
+  account: { name: string; address: string };
+  bio?: string;
+};
+
 type BaseState = {
   reports?: Report[];
   connectedAccount: string | null;
   connectivity: Connectivity;
   details: Map<number, ReferendumDetails>;
   indexes: Record<string, object>;
+  delegates: Array<Delegate>;
 };
 
 type BaseRestoredState = BaseState &
@@ -150,6 +156,11 @@ export type SetIndexes = {
   data: Record<string, object>;
 };
 
+export type SetDelegates = {
+  type: 'SetDelegates';
+  data: Array<Delegate>;
+};
+
 export type Action =
   | AddReportAction
   | RemoveReportAction
@@ -160,4 +171,5 @@ export type Action =
   | StoreReferendumDetailsAction
   | CastVoteAction
   | ClearVotesAction
-  | SetIndexes;
+  | SetIndexes
+  | SetDelegates;

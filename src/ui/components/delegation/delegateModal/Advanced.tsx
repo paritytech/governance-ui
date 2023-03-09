@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Card, Modal, ButtonOutline } from '../../../lib';
 import { TrackSelect } from '../TrackSelect';
-import { delegatesMock } from '../../../../chain/mocks';
 import { DelegateCard } from '../DelegateCard.js';
 import { Accounticon } from '../../accounts/Accounticon.js';
+import { Delegate } from 'src/lifecycle/types';
 
 export function TrackSelection({ isCollapsed }: { isCollapsed: boolean }) {
   const [collapsed, setCollapsed] = useState(!!isCollapsed);
@@ -38,10 +38,15 @@ export function TrackSelection({ isCollapsed }: { isCollapsed: boolean }) {
   );
 }
 
-export function DelegateSelection({ isCollapsed }: { isCollapsed: boolean }) {
+export function DelegateSelection({
+  delegates,
+  isCollapsed,
+}: {
+  delegates: Delegate[];
+  isCollapsed: boolean;
+}) {
   const [collapsed, setCollapsed] = useState(!!isCollapsed);
-  const [selectedDelegate, setSelectedDelegate] = useState(delegatesMock[0]);
-  const delegates = delegatesMock;
+  const [selectedDelegate, setSelectedDelegate] = useState(delegates[0]);
   const {
     account: { name, address },
   } = selectedDelegate;
@@ -70,12 +75,12 @@ export function DelegateSelection({ isCollapsed }: { isCollapsed: boolean }) {
         ) : (
           <>
             <div className="flex max-h-[400px] w-full flex-row flex-wrap justify-center overflow-y-auto">
-              {delegates.map((del, idx) => (
+              {delegates.map((delegate, index) => (
                 <DelegateCard
-                  key={idx}
-                  delegate={del}
+                  key={index}
+                  delegate={delegate}
                   delegateHandler={() => {
-                    setSelectedDelegate(del);
+                    setSelectedDelegate(delegate);
                     setCollapsed(true);
                   }}
                 />
@@ -92,15 +97,21 @@ export function DelegateSelection({ isCollapsed }: { isCollapsed: boolean }) {
 }
 
 interface IDelegateModalProps {
+  delegates: Delegate[];
   open: boolean;
   onClose: () => void;
 }
-export function DelegateModal({ open, onClose }: IDelegateModalProps) {
+
+export function DelegateModal({
+  delegates,
+  open,
+  onClose,
+}: IDelegateModalProps) {
   return (
     <Modal size="xl" open={open} onClose={onClose}>
       <div className="h-[700px] max-h-screen w-full">
         <TrackSelection isCollapsed />
-        <DelegateSelection isCollapsed />
+        <DelegateSelection delegates={delegates} isCollapsed />
       </div>
     </Modal>
   );
