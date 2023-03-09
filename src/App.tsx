@@ -15,15 +15,8 @@ export function App(): JSX.Element {
         removeReport={(index) => updater.removeReport(index)}
       />
       <div className="m-auto flex h-screen flex-col">
-        <Header
-          onPermissionDenied={() =>
-            updater.addReport({
-              type: 'Warning',
-              message: 'Notification permission has been denied',
-            })
-          }
-        />
-        <DelegationPanel />
+        <Header />
+        <DelegationPanel state={state} />
       </div>
     </ErrorBoundary>
   );
