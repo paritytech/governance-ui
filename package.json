@@ -7,7 +7,7 @@
     "clean": "rm -rf .parcel-cache dist out node_modules yarn.lock",
     "prepare": "husky install",
     "dev": "DEFAULT_NETWORK=kusama parcel serve ./src/index.html",
-    "build": "parcel build ./src/index.html --detailed-report --log-level verbose --public-url ${PUBLIC_URL} && cp assets/robots.txt dist/ && mkdir -p dist/data && cp -R assets/data/ dist/data",
+    "build": "parcel build ./src/index.html --detailed-report --log-level verbose --public-url ${PUBLIC_URL} && cp assets/robots.txt dist/ && mkdir -p dist/data && cp -R assets/data/* dist/data/",
     "fix:format": "prettier -w ./src",
     "fix:lint": "eslint ./src --fix",
     "fix:all": "yarn fix:format && yarn fix:lint",
