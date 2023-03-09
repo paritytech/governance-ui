@@ -18,7 +18,6 @@ import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db.js';
 import { all, clear, open, save } from '../utils/indexeddb.js';
 import { measured } from '../utils/performance.js';
 import { newApi } from '../utils/polkadot-api.js';
-import { fetchReferenda } from '../utils/polkassembly.js';
 import { extractSearchParams } from '../utils/search-params.js';
 import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
 import type {
@@ -551,7 +550,6 @@ export function useLifeCycle(
  * @param dispatch
  */
 async function dispatchNetworkChange(
-  stateAccessor: () => State,
   dispatch: Dispatch<Action>,
   network: Network,
   rpcParam: string | null
@@ -566,12 +564,7 @@ async function dispatchNetworkChange(
     votes,
   });
 
-  return dispatchEndpointsParamChange(
-    stateAccessor,
-    dispatch,
-    network,
-    rpcParam
-  );
+  return dispatchEndpointsParamChange(dispatch, network, rpcParam);
 }
 
 function dispatchAddReport(dispatch: Dispatch<Action>, report: Report) {
@@ -582,7 +575,6 @@ function dispatchAddReport(dispatch: Dispatch<Action>, report: Report) {
 }
 
 async function dispatchEndpointsParamChange(
-  stateAccessor: () => State,
   dispatch: Dispatch<Action>,
   network: Network,
   rpcParam: string | null
@@ -590,12 +582,7 @@ async function dispatchEndpointsParamChange(
   if (rpcParam) {
     const endpoints = extractEndpointsFromParam(rpcParam);
     if (endpoints.type == 'ok') {
-      return await dispatchEndpointsChange(
-        stateAccessor,
-        dispatch,
-        network,
-        endpoints.value
-      );
+      return await dispatchEndpointsChange(dispatch, endpoints.value);
     } else {
       dispatchAddReport(dispatch, {
         type: 'Error',
@@ -603,36 +590,12 @@ async function dispatchEndpointsParamChange(
       });
     }
   } else {
-    return await dispatchEndpointsChange(
-      stateAccessor,
-      dispatch,
-      network,
-      endpointsFor(network)
-    );
+    return await dispatchEndpointsChange(dispatch, endpointsFor(network));
   }
 }
 
-async function loadAndDispatchReferendaDetails(
-  dispatch: Dispatch<Action>,
-  referendaIndexes: Array<number>,
-  network: Network
-) {
-  const indexes = Array.from(referendaIndexes);
-  indexes.forEach(async (index) => {
-    const details = await measured('fetch-referenda', () =>
-      fetchReferenda(network, index)
-    );
-    dispatch({
-      type: 'StoreReferendumDetailsAction',
-      details: new Map([[index, details]]),
-    });
-  });
-}
-
 async function dispatchEndpointsChange(
-  stateAccessor: () => State,
   dispatch: Dispatch<Action>,
-  network: Network,
   endpoints: string[]
 ): Promise<VoidFunction> {
   dispatch({
@@ -653,21 +616,6 @@ async function dispatchEndpointsChange(
       block: header.number.toNumber(),
       chain,
     });
-
-    // Trigger load of details for new referenda
-    const state = stateAccessor();
-    const previousReferendaIndexes = Array.from(state.details.keys());
-    const newReferendaIndexes = Array.from(
-      filterOngoingReferenda(chain.referenda).keys()
-    );
-    const missingReferendaIndexes = newReferendaIndexes.filter(
-      (index) => !previousReferendaIndexes.includes(index)
-    );
-    await loadAndDispatchReferendaDetails(
-      dispatch,
-      missingReferendaIndexes,
-      network
-    );
   });
 }
 
@@ -776,12 +724,7 @@ async function updateChainState(
             if (state.network != network.value) {
               // Only react to network changes
               updateUnsub(
-                await dispatchNetworkChange(
-                  stateAccessor,
-                  dispatch,
-                  network.value,
-                  rpcParam
-                )
+                await dispatchNetworkChange(dispatch, network.value, rpcParam)
               );
             }
           } else {
@@ -794,7 +737,6 @@ async function updateChainState(
           // Only `rpc` param is set, reconnect using those
           updateUnsub(
             await dispatchEndpointsParamChange(
-              stateAccessor,
               dispatch,
               state.network,
               rpcParam
@@ -844,14 +786,7 @@ async function updateChainState(
   const { networkParam, rpcParam } = currentParams();
   const network = getNetwork(networkParam);
   if (network.type == 'ok') {
-    updateUnsub(
-      await dispatchNetworkChange(
-        stateAccessor,
-        dispatch,
-        network.value,
-        rpcParam
-      )
-    );
+    updateUnsub(await dispatchNetworkChange(dispatch, network.value, rpcParam));
   } else {
     dispatchAddReport(dispatch, {
       type: 'Error',
