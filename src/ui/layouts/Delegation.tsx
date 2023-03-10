@@ -12,6 +12,7 @@ import { tracksMetadata, delegatesMock } from '../../chain/mocks';
 import { AddIcon, ChevronDownIcon, ChevronRightIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
+import ProgressStepper from '../components/ProgressStepper.js';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -82,8 +83,12 @@ export function TrackSelectSection({
 }) {
   return (
     <div className="mb-16 flex w-full flex-col gap-12 px-2 md:px-8">
-      <SectionTitle title="Delegate by Track" step={0}>
-        Select the tracks you&lsquo;d like to delegate.
+      <SectionTitle
+        title="Delegate by Track"
+        description="Select the tracks you&lsquo;d like to delegate."
+        step={0}
+      >
+        <ProgressStepper step={0} />
       </SectionTitle>
       <div className="flex flex-col gap-4">
         <div className="mb-4 flex flex-row justify-between">
@@ -122,8 +127,11 @@ export const DelegateSection = ({
   return (
     <>
       <div className="flex w-full flex-col gap-16 px-2 pb-6 md:px-8">
-        <SectionTitle title="Browse Delegates" step={1}>
-          Lorem ipsum dolor sit amet
+        <SectionTitle
+          title="Browse Delegates"
+          description="Lorem ipsum dolor sit amet"
+        >
+          <ProgressStepper step={1} />
         </SectionTitle>
         <div className="flex flex-col gap-4">
           <div className="flex flex-row items-center justify-between">
