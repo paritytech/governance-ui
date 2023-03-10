@@ -405,9 +405,7 @@ export class Updater {
     const url = 'https://jeluard.github.io/governance-ui/data/delegates.json';
     const delegates = await fetch(url);
     if (delegates.ok) {
-      const { data } = (await delegates.json()) as {
-        data: Array<Delegate>;
-      };
+      const data = (await delegates.json()) as Array<Delegate>;
       return ok(data);
     } else {
       return err(new Error(`Can't access ${url}`));

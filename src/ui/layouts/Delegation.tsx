@@ -176,7 +176,6 @@ export const DelegateSection = ({ delegates }: { delegates: Delegate[] }) => {
 };
 
 export function DelegationPanel({ state }: { state: State }) {
-  console.log(state);
   const { delegates } = state;
   const delegateSectionRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef(null);
