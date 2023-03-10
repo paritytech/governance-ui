@@ -138,7 +138,7 @@ export const ConnectButton = () => {
         </div>
       </Button>
       <Modal open={visible} onClose={() => closeModal()}>
-        <div className="flex max-h-[90vh] flex-col px-1 py-2">
+        <div className="my-mod flex max-h-[90vh] flex-col px-1 py-2">
           {currentView === 'accounts' ? (
             <AccountView
               gotoWalletsView={() => toggleView()}

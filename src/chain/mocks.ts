@@ -437,3 +437,62 @@ export const tracksMetadata = [
     ],
   },
 ];
+
+export const delegatesMock = [
+  {
+    account: {
+      name: 'hamid',
+      address: '128iGaUF4zV1L2bXtAH9UmocvqpSLrJFL5TxZYZkjoSf16Hv',
+    },
+    roles: ['nominator', 'fellow', 'validator'],
+    bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel facilisis augue. Praesent nec imperdiet diam. Etiam tempus convallis sollicitudin. Read more',
+    stats: [
+      { title: 'Most active track', value: 'Staking admin' },
+      { title: 'Participation', value: '75.71%' },
+      { title: 'Representing', value: '135 addresses' },
+      { title: 'DOT', value: '24k DOT' },
+    ],
+  },
+  {
+    account: {
+      name: 'hamid',
+      address: '128iGaUF4zV1L2bXtAH9UmocvqpSLrJFL5TxZYZkjoSf16Hv',
+    },
+    roles: ['nominator', 'fellow', 'validator'],
+    bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel facilisis augue. Praesent nec imperdiet diam. Etiam tempus convallis sollicitudin. Read more',
+    stats: [
+      { title: 'Most active track', value: 'Staking admin' },
+      { title: 'Participation', value: '75.71%' },
+      { title: 'Representing', value: '135 addresses' },
+      { title: 'DOT', value: '24k DOT' },
+    ],
+  },
+  {
+    account: {
+      name: 'hamid',
+      address: '128iGaUF4zV1L2bXtAH9UmocvqpSLrJFL5TxZYZkjoSf16Hv',
+    },
+    roles: ['nominator', 'fellow', 'validator'],
+    bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel facilisis augue. Praesent nec imperdiet diam. Etiam tempus convallis sollicitudin. Read more',
+    stats: [
+      { title: 'Most active track', value: 'Staking admin' },
+      { title: 'Participation', value: '75.71%' },
+      { title: 'Representing', value: '135 addresses' },
+      { title: 'DOT', value: '24k DOT' },
+    ],
+  },
+  {
+    account: {
+      name: 'hamid',
+      address: '128iGaUF4zV1L2bXtAH9UmocvqpSLrJFL5TxZYZkjoSf16Hv',
+    },
+    roles: ['nominator', 'fellow', 'validator'],
+    bio: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vel facilisis augue. Praesent nec imperdiet diam. Etiam tempus convallis sollicitudin. Read more',
+    stats: [
+      { title: 'Most active track', value: 'Staking admin' },
+      { title: 'Participation', value: '75.71%' },
+      { title: 'Representing', value: '135 addresses' },
+      { title: 'DOT', value: '24k DOT' },
+    ],
+  },
+];

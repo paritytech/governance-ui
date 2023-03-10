@@ -1,12 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { ButtonOutline } from '../lib';
-import {
-  DelegateCard,
-  DelegateAllCard,
-} from '../components/delegation/DelegateCard';
+import { DelegateCard } from '../components/delegation/DelegateCard';
 import { DelegateModal } from '../components/delegation/delegateModal/Summary.js';
 import { TrackSelect, CheckBox } from '../components/delegation/TrackSelect.js';
-import { tracksMetadata } from '../../chain/mocks';
+import { tracksMetadata, delegatesMock } from '../../chain/mocks';
 import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
@@ -58,10 +55,11 @@ export function DelegatesBar({ delegates }: { delegates: Delegate[] }) {
       </div>
       <div className="flex max-w-full gap-x-7 overflow-x-scroll px-6 pb-1">
         {delegates.map((delegate, idx) => (
-          <DelegateAllCard
+          <DelegateCard
             key={idx}
             delegate={delegate}
             delegateHandler={() => openModal()}
+            variant="all"
           />
         ))}
       </div>
@@ -158,6 +156,7 @@ export const DelegateSection = ({ delegates }: { delegates: Delegate[] }) => {
                 key={idx}
                 delegate={delegate}
                 delegateHandler={() => openModal()}
+                variant="some"
               />
             ))}
           </div>
@@ -188,7 +187,7 @@ export function DelegationPanel({ state }: { state: State }) {
         <Headline />
         <DelegatesBar delegates={delegates} />
         <TrackSelectSection delegateHandler={() => gotoDelegateSection()} />
-        <div ref={delegateSectionRef}>
+        <div className="w-full" ref={delegateSectionRef}>
           <DelegateSection delegates={delegates} />
         </div>
       </main>
