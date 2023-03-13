@@ -1,23 +1,21 @@
-import ProgressStepper from './ProgressStepper';
-
 interface SectionTitleProps {
   title: string;
-  children?: string;
-  step?: number;
+  description?: string;
+  children?: JSX.Element;
 }
 
 export default function SectionTitle({
   title,
+  description,
   children,
-  step,
 }: SectionTitleProps) {
   return (
-    <div className="items-top flex justify-between">
-      <div className="prose prose-sm  pb-4">
+    <div className="items-top flex h-auto justify-between">
+      <div className="prose prose-sm  pt-1">
         <h2 className="mb-2">{title}</h2>
-        <div className="text-base">{children}</div>
+        <div className="text-sm">{description}</div>
       </div>
-      <ProgressStepper step={step} />
+      {children}
     </div>
   );
 }

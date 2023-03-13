@@ -9,40 +9,42 @@ export default function ProgressStepper({ step, steps }: ProgressStepperProps) {
   let lefIcon = <MoreHorizontalIcon />;
   if (step > 0) lefIcon = <CheckIcon />;
 
-  let middleIcon = null;
+  let middleIcon = <div className="h-1 w-1 rounded-full bg-gray-400" />;
   if (step === 1) middleIcon = <MoreHorizontalIcon />;
   if (step === 2) middleIcon = <CheckIcon />;
 
-  let rightIcon = null;
+  let rightIcon = <div className="h-1 w-1 rounded-full bg-gray-400" />;
   if (step === 2) rightIcon = <MoreHorizontalIcon />;
 
   return (
-    <div className="flex w-1/2 flex-col gap-2">
+    <div className="flex w-1/2 flex-col gap-2 font-medium">
       <div className="flex h-[32px] rounded-full bg-gray-200 p-1">
         <div
-          className={`flex w-[24px] items-center justify-center ${
-            step < 1 ? 'rounded-full' : 'rounded-l-full'
-          } bg-primary text-white`}
+          className={`flex items-center justify-center px-2 ${
+            step < 1 ? 'rounded-full' : ' rounded-l-full'
+          } bg-white text-primary`}
         >
           {lefIcon}
         </div>
-        <div className={`grow ${step < 1 ? `` : `bg-primary`}`} />
+        <div className={`grow ${step < 1 ? `` : `bg-white`}`} />
         <div
-          className={`w-[24px] ${
+          className={`flex items-center justify-center px-2 ${
             step < 1
-              ? `rounded-full bg-white`
+              ? `w-[24px] rounded-full bg-none`
               : step < 2
-              ? 'rounded-r-full bg-primary'
-              : 'rounded-none bg-primary'
-          } text-white`}
+              ? 'rounded-r-full bg-white '
+              : 'rounded-none bg-white'
+          } text-primary`}
         >
           {middleIcon}
         </div>
-        <div className={`grow ${step < 2 ? `` : `bg-primary`}`} />
+        <div className={`grow ${step < 2 ? `` : `bg-white`}`} />
         <div
-          className={`w-[24px] ${
-            step < 2 ? 'rounded-full bg-white' : 'rounded-r-full bg-primary'
-          } text-white`}
+          className={`flex items-center justify-center px-2 ${
+            step < 2
+              ? 'bg-trans w-[24px] rounded-full bg-none'
+              : 'rounded-r-full bg-white'
+          } text-primary`}
         >
           {rightIcon}
         </div>
@@ -58,9 +60,7 @@ export default function ProgressStepper({ step, steps }: ProgressStepperProps) {
                   : index === 1
                   ? 'text-center'
                   : 'text-right'
-              } ${
-                index === step ? 'font-semibold text-primary' : 'text-black'
-              }`}
+              } ${index === step ? ' text-primary' : 'text-black'}`}
             >
               {currentStep}
             </span>

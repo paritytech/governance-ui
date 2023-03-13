@@ -2,13 +2,13 @@ import React, { useRef, useState } from 'react';
 import { ButtonOutline } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { DelegateModal } from '../components/delegation/delegateModal/Summary.js';
-import { TrackSelect, CheckBox } from '../components/delegation/TrackSelect.js';
+import { TrackSelect } from '../components/delegation/TrackSelect.js';
 import { tracksMetadata } from '../../chain/mocks';
-import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
+import { AddIcon, ChevronDownIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
-import { ButtonSecondary } from '../lib/Button';
-import { Delegate, State } from '../../lifecycle/types';
+import ProgressStepper from '../components/ProgressStepper.js';
+import { Delegate, State } from 'src/lifecycle/types.js';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -53,8 +53,8 @@ export function DelegatesBar({ delegates }: { delegates: Delegate[] }) {
           options
         </div>
       </div>
-      <div className="flex max-w-full gap-x-7 overflow-x-scroll px-6 pb-1">
-        {delegates.map((delegate, idx) => (
+      <div className="flex max-w-full gap-7 overflow-x-scroll px-6 pb-1	">
+        {delegates?.map((delegate, idx) => (
           <DelegateCard
             key={idx}
             delegate={delegate}
@@ -75,32 +75,6 @@ export function DelegatesBar({ delegates }: { delegates: Delegate[] }) {
   );
 }
 
-export function TrackSelectSection({
-  delegateHandler,
-}: {
-  delegateHandler: () => void;
-}) {
-  return (
-    <div className="mb-16 flex w-full flex-col gap-16 px-2 md:px-8">
-      <SectionTitle title="Delegate by Track" step={0}>
-        Lorem ipsum dolor sit amet
-      </SectionTitle>
-      <div className="flex flex-col gap-4">
-        <div className="mb-4 flex flex-row justify-between">
-          <CheckBox background title="All tracks" />
-          <ButtonSecondary onClick={() => delegateHandler()}>
-            <div className="flex flex-row items-center justify-center gap-1">
-              <div>Delegate Tracks</div>
-              <CaretRightIcon />
-            </div>
-          </ButtonSecondary>
-        </div>
-        <TrackSelect expanded />
-      </div>
-    </div>
-  );
-}
-
 export const DelegateSection = ({ delegates }: { delegates: Delegate[] }) => {
   // ToDo : Move Modal to a context
   const [visible, setVisible] = useState(false);
@@ -118,31 +92,28 @@ export const DelegateSection = ({ delegates }: { delegates: Delegate[] }) => {
   return (
     <>
       <div className="flex w-full flex-col gap-16 px-2 pb-6 md:px-8">
-        <SectionTitle title="Browse Delegates" step={1}>
-          Lorem ipsum dolor sit amet
+        <SectionTitle
+          title="Browse Delegates"
+          description="Lorem ipsum dolor sit amet"
+        >
+          <ProgressStepper step={1} />
         </SectionTitle>
         <div className="flex flex-col gap-4">
           <div className="flex flex-row items-center justify-between">
             <div className="flex flex-row items-center justify-between gap-4">
               <ButtonOutline>
-                <div className="flex flex-row items-center justify-center gap-1">
-                  <div>Aggregate Best</div>
-                  <CaretDownIcon />
-                </div>
+                <div>Aggregate Best</div>
+                <ChevronDownIcon />
               </ButtonOutline>
               <ButtonOutline>
-                <div className="flex flex-row items-center justify-center gap-1">
-                  <div>Status</div>
-                  <CaretDownIcon />
-                </div>
+                <div>Status</div>
+                <ChevronDownIcon />
               </ButtonOutline>
             </div>
             <div className="flex flex-row items-center justify-between gap-4">
               <ButtonOutline>
-                <div className="flex flex-row items-center justify-center gap-1">
-                  <PlusIcon />
-                  <div>Add address</div>
-                </div>
+                <AddIcon />
+                <div>Add address</div>
               </ButtonOutline>
               <input
                 placeholder="Search"
@@ -178,16 +149,23 @@ export function DelegationPanel({ state }: { state: State }) {
   const { delegates } = state;
   const delegateSectionRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef(null);
-  const gotoDelegateSection = () => {
-    delegateSectionRef?.current?.scrollIntoView({ behavior: 'smooth' });
+  const trackSectionRef: React.MutableRefObject<HTMLDivElement | null> =
+    useRef(null);
+  const gotoSection = (section: any) => {
+    section?.current?.scrollIntoView({ behavior: 'smooth' });
   };
   return (
     <DelegationProvider>
-      <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20">
+      <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-16 pt-14 md:pt-20">
         <Headline />
         <DelegatesBar delegates={delegates} />
-        <TrackSelectSection delegateHandler={() => gotoDelegateSection()} />
-        <div className="w-full" ref={delegateSectionRef}>
+        <div ref={trackSectionRef}>
+          <TrackSelect
+            expanded
+            delegateHandler={() => gotoSection(delegateSectionRef)}
+          />
+        </div>
+        <div ref={delegateSectionRef}>
           <DelegateSection delegates={delegates} />
         </div>
       </main>
