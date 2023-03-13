@@ -54,17 +54,11 @@ const ReferendumCard = memo(
   }) => {
     if (details && details.posts.length > 0) {
       const { title, content } = details.posts[0];
-      const isHTML = content.startsWith('<p'); // A bug in polkascan made some posts in HTML. They should always be markdown.
       return (
         <Card className="flex h-[640px] w-screen flex-col gap-8 md:w-[640px]">
           <Header index={index} title={title} track={track} />
           <div className="w-full overflow-y-scroll break-words">
-            {isHTML ? (
-              // ToDo: This should be removed, after making sure it does not break the UX, or we should find a new source to pull this info.
-              <div dangerouslySetInnerHTML={{ __html: content }} />
-            ) : (
-              <Remark>{content}</Remark>
-            )}
+            <Remark>{content}</Remark>
           </div>
         </Card>
       );

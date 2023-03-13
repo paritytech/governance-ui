@@ -23,7 +23,7 @@ export function DelegateModal({
   const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();
   const delegateHandler = () => {
-    console.log('submit delegate Tx');
+    // TODO
     onClose();
   };
   return (
@@ -34,7 +34,7 @@ export function DelegateModal({
             <h2 className="mb-2 text-3xl font-medium">Summary</h2>
             <p className="text-base">
               You’re about to submit a transaction to delegate your voting power
-              for the following tracks to Daria Delegate.
+              for the following tracks to <b>{name}</b> Delegate.
             </p>
           </div>
           <div className="flex flex-col gap-1">
