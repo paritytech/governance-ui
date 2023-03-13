@@ -1,6 +1,6 @@
 import type { TrackType } from './types';
 import { tracksMetadata } from '../../../chain/mocks';
-import { useDelegation } from '../../../contexts/Delegation.js';
+import { useDelegation } from '../../../contexts';
 import { Card } from '../../lib';
 
 interface ICheckBoxProps {
