@@ -11,7 +11,7 @@ import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import { ButtonSecondary } from '../lib/Button';
-import { Delegate, State } from 'src/lifecycle/types.js';
+import { Delegate, State } from '../../lifecycle/types';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',

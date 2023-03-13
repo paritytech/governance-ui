@@ -1,4 +1,4 @@
-import { ClickableProps } from 'src/ui/lib/types';
+import { ClickableProps } from '../../../ui/lib/types';
 
 export function ConnectCard({
   className,
