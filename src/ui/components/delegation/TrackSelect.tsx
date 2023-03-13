@@ -84,7 +84,6 @@ interface ITrackSelectProps {
   className?: string;
   expanded?: boolean;
   delegateHandler?: () => void;
-  ref?: any;
 }
 export function TrackSelect({
   className,

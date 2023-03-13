@@ -94,6 +94,7 @@ export function DelegateCard({
           )}
         </div>
         <div className="prose prose-sm leading-tight">
+
           <div className="">{bio}</div>
         </div>
         <StatBar stats={[]} />
@@ -103,6 +104,7 @@ export function DelegateCard({
             <DelegateIcon />
           </Button>
         )}
+
       </Card>
     </>
   );
