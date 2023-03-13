@@ -6,12 +6,12 @@ import {
 } from '../components/delegation/DelegateCard';
 import { DelegateModal } from '../components/delegation/delegateModal/Summary.js';
 import { TrackSelect, CheckBox } from '../components/delegation/TrackSelect.js';
-import { tracksMetadata, delegatesMock } from '../../chain/mocks';
+import { tracksMetadata } from '../../chain/mocks';
 import { AddIcon, ChevronDownIcon, ChevronRightIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
-
+import { Delegate, State } from 'src/lifecycle/types.js';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -58,7 +58,6 @@ export function DelegatesBar({ delegates }: { delegates: Delegate[] }) {
       </div>
       <div className="flex max-w-full gap-7 overflow-x-scroll px-6 pb-1	">
         {delegates?.map((delegate, idx) => (
-
           <DelegateAllCard
             key={idx}
             delegate={delegate}
@@ -181,15 +180,14 @@ export function DelegationPanel({ state }: { state: State }) {
     <DelegationProvider>
       <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-16 pt-14 md:pt-20">
         <Headline />
-        <DelegatesBar delegates={delegatesMock} />
+        <DelegatesBar delegates={delegates} />
         <div ref={trackSectionRef}>
           <TrackSelectSection
             delegateHandler={() => gotoSection(delegateSectionRef)}
           />
         </div>
         <div ref={delegateSectionRef} className="pt-8">
-          <DelegateSection delegates={delegatesMock} />
-
+          <DelegateSection delegates={delegates} />
         </div>
       </main>
     </DelegationProvider>

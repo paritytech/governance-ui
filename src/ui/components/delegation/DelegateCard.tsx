@@ -1,4 +1,4 @@
-import type { DelegateRoleType, DelegateType, StatType } from './types';
+import type { DelegateRoleType, StatType } from './types';
 import { ChevronRightIcon, DelegateIcon } from '../../icons';
 import { Button, ButtonSecondary, Card } from '../../lib';
 

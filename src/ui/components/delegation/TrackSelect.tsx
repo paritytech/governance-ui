@@ -53,25 +53,6 @@ export function CheckBox({
   );
 }
 
-{
-  /* <label htmlFor={checkboxId} className="flex items-center gap-2">
-        <div
-          className={`flex h-4 w-4 rounded-sm border-[1px] p-[1px] ${
-            checked
-              ? 'border-primary bg-primary hover:brightness-95'
-              : 'border-gray-500  bg-white hover:brightness-95'
-          }`}
-        >
-          <CheckIcon
-            className={`h-full w-full ${
-              checked ? 'block' : 'hidden'
-            } text-white`}
-          />
-        </div>
-        <span className="text-sm font-semibold text-gray-900">{title}</span>
-      </label> */
-}
-
 interface ITrackCheckableCardProps {
   track?: TrackType;
   checked?: boolean;
@@ -109,7 +90,6 @@ export function TrackSelect({
 }: ITrackSelectProps) {
   const availableTracks = tracksMetadata;
   const { selectedTracks, setTrackSelection } = useDelegation();
-  let availableSubtracksCount: number;
 
   return (
     <div className="flex flex-col gap-12">

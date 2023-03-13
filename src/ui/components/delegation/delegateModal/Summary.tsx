@@ -42,8 +42,7 @@ export function DelegateModal({
             <div className="flex gap-2">
               <Accounticon
                 textClassName="font-medium"
-                address={account?.address}
-
+                address={address}
                 size={24}
               />
               <div className="capitalize">{name}</div>
