@@ -1,10 +1,5 @@
-import { useEffect, useState } from 'react';
 import { ConnectButton } from './accounts/ConnectButton.js';
-import { Button, HeartIcon, Navbar } from '../lib/index.js';
-import {
-  areNotificationsGranted,
-  requestNotificationPermission,
-} from '../../utils/permissions.js';
+import { Navbar } from '../lib/index.js';
 
 const tokenUrl = new URL(
   '../../../assets/images/polkadot-token.svg',
@@ -15,20 +10,7 @@ const logoUrl = new URL(
   import.meta.url
 ).toString();
 
-export function Header({
-  onPermissionDenied,
-}: {
-  onPermissionDenied: () => void;
-}): JSX.Element {
-  const [notificationGranted, setNotificationGranted] = useState(true);
-
-  useEffect(() => {
-    async function fetch() {
-      setNotificationGranted(await areNotificationsGranted());
-    }
-
-    fetch();
-  }, []);
+export function Header(): JSX.Element {
   return (
     <Navbar>
       <Navbar.Brand>
@@ -45,20 +27,6 @@ export function Header({
       <Navbar.Content className="w-full">
         <Navbar.Item className="w-full">
           <div className="flex w-full  justify-start gap-2 md:justify-end">
-            {!notificationGranted && (
-              <Button
-                onClick={async () => {
-                  const permission = await requestNotificationPermission();
-                  if (permission !== 'granted') {
-                    onPermissionDenied();
-                  } else {
-                    setNotificationGranted(true);
-                  }
-                }}
-              >
-                <HeartIcon className="fill-primary" />
-              </Button>
-            )}
             <ConnectButton />
           </div>
         </Navbar.Item>

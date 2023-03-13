@@ -1,5 +1,3 @@
-import type { DelegateType } from '../components/delegation/types.js';
-
 import React, { useRef, useState } from 'react';
 import { ButtonOutline, ButtonSecondary } from '../lib';
 import {
@@ -13,6 +11,7 @@ import { AddIcon, ChevronDownIcon, ChevronRightIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
+
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -38,7 +37,7 @@ function Headline() {
   );
 }
 
-export function DelegatesBar({ delegates }: { delegates: DelegateType[] }) {
+export function DelegatesBar({ delegates }: { delegates: Delegate[] }) {
   // ToDo : Move Modal to a context
   const [visible, setVisible] = useState(false);
   const allTracks = tracksMetadata.map((track) => track.subtracks).flat();
@@ -59,6 +58,7 @@ export function DelegatesBar({ delegates }: { delegates: DelegateType[] }) {
       </div>
       <div className="flex max-w-full gap-7 overflow-x-scroll px-6 pb-1	">
         {delegates?.map((delegate, idx) => (
+
           <DelegateAllCard
             key={idx}
             delegate={delegate}
@@ -66,12 +66,14 @@ export function DelegatesBar({ delegates }: { delegates: DelegateType[] }) {
           />
         ))}
       </div>
-      <DelegateModal
-        open={visible}
-        onClose={() => closeModal()}
-        delegate={delegates[0]}
-        tracks={allTracks}
-      />
+      {delegates.length > 0 && (
+        <DelegateModal
+          open={visible}
+          onClose={() => closeModal()}
+          delegate={delegates[0]}
+          tracks={allTracks}
+        />
+      )}
     </section>
   );
 }
@@ -97,11 +99,7 @@ export function TrackSelectSection({
   );
 }
 
-export const DelegateSection = ({
-  delegates,
-}: {
-  delegates: DelegateType[];
-}) => {
+export const DelegateSection = ({ delegates }: { delegates: Delegate[] }) => {
   // ToDo : Move Modal to a context
   const [visible, setVisible] = useState(false);
   const { selectedTracks } = useDelegation();
@@ -148,7 +146,7 @@ export const DelegateSection = ({
             </div>
           </div>
           <div className="flex flex-row flex-wrap items-center justify-start gap-y-4 gap-x-7">
-            {delegates?.map((delegate, idx) => (
+            {delegates.map((delegate, idx) => (
               <DelegateCard
                 key={idx}
                 delegate={delegate}
@@ -157,18 +155,21 @@ export const DelegateSection = ({
             ))}
           </div>
         </div>
-        <DelegateModal
-          open={visible}
-          onClose={() => closeModal()}
-          delegate={delegates[0]}
-          tracks={tracks}
-        />
+        {delegates.length > 0 && (
+          <DelegateModal
+            open={visible}
+            onClose={() => closeModal()}
+            delegate={delegates[0]}
+            tracks={tracks}
+          />
+        )}
       </div>
     </>
   );
 };
 
-export function DelegationPanel() {
+export function DelegationPanel({ state }: { state: State }) {
+  const { delegates } = state;
   const delegateSectionRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef(null);
   const trackSectionRef: React.MutableRefObject<HTMLDivElement | null> =
@@ -188,6 +189,7 @@ export function DelegationPanel() {
         </div>
         <div ref={delegateSectionRef} className="pt-8">
           <DelegateSection delegates={delegatesMock} />
+
         </div>
       </main>
     </DelegationProvider>

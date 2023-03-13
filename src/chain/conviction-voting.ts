@@ -224,3 +224,28 @@ export async function submitBatchVotes(
     }
   );
 }
+
+export function delegate(
+  api: { tx: SubmittableExtrinsics<'promise'> },
+  track: number,
+  to: Address,
+  conviction: PalletConvictionVotingConviction,
+  balance: BN
+) {
+  return api.tx.convictionVoting.delegate(track, to, conviction, balance);
+}
+
+export function undelegate(
+  api: { tx: SubmittableExtrinsics<'promise'> },
+  track: number
+) {
+  return api.tx.convictionVoting.undelegate(track);
+}
+
+export function unlock(
+  api: { tx: SubmittableExtrinsics<'promise'> },
+  track: number,
+  target: Address
+) {
+  return api.tx.convictionVoting.unlock(track, target);
+}

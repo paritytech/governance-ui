@@ -1,10 +1,12 @@
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
 import { Modal, Button, ButtonSecondary } from '../../../lib';
+import { Delegate } from '../../../../lifecycle/types';
+
 import { Accounticon } from '../../accounts/Accounticon.js';
-import type { DelegateType, TrackType } from '../types';
+import type { TrackType } from '../types';
 
 interface IDelegateModalProps {
-  delegate: DelegateType;
+  delegate: Delegate;
   tracks: TrackType[];
   open: boolean;
   onClose: () => void;
@@ -15,7 +17,9 @@ export function DelegateModal({
   open,
   onClose,
 }: IDelegateModalProps) {
-  const { account } = delegate;
+  const {
+    account: { name, address },
+  } = delegate;
   const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();
   const delegateHandler = () => {
@@ -39,9 +43,10 @@ export function DelegateModal({
               <Accounticon
                 textClassName="font-medium"
                 address={account?.address}
+
                 size={24}
               />
-              <div className="capitalize">{account?.name}</div>
+              <div className="capitalize">{name}</div>
             </div>
           </div>
           <div className="flex flex-col gap-1">

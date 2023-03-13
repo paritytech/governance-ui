@@ -1,7 +1,9 @@
 import type { DelegateRoleType, DelegateType, StatType } from './types';
 import { ChevronRightIcon, DelegateIcon } from '../../icons';
 import { Button, ButtonSecondary, Card } from '../../lib';
+
 import { Accounticon } from '../accounts/Accounticon.js';
+import { Delegate } from '../../../lifecycle/types';
 
 const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
   nominator: { title: 'nominator', twColor: 'bg-green-300' },
@@ -46,14 +48,12 @@ export function DelegateAllCard({
   delegate,
   delegateHandler,
 }: {
-  delegate: DelegateType;
+  delegate: Delegate;
   delegateHandler: () => void;
 }) {
   const {
     account: { name, address },
-    roles,
     bio,
-    stats,
   } = delegate;
 
   return (
@@ -70,15 +70,19 @@ export function DelegateAllCard({
           </div>
         </div>
         <div className="flex gap-2">
-          {roles.map((role) => (
-            <RoleTag key={role} role={role} />
-          ))}
+          {[].map(
+            (
+              role // TODO
+            ) => (
+              <RoleTag key={role} role={role} />
+            )
+          )}
         </div>
         <div className="prose prose-sm leading-tight">
           <div className="">{bio}</div>
         </div>
         <hr />
-        <StatBar stats={stats} />
+        <StatBar stats={[]} />
         <Button onClick={() => delegateHandler()}>
           <div>Delegate All Votes</div>
           <DelegateIcon />
@@ -92,14 +96,12 @@ export function DelegateCard({
   delegate,
   delegateHandler,
 }: {
-  delegate: DelegateType;
+  delegate: Delegate;
   delegateHandler: () => void;
 }) {
   const {
     account: { name, address },
-    roles,
     bio,
-    stats,
   } = delegate;
 
   return (
@@ -120,16 +122,20 @@ export function DelegateCard({
           </ButtonSecondary>
         </div>
         <div className="flex gap-2">
-          {roles.map((role) => (
-            <RoleTag key={role} role={role} />
-          ))}
+          {[].map(
+            (
+              role // TODO
+            ) => (
+              <RoleTag key={role} role={role} />
+            )
+          )}
         </div>
         <div className="prose prose-sm leading-tight">
           <div className="uppercase leading-tight">About</div>
           <div className="">{bio}</div>
         </div>
         <hr />
-        <StatBar stats={stats} />
+        <StatBar stats={[]} />
       </Card>
     </>
   );

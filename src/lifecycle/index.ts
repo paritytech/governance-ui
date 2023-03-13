@@ -18,13 +18,13 @@ import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db.js';
 import { all, clear, open, save } from '../utils/indexeddb.js';
 import { measured } from '../utils/performance.js';
 import { newApi } from '../utils/polkadot-api.js';
-import { fetchReferenda } from '../utils/polkassembly.js';
 import { extractSearchParams } from '../utils/search-params.js';
 import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
 import type {
   Action,
   Address,
   ChainState,
+  Delegate,
   PersistedDataContext,
   Report,
   State,
@@ -257,6 +257,11 @@ function reducer(previousState: State, action: Action): State {
         ...previousState,
         indexes: action.data,
       };
+    case 'SetDelegates':
+      return {
+        ...previousState,
+        delegates: action.data || [],
+      };
   }
 }
 
@@ -334,7 +339,34 @@ export class Updater {
   async start() {
     try {
       this.unsub = await updateChainState(this.#stateAccessor, this.#dispatch);
-      await this.fetchIndexes();
+
+      // Fetch indexes
+      const indexes = await this.fetchIndexes();
+      if (indexes.type == 'ok') {
+        this.#dispatch({
+          type: 'SetIndexes',
+          data: indexes.value,
+        });
+      } else {
+        await this.addReport({
+          type: 'Warning',
+          message: indexes.error.message,
+        });
+      }
+
+      // Fetch delegates
+      const delegates = await this.fetchDelegates();
+      if (delegates.type == 'ok') {
+        this.#dispatch({
+          type: 'SetDelegates',
+          data: delegates.value,
+        });
+      } else {
+        await this.addReport({
+          type: 'Warning',
+          message: delegates.error.message,
+        });
+      }
     } catch (e: any) {
       await this.addReport({ type: 'Error', message: e.toString() });
     }
@@ -344,27 +376,40 @@ export class Updater {
     this.unsub?.();
   }
 
-  async fetchIndexes() {
-    const reqIndexIndexes = await fetch(
-      'https://jeluard.github.io/panoptidot/data/indexes/index.json'
-    );
-    const { data } = (await reqIndexIndexes.json()) as {
-      data: Array<string>;
-    };
-    const resps = await Promise.all(
-      data.map((index) =>
-        fetch(`https://jeluard.github.io/panoptidot/data/indexes/${index}.json`)
-      )
-    );
-    const indexes = await Promise.all(resps.map((resp) => resp.json()));
-    const map = Object.fromEntries(
-      data.map((datum, index) => [datum, indexes[index].data])
-    );
+  async fetchIndexes(): Promise<Result<Record<string, any>>> {
+    const url = 'https://jeluard.github.io/panoptidot/data/indexes/index.json';
+    const reqIndexIndexes = await fetch(url);
+    if (reqIndexIndexes.ok) {
+      const { data } = (await reqIndexIndexes.json()) as {
+        data: Array<string>;
+      };
+      const resps = await Promise.all(
+        data.map((index) =>
+          fetch(
+            `https://jeluard.github.io/panoptidot/data/indexes/${index}.json`
+          )
+        )
+      );
+      const indexes = await Promise.all(resps.map((resp) => resp.json()));
+      return ok(
+        Object.fromEntries(
+          data.map((datum, index) => [datum, indexes[index].data])
+        )
+      );
+    } else {
+      return err(new Error(`Can't access ${url}`));
+    }
+  }
 
-    this.#dispatch({
-      type: 'SetIndexes',
-      data: map,
-    });
+  async fetchDelegates(): Promise<Result<Delegate[]>> {
+    const url = 'https://jeluard.github.io/governance-ui/data/delegates.json';
+    const delegates = await fetch(url);
+    if (delegates.ok) {
+      const data = (await delegates.json()) as Array<Delegate>;
+      return ok(data);
+    } else {
+      return err(new Error(`Can't access ${url}`));
+    }
   }
 
   async castVote(index: number, vote: AccountVote) {
@@ -436,6 +481,7 @@ const DEFAULT_INITIAL_STATE: State = {
   connectedAccount: null,
   details: new Map(),
   indexes: {},
+  delegates: [],
 };
 
 type Reducer = (previousState: State, action: Action) => State;
@@ -502,7 +548,6 @@ export function useLifeCycle(
  * @param dispatch
  */
 async function dispatchNetworkChange(
-  stateAccessor: () => State,
   dispatch: Dispatch<Action>,
   network: Network,
   rpcParam: string | null
@@ -517,12 +562,7 @@ async function dispatchNetworkChange(
     votes,
   });
 
-  return dispatchEndpointsParamChange(
-    stateAccessor,
-    dispatch,
-    network,
-    rpcParam
-  );
+  return dispatchEndpointsParamChange(dispatch, network, rpcParam);
 }
 
 function dispatchAddReport(dispatch: Dispatch<Action>, report: Report) {
@@ -533,7 +573,6 @@ function dispatchAddReport(dispatch: Dispatch<Action>, report: Report) {
 }
 
 async function dispatchEndpointsParamChange(
-  stateAccessor: () => State,
   dispatch: Dispatch<Action>,
   network: Network,
   rpcParam: string | null
@@ -541,12 +580,7 @@ async function dispatchEndpointsParamChange(
   if (rpcParam) {
     const endpoints = extractEndpointsFromParam(rpcParam);
     if (endpoints.type == 'ok') {
-      return await dispatchEndpointsChange(
-        stateAccessor,
-        dispatch,
-        network,
-        endpoints.value
-      );
+      return await dispatchEndpointsChange(dispatch, endpoints.value);
     } else {
       dispatchAddReport(dispatch, {
         type: 'Error',
@@ -554,36 +588,12 @@ async function dispatchEndpointsParamChange(
       });
     }
   } else {
-    return await dispatchEndpointsChange(
-      stateAccessor,
-      dispatch,
-      network,
-      endpointsFor(network)
-    );
+    return await dispatchEndpointsChange(dispatch, endpointsFor(network));
   }
 }
 
-async function loadAndDispatchReferendaDetails(
-  dispatch: Dispatch<Action>,
-  referendaIndexes: Array<number>,
-  network: Network
-) {
-  const indexes = Array.from(referendaIndexes);
-  indexes.forEach(async (index) => {
-    const details = await measured('fetch-referenda', () =>
-      fetchReferenda(network, index)
-    );
-    dispatch({
-      type: 'StoreReferendumDetailsAction',
-      details: new Map([[index, details]]),
-    });
-  });
-}
-
 async function dispatchEndpointsChange(
-  stateAccessor: () => State,
   dispatch: Dispatch<Action>,
-  network: Network,
   endpoints: string[]
 ): Promise<VoidFunction> {
   dispatch({
@@ -604,21 +614,6 @@ async function dispatchEndpointsChange(
       block: header.number.toNumber(),
       chain,
     });
-
-    // Trigger load of details for new referenda
-    const state = stateAccessor();
-    const previousReferendaIndexes = Array.from(state.details.keys());
-    const newReferendaIndexes = Array.from(
-      filterOngoingReferenda(chain.referenda).keys()
-    );
-    const missingReferendaIndexes = newReferendaIndexes.filter(
-      (index) => !previousReferendaIndexes.includes(index)
-    );
-    await loadAndDispatchReferendaDetails(
-      dispatch,
-      missingReferendaIndexes,
-      network
-    );
   });
 }
 
@@ -727,12 +722,7 @@ async function updateChainState(
             if (state.network != network.value) {
               // Only react to network changes
               updateUnsub(
-                await dispatchNetworkChange(
-                  stateAccessor,
-                  dispatch,
-                  network.value,
-                  rpcParam
-                )
+                await dispatchNetworkChange(dispatch, network.value, rpcParam)
               );
             }
           } else {
@@ -745,7 +735,6 @@ async function updateChainState(
           // Only `rpc` param is set, reconnect using those
           updateUnsub(
             await dispatchEndpointsParamChange(
-              stateAccessor,
               dispatch,
               state.network,
               rpcParam
@@ -795,14 +784,7 @@ async function updateChainState(
   const { networkParam, rpcParam } = currentParams();
   const network = getNetwork(networkParam);
   if (network.type == 'ok') {
-    updateUnsub(
-      await dispatchNetworkChange(
-        stateAccessor,
-        dispatch,
-        network.value,
-        rpcParam
-      )
-    );
+    updateUnsub(await dispatchNetworkChange(dispatch, network.value, rpcParam));
   } else {
     dispatchAddReport(dispatch, {
       type: 'Error',

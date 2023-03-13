@@ -487,13 +487,13 @@
   dependencies:
     "@types/node" "*"
 
-"@zombienet/cli@1.3.37":
-  version "1.3.37"
-  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.37.tgz#d795ab8e274f918140c0ecec58240e1e370ddbf9"
-  integrity sha512-YVZgsbgIoQTkiLJWjTwmbHUj+qRKNvEYjeFT9Y/kYHPcDM7kTX9f+qg2dKDGxrff85Ix71Aiy5Fd2Ve7rOSkXQ==
+"@zombienet/cli@1.3.39":
+  version "1.3.39"
+  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.39.tgz#cb30be0e0c455448c5b6a3b721dc21d8d86ef3de"
+  integrity sha512-P4K3M3X0ET64/+e1ReFAIeUh4KGF/6MY0craZXWkJ6dMxGKtxTGaMGbhS9zmnyEAIdXXxYSoFTzbG4Npq2gD8g==
   dependencies:
     "@zombienet/dsl-parser-wrapper" "^0.1.7"
-    "@zombienet/orchestrator" "^0.0.28"
+    "@zombienet/orchestrator" "^0.0.30"
     "@zombienet/utils" "^0.0.15"
     axios "^0.27.2"
     commander "^10.0.0"
@@ -507,15 +507,15 @@
   resolved "https://registry.yarnpkg.com/@zombienet/dsl-parser-wrapper/-/dsl-parser-wrapper-0.1.7.tgz#ed3a1e25081732b188d2fefbd78517c7709ca3bf"
   integrity sha512-pJqo1LZbNqnL6Of1h67eYtTTu0BLcf+U/nGQtj8pYr0V4XVDWdCYvT4C9kXkrh5964nKz3KGB7Eky43NqRJZqg==
 
-"@zombienet/orchestrator@^0.0.28":
-  version "0.0.28"
-  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.28.tgz#3b35ba35d63f81045e5fb380e56ed4ecb9a90045"
-  integrity sha512-/p+5uBIyzPZMiKEVXdNdU6wwCMxsGt+nQgXvDzd7IQxX+rWGFYWz+YXjV5GgMNDJ5wPrB+QZfe2vIbwquxoRJg==
+"@zombienet/orchestrator@^0.0.30":
+  version "0.0.30"
+  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.30.tgz#14048968c65c8efa07479a6e1d48a5fbecb6a492"
+  integrity sha512-YfFQ2t8jxkO4Cy+yp0XgwwQHfoEe0N6y8TyUbBP0t2NK68vY7AQvVOFS8HQn4/VpMIY+cxSvgKThuZY09MnnYg==
   dependencies:
     "@polkadot/api" "^9.2.4"
     "@polkadot/keyring" "^10.1.6"
     "@polkadot/util-crypto" "^10.1.6"
-    "@zombienet/utils" "^0.0.15"
+    "@zombienet/utils" "^0.0.16"
     JSONStream "^1.3.5"
     axios "^0.27.2"
     chai "^4.3.4"
@@ -537,6 +537,17 @@
   version "0.0.15"
   resolved "https://registry.yarnpkg.com/@zombienet/utils/-/utils-0.0.15.tgz#14e7a30cc358b349523b9ac24e455ae22cdaf75a"
   integrity sha512-Wv/bB79muSeR4DGYZHfmXSQF6xuNgQJf+kqSwoCsKemFxa/PeSHQUG62WvF89DDxpdMUHdhc8H+j7//gekSKvA==
+  dependencies:
+    axios "^0.27.2"
+    cli-table3 "^0.6.2"
+    debug "^4.3.2"
+    nunjucks "^3.2.3"
+    toml "^3.0.0"
+
+"@zombienet/utils@^0.0.16":
+  version "0.0.16"
+  resolved "https://registry.yarnpkg.com/@zombienet/utils/-/utils-0.0.16.tgz#23e448446b07fd90507314175d6e0fc11817706f"
+  integrity sha512-95vno6JmEKm0ddNT8ZoG7JJVN2ZHSo5N08Vlih1gbQCzNCSSWpjgUOFQEI9VaGNX0fTR+oNiSIiY8piYOtM4YA==
   dependencies:
     axios "^0.27.2"
     cli-table3 "^0.6.2"
