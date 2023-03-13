@@ -2,7 +2,7 @@ import type { TrackType } from './types';
 import { tracksMetadata } from '../../../chain/mocks';
 import { useDelegation } from '../../../contexts/Delegation.js';
 import { ButtonSecondary, Card } from '../../lib';
-import { CheckIcon, ChevronDownIcon, ChevronRightIcon } from '../../icons';
+import { CheckIcon, ChevronDownIcon } from '../../icons';
 import SectionTitle from '../SectionTitle';
 import ProgressStepper from '../ProgressStepper';
 

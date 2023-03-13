@@ -1,13 +1,13 @@
 import React, { useRef, useState } from 'react';
-import { ButtonOutline, ButtonSecondary } from '../lib';
+import { ButtonOutline } from '../lib';
 import {
   DelegateCard,
   DelegateAllCard,
 } from '../components/delegation/DelegateCard';
 import { DelegateModal } from '../components/delegation/delegateModal/Summary.js';
-import { TrackSelect, CheckBox } from '../components/delegation/TrackSelect.js';
+import { TrackSelect } from '../components/delegation/TrackSelect.js';
 import { tracksMetadata } from '../../chain/mocks';
-import { AddIcon, ChevronDownIcon, ChevronRightIcon } from '../icons';
+import { AddIcon, ChevronDownIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
