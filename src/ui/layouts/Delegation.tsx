@@ -1,9 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { ButtonOutline } from '../lib';
-import {
-  DelegateCard,
-  DelegateAllCard,
-} from '../components/delegation/DelegateCard';
+import { DelegateCard } from '../components/delegation/DelegateCard';
 import { DelegateModal } from '../components/delegation/delegateModal/Summary.js';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
 import { tracksMetadata } from '../../chain/mocks';
@@ -60,9 +57,11 @@ export function DelegatesBar({ delegates }: { delegates: Delegate[] }) {
       <div className="flex max-w-full gap-7 overflow-x-scroll px-6 pb-1	">
         {delegates?.map((delegate, idx) => (
           <DelegateAllCard
+
             key={idx}
             delegate={delegate}
             delegateHandler={() => openModal()}
+            variant="all"
           />
         ))}
       </div>
@@ -130,6 +129,7 @@ export const DelegateSection = ({ delegates }: { delegates: Delegate[] }) => {
                 key={idx}
                 delegate={delegate}
                 delegateHandler={() => openModal()}
+                variant="some"
               />
             ))}
           </div>
@@ -168,6 +168,7 @@ export function DelegationPanel({ state }: { state: State }) {
           />
         </div>
         <div ref={delegateSectionRef}>
+
           <DelegateSection delegates={delegates} />
         </div>
       </main>

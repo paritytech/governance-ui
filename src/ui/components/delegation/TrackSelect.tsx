@@ -6,6 +6,7 @@ import { CheckIcon, ChevronDownIcon } from '../../icons';
 import SectionTitle from '../SectionTitle';
 import ProgressStepper from '../ProgressStepper';
 
+
 interface ICheckBoxProps {
   title?: string;
   checked?: boolean;
