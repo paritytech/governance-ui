@@ -3,7 +3,7 @@ import { ButtonOutline } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { DelegateModal } from '../components/delegation/delegateModal/Summary.js';
 import { TrackSelect, CheckBox } from '../components/delegation/TrackSelect.js';
-import { tracksMetadata, delegatesMock } from '../../chain/mocks';
+import { tracksMetadata } from '../../chain/mocks';
 import { CaretDownIcon, CaretRightIcon, PlusIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
