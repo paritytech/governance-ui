@@ -91,16 +91,7 @@ export function TrackSelectSection({
         <ProgressStepper step={0} />
       </SectionTitle>
       <div className="flex flex-col gap-4">
-        <div className="mb-4 flex flex-row justify-between">
-          <CheckBox background title="All tracks" />
-          <ButtonSecondary onClick={() => delegateHandler()}>
-            <div className="flex flex-row items-center justify-center gap-1">
-              <div>Delegate Tracks</div>
-              <ChevronRightIcon />
-            </div>
-          </ButtonSecondary>
-        </div>
-        <TrackSelect expanded />
+        <TrackSelect expanded delegateHandler={delegateHandler} />
       </div>
     </div>
   );

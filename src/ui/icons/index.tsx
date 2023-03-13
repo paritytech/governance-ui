@@ -1,10 +1,12 @@
 interface IconProps {
   size?: string;
+  className?: string;
 }
 
-export function ChevronDownIcon({ size }: IconProps) {
+export function ChevronDownIcon({ size, className }: IconProps) {
   return (
     <svg
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width={size ? size : '16'}
       height={size ? size : '16'}
@@ -20,9 +22,10 @@ export function ChevronDownIcon({ size }: IconProps) {
   );
 }
 
-export function ChevronRightIcon({ size }: IconProps) {
+export function ChevronRightIcon({ size, className }: IconProps) {
   return (
     <svg
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width={size ? size : '16'}
       height={size ? size : '16'}
@@ -38,9 +41,10 @@ export function ChevronRightIcon({ size }: IconProps) {
   );
 }
 
-export function AddIcon({ size }: IconProps) {
+export function AddIcon({ size, className }: IconProps) {
   return (
     <svg
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width={size ? size : '16'}
       height={size ? size : '16'}
@@ -56,9 +60,10 @@ export function AddIcon({ size }: IconProps) {
   );
 }
 
-export function CloseIcon({ size }: IconProps) {
+export function CloseIcon({ size, className }: IconProps) {
   return (
     <svg
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width={size ? size : '16'}
       height={size ? size : '16'}
@@ -77,9 +82,10 @@ export function CloseIcon({ size }: IconProps) {
   );
 }
 
-export function DelegateIcon({ size }: IconProps) {
+export function DelegateIcon({ size, className }: IconProps) {
   return (
     <svg
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width={size ? size : '16'}
       height={size ? size : '16'}
@@ -103,9 +109,10 @@ export function DelegateIcon({ size }: IconProps) {
   );
 }
 
-export function MoreHorizontalIcon({ size }: IconProps) {
+export function MoreHorizontalIcon({ size, className }: IconProps) {
   return (
     <svg
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width={size ? size : '16'}
       height={size ? size : '16'}
@@ -138,9 +145,10 @@ export function MoreHorizontalIcon({ size }: IconProps) {
   );
 }
 
-export function CheckIcon({ size }: IconProps) {
+export function CheckIcon({ size, className }: IconProps) {
   return (
     <svg
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width={size ? size : '16'}
       height={size ? size : '16'}
@@ -155,9 +163,10 @@ export function CheckIcon({ size }: IconProps) {
     </svg>
   );
 }
-export function WalletIcon({ size }: IconProps) {
+export function WalletIcon({ size, className }: IconProps) {
   return (
     <svg
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width={size ? size : '16'}
       height={size ? size : '16'}
@@ -175,9 +184,10 @@ export function WalletIcon({ size }: IconProps) {
   );
 }
 
-export function DisconnectIcon({ size }: IconProps) {
+export function DisconnectIcon({ size, className }: IconProps) {
   return (
     <svg
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width={size ? size : '16'}
       height={size ? size : '16'}
@@ -196,9 +206,10 @@ export function DisconnectIcon({ size }: IconProps) {
   );
 }
 
-export function ConnectedIcon({ size }: IconProps) {
+export function ConnectedIcon({ size, className }: IconProps) {
   return (
     <svg
+      className={className}
       xmlns="http://www.w3.org/2000/svg"
       width={size ? size : '16'}
       height={size ? size : '16'}
