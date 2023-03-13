@@ -74,8 +74,8 @@ export function DelegateCard({
           {variant === 'some' && (
             <ButtonSecondary onClick={() => delegateHandler()}>
               <div className="flex w-full flex-nowrap items-center justify-center gap-1">
-                <DelegateIcon />
-                <div>Delegate Votes</div>
+                <div>Select</div>
+                <ChevronRightIcon />
               </div>
             </ButtonSecondary>
           )}
