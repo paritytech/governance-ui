@@ -102,7 +102,7 @@ export function DelegateCard({
   );
 }
 
-export function DelegateCard({
+export function DelegateCardOld({
   delegate,
   delegateHandler,
 }: {
@@ -146,7 +146,6 @@ export function DelegateCard({
         </div>
         <hr />
         <StatBar stats={[]} />
-
       </Card>
     </>
   );

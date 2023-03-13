@@ -55,8 +55,7 @@ export function DelegatesBar({ delegates }: { delegates: Delegate[] }) {
       </div>
       <div className="flex max-w-full gap-7 overflow-x-scroll px-6 pb-1	">
         {delegates?.map((delegate, idx) => (
-          <DelegateAllCard
-
+          <DelegateCard
             key={idx}
             delegate={delegate}
             delegateHandler={() => openModal()}
@@ -167,7 +166,6 @@ export function DelegationPanel({ state }: { state: State }) {
           />
         </div>
         <div ref={delegateSectionRef}>
-
           <DelegateSection delegates={delegates} />
         </div>
       </main>
