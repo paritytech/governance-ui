@@ -13,6 +13,7 @@ import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
 import { Delegate, State } from 'src/lifecycle/types.js';
 
+
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
   import.meta.url
