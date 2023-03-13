@@ -180,15 +180,21 @@ export const DelegateSection = ({
 export function DelegationPanel() {
   const delegateSectionRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef(null);
-  const gotoDelegateSection = () => {
-    delegateSectionRef?.current?.scrollIntoView({ behavior: 'smooth' });
+  const trackSectionRef: React.MutableRefObject<HTMLDivElement | null> =
+    useRef(null);
+  const gotoSection = (section: any) => {
+    section?.current?.scrollIntoView({ behavior: 'smooth' });
   };
   return (
     <DelegationProvider>
       <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-16 pt-14 md:pt-20">
         <Headline />
         <DelegatesBar delegates={delegatesMock} />
-        <TrackSelectSection delegateHandler={() => gotoDelegateSection()} />
+        <div ref={trackSectionRef}>
+          <TrackSelectSection
+            delegateHandler={() => gotoSection(delegateSectionRef)}
+          />
+        </div>
         <div ref={delegateSectionRef} className="pt-8">
           <DelegateSection delegates={delegatesMock} />
         </div>

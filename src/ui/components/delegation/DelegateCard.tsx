@@ -75,7 +75,6 @@ export function DelegateAllCard({
           ))}
         </div>
         <div className="prose prose-sm leading-tight">
-          <div className="uppercase leading-tight">About</div>
           <div className="">{bio}</div>
         </div>
         <hr />
