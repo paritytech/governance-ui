@@ -77,27 +77,6 @@ export function DelegatesBar({ delegates }: { delegates: Delegate[] }) {
   );
 }
 
-export function TrackSelectSection({
-  delegateHandler,
-}: {
-  delegateHandler: () => void;
-}) {
-  return (
-    <div className="mb-16 flex w-full flex-col gap-12 px-2 md:px-8">
-      <SectionTitle
-        title="Delegate by Track"
-        description="Select the tracks you&lsquo;d like to delegate."
-        step={0}
-      >
-        <ProgressStepper step={0} />
-      </SectionTitle>
-      <div className="flex flex-col gap-4">
-        <TrackSelect expanded delegateHandler={delegateHandler} />
-      </div>
-    </div>
-  );
-}
-
 export const DelegateSection = ({ delegates }: { delegates: Delegate[] }) => {
   // ToDo : Move Modal to a context
   const [visible, setVisible] = useState(false);
@@ -182,11 +161,12 @@ export function DelegationPanel({ state }: { state: State }) {
         <Headline />
         <DelegatesBar delegates={delegates} />
         <div ref={trackSectionRef}>
-          <TrackSelectSection
+          <TrackSelect
+            expanded
             delegateHandler={() => gotoSection(delegateSectionRef)}
           />
         </div>
-        <div ref={delegateSectionRef} className="pt-8">
+        <div ref={delegateSectionRef}>
           <DelegateSection delegates={delegates} />
         </div>
       </main>

@@ -2,7 +2,9 @@ import type { TrackType } from './types';
 import { tracksMetadata } from '../../../chain/mocks';
 import { useDelegation } from '../../../contexts/Delegation.js';
 import { ButtonSecondary, Card } from '../../lib';
-import { CheckIcon, ChevronRightIcon } from '../../icons';
+import { CheckIcon, ChevronDownIcon, ChevronRightIcon } from '../../icons';
+import SectionTitle from '../SectionTitle';
+import ProgressStepper from '../ProgressStepper';
 
 interface ICheckBoxProps {
   title?: string;
@@ -92,7 +94,14 @@ export function TrackSelect({
   const { selectedTracks, setTrackSelection } = useDelegation();
 
   return (
-    <div className="flex flex-col gap-12">
+    <div className="flex flex-col gap-12 px-8 pb-24">
+      <SectionTitle
+        title="Delegate by Track"
+        description="Select the tracks you&lsquo;d like to delegate."
+        step={0}
+      >
+        <ProgressStepper step={0} />
+      </SectionTitle>
       <div className="mb-4 flex flex-row justify-between">
         <CheckBox
           background
@@ -112,8 +121,12 @@ export function TrackSelect({
           onClick={() => (delegateHandler ? delegateHandler() : null)}
         >
           <div className="flex flex-row items-center justify-center gap-1">
-            <div>Delegate Tracks</div>
-            <ChevronRightIcon />
+            <div>
+              {selectedTracks.size > 0
+                ? 'Delegate Tracks'
+                : 'Check delegates first'}
+            </div>
+            <ChevronDownIcon />
           </div>
         </ButtonSecondary>
       </div>
