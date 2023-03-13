@@ -121,7 +121,7 @@ export const DelegateSection = ({ delegates }: { delegates: Delegate[] }) => {
               />
             </div>
           </div>
-          <div className="flex flex-row flex-wrap items-center justify-start gap-y-4 gap-x-7">
+          <div className="grid grid-cols-3 flex-wrap items-center justify-start gap-6">
             {delegates.map((delegate, idx) => (
               <DelegateCard
                 key={idx}
