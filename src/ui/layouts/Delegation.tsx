@@ -8,7 +8,7 @@ import { AddIcon, ChevronDownIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
-import { Delegate, State } from 'src/lifecycle/types.js';
+import { State } from 'src/lifecycle/types.js';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -34,8 +34,9 @@ function Headline() {
   );
 }
 
-export function DelegatesBar({ delegates }: { delegates: Delegate[] }) {
+export function DelegatesBar({ state }: { state: State }) {
   // ToDo : Move Modal to a context
+  const { delegates } = state;
   const [visible, setVisible] = useState(false);
   const allTracks = tracksMetadata.map((track) => track.subtracks).flat();
   const closeModal = () => {
@@ -54,11 +55,12 @@ export function DelegatesBar({ delegates }: { delegates: Delegate[] }) {
         </div>
       </div>
       <div className="flex max-w-full gap-7 overflow-x-scroll px-6 pb-1	">
-        {delegates?.map((delegate, idx) => (
+        {delegates.map((delegate, idx) => (
           <DelegateCard
             key={idx}
             delegate={delegate}
-            delegateHandler={() => openModal()}
+            state={state}
+            delegateHandler={openModal}
             variant="all"
           />
         ))}
@@ -66,7 +68,7 @@ export function DelegatesBar({ delegates }: { delegates: Delegate[] }) {
       {delegates.length > 0 && (
         <DelegateModal
           open={visible}
-          onClose={() => closeModal()}
+          onClose={closeModal}
           delegate={delegates[0]}
           tracks={allTracks}
         />
@@ -75,8 +77,9 @@ export function DelegatesBar({ delegates }: { delegates: Delegate[] }) {
   );
 }
 
-export const DelegateSection = ({ delegates }: { delegates: Delegate[] }) => {
+export const DelegateSection = ({ state }: { state: State }) => {
   // ToDo : Move Modal to a context
+  const { delegates } = state;
   const [visible, setVisible] = useState(false);
   const { selectedTracks } = useDelegation();
   const tracks = tracksMetadata
@@ -126,7 +129,8 @@ export const DelegateSection = ({ delegates }: { delegates: Delegate[] }) => {
               <DelegateCard
                 key={idx}
                 delegate={delegate}
-                delegateHandler={() => openModal()}
+                state={state}
+                delegateHandler={openModal}
                 variant="some"
               />
             ))}
@@ -158,7 +162,7 @@ export function DelegationPanel({ state }: { state: State }) {
     <DelegationProvider>
       <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-16 pt-14 md:pt-20">
         <Headline />
-        <DelegatesBar delegates={delegates} />
+        <DelegatesBar state={state} />
         <div ref={trackSectionRef}>
           <TrackSelect
             expanded
@@ -166,7 +170,7 @@ export function DelegationPanel({ state }: { state: State }) {
           />
         </div>
         <div ref={delegateSectionRef}>
-          <DelegateSection delegates={delegates} />
+          <DelegateSection state={state} />
         </div>
       </main>
     </DelegationProvider>

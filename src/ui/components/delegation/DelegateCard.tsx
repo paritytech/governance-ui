@@ -1,9 +1,8 @@
 import type { DelegateRoleType, StatType } from './types';
-import { ChevronRightIcon, DelegateIcon } from '../../icons';
-import { Button, ButtonSecondary, Card } from '../../lib';
-
+import { DelegateIcon } from '../../icons';
+import { Button, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
-import { Delegate } from '../../../lifecycle/types';
+import { Delegate, State } from '../../../lifecycle/types';
 
 const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
   nominator: { title: 'nominator', twColor: 'bg-green-300' },
@@ -44,12 +43,23 @@ export function StatBar({ stats }: { stats: StatType[] }) {
   );
 }
 
+function extractRole(address: string, state: State): DelegateRoleType[] {
+  if (state.type == 'ConnectedState') {
+    if (state.chain.fellows.has(address)) {
+      return ['fellow'];
+    }
+  }
+  return [];
+}
+
 export function DelegateCard({
   delegate,
+  state,
   delegateHandler,
   variant,
 }: {
   delegate: Delegate;
+  state: State;
   delegateHandler: () => void;
   variant: 'all' | 'some';
 }) {
@@ -57,7 +67,7 @@ export function DelegateCard({
     account: { name, address },
     bio,
   } = delegate;
-
+  const roles = extractRole(address, state);
   return (
     <>
       <Card className="flex w-[450px] shrink-0 grow-0 flex-col gap-4 p-6 shadow-md">
@@ -71,7 +81,7 @@ export function DelegateCard({
             />
           </div>
           {variant === 'some' && (
-            <Button onClick={() => delegateHandler()}>
+            <Button onClick={delegateHandler}>
               <div className="flex w-full flex-nowrap items-center justify-center gap-1">
                 <DelegateIcon />
                 <div>Delegate Votes</div>
@@ -80,72 +90,19 @@ export function DelegateCard({
           )}
         </div>
         <div className="flex gap-2">
-          {[].map(
-            (
-              role // TODO
-            ) => (
-              <RoleTag key={role} role={role} />
-            )
-          )}
+          {roles.map((role) => (
+            <RoleTag key={role} role={role} />
+          ))}
         </div>
         <div className="prose prose-sm leading-tight">
           <div className="">{bio}</div>
         </div>
         <hr />
         <StatBar stats={[]} />
-        <Button onClick={() => delegateHandler()}>
+        <Button onClick={delegateHandler}>
           <div>Delegate All Votes</div>
           <DelegateIcon />
         </Button>
-      </Card>
-    </>
-  );
-}
-
-export function DelegateCardOld({
-  delegate,
-  delegateHandler,
-}: {
-  delegate: Delegate;
-  delegateHandler: () => void;
-}) {
-  const {
-    account: { name, address },
-    bio,
-  } = delegate;
-
-  return (
-    <>
-      <Card className="flex w-[450px] shrink-0 grow-0 flex-col gap-4 p-6 shadow-md">
-        <div className="flex items-start justify-between">
-          <div className="flex flex-col items-start">
-            <h2 className="text-xl capitalize">{name}</h2>
-            <Accounticon
-              address={address}
-              size={24}
-              textClassName="font-semibold my-2"
-            />
-          </div>
-          <ButtonSecondary onClick={() => delegateHandler()}>
-            <div>Delegate Votes</div>
-            <ChevronRightIcon />
-          </ButtonSecondary>
-        </div>
-        <div className="flex gap-2">
-          {[].map(
-            (
-              role // TODO
-            ) => (
-              <RoleTag key={role} role={role} />
-            )
-          )}
-        </div>
-        <div className="prose prose-sm leading-tight">
-          <div className="uppercase leading-tight">About</div>
-          <div className="">{bio}</div>
-        </div>
-        <hr />
-        <StatBar stats={[]} />
       </Card>
     </>
   );
