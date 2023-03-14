@@ -63,10 +63,7 @@ export function DelegateCard({
   delegateHandler: () => void;
   variant: 'all' | 'some';
 }) {
-  const {
-    account: { name, address },
-    bio,
-  } = delegate;
+  const { name, address, manifesto } = delegate;
   const roles = extractRole(address, state);
   return (
     <>
@@ -95,7 +92,7 @@ export function DelegateCard({
           ))}
         </div>
         <div className="prose prose-sm leading-tight">
-          <div className="">{bio}</div>
+          <div className="">{manifesto}</div>
         </div>
         <hr />
         <StatBar stats={[]} />

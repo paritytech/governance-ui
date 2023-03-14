@@ -110,7 +110,7 @@ export function TrackSelect({
           // how do i check number of available tracks?
           onChange={(e) => {
             const isChecked = e.target.checked;
-            availableTracks.map((track, idx) => {
+            availableTracks.map((track) => {
               track.subtracks.map((subtracks) => {
                 setTrackSelection(subtracks.id, isChecked);
               });

@@ -150,7 +150,6 @@ export const DelegateSection = ({ state }: { state: State }) => {
 };
 
 export function DelegationPanel({ state }: { state: State }) {
-  const { delegates } = state;
   const delegateSectionRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef(null);
   const trackSectionRef: React.MutableRefObject<HTMLDivElement | null> =

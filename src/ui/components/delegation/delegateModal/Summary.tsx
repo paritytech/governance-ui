@@ -17,9 +17,7 @@ export function DelegateModal({
   open,
   onClose,
 }: IDelegateModalProps) {
-  const {
-    account: { name, address },
-  } = delegate;
+  const { name, address } = delegate;
   const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();
   const delegateHandler = () => {
