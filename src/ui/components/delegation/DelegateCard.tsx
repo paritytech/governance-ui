@@ -1,6 +1,6 @@
 import type { DelegateRoleType, StatType } from './types';
-import { DelegateIcon } from '../../icons';
-import { Button, Card } from '../../lib';
+import { ChevronRightIcon, DelegateIcon } from '../../icons';
+import { Button, ButtonSecondary, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
 import { Delegate, State } from '../../../lifecycle/types';
 
@@ -34,6 +34,7 @@ export function CardStat({ stat }: { stat: StatType }) {
 export function StatBar({ stats }: { stats: StatType[] }) {
   return (
     <>
+      {stats.length > 0 && <hr />}
       <div className="prose prose-sm flex flex-row gap-6">
         {stats.map((stat, idx) => (
           <CardStat key={idx} stat={stat} />
@@ -67,7 +68,11 @@ export function DelegateCard({
   const roles = extractRole(address, state);
   return (
     <>
-      <Card className="flex w-[450px] shrink-0 grow-0 flex-col gap-4 p-6 shadow-md">
+      <Card
+        className={`flex shrink-0 grow-0 flex-col gap-4 p-6 shadow-md ${
+          variant === 'all' ? 'w-[420px]' : 'w-full'
+        }`}
+      >
         <div className="flex items-start justify-between">
           <div className="flex flex-col items-start">
             <h2 className="text-xl capitalize">{name}</h2>
@@ -78,12 +83,12 @@ export function DelegateCard({
             />
           </div>
           {variant === 'some' && (
-            <Button onClick={delegateHandler}>
+            <ButtonSecondary onClick={delegateHandler}>
               <div className="flex w-full flex-nowrap items-center justify-center gap-1">
-                <DelegateIcon />
-                <div>Delegate Votes</div>
+                <div>Select</div>
+                <ChevronRightIcon />
               </div>
-            </Button>
+            </ButtonSecondary>
           )}
         </div>
         <div className="flex gap-2">
@@ -94,12 +99,13 @@ export function DelegateCard({
         <div className="prose prose-sm leading-tight">
           <div className="">{manifesto}</div>
         </div>
-        <hr />
         <StatBar stats={[]} />
-        <Button onClick={delegateHandler}>
-          <div>Delegate All Votes</div>
-          <DelegateIcon />
-        </Button>
+        {variant === 'all' && (
+          <Button onClick={delegateHandler}>
+            <div>Delegate All Votes</div>
+            <DelegateIcon />
+          </Button>
+        )}
       </Card>
     </>
   );
