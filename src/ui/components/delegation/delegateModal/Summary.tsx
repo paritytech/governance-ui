@@ -4,6 +4,7 @@ import { Delegate } from '../../../../lifecycle/types';
 
 import { Accounticon } from '../../accounts/Accounticon.js';
 import type { TrackType } from '../types';
+import { SimpleAnalytics } from '../../../../analytics';
 
 interface IDelegateModalProps {
   delegate: Delegate;
@@ -21,7 +22,12 @@ export function DelegateModal({
   const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();
   const delegateHandler = () => {
-    // TODO
+    // TODO: submit delegate tx
+
+    // Submit analytics
+    SimpleAnalytics.track('Delegate');
+
+    // close modal
     onClose();
   };
   return (
