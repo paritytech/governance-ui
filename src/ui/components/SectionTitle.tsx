@@ -10,8 +10,8 @@ export default function SectionTitle({
   children,
 }: SectionTitleProps) {
   return (
-    <div className="items-top flex h-auto justify-between">
-      <div className="prose prose-sm  pt-1">
+    <div className="items-top flex h-auto w-full flex-col justify-between gap-6 lg:flex-row">
+      <div className=" prose prose-sm  pt-1">
         <h2 className="mb-2">{title}</h2>
         <div className="text-sm">{description}</div>
       </div>

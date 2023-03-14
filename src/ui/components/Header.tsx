@@ -18,9 +18,12 @@ export function Header(): JSX.Element {
           <div className="h-8 md:hidden">
             <img className="inline h-full" src={tokenUrl} alt="polkadot logo" />
           </div>
-          <div className="hidden h-8 md:block">
+          <div className="hidden h-8 items-center gap-2 md:flex">
             <img className="inline h-full" src={logoUrl} alt="polkadot logo" />
-            <span className="align-middle">| Open Governance</span>
+            <div className="h-4 w-[3px] bg-black" />
+            <span className="prose">
+              <h3 className="pl-1 align-middle">Open Governance</h3>
+            </span>
           </div>
         </div>
       </Navbar.Brand>
