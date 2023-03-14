@@ -1,9 +1,8 @@
 import type { DelegateRoleType, StatType } from './types';
-import { ChevronRightIcon, DelegateIcon } from '../../icons';
-import { Button, ButtonSecondary, Card } from '../../lib';
-
+import { DelegateIcon } from '../../icons';
+import { Button, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
-import { Delegate } from '../../../lifecycle/types';
+import { Delegate, State } from '../../../lifecycle/types';
 
 const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
   nominator: { title: 'nominator', twColor: 'bg-green-300' },
@@ -45,20 +44,28 @@ export function StatBar({ stats }: { stats: StatType[] }) {
   );
 }
 
+function extractRole(address: string, state: State): DelegateRoleType[] {
+  if (state.type == 'ConnectedState') {
+    if (state.chain.fellows.has(address)) {
+      return ['fellow'];
+    }
+  }
+  return [];
+}
+
 export function DelegateCard({
   delegate,
+  state,
   delegateHandler,
   variant,
 }: {
   delegate: Delegate;
+  state: State;
   delegateHandler: () => void;
   variant: 'all' | 'some';
 }) {
-  const {
-    account: { name, address },
-    bio,
-  } = delegate;
-
+  const { name, address, manifesto } = delegate;
+  const roles = extractRole(address, state);
   return (
     <>
       <Card
@@ -77,6 +84,7 @@ export function DelegateCard({
           </div>
           {variant === 'some' && (
             <ButtonSecondary onClick={() => delegateHandler()}>
+
               <div className="flex w-full flex-nowrap items-center justify-center gap-1">
                 <div>Select</div>
                 <ChevronRightIcon />
@@ -85,16 +93,12 @@ export function DelegateCard({
           )}
         </div>
         <div className="flex gap-2">
-          {[].map(
-            (
-              role // TODO
-            ) => (
-              <RoleTag key={role} role={role} />
-            )
-          )}
+          {roles.map((role) => (
+            <RoleTag key={role} role={role} />
+          ))}
         </div>
         <div className="prose prose-sm leading-tight">
-          <div className="">{bio}</div>
+          <div className="">{manifesto}</div>
         </div>
         <StatBar stats={[]} />
         {variant === 'all' && (
@@ -103,6 +107,7 @@ export function DelegateCard({
             <DelegateIcon />
           </Button>
         )}
+
       </Card>
     </>
   );
