@@ -1,6 +1,6 @@
 import type { DelegateRoleType, StatType } from './types';
-import { DelegateIcon } from '../../icons';
-import { Button, Card } from '../../lib';
+import { ChevronRightIcon, DelegateIcon } from '../../icons';
+import { Button, ButtonSecondary, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
 import { Delegate, State } from '../../../lifecycle/types';
 
@@ -84,7 +84,6 @@ export function DelegateCard({
           </div>
           {variant === 'some' && (
             <ButtonSecondary onClick={() => delegateHandler()}>
-
               <div className="flex w-full flex-nowrap items-center justify-center gap-1">
                 <div>Select</div>
                 <ChevronRightIcon />
@@ -107,7 +106,6 @@ export function DelegateCard({
             <DelegateIcon />
           </Button>
         )}
-
       </Card>
     </>
   );

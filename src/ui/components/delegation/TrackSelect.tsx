@@ -115,7 +115,6 @@ export function TrackSelect({
                 track.subtracks.map((subtracks) => {
                   setTrackSelection(subtracks.id, isChecked);
                 });
-
               });
             }}
           />

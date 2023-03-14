@@ -56,7 +56,6 @@ export function DelegatesBar({ state }: { state: State }) {
       </div>
       <div className="flex max-w-full gap-7 overflow-x-scroll px-3 pb-1 lg:px-6	">
         {delegates?.map((delegate, idx) => (
-
           <DelegateCard
             key={idx}
             delegate={delegate}
@@ -123,12 +122,12 @@ export const DelegateSection = ({ state }: { state: State }) => {
               placeholder="Search"
               className="w-full self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70 lg:w-fit"
             />
-
           </div>
         </div>
         <div className="grid grid-cols-1 flex-wrap items-center justify-start gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
           {delegates.map((delegate, idx) => (
             <DelegateCard
+              state={state}
               key={idx}
               delegate={delegate}
               delegateHandler={() => openModal()}
@@ -169,8 +168,7 @@ export function DelegationPanel({ state }: { state: State }) {
           />
         </div>
         <div ref={delegateSectionRef} className="w-full">
-          <DelegateSection delegates={delegates} />
-
+          <DelegateSection state={state} />
         </div>
       </main>
     </DelegationProvider>
