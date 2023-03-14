@@ -18,9 +18,7 @@ export function DelegateModal({
   open,
   onClose,
 }: IDelegateModalProps) {
-  const {
-    account: { name, address },
-  } = delegate;
+  const { name, address } = delegate;
   const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();
   const delegateHandler = () => {
@@ -62,11 +60,11 @@ export function DelegateModal({
           </div>
         </div>
         <div className="flex w-full flex-row justify-end gap-4">
-          <ButtonSecondary onClick={() => cancelHandler()}>
+          <ButtonSecondary onClick={cancelHandler}>
             <CloseIcon />
             <div>Cancel</div>
           </ButtonSecondary>
-          <Button onClick={() => delegateHandler()}>
+          <Button onClick={delegateHandler}>
             <div>Delegate Now</div>
             <ChevronRightIcon />
           </Button>

@@ -94,7 +94,7 @@ export function TrackSelect({
   const { selectedTracks, setTrackSelection } = useDelegation();
 
   return (
-    <div className="flex flex-col gap-12 px-8 pb-24">
+    <div className="flex flex-col gap-12 px-3 lg:px-8 lg:pb-12">
       <SectionTitle
         title="Delegate by Track"
         description="Select the tracks you&lsquo;d like to delegate."
@@ -102,56 +102,58 @@ export function TrackSelect({
       >
         <ProgressStepper step={0} />
       </SectionTitle>
-      <div className="mb-4 flex flex-row justify-between">
-        <CheckBox
-          background
-          title="All tracks"
-          checked={selectedTracks.size > 0 ? true : false}
-          // how do i check number of available tracks?
-          onChange={(e) => {
-            const isChecked = e.target.checked;
-            availableTracks.map((track) => {
-              track.subtracks.map((subtracks) => {
-                setTrackSelection(subtracks.id, isChecked);
+      <div className="flex flex-col gap-2 lg:gap-4">
+        <div className="mb-4 flex flex-row justify-between">
+          <CheckBox
+            background
+            title="All tracks"
+            checked={selectedTracks.size > 0 ? true : false}
+            // how do i check number of available tracks?
+            onChange={(e) => {
+              const isChecked = e.target.checked;
+              availableTracks.map((track) => {
+                track.subtracks.map((subtracks) => {
+                  setTrackSelection(subtracks.id, isChecked);
+                });
               });
-            });
-          }}
-        />
-        <ButtonSecondary
-          onClick={() => (delegateHandler ? delegateHandler() : null)}
+            }}
+          />
+          <ButtonSecondary
+            onClick={() => (delegateHandler ? delegateHandler() : null)}
+          >
+            <div className="flex flex-row items-center justify-center gap-1">
+              <div>
+                {selectedTracks.size > 0
+                  ? 'Delegate Tracks'
+                  : 'Check delegates first'}
+              </div>
+              <ChevronDownIcon />
+            </div>
+          </ButtonSecondary>
+        </div>
+        <div
+          className={`flex w-full flex-col justify-between md:flex-row md:gap-4 ${className}`}
         >
-          <div className="flex flex-row items-center justify-center gap-1">
-            <div>
-              {selectedTracks.size > 0
-                ? 'Delegate Tracks'
-                : 'Check delegates first'}
+          {availableTracks.map((track, idx) => (
+            <div key={idx} className="flex w-full flex-col gap-2 md:w-1/4">
+              <div className="text-sm">{track.title}</div>
+              <div className="mb-8 flex flex-col gap-2 lg:gap-4">
+                {track.subtracks.map((subtrack, idx) => (
+                  <TrackCheckableCard
+                    key={idx}
+                    track={subtrack}
+                    checked={selectedTracks.has(subtrack.id)}
+                    onChange={(e) => {
+                      const isChecked = e.target.checked;
+                      setTrackSelection(subtrack.id, isChecked);
+                    }}
+                    expanded={expanded}
+                  />
+                ))}
+              </div>
             </div>
-            <ChevronDownIcon />
-          </div>
-        </ButtonSecondary>
-      </div>
-      <div
-        className={`flex w-full flex-col justify-between md:flex-row md:gap-4 ${className}`}
-      >
-        {availableTracks.map((track, idx) => (
-          <div key={idx} className=" flex w-full flex-col gap-2 md:w-1/4">
-            <div className="px-2 text-sm">{track.title}</div>
-            <div className="flex flex-col gap-4">
-              {track.subtracks.map((subtrack, idx) => (
-                <TrackCheckableCard
-                  key={idx}
-                  track={subtrack}
-                  checked={selectedTracks.has(subtrack.id)}
-                  onChange={(e) => {
-                    const isChecked = e.target.checked;
-                    setTrackSelection(subtrack.id, isChecked);
-                  }}
-                  expanded={expanded}
-                />
-              ))}
-            </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
     </div>
   );

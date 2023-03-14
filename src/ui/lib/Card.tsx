@@ -7,7 +7,7 @@ export function Card({
 }: BaseElementProps): JSX.Element {
   return (
     <div
-      className={`m-1 rounded-2xl bg-white p-2 shadow ${className || ''}`}
+      className={`rounded-2xl bg-white p-2 shadow ${className || ''}`}
       style={style}
     >
       {children}

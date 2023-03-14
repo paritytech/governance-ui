@@ -47,8 +47,9 @@ export type Report = Warning | Error;
 // States
 
 export type Delegate = {
-  account: { name: string; address: string };
-  bio?: string;
+  name: string;
+  address: string;
+  manifesto: string;
 };
 
 type BaseState = {

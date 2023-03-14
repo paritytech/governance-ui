@@ -17,7 +17,7 @@ export default function ProgressStepper({ step, steps }: ProgressStepperProps) {
   if (step === 2) rightIcon = <MoreHorizontalIcon />;
 
   return (
-    <div className="flex w-1/2 flex-col gap-2 font-medium">
+    <div className="flex w-full flex-col gap-2 font-medium lg:w-1/2">
       <div className="flex h-[32px] rounded-full bg-gray-200 p-1">
         <div
           className={`flex items-center justify-center px-2 ${
