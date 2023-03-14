@@ -22,7 +22,7 @@ function Headline() {
         <h1 className="text-center">
           Governance is now <span className="text-primary">open</span>
         </h1>
-        <div className="m-auto max-w-[500px] text-center text-base">
+        <div className="m-auto max-w-[500px] px-3 text-center text-base">
           Not ready to do the research? Contribute without the hassle: delegate
           your votes to experts.
         </div>
@@ -54,7 +54,7 @@ export function DelegatesBar({ state }: { state: State }) {
           options
         </div>
       </div>
-      <div className="flex max-w-full gap-7 overflow-x-scroll px-6 pb-1	">
+      <div className="flex max-w-full gap-7 overflow-x-scroll px-3 pb-1 lg:px-6	">
         {delegates.map((delegate, idx) => (
           <DelegateCard
             key={idx}
@@ -94,7 +94,7 @@ export const DelegateSection = ({ state }: { state: State }) => {
   };
   return (
     <>
-      <div className="flex w-full flex-col gap-16 px-2 pb-6 md:px-8">
+      <div className="mb-48 mt-6 flex w-full flex-col gap-16 px-3 md:px-8">
         <SectionTitle
           title="Browse Delegates"
           description="Lorem ipsum dolor sit amet"
@@ -102,8 +102,18 @@ export const DelegateSection = ({ state }: { state: State }) => {
           <ProgressStepper step={1} />
         </SectionTitle>
         <div className="flex flex-col gap-4">
-          <div className="flex flex-row items-center justify-between">
-            <div className="flex flex-row items-center justify-between gap-4">
+          <div className="flex w-full flex-col items-center justify-between gap-4 md:flex-row">
+            <div className="flex w-full flex-row items-center justify-between gap-4 lg:justify-start">
+              <input
+                placeholder="Search"
+                className="w-full self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70 lg:w-fit"
+              />
+              <ButtonOutline className="w-fit">
+                <AddIcon />
+                <div className="whitespace-nowrap">Add address</div>
+              </ButtonOutline>
+            </div>
+            <div className="flex w-full flex-row items-center justify-start gap-4 lg:justify-end">
               <ButtonOutline>
                 <div>Aggregate Best</div>
                 <ChevronDownIcon />
@@ -113,18 +123,8 @@ export const DelegateSection = ({ state }: { state: State }) => {
                 <ChevronDownIcon />
               </ButtonOutline>
             </div>
-            <div className="flex flex-row items-center justify-between gap-4">
-              <ButtonOutline>
-                <AddIcon />
-                <div>Add address</div>
-              </ButtonOutline>
-              <input
-                placeholder="Search"
-                className="w-[200px] self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70"
-              />
-            </div>
           </div>
-          <div className="flex flex-row flex-wrap items-center justify-start gap-y-4 gap-x-7">
+          <div className="grid grid-cols-1 flex-wrap items-center justify-start gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
             {delegates.map((delegate, idx) => (
               <DelegateCard
                 key={idx}
