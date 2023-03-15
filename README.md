@@ -9,7 +9,7 @@ Governance UI is a [PWA](https://web.dev/learn/pwa/) - or Progressive Web App - 
 
 Anyone can register themselves as a delegate.
 
-To add a new delegate, edit [this file](assets/data/delegates.json).
+To add a new delegate, edit [this file](assets/data/polkadot/delegates.json).
 
 The following table outlines the structure of a `delegate` entry:
 

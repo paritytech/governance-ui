@@ -353,20 +353,6 @@ export class Updater {
           message: indexes.error.message,
         });
       }
-
-      // Fetch delegates
-      const delegates = await this.fetchDelegates();
-      if (delegates.type == 'ok') {
-        this.#dispatch({
-          type: 'SetDelegates',
-          data: delegates.value,
-        });
-      } else {
-        await this.addReport({
-          type: 'Warning',
-          message: delegates.error.message,
-        });
-      }
     } catch (e: any) {
       await this.addReport({ type: 'Error', message: e.toString() });
     }
@@ -396,17 +382,6 @@ export class Updater {
           data.map((datum, index) => [datum, indexes[index].data])
         )
       );
-    } else {
-      return err(new Error(`Can't access ${url}`));
-    }
-  }
-
-  async fetchDelegates(): Promise<Result<Delegate[]>> {
-    const url = 'https://jeluard.github.io/governance-ui/data/delegates.json';
-    const delegates = await fetch(url);
-    if (delegates.ok) {
-      const data = (await delegates.json()) as Array<Delegate>;
-      return ok(data);
     } else {
       return err(new Error(`Can't access ${url}`));
     }
@@ -539,6 +514,17 @@ export function useLifeCycle(
   return [state, updater];
 }
 
+async function fetchDelegates(network: Network): Promise<Result<Delegate[]>> {
+  const url = `https://jeluard.github.io/governance-ui/data/${network.toLowerCase()}/delegates.json`;
+  const delegates = await fetch(url);
+  if (delegates.ok) {
+    const data = (await delegates.json()) as Array<Delegate>;
+    return ok(data);
+  } else {
+    return err(new Error(`Can't access ${url}`));
+  }
+}
+
 /**
  * Called when the connected network has changed.
  * Underlying `indexeddb`, `api` and associated resources will refreshed.
@@ -561,6 +547,20 @@ async function dispatchNetworkChange(
     network,
     votes,
   });
+
+  // Fetch delegates
+  const delegates = await fetchDelegates(network);
+  if (delegates.type == 'ok') {
+    dispatch({
+      type: 'SetDelegates',
+      data: delegates.value,
+    });
+  } else {
+    dispatchAddReport(dispatch, {
+      type: 'Warning',
+      message: delegates.error.message,
+    });
+  }
 
   return dispatchEndpointsParamChange(dispatch, network, rpcParam);
 }
