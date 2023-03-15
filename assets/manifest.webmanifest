@@ -41,6 +41,6 @@
   "categories": ["polkadot", "governance", "dapp", "social"],
   "related_applications": [{
     "platform": "webapp",
-    "url": "https://jeluard.github.io/governance-ui/manifest.webmanifest"
+    "url": "https://paritytech.github.io/governance-ui/manifest.webmanifest"
   }]
 }

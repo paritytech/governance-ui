@@ -34,7 +34,7 @@ jobs:
         working-directory: test
         env:
           # TODO extract this URL from context
-          URL: https://jeluard.github.io/governance-ui
+          URL: https://paritytech.github.io/governance-ui
       - uses: actions/upload-artifact@v3
         if: always()
         with:
