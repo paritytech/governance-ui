@@ -54,7 +54,7 @@
     "@types/serviceworker": "0.0.65",
     "@typescript-eslint/eslint-plugin": "5.55.0",
     "@typescript-eslint/parser": "5.55.0",
-    "buffer": "6.0.3",
+    "buffer": "5.5.0",
     "eslint": "8.36.0",
     "eslint-config-prettier": "8.7.0",
     "eslint-plugin-react": "7.32.2",
