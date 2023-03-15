@@ -515,7 +515,7 @@ export function useLifeCycle(
 }
 
 async function fetchDelegates(network: Network): Promise<Result<Delegate[]>> {
-  const url = `https://jeluard.github.io/governance-ui/data/${network.toLowerCase()}/delegates.json`;
+  const url = `https://paritytech.github.io/governance-ui/data/${network.toLowerCase()}/delegates.json`;
   const delegates = await fetch(url);
   if (delegates.ok) {
     const data = (await delegates.json()) as Array<Delegate>;
