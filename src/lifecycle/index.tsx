@@ -1,4 +1,13 @@
-import { Dispatch, useCallback, useEffect, useReducer, useRef } from 'react';
+import React, {
+  Dispatch,
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useContext,
+  useState,
+  createContext,
+} from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
 import { getVotingFor, submitBatchVotes } from '../chain/conviction-voting.js';
@@ -758,5 +767,38 @@ async function updateChainState(
     currentUnsub?.();
   };
 }
+
+/**
+ * Provides the lifeCycle context
+ */
+interface IAppStateContext {
+  state: State;
+  updater: Updater;
+  api: ApiPromise | undefined;
+}
+const appStateContext = createContext<IAppStateContext>({} as IAppStateContext);
+export const useAppLifeCycle = () => useContext(appStateContext);
+export const AppLifeCycleProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const [state, updater] = useLifeCycle();
+  const [api, setApi] = useState<ApiPromise>();
+  if (
+    state.type === 'ConnectedState' &&
+    (state.connectivity.type === 'Connected' ||
+      state.connectivity.type === 'Following')
+  ) {
+    API_CACHE.getOrCreate(state.connectivity.endpoints).then((api) =>
+      setApi(api)
+    );
+  }
+  return (
+    <appStateContext.Provider value={{ state, updater, api }}>
+      {children}
+    </appStateContext.Provider>
+  );
+};
 
 export * from './types';

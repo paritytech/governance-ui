@@ -1,4 +1,4 @@
-import AppStateProvider from './contexts/AppState.js';
+import { AppLifeCycleProvider } from './lifecycle/index.js';
 import {
   ErrorBoundary,
   Header,
@@ -9,13 +9,13 @@ import { DelegationPanel } from './ui/layouts/Delegation.js';
 export function App(): JSX.Element {
   return (
     <ErrorBoundary>
-      <AppStateProvider>
+      <AppLifeCycleProvider>
         <NotificationBox />
         <div className="m-auto flex h-screen flex-col">
           <Header />
           <DelegationPanel />
         </div>
-      </AppStateProvider>
+      </AppLifeCycleProvider>
     </ErrorBoundary>
   );
 }

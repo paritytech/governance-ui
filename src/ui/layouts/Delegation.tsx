@@ -8,7 +8,7 @@ import { AddIcon, ChevronDownIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
-import { useAppState } from '../../contexts/AppState';
+import { useAppLifeCycle } from '../../lifecycle';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -36,7 +36,7 @@ function Headline() {
 
 export function DelegatesBar() {
   // ToDo : Move Modal to a context
-  const { state } = useAppState();
+  const { state } = useAppLifeCycle();
   const { delegates } = state;
   const [visible, setVisible] = useState(false);
   const allTracks = tracksMetadata.map((track) => track.subtracks).flat();
@@ -80,10 +80,11 @@ export function DelegatesBar() {
 
 export const DelegateSection = () => {
   // ToDo : Move Modal to a context
-  const { state } = useAppState();
+  const { state } = useAppLifeCycle();
   const { delegates } = state;
   const [visible, setVisible] = useState(false);
   const { selectedTracks } = useDelegation();
+
   const tracks = tracksMetadata
     .map((track) => track.subtracks)
     .flat()
