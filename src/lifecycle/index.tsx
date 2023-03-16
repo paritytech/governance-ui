@@ -776,8 +776,10 @@ interface IAppStateContext {
   updater: Updater;
   api: ApiPromise | undefined;
 }
-const appStateContext = createContext<IAppStateContext>({} as IAppStateContext);
-export const useAppLifeCycle = () => useContext(appStateContext);
+const appLifeCycleContext = createContext<IAppStateContext>(
+  {} as IAppStateContext
+);
+export const useAppLifeCycle = () => useContext(appLifeCycleContext);
 export const AppLifeCycleProvider = ({
   children,
 }: {
@@ -795,9 +797,9 @@ export const AppLifeCycleProvider = ({
     );
   }
   return (
-    <appStateContext.Provider value={{ state, updater, api }}>
+    <appLifeCycleContext.Provider value={{ state, updater, api }}>
       {children}
-    </appStateContext.Provider>
+    </appLifeCycleContext.Provider>
   );
 };
 
