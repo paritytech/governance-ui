@@ -1,3 +1,4 @@
+import { Remark } from 'react-remark';
 import type { DelegateRoleType, StatType } from './types';
 import { ChevronRightIcon, DelegateIcon } from '../../icons';
 import { Button, ButtonSecondary, Card } from '../../lib';
@@ -53,6 +54,11 @@ function extractRole(address: string, state: State): DelegateRoleType[] {
   return [];
 }
 
+function manifestoPreview(str: string): string {
+  // TODO return a preview considering lines (e.g. max3 lines)
+  return str.substring(0, 200);
+}
+
 export function DelegateCard({
   delegate,
   state,
@@ -69,7 +75,7 @@ export function DelegateCard({
   return (
     <>
       <Card
-        className={`flex shrink-0 grow-0 flex-col gap-4 p-6 shadow-md ${
+        className={`grid h-96 shrink-0 grow-0 flex-col gap-4 p-6 shadow-md ${
           variant === 'all' ? 'w-[420px]' : 'w-full'
         }`}
       >
@@ -96,12 +102,15 @@ export function DelegateCard({
             <RoleTag key={role} role={role} />
           ))}
         </div>
-        <div className="prose prose-sm leading-tight">
-          <div className="">{manifesto}</div>
+        <div className="prose prose-sm overflow-auto leading-tight">
+          <Remark>{manifestoPreview(manifesto)}</Remark>
         </div>
         <StatBar stats={[]} />
         {variant === 'all' && (
-          <Button onClick={delegateHandler}>
+          <Button
+            className="align-self-center w-9/12 justify-self-center"
+            onClick={delegateHandler}
+          >
             <div>Delegate All Votes</div>
             <DelegateIcon />
           </Button>
