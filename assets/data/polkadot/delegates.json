@@ -12,7 +12,7 @@
     {
         "name": "turboflakes.io",
         "address": "12gPFmRqnsDhc9C5DuXyXBFA23io5fSGtKTSAimQtAWgueD2",
-        "manifesto": "PLEASE ADD a DESCRIPTION of YOUR GOALS as a DELEGATE. Supports markdown."
+        "manifesto": "TurboFlakes was born out of interest in the Polkadot network. TurboFlakes provides end-user tooling to help you to interact with Substrate blockchain networks. Our journey began in January 2021 when we decided to deepen our knowledge about this multichain network. At first we were only participating as Nominators, but we soon realised that our expertise could also be applied to set a reliable infrastructure to safely run and secure Validators for the Polkadot and Kusama networks. Read more at: https://www.turboflakes.io/#/about"
     },
     {
         "name": "NeNa 🌻",
@@ -22,12 +22,12 @@
     {
         "name": "Swiss Bond",
         "address": "13EEEhiXeCFpFjVQxmjJsHjr9LFvnAurcnwQ1FDgB5LmJwQp",
-        "manifesto": "PLEASE ADD a DESCRIPTION of YOUR GOALS as a DELEGATE. Supports markdown."
+        "manifesto": "Swiss Bond is a trusted Proof-of-Stake infrastructure provider and validator to comfortably stake your coins and earn rewards."
     },
     {
         "name": "RADIUMBLOCK.COM",
         "address": "13GtCixw3EZARj52CVbKLrsAzyc7dmmYhDV6quS5yeVCfnh1",
-        "manifesto": "PLEASE ADD a DESCRIPTION of YOUR GOALS as a DELEGATE. Supports markdown."
+        "manifesto": "Radiumblock.com focuses on Web3 Infra for Designers, Developers, Dapps! Supporting a growing list of blockchains networks with world-class enterprise infrastructure! Read more at: https://radiumblock.com/"
     },
     {
         "name": "Ruby-Node 💎",
@@ -37,12 +37,12 @@
     {
         "name": "Generic-chain",
         "address": "13pZskDR7Pt67NtcChSr4uFRBf9ZS52nQeyrceSykq8MDrMe",
-        "manifesto": "PLEASE ADD a DESCRIPTION of YOUR GOALS as a DELEGATE. Supports markdown."
+        "manifesto": "Generic chain offers Non-custodial Validation Services for many chains in the Polkadot ecosystem. With a reasonable commission and an outstanding operations team, we are committed to ensure that these validators serve the network in the best possible way. Read more at https://www.generic-chain.io/"
     },
     {
         "name": "AG",
         "address": "13ujCsf3t2YAdAhcpcEFVoJAPRYzMLHUHEnLroQp41sJCSnm",
-        "manifesto": "PLEASE ADD a DESCRIPTION of YOUR GOALS as a DELEGATE. Supports markdown."
+        "manifesto": "AG Staking provides high returns, low downtimes for many blockchain networks. Invested in increase decentralisation of young networks. Read more at : https://validator.ag/"
     },
     {
         "name": "Khastor",
@@ -50,29 +50,29 @@
         "manifesto": "PLEASE ADD a DESCRIPTION of YOUR GOALS as a DELEGATE. Supports markdown."
     },
     {
-        "name": "Coinstudio",
+        "name": "CoinStudio",
         "address": "14d2kv44xf9nFnYdms32dYPKQsr5C9urbDzTz7iwU8iHb9az",
-        "manifesto": "PLEASE ADD a DESCRIPTION of YOUR GOALS as a DELEGATE. Supports markdown."
+        "manifesto" : "Kusama and Polkadot Validator, Governance participant. Check our active attempts to improve the Governance process https://kusama.polkassembly.io/post/2431",
     },
     {
         "name": "michalis",
         "address": "14id3ENXVkJ34Q51AfWDGcMHA1EbGu8obF8QJLEUkzAB8KVh",
-        "manifesto": "PLEASE ADD a DESCRIPTION of YOUR GOALS as a DELEGATE. Supports markdown."
+        "manifesto": "Support & Anti-Scam Lead at Web3Foundation."
     },
     {
-        "name": "Stake Plus",
-        "address": "152QidDC4QrtMCyRGiQmvrNyjntvMg2XouCSdoPSeqUNTvsq",
-        "manifesto": "PLEASE ADD a DESCRIPTION of YOUR GOALS as a DELEGATE. Supports markdown."
+        "name": "Stake.Plus",
+        "address" : "152QidDC4QrtMCyRGiQmvrNyjntvMg2XouCSdoPSeqUNTvsq",
+        "manifesto": "Validation, Collation and Infrastructure Services. We are committed to providing quality infrastructure services for the Polkadot ecosystem on owned hardware powered by renewable energy.",
     },
     {
         "name": "SAXEMBERG",
         "address": "153YD8ZHD9dRh82U419bSCB5SzWhbdAFzjj4NtA5pMazR2yC",
-        "manifesto": "PLEASE ADD a DESCRIPTION of YOUR GOALS as a DELEGATE. Supports markdown."
+        "manifesto": "We offer validation and collation services of our nominators on the Kusama and Polkadot ecosystem. In addition, we are currently developing dapps on the same ecosystem. We strive for a credible neutral ecosystem in fair terms for everybody. So we don't ever plan on exploiting consensus rules on blockchains or seek to exploit blockchains with misconfigured parameters. Read more at : https://saxemberg.com/about/."
     },
     {
-        "name": "Paradox",
+        "name": "Will | Paradox | ParaNodes.io",
         "address": "15D2JM548bqRuE45aDmeF2WqiKC56WtNnRmCxVSree9YKwVb",
-        "manifesto": "PLEASE ADD a DESCRIPTION of YOUR GOALS as a DELEGATE. Supports markdown."
+        "manifesto": "Validator Operator at ParaNodes.io. I'm a former member of Kusama's outgoing council.  My council experience allows me to better understand the technical aspects of governance and appreciate the general 'values' of the chain.\n\nI am also a well known within the validator community and operate validators under the moniker [ParaNodes.io](https://paranodes.io).\n\nIf you'll like to hear my thoughts on governance, please tune in to [AAG](https://www.youtube.com/playlist?list=PLtyd7v_I7PGkXbJmKojrZ1KXwspR1JkpV) I make live appearances on the first Monday of each month."
     },
     {
         "name": "NEWDEAL",
@@ -82,7 +82,7 @@
     {
         "name": "UBIK CAPITAL",
         "address": "15iwm1HrcGiTZoZenijMTCayRD3hM2RpKde3LrrNxPKAMjTg",
-        "manifesto": "PLEASE ADD a DESCRIPTION of YOUR GOALS as a DELEGATE. Supports markdown."
+        "manifesto": "Ubik Capital is a Proof of Stake service provider, validator, and investor. Ubik Capital provides staking as a service and investments to various blockchain projects. Ubik Capital secures major networks and is a trusted staking provider with years of industry experience. Read more at : https://ubik.capital/"
     },
     {
         "name": "CryptoLab 01",
@@ -117,6 +117,6 @@
     {
         "name": "Gontajones",
         "address": "1UQC7Vs4zbywp8CbxcCCRUyyRqeUZxq9aXeD8UZ3MpLUy12",
-        "manifesto": "PLEASE ADD a DESCRIPTION of YOUR GOALS as a DELEGATE. Supports markdown."
+        "manifesto": "Polkadot Application Engineer at Parity. Help build an ecosystem of lighthouse projects, tutorials, documentation, and an open-source culture around Substrate. Provide technical support to Polkadot ecosystem teams. You can follow https://twitter.com/arturgontijo."
     }
 ]
