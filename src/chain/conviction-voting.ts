@@ -209,7 +209,6 @@ export async function submitBatchVotes(
     (callResult) => {
       const { status } = callResult;
       // TODO handle result better
-      console.log(callResult.toHuman());
       if (status.isInBlock) {
         console.log('Transaction is in block.');
       } else if (status.isBroadcast) {
