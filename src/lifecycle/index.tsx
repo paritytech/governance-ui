@@ -771,13 +771,13 @@ async function updateChainState(
 /**
  * Provides the lifeCycle context
  */
-interface IAppStateContext {
+interface ILifeCycleContext {
   state: State;
   updater: Updater;
   api: ApiPromise | undefined;
 }
-const appLifeCycleContext = createContext<IAppStateContext>(
-  {} as IAppStateContext
+const appLifeCycleContext = createContext<ILifeCycleContext>(
+  {} as ILifeCycleContext
 );
 export const useAppLifeCycle = () => useContext(appLifeCycleContext);
 export const AppLifeCycleProvider = ({
