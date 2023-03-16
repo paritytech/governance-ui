@@ -1,5 +1,4 @@
 import { createContext, useState, useContext, useEffect, useRef } from 'react';
-import { useLifeCycle } from '../lifecycle';
 import { TrackDelegation } from '../types';
 import { useAccount } from './Account';
 import { tracksMetadata } from '../chain/mocks';
@@ -45,7 +44,7 @@ export function DelegationProvider({
 
   // subscribe
   const { connectedAccount } = useAccount();
-  const { _, updater } = useAppState();
+  const { updater } = useAppState();
   const connectedAddress = connectedAccount?.account?.address;
   useEffect(() => {
     const trackIds = tracksMetadata
