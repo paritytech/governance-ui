@@ -394,12 +394,12 @@ export class Updater {
     tracks: number[],
     cb: (delegations: any) => void
   ) {
-    console.log(address, tracks);
     const state = this.#stateAccessor();
     let unsub;
     if (
       state.type == 'ConnectedState' &&
-      state.connectivity.type == 'Connected'
+      (state.connectivity.type == 'Connected' ||
+        state.connectivity.type == 'Following')
     ) {
       const api = await API_CACHE.getOrCreate(state.connectivity.endpoints);
       const args = tracks.map((track) => [address, track]);
@@ -411,15 +411,12 @@ export class Updater {
             track: args[idx][1],
             delegating: voting?.isDelegating ? voting.asDelegating : undefined,
           }));
-          console.log('voting', votings);
-          console.log('dels', delegations);
           cb(delegations);
         }
       );
-      console.log('!!unsub');
     } else {
-      console.log('!!not connected');
-      //await this.addReport(incorrectTransitionError(state));
+      console.log(state);
+      await this.addReport(incorrectTransitionError(state));
     }
     return unsub;
   }
@@ -793,3 +790,5 @@ async function updateChainState(
     currentUnsub?.();
   };
 }
+
+export * from './types';

@@ -1,15 +1,12 @@
-import { Report } from '../../lifecycle/types.js';
+import { useAppState } from '../../contexts/AppState.js';
 import { Card } from '../lib/index.js';
 
 const TRANSIENT_DISPLAY_TIME_MS = 3000; //milliseconds
 
-export function NotificationBox({
-  reports,
-  removeReport,
-}: {
-  reports?: Report[];
-  removeReport: (index: number) => void;
-}): JSX.Element {
+export function NotificationBox(): JSX.Element {
+  const { state, updater } = useAppState();
+  const reports = state?.reports || [];
+  const removeReport = (index: number) => updater?.removeReport(index);
   const current = reports?.at(0);
   const removeCurrent = () => {
     if (current) {

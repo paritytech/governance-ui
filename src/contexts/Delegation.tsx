@@ -3,6 +3,7 @@ import { useLifeCycle } from '../lifecycle';
 import { TrackDelegation } from '../types';
 import { useAccount } from './Account';
 import { tracksMetadata } from '../chain/mocks';
+import { useAppState } from './AppState';
 
 interface IDelegationContext {
   selectedTracks: Set<number>;
@@ -44,7 +45,7 @@ export function DelegationProvider({
 
   // subscribe
   const { connectedAccount } = useAccount();
-  const [_, updater] = useLifeCycle();
+  const { _, updater } = useAppState();
   const connectedAddress = connectedAccount?.account?.address;
   useEffect(() => {
     const trackIds = tracksMetadata
@@ -53,7 +54,7 @@ export function DelegationProvider({
       .map((t) => t.id);
     if (connectedAddress) {
       updater
-        .subscribeToDelegates(connectedAddress, trackIds, (delegations) => {
+        ?.subscribeToDelegates(connectedAddress, trackIds, (delegations) => {
           setDelegations(delegations);
         })
         .then((unsub) => setDelegationUnsub(unsub));
