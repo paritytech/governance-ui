@@ -339,20 +339,6 @@ export class Updater {
   async start() {
     try {
       this.unsub = await updateChainState(this.#stateAccessor, this.#dispatch);
-
-      // Fetch indexes
-      const indexes = await this.fetchIndexes();
-      if (indexes.type == 'ok') {
-        this.#dispatch({
-          type: 'SetIndexes',
-          data: indexes.value,
-        });
-      } else {
-        await this.addReport({
-          type: 'Warning',
-          message: indexes.error.message,
-        });
-      }
     } catch (e: any) {
       await this.addReport({ type: 'Error', message: e.toString() });
     }
@@ -360,31 +346,6 @@ export class Updater {
 
   stop() {
     this.unsub?.();
-  }
-
-  async fetchIndexes(): Promise<Result<Record<string, any>>> {
-    const url = 'https://jeluard.github.io/panoptidot/data/indexes/index.json';
-    const reqIndexIndexes = await fetch(url);
-    if (reqIndexIndexes.ok) {
-      const { data } = (await reqIndexIndexes.json()) as {
-        data: Array<string>;
-      };
-      const resps = await Promise.all(
-        data.map((index) =>
-          fetch(
-            `https://jeluard.github.io/panoptidot/data/indexes/${index}.json`
-          )
-        )
-      );
-      const indexes = await Promise.all(resps.map((resp) => resp.json()));
-      return ok(
-        Object.fromEntries(
-          data.map((datum, index) => [datum, indexes[index].data])
-        )
-      );
-    } else {
-      return err(new Error(`Can't access ${url}`));
-    }
   }
 
   async castVote(index: number, vote: AccountVote) {
