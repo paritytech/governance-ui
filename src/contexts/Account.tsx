@@ -90,6 +90,7 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     _setConnectedAccount(signingAccount);
   };
 
+  // load connected account from storage
   const storedConnectedAddress = AccountStorage.getConnectedAddress();
   useEffect(() => {
     if (storedConnectedAddress) {
@@ -101,6 +102,7 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [storedConnectedAddress, walletsAccounts]);
 
+  // load accounts from connected wallets
   useEffect(() => {
     getWalletsAccounts().then((accounts: Map<string, SigningAccount>) => {
       setWalletsAccounts(accounts);

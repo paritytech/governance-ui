@@ -238,3 +238,5 @@ export type Track = {
   /// needed for approval as a function of time into decision period.
   minSupport: Curve;
 };
+
+export type TrackDelegation = VotingDelegating & { trackIndex: number };

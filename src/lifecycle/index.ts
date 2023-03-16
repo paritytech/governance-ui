@@ -389,6 +389,41 @@ export class Updater {
     }
   }
 
+  async subscribeToDelegates(
+    address: string,
+    tracks: number[],
+    cb: (delegations: any) => void
+  ) {
+    console.log(address, tracks);
+    const state = this.#stateAccessor();
+    let unsub;
+    if (
+      state.type == 'ConnectedState' &&
+      state.connectivity.type == 'Connected'
+    ) {
+      const api = await API_CACHE.getOrCreate(state.connectivity.endpoints);
+      const args = tracks.map((track) => [address, track]);
+
+      unsub = await api.query.convictionVoting.votingFor.multi(
+        args,
+        (votings) => {
+          const delegations = votings.map((voting, idx) => ({
+            track: args[idx][1],
+            delegating: voting?.isDelegating ? voting.asDelegating : undefined,
+          }));
+          console.log('voting', votings);
+          console.log('dels', delegations);
+          cb(delegations);
+        }
+      );
+      console.log('!!unsub');
+    } else {
+      console.log('!!not connected');
+      //await this.addReport(incorrectTransitionError(state));
+    }
+    return unsub;
+  }
+
   async setConnectedAccount(connectedAccount: Address) {
     this.#dispatch({
       type: 'SetConnectedAccountAction',

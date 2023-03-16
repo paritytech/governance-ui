@@ -16,6 +16,8 @@ const placeholderUrl = new URL(
 ).toString();
 
 function Headline() {
+  const { currentDelegations } = useDelegation();
+  console.log(currentDelegations);
   return (
     <section className=" flex max-w-full flex-col items-center justify-center gap-3">
       <div className="prose mb-4 max-w-none md:prose-xl">
