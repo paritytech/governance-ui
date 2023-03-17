@@ -84,7 +84,6 @@ export const DelegateSection = () => {
   const { delegates } = state;
   const [visible, setVisible] = useState(false);
   const { selectedTracks } = useDelegation();
-
   const tracks = tracksMetadata
     .map((track) => track.subtracks)
     .flat()

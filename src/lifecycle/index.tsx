@@ -5,7 +5,6 @@ import React, {
   useReducer,
   useRef,
   useContext,
-  useState,
   createContext,
 } from 'react';
 import { ApiPromise } from '@polkadot/api';
@@ -454,36 +453,6 @@ function useReducerWithHistory(
   );
 }
 
-export function useLifeCycle(
-  initialState: State = DEFAULT_INITIAL_STATE
-): [State, Updater] {
-  const [state, dispatch] = useReducer(
-    useReducerWithHistory(reducer, history),
-    initialState
-  );
-  const lastState = useRef(state);
-  useEffect(() => {
-    lastState.current = state;
-  }, [state]);
-  // Allows to access current State
-  const stateAccessor = useCallback(() => lastState.current, []);
-  const updater = new Updater(stateAccessor, dispatch);
-
-  useEffect(() => {
-    async function start() {
-      await updater.start();
-    }
-
-    start();
-
-    return () => {
-      updater.stop();
-    };
-  }, []);
-
-  return [state, updater];
-}
-
 async function fetchDelegates(network: Network): Promise<Result<Delegate[]>> {
   const url = `https://paritytech.github.io/governance-ui/data/${network.toLowerCase()}/delegates.json`;
   const delegates = await fetch(url);
@@ -774,30 +743,46 @@ async function updateChainState(
 interface ILifeCycleContext {
   state: State;
   updater: Updater;
-  api: ApiPromise | undefined;
 }
 const appLifeCycleContext = createContext<ILifeCycleContext>(
   {} as ILifeCycleContext
 );
 export const useAppLifeCycle = () => useContext(appLifeCycleContext);
 export const AppLifeCycleProvider = ({
+  initialState = DEFAULT_INITIAL_STATE,
   children,
 }: {
   children: React.ReactNode;
+  initialState?: State;
 }) => {
-  const [state, updater] = useLifeCycle();
-  const [api, setApi] = useState<ApiPromise>();
-  if (
-    state.type === 'ConnectedState' &&
-    (state.connectivity.type === 'Connected' ||
-      state.connectivity.type === 'Following')
-  ) {
-    API_CACHE.getOrCreate(state.connectivity.endpoints).then((api) =>
-      setApi(api)
-    );
-  }
+  const [state, dispatch] = useReducer(
+    useReducerWithHistory(reducer, history),
+    initialState
+  );
+  const lastState = useRef(state);
+
+  // Allows to access current State
+  const stateAccessor = useCallback(() => lastState.current, []);
+  const updater = new Updater(stateAccessor, dispatch);
+
+  useEffect(() => {
+    lastState.current = state;
+  }, [state]);
+
+  useEffect(() => {
+    async function start() {
+      await updater.start();
+    }
+
+    start();
+
+    return () => {
+      updater.stop();
+    };
+  }, []);
+
   return (
-    <appLifeCycleContext.Provider value={{ state, updater, api }}>
+    <appLifeCycleContext.Provider value={{ state, updater }}>
       {children}
     </appLifeCycleContext.Provider>
   );
