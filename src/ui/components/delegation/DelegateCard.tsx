@@ -49,14 +49,22 @@ function extractRole(address: string, state: State): DelegateRoleType[] {
   if (state.type == 'ConnectedState') {
     if (state.chain.fellows.has(address)) {
       return ['fellow'];
+    } else {
+      // ToDo: remove (this is a mock role for UX testing)
+      return ['nominator'];
     }
   }
   return [];
 }
 
-function manifestoPreview(str: string): string {
+function manifestoPreview(
+  str: string,
+  maxLen: number
+): { preview: string; truncated: boolean } {
   // TODO return a preview considering lines (e.g. max3 lines)
-  return str.substring(0, 200);
+  const preview = str.substring(0, maxLen);
+  const truncated = str.length > maxLen;
+  return { preview, truncated };
 }
 
 export function DelegateCard({
@@ -72,10 +80,11 @@ export function DelegateCard({
 }) {
   const { name, address, manifesto } = delegate;
   const roles = extractRole(address, state);
+  const { preview, truncated } = manifestoPreview(manifesto, 200);
   return (
     <>
       <Card
-        className={`grid h-96 shrink-0 grow-0 flex-col gap-4 p-6 shadow-md ${
+        className={`flex h-80 shrink-0 grow-0 flex-col gap-4 p-6 shadow-md ${
           variant === 'all' ? 'w-[420px]' : 'w-full'
         }`}
       >
@@ -102,15 +111,13 @@ export function DelegateCard({
             <RoleTag key={role} role={role} />
           ))}
         </div>
-        <div className="prose prose-sm overflow-auto leading-tight">
-          <Remark>{manifestoPreview(manifesto)}</Remark>
+        <div className="prose prose-sm grow overflow-auto text-ellipsis leading-tight">
+          <Remark>{preview}</Remark>
+          {truncated && <span className="text-primary">{'Read more ->'}</span>}
         </div>
         <StatBar stats={[]} />
         {variant === 'all' && (
-          <Button
-            className="align-self-center w-9/12 justify-self-center"
-            onClick={delegateHandler}
-          >
+          <Button onClick={delegateHandler}>
             <div>Delegate All Votes</div>
             <DelegateIcon />
           </Button>
