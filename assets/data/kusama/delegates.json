@@ -76,5 +76,10 @@
     "name": "KRYPTOSCHAIN",
     "image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/KryptosChain_Logo.png",
     "manifesto": "Content Creator for the Polkadot & Kusama ecosystems since late 2020 (soon after launch) and a Crypto Content Creator since 2018 : https://www.youtube.com/c/kryptoschain and on Twitter: https://twitter.com/KryptosChain I'm also an active contributor to Open Governance."
+  },
+  {
+    "name": "TurboFlakes",
+    "address": "H1tAQMm3eizGcmpAhL9aA9gR844kZpQfkU7pkmMiLx9jSzE",
+    "manifesto": "TurboFlakes have been building bold tools, running validators and collators in the Polkadot ecosystem since 2021. We also provide RPC infrastructure from a carbon-free DC for the common good.\n\nWe believe and are aligned with the Web3 vision and a Decentralized Open Web. We love experimentation and ideation.\n\nWe are active participants in Governance and we support proposals that overall would bring joy and evolution to Polkadot and help it succeed. Read more about us at https://turboflakes.io"
   }
 ]
