@@ -52,8 +52,8 @@ const ReferendumCard = memo(
     details: ReferendumDetails | undefined;
     track?: Track;
   }) => {
-    if (details && details.posts.length > 0) {
-      const { title, content } = details.posts[0];
+    if (details) {
+      const { title, content } = details;
       return (
         <Card className="flex h-[640px] w-screen flex-col gap-8 md:w-[640px]">
           <Header index={index} title={title} track={track} />

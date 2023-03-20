@@ -8,7 +8,9 @@ import { AddIcon, ChevronDownIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
-import { useAppLifeCycle } from '../../lifecycle';
+import { State } from '../../lifecycle/types.js';
+import { useAppLifeCycle, filterOngoingReferenda } from '../../lifecycle';
+import { ReferendumOngoing } from '../../types';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -151,7 +153,15 @@ export const DelegateSection = () => {
   );
 };
 
+function exportReferenda(state: State): Map<number, ReferendumOngoing> {
+  if (state.type == 'ConnectedState') {
+    return filterOngoingReferenda(state.chain.referenda);
+  }
+  return new Map();
+}
+
 export function DelegationPanel() {
+  const { state } = useAppLifeCycle();
   const delegateSectionRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef(null);
   const trackSectionRef: React.MutableRefObject<HTMLDivElement | null> =
@@ -166,7 +176,8 @@ export function DelegationPanel() {
         <DelegatesBar />
         <div ref={trackSectionRef}>
           <TrackSelect
-            expanded
+            details={state.details}
+            referenda={exportReferenda(state)}
             delegateHandler={() => gotoSection(delegateSectionRef)}
           />
         </div>
