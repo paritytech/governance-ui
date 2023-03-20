@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { Remark } from 'react-remark';
 import type { DelegateRoleType, StatType } from './types';
 import { ChevronRightIcon, DelegateIcon } from '../../icons';
@@ -80,7 +81,10 @@ export function DelegateCard({
 }) {
   const { name, address, manifesto } = delegate;
   const roles = extractRole(address, state);
-  const { preview, truncated } = manifestoPreview(manifesto, 200);
+  const { preview, truncated } = useMemo(
+    () => manifestoPreview(manifesto, 200),
+    [manifesto]
+  );
   return (
     <>
       <Card
