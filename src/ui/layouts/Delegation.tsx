@@ -56,7 +56,7 @@ export function DelegatesBar() {
         </div>
       </div>
       <div className="flex max-w-full gap-7 overflow-x-scroll px-3 pb-1 lg:px-6	">
-        {delegates?.map((delegate, idx) => (
+        {delegates.map((delegate, idx) => (
           <DelegateCard
             key={idx}
             delegate={delegate}
