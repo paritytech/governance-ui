@@ -5,6 +5,8 @@ import { ButtonSecondary, Card } from '../../lib';
 import { CheckIcon, ChevronDownIcon } from '../../icons';
 import SectionTitle from '../SectionTitle';
 import ProgressStepper from '../ProgressStepper';
+import { ReferendumDetails, ReferendumOngoing } from '../../../types';
+import { Accounticon } from '../accounts/Accounticon';
 
 interface ICheckBoxProps {
   title?: string;
@@ -57,13 +59,73 @@ export function CheckBox({
 
 interface ITrackCheckableCardProps {
   track?: TrackType;
+  referenda: Map<number, ReferendumOngoing>;
+  details: Map<number, ReferendumDetails>;
   checked?: boolean;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   expanded?: boolean;
 }
 
+function referendaTitle(
+  index: number,
+  details: Map<number, ReferendumDetails>
+): string {
+  const detail = details.get(index);
+  const base = `# ${index}`;
+  if (detail) {
+    return `${base} - ${detail.title}`;
+  } else {
+    return base;
+  }
+}
+
+function ReferendaLinks({ index }: { index: number }): JSX.Element {
+  return (
+    <div>
+      <a href={`https://kusama.polkassembly.io/referenda/${index}`}>P</a>
+    </div>
+  );
+}
+
+function ReferendaDetails({
+  index,
+  details,
+  referendum,
+}: {
+  index: number;
+  details: Map<number, ReferendumDetails>;
+  referendum: ReferendumOngoing;
+}): JSX.Element {
+  return (
+    <div className="rounded-2xl border-2 border-solid border-gray-100 p-5">
+      <div className="flex flex-row">
+        <div className="text-sm leading-tight">
+          {referendaTitle(index, details)}
+        </div>
+        <ReferendaLinks index={index} />
+      </div>
+      <div className="flex flex-row pt-5">
+        <Accounticon
+          textClassName="font-medium"
+          address={referendum.submissionDeposit.who}
+          size={24}
+        />
+        <div className="text-sm leading-tight">
+          {referendum.tally.ayes.toString()}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function NoActiveReferendum(): JSX.Element {
+  return <div>No active referendum</div>;
+}
+
 export function TrackCheckableCard({
   track,
+  referenda,
+  details,
   checked,
   onChange,
   expanded,
@@ -75,18 +137,45 @@ export function TrackCheckableCard({
         {expanded && (
           <div className="text-sm leading-tight">{track?.description}</div>
         )}
+        {referenda.size ? (
+          Array.from(referenda.entries()).map(([index, referendum]) => (
+            <ReferendaDetails
+              key={index}
+              index={index}
+              details={details}
+              referendum={referendum}
+            />
+          ))
+        ) : (
+          <NoActiveReferendum />
+        )}
       </div>
     </Card>
   );
 }
 
+function filterReferendaForTrack(
+  trackIndex: number,
+  referenda: Map<number, ReferendumOngoing>
+): Map<number, ReferendumOngoing> {
+  return new Map(
+    Array.from(referenda.entries()).filter(
+      ([, referendum]) => referendum.trackIndex == trackIndex
+    )
+  );
+}
+
 interface ITrackSelectProps {
   className?: string;
+  referenda: Map<number, ReferendumOngoing>;
+  details: Map<number, ReferendumDetails>;
   expanded?: boolean;
   delegateHandler?: () => void;
 }
 export function TrackSelect({
   className,
+  referenda,
+  details,
   expanded,
   delegateHandler,
 }: ITrackSelectProps) {
@@ -142,6 +231,8 @@ export function TrackSelect({
                   <TrackCheckableCard
                     key={idx}
                     track={subtrack}
+                    details={details}
+                    referenda={filterReferendaForTrack(subtrack.id, referenda)}
                     checked={selectedTracks.has(subtrack.id)}
                     onChange={(e) => {
                       const isChecked = e.target.checked;
