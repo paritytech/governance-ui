@@ -20,7 +20,7 @@ import {
 } from '../chain/conviction-voting.js';
 import { getAllMembers } from '../chain/fellowship-collective.js';
 import { getAllReferenda, getAllTracks } from '../chain/referenda.js';
-import { SigningAccount } from '../contexts/index.js';
+import { AccountStorage, SigningAccount } from '../contexts/index.js';
 import { DEFAULT_NETWORK, endpointsFor, Network, parse } from '../network.js';
 import {
   AccountVote,
@@ -28,6 +28,7 @@ import {
   Referendum,
   ReferendumOngoing,
   Voting,
+  VotingDelegating,
 } from '../types.js';
 import { err, ok, Result } from '../utils/index.js';
 import { Cache, Destroyable, Readyable } from '../utils/cache.js';
@@ -79,9 +80,11 @@ function filterOldVotes(
 }
 
 /**
- * @param votings
- * @param referenda
- * @returns
+ * Extracts user's votes for a set of referenda
+ * @param address user's account address
+ * @param allVotings all votings retrieved from conviction pallet state
+ * @param referenda a map of referenda to extracts the votings for
+ * @returns a map of catsing votes for the target referenda by the account
  */
 function extractUserVotes(
   address: Address,
@@ -105,16 +108,39 @@ function extractUserVotes(
   return votes;
 }
 
+/**
+ * return all delegations for a specific address
+ * @param address the address to extract the delegations for.
+ * @param allVotings all votings retrieved from conviction pallet state
+ * @returns a map of delegations by the account per each track
+ */
+export function getAllDelegations(
+  address: Address,
+  allVotings: Map<Address, Map<number, Voting>>
+): Map<number, VotingDelegating> {
+  const delegates = new Map<number, VotingDelegating>();
+  const votings = allVotings.get(address);
+  if (votings) {
+    votings.forEach((voting, trackId) => {
+      // filter the delegatings.
+      if (voting.type === 'delegating') {
+        delegates.set(trackId, voting);
+      }
+    });
+  }
+  return delegates;
+}
+
 export function getAllVotes(
   votes: Map<number, AccountVote>,
   allVotings: Map<Address, Map<number, Voting>>,
   referenda: Map<number, ReferendumOngoing>,
-  connectedAccount: Address | null
+  connectedAddress: Address | null
 ): Map<number, AccountVote> {
   const currentVotes = filterOldVotes(votes, referenda);
-  if (connectedAccount) {
+  if (connectedAddress) {
     const onChainVotes = extractUserVotes(
-      connectedAccount,
+      connectedAddress,
       allVotings,
       referenda
     );
@@ -464,7 +490,7 @@ export class Updater {
     }
   }
 
-  async setConnectedAccount(connectedAccount: Address) {
+  async setConnectedAccount(connectedAccount: SigningAccount | undefined) {
     this.#dispatch({
       type: 'SetConnectedAccount',
       connectedAccount,
@@ -497,7 +523,7 @@ export class Updater {
 const DEFAULT_INITIAL_STATE: State = {
   type: 'InitialState',
   connectivity: { type: navigator.onLine ? 'Online' : 'Offline' },
-  connectedAccount: null,
+  connectedAccount: undefined,
   details: new Map(),
   indexes: {},
   delegates: [],
@@ -701,6 +727,14 @@ async function dispatchEndpointsChange(
     const details = await measured('fetch-chain-details', () =>
       fetchChainState(apiAt)
     );
+
+    const connectedAddress = state.connectedAccount?.account?.address;
+    let account: AccountChainState | undefined;
+    if (connectedAddress) {
+      account = await measured('fetch-account-chain-state', () =>
+        fetchAccountChainState(apiAt, connectedAddress)
+      );
+    }
 
     // New block has been received, we are up-to-date with the chain
     dispatch({

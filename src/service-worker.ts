@@ -116,7 +116,7 @@ async function networks(): Promise<Network[]> {
 
 self.addEventListener('periodicsync', async (event: SyncEvent) => {
   if (event.tag === REFERENDA_UPDATES_TAG) {
-    const connectedAccount = AccountStorage.getConnectedAddress();
+    const connectedAddress = AccountStorage.getConnectedAddress();
     // Retrieve referenda updates
     for (const network of await networks()) {
       const api = await newApi({
@@ -130,8 +130,8 @@ self.addEventListener('periodicsync', async (event: SyncEvent) => {
       const apiAt = await api.at(hash);
       const { referenda } = await fetchChainState(apiAt);
       let account;
-      if (connectedAccount) {
-        account = await fetchAccountChainState(apiAt, connectedAccount);
+      if (connectedAddress) {
+        account = await fetchAccountChainState(apiAt, connectedAddress);
       }
 
       // Extract to be voted on referenda based on current votes
@@ -144,7 +144,7 @@ self.addEventListener('periodicsync', async (event: SyncEvent) => {
         votes,
         account?.allVotings || new Map(),
         ongoingReferenda,
-        connectedAccount
+        connectedAddress
       );
       const referendaToBeVotedOn = filterToBeVotedReferenda(
         ongoingReferenda,

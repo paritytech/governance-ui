@@ -1,4 +1,4 @@
-import type { Tally } from '../../../types';
+import type { Tally, VotingDelegating } from '../../../types';
 import type { TrackType } from './types';
 
 import { memo } from 'react';
@@ -65,6 +65,7 @@ interface ITrackCheckableCardProps {
   track?: TrackType;
   referenda: Map<number, ReferendumOngoing>;
   details: Map<number, ReferendumDetails>;
+  delegation: VotingDelegating | undefined;
   checked?: boolean;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   expanded?: boolean;
@@ -162,6 +163,7 @@ export function TrackCheckableCard({
   track,
   referenda,
   details,
+  delegation,
   checked,
   onChange,
   expanded,
@@ -208,6 +210,7 @@ interface ITrackSelectProps {
   network: Network;
   referenda: Map<number, ReferendumOngoing>;
   details: Map<number, ReferendumDetails>;
+  delegations: Map<number, VotingDelegating>;
   expanded?: boolean;
   delegateHandler: () => void;
 }
@@ -216,6 +219,7 @@ export function TrackSelect({
   network,
   referenda,
   details,
+  delegations,
   expanded,
   delegateHandler,
 }: ITrackSelectProps) {
@@ -271,6 +275,7 @@ export function TrackSelect({
                     track={subtrack}
                     details={details}
                     referenda={filterReferendaForTrack(subtrack.id, referenda)}
+                    delegation={delegations.get(subtrack.id)}
                     checked={selectedTracks.has(subtrack.id)}
                     onChange={(e) => {
                       const isChecked = e.target.checked;

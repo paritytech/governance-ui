@@ -25,11 +25,12 @@ function InnerPanel({ state, updater }: PanelProps): JSX.Element {
       const { account, chain, votes, details, connectedAccount } = state;
       const { tracks, referenda } = chain;
       const ongoingReferenda = filterOngoingReferenda(referenda);
+      const connectedAddress = connectedAccount?.account?.address;
       const allVotes = getAllVotes(
         votes,
         account?.allVotings || new Map(),
         ongoingReferenda,
-        connectedAccount
+        connectedAddress
       );
       const referendaToBeVotedOn = filterToBeVotedReferenda(
         ongoingReferenda,

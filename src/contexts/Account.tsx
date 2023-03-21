@@ -1,13 +1,8 @@
-import { Account, WalletMetadata } from '@polkadot-onboard/core';
-import type { Signer } from '@polkadot/types/types';
-import React, { useContext, createContext, useState, useEffect } from 'react';
-import { useWallets } from './Wallets.js';
+import type { SigningAccount } from '../lifecycle/index.js';
 
-export type SigningAccount = {
-  account: Account;
-  signer: Signer;
-  sourceMetadata: WalletMetadata;
-};
+import React, { useContext, createContext, useState, useEffect } from 'react';
+import { useAppLifeCycle } from '../lifecycle/index.js';
+import { useWallets } from './Wallets.js';
 
 export interface IAccountContext {
   connectedAccount: SigningAccount | undefined;
@@ -30,6 +25,7 @@ export class AccountStorage {
 }
 
 const AccountProvider = ({ children }: { children: React.ReactNode }) => {
+  const { state, updater } = useAppLifeCycle();
   const [_connectedAccount, _setConnectedAccount] = useState<
     SigningAccount | undefined
   >();
@@ -88,6 +84,7 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   const setConnectedAccount = (signingAccount: SigningAccount | undefined) => {
     AccountStorage.setConnectedAddress(signingAccount?.account.address || '');
     _setConnectedAccount(signingAccount);
+    updater.setConnectedAccount(signingAccount);
   };
 
   // load connected account from storage
