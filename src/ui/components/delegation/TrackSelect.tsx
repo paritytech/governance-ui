@@ -1,6 +1,7 @@
 import type { Tally } from '../../../types';
 import type { TrackType } from './types';
 
+import { memo } from 'react';
 import { tracksMetadata } from '../../../chain/mocks';
 import { useDelegation } from '../../../contexts/Delegation.js';
 import { ButtonSecondary, Card } from '../../lib';
@@ -89,7 +90,7 @@ function ReferendaLinkIcon({ index }: { index: number }): JSX.Element {
   );
 }
 
-function TallyBadgeBox({ tally }: { tally: Tally }): JSX.Element {
+const TallyBadgeBox = memo(function ({ tally }: { tally: Tally }): JSX.Element {
   const { ayes, nays } = tally;
   const total = ayes.add(nays);
   const ayePerc = ayes.muln(100).div(total).toNumber();
@@ -108,7 +109,8 @@ function TallyBadgeBox({ tally }: { tally: Tally }): JSX.Element {
       >{`${nayPerc}%`}</div>
     </div>
   );
-}
+});
+
 function ReferendaDetails({
   index,
   details,
