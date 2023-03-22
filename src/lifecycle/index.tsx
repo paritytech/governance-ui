@@ -325,9 +325,8 @@ export async function fetchAccountChainState(
 ): Promise<AccountChainState> {
   const allVotings = new Map<Address, Map<number, Voting>>();
   allVotings.set(connectedAccount, await getVotingFor(api, connectedAccount));
-  const balance = (
-    await api.query.system.account(connectedAccount)
-  ).data.free.toBn();
+  const account = await api.query.system.account(connectedAccount);
+  const balance = account.data.free.toBn();
   return { allVotings, balance };
 }
 
