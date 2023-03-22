@@ -1,4 +1,5 @@
 import { AppLifeCycleProvider } from './lifecycle/index.js';
+import Footer from './ui/components/Footer.js';
 import {
   ErrorBoundary,
   Header,
@@ -15,6 +16,7 @@ export function App(): JSX.Element {
           <Header />
           <DelegationPanel />
         </div>
+        <Footer />
       </AppLifeCycleProvider>
     </ErrorBoundary>
   );
