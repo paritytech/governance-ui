@@ -5,6 +5,7 @@ import {
   filterToBeVotedReferenda,
   fetchChainState,
   getAllVotes,
+  fetchAccountChainState,
 } from './lifecycle/index.js';
 import { endpointsFor, Network } from './network.js';
 import { AccountVote, Referendum } from './types.js';
@@ -127,7 +128,11 @@ self.addEventListener('periodicsync', async (event: SyncEvent) => {
       // Get referenda for latest block
       const hash = await api.rpc.chain.getBlockHash(number);
       const apiAt = await api.at(hash);
-      const { allVotings, referenda } = await fetchChainState(apiAt);
+      const { referenda } = await fetchChainState(apiAt);
+      let account;
+      if (connectedAccount) {
+        account = await fetchAccountChainState(apiAt, connectedAccount);
+      }
 
       // Extract to be voted on referenda based on current votes
       const ongoingReferenda = filterOngoingReferenda(referenda);
@@ -137,7 +142,7 @@ self.addEventListener('periodicsync', async (event: SyncEvent) => {
       >;
       const allVotes = getAllVotes(
         votes,
-        allVotings,
+        account?.allVotings || new Map(),
         ongoingReferenda,
         connectedAccount
       );

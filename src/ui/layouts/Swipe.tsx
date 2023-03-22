@@ -22,12 +22,12 @@ function InnerPanel({ state, updater }: PanelProps): JSX.Element {
     case 'InitialState':
       return <LoadingPanel message={`Get ready to vote!`} />;
     case 'ConnectedState': {
-      const { chain, votes, details, connectedAccount } = state;
-      const { allVotings, tracks, referenda } = chain;
+      const { account, chain, votes, details, connectedAccount } = state;
+      const { tracks, referenda } = chain;
       const ongoingReferenda = filterOngoingReferenda(referenda);
       const allVotes = getAllVotes(
         votes,
-        allVotings,
+        account?.allVotings || new Map(),
         ongoingReferenda,
         connectedAccount
       );

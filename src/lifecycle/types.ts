@@ -1,3 +1,4 @@
+import BN from 'bn.js';
 import { Network } from '../network.js';
 import {
   AccountVote,
@@ -21,11 +22,15 @@ export type Fellow = {
   rank: number;
 };
 
+export type AccountChainState = {
+  allVotings: Map<Address, Map<number, Voting>>;
+  balance: BN;
+};
+
 export type ChainState = {
   tracks: Map<number, Track>;
   referenda: Map<number, Referendum>;
   fellows: Map<Address, Fellow>;
-  allVotings: Map<Address, Map<number, Voting>>;
 };
 
 export type PersistedDataContext = {
@@ -78,6 +83,7 @@ export type ConnectedState = BaseRestoredState & {
   type: 'ConnectedState';
   block: number;
   chain: ChainState;
+  account?: AccountChainState;
 };
 
 export type State = InitialState | RestoredState | ConnectedState;
@@ -109,10 +115,12 @@ export type UpdateConnectivityAction = {
   connectivity: Connectivity;
 };
 
-export type AddFinalizedBlockAction = BaseConnected & {
+export type AddFinalizedBlockAction = {
   type: 'AddFinalizedBlockAction';
   block: number;
   chain: ChainState;
+  account: AccountChainState | undefined;
+  endpoints: string[];
 };
 
 export type StoreReferendumDetailsAction = {
@@ -129,6 +137,7 @@ type Online = {
 };
 
 type BaseConnected = {
+  type: 'Connected' | 'Following';
   endpoints: string[];
 };
 
@@ -141,6 +150,13 @@ type Following = BaseConnected & {
 };
 
 export type Connectivity = Offline | Online | Connected | Following;
+
+export const isAtLeastConnected = (
+  connectivity: Connectivity
+): connectivity is BaseConnected => {
+  const { type } = connectivity;
+  return type == 'Connected' || type == 'Following';
+};
 
 export type CastVoteAction = {
   type: 'CastVoteAction';
