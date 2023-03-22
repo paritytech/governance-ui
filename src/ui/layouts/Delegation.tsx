@@ -8,7 +8,9 @@ import { AddIcon, ChevronDownIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
-import { State } from 'src/lifecycle/types.js';
+import { State } from '../../lifecycle/types.js';
+import { useAppLifeCycle, filterOngoingReferenda } from '../../lifecycle';
+import { ReferendumOngoing } from '../../types';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -34,8 +36,9 @@ function Headline() {
   );
 }
 
-export function DelegatesBar({ state }: { state: State }) {
+export function DelegatesBar() {
   // ToDo : Move Modal to a context
+  const { state } = useAppLifeCycle();
   const { delegates } = state;
   const [visible, setVisible] = useState(false);
   const allTracks = tracksMetadata.map((track) => track.subtracks).flat();
@@ -65,7 +68,7 @@ export function DelegatesBar({ state }: { state: State }) {
           />
         ))}
       </div>
-      {delegates.length > 0 && (
+      {delegates && delegates.length > 0 && (
         <DelegateModal
           open={visible}
           onClose={closeModal}
@@ -77,8 +80,9 @@ export function DelegatesBar({ state }: { state: State }) {
   );
 }
 
-export const DelegateSection = ({ state }: { state: State }) => {
+export const DelegateSection = () => {
   // ToDo : Move Modal to a context
+  const { state } = useAppLifeCycle();
   const { delegates } = state;
   const [visible, setVisible] = useState(false);
   const { selectedTracks } = useDelegation();
@@ -125,7 +129,7 @@ export const DelegateSection = ({ state }: { state: State }) => {
             </div>
           </div>
           <div className="grid grid-cols-1 flex-wrap items-center justify-start gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
-            {delegates.map((delegate, idx) => (
+            {delegates?.map((delegate, idx) => (
               <DelegateCard
                 key={idx}
                 delegate={delegate}
@@ -136,7 +140,7 @@ export const DelegateSection = ({ state }: { state: State }) => {
             ))}
           </div>
         </div>
-        {delegates.length > 0 && (
+        {delegates && delegates.length > 0 && (
           <DelegateModal
             open={visible}
             onClose={() => closeModal()}
@@ -149,7 +153,15 @@ export const DelegateSection = ({ state }: { state: State }) => {
   );
 };
 
-export function DelegationPanel({ state }: { state: State }) {
+function exportReferenda(state: State): Map<number, ReferendumOngoing> {
+  if (state.type == 'ConnectedState') {
+    return filterOngoingReferenda(state.chain.referenda);
+  }
+  return new Map();
+}
+
+export function DelegationPanel() {
+  const { state } = useAppLifeCycle();
   const delegateSectionRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef(null);
   const trackSectionRef: React.MutableRefObject<HTMLDivElement | null> =
@@ -161,15 +173,16 @@ export function DelegationPanel({ state }: { state: State }) {
     <DelegationProvider>
       <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-16 pt-14 md:pt-20">
         <Headline />
-        <DelegatesBar state={state} />
+        <DelegatesBar />
         <div ref={trackSectionRef}>
           <TrackSelect
-            expanded
+            details={state.details}
+            referenda={exportReferenda(state)}
             delegateHandler={() => gotoSection(delegateSectionRef)}
           />
         </div>
         <div ref={delegateSectionRef}>
-          <DelegateSection state={state} />
+          <DelegateSection />
         </div>
       </main>
     </DelegationProvider>

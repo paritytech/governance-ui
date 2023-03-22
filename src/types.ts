@@ -96,13 +96,9 @@ export type Referendum =
   | ReferendumKilled
   | Unknown;
 
-export type Post = {
+export type ReferendumDetails = {
   title: string;
   content: string;
-};
-
-export type ReferendumDetails = {
-  posts: Array<Post>;
 };
 
 export type PriorLock = {

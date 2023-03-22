@@ -1,4 +1,12 @@
-import { Dispatch, useCallback, useEffect, useReducer, useRef } from 'react';
+import React, {
+  Dispatch,
+  useCallback,
+  useEffect,
+  useReducer,
+  useRef,
+  useContext,
+  createContext,
+} from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
 import { getVotingFor, submitBatchVotes } from '../chain/conviction-voting.js';
@@ -29,6 +37,7 @@ import type {
   Report,
   State,
 } from './types.js';
+import { fetchReferenda } from '../utils/polkassembly.js';
 
 // Auto follow chain updates? Only if user settings? Show notif? Only if impacting change?
 // Revisit if/when ChainState is persisted
@@ -372,7 +381,8 @@ export class Updater {
     const state = this.#stateAccessor();
     if (
       state.type == 'ConnectedState' &&
-      state.connectivity.type == 'Connected'
+      (state.connectivity.type == 'Connected' ||
+        state.connectivity.type == 'Following')
     ) {
       const db = await DB_CACHE.getOrCreate(dbNameFor(state.network));
       const api = await API_CACHE.getOrCreate(state.connectivity.endpoints);
@@ -445,36 +455,6 @@ function useReducerWithHistory(
   );
 }
 
-export function useLifeCycle(
-  initialState: State = DEFAULT_INITIAL_STATE
-): [State, Updater] {
-  const [state, dispatch] = useReducer(
-    useReducerWithHistory(reducer, history),
-    initialState
-  );
-  const lastState = useRef(state);
-  useEffect(() => {
-    lastState.current = state;
-  }, [state]);
-  // Allows to access current State
-  const stateAccessor = useCallback(() => lastState.current, []);
-  const updater = new Updater(stateAccessor, dispatch);
-
-  useEffect(() => {
-    async function start() {
-      await updater.start();
-    }
-
-    start();
-
-    return () => {
-      updater.stop();
-    };
-  }, []);
-
-  return [state, updater];
-}
-
 async function fetchDelegates(network: Network): Promise<Result<Delegate[]>> {
   const url = `https://paritytech.github.io/governance-ui/data/${network.toLowerCase()}/delegates.json`;
   const delegates = await fetch(url);
@@ -495,6 +475,7 @@ async function fetchDelegates(network: Network): Promise<Result<Delegate[]>> {
  * @param dispatch
  */
 async function dispatchNetworkChange(
+  stateAccessor: () => State,
   dispatch: Dispatch<Action>,
   network: Network,
   rpcParam: string | null
@@ -523,7 +504,12 @@ async function dispatchNetworkChange(
     });
   }
 
-  return dispatchEndpointsParamChange(dispatch, network, rpcParam);
+  return dispatchEndpointsParamChange(
+    stateAccessor,
+    dispatch,
+    network,
+    rpcParam
+  );
 }
 
 function dispatchAddReport(dispatch: Dispatch<Action>, report: Report) {
@@ -534,6 +520,7 @@ function dispatchAddReport(dispatch: Dispatch<Action>, report: Report) {
 }
 
 async function dispatchEndpointsParamChange(
+  stateAccessor: () => State,
   dispatch: Dispatch<Action>,
   network: Network,
   rpcParam: string | null
@@ -541,7 +528,12 @@ async function dispatchEndpointsParamChange(
   if (rpcParam) {
     const endpoints = extractEndpointsFromParam(rpcParam);
     if (endpoints.type == 'ok') {
-      return await dispatchEndpointsChange(dispatch, endpoints.value);
+      return await dispatchEndpointsChange(
+        stateAccessor,
+        dispatch,
+        network,
+        endpoints.value
+      );
     } else {
       dispatchAddReport(dispatch, {
         type: 'Error',
@@ -549,32 +541,83 @@ async function dispatchEndpointsParamChange(
       });
     }
   } else {
-    return await dispatchEndpointsChange(dispatch, endpointsFor(network));
+    return await dispatchEndpointsChange(
+      stateAccessor,
+      dispatch,
+      network,
+      endpointsFor(network)
+    );
   }
 }
 
-async function dispatchEndpointsChange(
+async function loadAndDispatchReferendaDetails(
   dispatch: Dispatch<Action>,
+  referendaIndexes: Array<number>,
+  network: Network
+) {
+  const indexes = Array.from(referendaIndexes);
+  indexes.forEach(async (index) => {
+    const details = await measured('fetch-referenda', () =>
+      fetchReferenda(network, index)
+    );
+    if (details.type == 'ok') {
+      dispatch({
+        type: 'StoreReferendumDetailsAction',
+        details: new Map([[index, details.value]]),
+      });
+    } else {
+      dispatchAddReport(dispatch, {
+        type: 'Error',
+        message: `Error while accessing referenda details: ${details.error}`,
+      });
+    }
+  });
+}
+
+async function dispatchEndpointsChange(
+  stateAccessor: () => State,
+  dispatch: Dispatch<Action>,
+  network: Network,
   endpoints: string[]
 ): Promise<VoidFunction> {
+  // Connection has been established
   dispatch({
     type: 'UpdateConnectivityAction',
     connectivity: { type: 'Connected', endpoints },
   });
 
   const api = await API_CACHE.getOrCreate(endpoints);
+  // TODO listen for deconnection/stales and update accordingly
+  // TODO listen to balance updates
   return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
     const apiAt = await api.at(header.hash);
     // TODO rely on subs, do not re-fetch whole state each block
     const chain = await measured('fetch-chain-state', () =>
       fetchChainState(apiAt)
     );
+
+    // New block has been received, we are up-to-date with the chain
     dispatch({
       type: 'AddFinalizedBlockAction',
       endpoints,
       block: header.number.toNumber(),
       chain,
     });
+
+    // Trigger load of details for new referenda
+    const state = stateAccessor();
+    const previousReferendaIndexes = Array.from(state.details.keys());
+    const newReferendaIndexes = Array.from(
+      filterOngoingReferenda(chain.referenda).keys()
+    );
+    const missingReferendaIndexes = newReferendaIndexes.filter(
+      (index) => !previousReferendaIndexes.includes(index)
+    );
+    await loadAndDispatchReferendaDetails(
+      dispatch,
+      missingReferendaIndexes,
+      network
+    );
   });
 }
 
@@ -683,7 +726,12 @@ async function updateChainState(
             if (state.network != network.value) {
               // Only react to network changes
               updateUnsub(
-                await dispatchNetworkChange(dispatch, network.value, rpcParam)
+                await dispatchNetworkChange(
+                  stateAccessor,
+                  dispatch,
+                  network.value,
+                  rpcParam
+                )
               );
             }
           } else {
@@ -696,6 +744,7 @@ async function updateChainState(
           // Only `rpc` param is set, reconnect using those
           updateUnsub(
             await dispatchEndpointsParamChange(
+              stateAccessor,
               dispatch,
               state.network,
               rpcParam
@@ -745,7 +794,14 @@ async function updateChainState(
   const { networkParam, rpcParam } = currentParams();
   const network = getNetwork(networkParam);
   if (network.type == 'ok') {
-    updateUnsub(await dispatchNetworkChange(dispatch, network.value, rpcParam));
+    updateUnsub(
+      await dispatchNetworkChange(
+        stateAccessor,
+        dispatch,
+        network.value,
+        rpcParam
+      )
+    );
   } else {
     dispatchAddReport(dispatch, {
       type: 'Error',
@@ -758,3 +814,56 @@ async function updateChainState(
     currentUnsub?.();
   };
 }
+
+/**
+ * Provides the lifeCycle context
+ */
+interface ILifeCycleContext {
+  state: State;
+  updater: Updater;
+}
+const appLifeCycleContext = createContext<ILifeCycleContext>(
+  {} as ILifeCycleContext
+);
+export const useAppLifeCycle = () => useContext(appLifeCycleContext);
+export const AppLifeCycleProvider = ({
+  initialState = DEFAULT_INITIAL_STATE,
+  children,
+}: {
+  children: React.ReactNode;
+  initialState?: State;
+}) => {
+  const [state, dispatch] = useReducer(
+    useReducerWithHistory(reducer, history),
+    initialState
+  );
+  const lastState = useRef(state);
+
+  // Allows to access current State
+  const stateAccessor = useCallback(() => lastState.current, []);
+  const updater = new Updater(stateAccessor, dispatch);
+
+  useEffect(() => {
+    lastState.current = state;
+  }, [state]);
+
+  useEffect(() => {
+    async function start() {
+      await updater.start();
+    }
+
+    start();
+
+    return () => {
+      updater.stop();
+    };
+  }, []);
+
+  return (
+    <appLifeCycleContext.Provider value={{ state, updater }}>
+      {children}
+    </appLifeCycleContext.Provider>
+  );
+};
+
+export * from './types';
