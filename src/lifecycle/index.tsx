@@ -9,13 +9,18 @@ import React, {
 } from 'react';
 import { ApiPromise } from '@polkadot/api';
 import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
-import { getVotingFor, submitBatchVotes } from '../chain/conviction-voting.js';
+import {
+  createBatchVotes,
+  delegate,
+  getVotingFor,
+} from '../chain/conviction-voting.js';
 import { getAllMembers } from '../chain/fellowship-collective.js';
 import { getAllReferenda, getAllTracks } from '../chain/referenda.js';
 import { SigningAccount } from '../contexts/index.js';
 import { DEFAULT_NETWORK, endpointsFor, Network, parse } from '../network.js';
 import {
   AccountVote,
+  Conviction,
   Referendum,
   ReferendumOngoing,
   Voting,
@@ -25,19 +30,21 @@ import { Cache, Destroyable, Readyable } from '../utils/cache.js';
 import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db.js';
 import { all, clear, open, save } from '../utils/indexeddb.js';
 import { measured } from '../utils/performance.js';
-import { newApi } from '../utils/polkadot-api.js';
+import { batchAll, newApi, submitBatch } from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
 import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
-import type {
+import {
   Action,
   Address,
   ChainState,
   Delegate,
+  isAtLeastConnected,
   PersistedDataContext,
   Report,
   State,
 } from './types.js';
 import { fetchReferenda } from '../utils/polkassembly.js';
+import BN from 'bn.js';
 
 // Auto follow chain updates? Only if user settings? Show notif? Only if impacting change?
 // Revisit if/when ChainState is persisted
@@ -301,8 +308,12 @@ export async function fetchChainState(
   const allVotings = new Map<Address, Map<number, Voting>>();
   if (connectedAccount) {
     allVotings.set(connectedAccount, await getVotingFor(api, connectedAccount));
+    const balance = (
+      await api.query.system.account(connectedAccount)
+    ).data.free.toBn();
+    return { tracks, referenda, fellows, allVotings, balance };
   }
-  return { tracks, referenda, allVotings, fellows };
+  return { tracks, referenda, fellows, allVotings };
 }
 
 class DBReady implements Readyable<IDBDatabase>, Destroyable {
@@ -379,14 +390,12 @@ export class Updater {
     accountVotes: Map<number, AccountVote>
   ) {
     const state = this.#stateAccessor();
-    if (
-      state.type == 'ConnectedState' &&
-      (state.connectivity.type == 'Connected' ||
-        state.connectivity.type == 'Following')
-    ) {
+    const { type, connectivity } = state;
+    if (type == 'ConnectedState' && isAtLeastConnected(connectivity)) {
       const db = await DB_CACHE.getOrCreate(dbNameFor(state.network));
-      const api = await API_CACHE.getOrCreate(state.connectivity.endpoints);
-      await submitBatchVotes(api, account.address, signer, accountVotes);
+      const api = await API_CACHE.getOrCreate(connectivity.endpoints);
+      const votes = createBatchVotes(api, accountVotes);
+      await submitBatch(account.address, signer, votes);
 
       // Clear user votes
       await clear(db, VOTE_STORE_NAME);
@@ -394,6 +403,26 @@ export class Updater {
       this.#dispatch({
         type: 'ClearVotesAction',
       });
+    } else {
+      await this.addReport(incorrectTransitionError(state));
+    }
+  }
+
+  async signAndSendDelegation(
+    { account, signer }: SigningAccount,
+    address: string,
+    tracks: number[],
+    balance: BN,
+    conviction: Conviction
+  ) {
+    const state = this.#stateAccessor();
+    const { type, connectivity } = state;
+    if (type == 'ConnectedState' && isAtLeastConnected(connectivity)) {
+      const api = await API_CACHE.getOrCreate(connectivity.endpoints);
+      const txs = tracks.map((track) =>
+        delegate(api, track, address, conviction, balance)
+      );
+      await submitBatch(account.address, signer, batchAll(api, txs));
     } else {
       await this.addReport(incorrectTransitionError(state));
     }
@@ -588,7 +617,7 @@ async function dispatchEndpointsChange(
 
   const api = await API_CACHE.getOrCreate(endpoints);
   // TODO listen for deconnection/stales and update accordingly
-  // TODO listen to balance updates
+
   return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
     const apiAt = await api.at(header.hash);
     // TODO rely on subs, do not re-fetch whole state each block

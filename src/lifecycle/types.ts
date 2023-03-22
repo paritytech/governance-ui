@@ -1,3 +1,4 @@
+import BN from 'bn.js';
 import { Network } from '../network.js';
 import {
   AccountVote,
@@ -26,6 +27,7 @@ export type ChainState = {
   referenda: Map<number, Referendum>;
   fellows: Map<Address, Fellow>;
   allVotings: Map<Address, Map<number, Voting>>;
+  balance?: BN;
 };
 
 export type PersistedDataContext = {
@@ -109,10 +111,11 @@ export type UpdateConnectivityAction = {
   connectivity: Connectivity;
 };
 
-export type AddFinalizedBlockAction = BaseConnected & {
+export type AddFinalizedBlockAction = {
   type: 'AddFinalizedBlockAction';
   block: number;
   chain: ChainState;
+  endpoints: string[];
 };
 
 export type StoreReferendumDetailsAction = {
@@ -129,6 +132,7 @@ type Online = {
 };
 
 type BaseConnected = {
+  type: 'Connected' | 'Following';
   endpoints: string[];
 };
 
@@ -141,6 +145,13 @@ type Following = BaseConnected & {
 };
 
 export type Connectivity = Offline | Online | Connected | Following;
+
+export const isAtLeastConnected = (
+  connectivity: Connectivity
+): connectivity is BaseConnected => {
+  const { type } = connectivity;
+  return type == 'Connected' || type == 'Following';
+};
 
 export type CastVoteAction = {
   type: 'CastVoteAction';

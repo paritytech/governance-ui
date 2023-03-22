@@ -8,7 +8,7 @@ import { AddIcon, ChevronDownIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
-import { State } from '../../lifecycle/types.js';
+import { ConnectedState, State } from '../../lifecycle/types.js';
 import { useAppLifeCycle, filterOngoingReferenda } from '../../lifecycle';
 import { ReferendumOngoing } from '../../types';
 
@@ -169,6 +169,7 @@ export function DelegationPanel() {
   const gotoSection = (section: any) => {
     section?.current?.scrollIntoView({ behavior: 'smooth' });
   };
+  const network = (state as ConnectedState).network;
   return (
     <DelegationProvider>
       <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-16 pt-14 md:pt-20">
@@ -176,6 +177,7 @@ export function DelegationPanel() {
         <DelegatesBar />
         <div ref={trackSectionRef}>
           <TrackSelect
+            network={network}
             details={state.details}
             referenda={exportReferenda(state)}
             delegateHandler={() => gotoSection(delegateSectionRef)}

@@ -50,9 +50,6 @@ function extractRole(address: string, state: State): DelegateRoleType[] {
   if (state.type == 'ConnectedState') {
     if (state.chain.fellows.has(address)) {
       return ['fellow'];
-    } else {
-      // ToDo: remove (this is a mock role for UX testing)
-      return ['nominator'];
     }
   }
   return [];
@@ -62,7 +59,6 @@ function manifestoPreview(
   str: string,
   maxLen: number
 ): { preview: string; truncated: boolean } {
-  // TODO return a preview considering lines (e.g. max3 lines)
   const preview = str.substring(0, maxLen);
   const truncated = str.length > maxLen;
   return { preview, truncated };
