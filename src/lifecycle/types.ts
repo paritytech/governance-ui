@@ -22,12 +22,15 @@ export type Fellow = {
   rank: number;
 };
 
+export type AccountChainState = {
+  allVotings: Map<Address, Map<number, Voting>>;
+  balance: BN;
+};
+
 export type ChainState = {
   tracks: Map<number, Track>;
   referenda: Map<number, Referendum>;
   fellows: Map<Address, Fellow>;
-  allVotings: Map<Address, Map<number, Voting>>;
-  balance?: BN;
 };
 
 export type PersistedDataContext = {
@@ -80,6 +83,7 @@ export type ConnectedState = BaseRestoredState & {
   type: 'ConnectedState';
   block: number;
   chain: ChainState;
+  account?: AccountChainState;
 };
 
 export type State = InitialState | RestoredState | ConnectedState;
@@ -115,6 +119,7 @@ export type AddFinalizedBlockAction = {
   type: 'AddFinalizedBlockAction';
   block: number;
   chain: ChainState;
+  account: AccountChainState | undefined;
   endpoints: string[];
 };
 

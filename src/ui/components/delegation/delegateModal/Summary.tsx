@@ -11,7 +11,7 @@ import { SigningAccount, useAccount } from '../../../.././contexts';
 
 function extractBalance(state: State): BN | undefined {
   if (state.type == 'ConnectedState') {
-    return state.chain.balance;
+    return state.account?.balance;
   }
 }
 

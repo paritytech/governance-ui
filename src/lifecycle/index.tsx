@@ -34,6 +34,7 @@ import { batchAll, newApi, submitBatch } from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
 import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
 import {
+  AccountChainState,
   Action,
   Address,
   ChainState,
@@ -167,10 +168,19 @@ function reducer(previousState: State, action: Action): State {
   switch (action.type) {
     case 'SetConnectedAccountAction': {
       const { connectedAccount } = action;
-      return {
-        ...previousState,
-        connectedAccount,
-      };
+      if (previousState.type == 'ConnectedState') {
+        return {
+          ...previousState,
+          connectedAccount,
+          // Clear previous account data
+          account: undefined,
+        };
+      } else {
+        return withNewReport(
+          previousState,
+          incorrectTransitionError(previousState)
+        );
+      }
     }
     case 'SetRestoredAction': {
       const { network, votes } = action;
@@ -207,7 +217,7 @@ function reducer(previousState: State, action: Action): State {
       };
     }
     case 'AddFinalizedBlockAction': {
-      const { endpoints, block, chain } = action;
+      const { endpoints, block, account, chain } = action;
       if (previousState.type == 'ConnectedState') {
         // Already connected, update connectivity
         // But do not update chain details
@@ -224,6 +234,7 @@ function reducer(previousState: State, action: Action): State {
           type: 'ConnectedState',
           block,
           chain,
+          account,
           details: new Map(),
         };
       } else {
@@ -295,25 +306,29 @@ async function restorePersisted(
   };
 }
 
-export async function fetchChainState(
+export async function fetchChainState(api: {
+  consts: QueryableConsts<'promise'>;
+  query: QueryableStorage<'promise'>;
+}): Promise<ChainState> {
+  const tracks = getAllTracks(api);
+  const referenda = await getAllReferenda(api);
+  const fellows = await getAllMembers(api);
+  return { tracks, referenda, fellows };
+}
+
+export async function fetchAccountChainState(
   api: {
     consts: QueryableConsts<'promise'>;
     query: QueryableStorage<'promise'>;
   },
-  connectedAccount?: Address
-): Promise<ChainState> {
-  const tracks = getAllTracks(api);
-  const referenda = await getAllReferenda(api);
-  const fellows = await getAllMembers(api);
+  connectedAccount: Address
+): Promise<AccountChainState> {
   const allVotings = new Map<Address, Map<number, Voting>>();
-  if (connectedAccount) {
-    allVotings.set(connectedAccount, await getVotingFor(api, connectedAccount));
-    const balance = (
-      await api.query.system.account(connectedAccount)
-    ).data.free.toBn();
-    return { tracks, referenda, fellows, allVotings, balance };
-  }
-  return { tracks, referenda, fellows, allVotings };
+  allVotings.set(connectedAccount, await getVotingFor(api, connectedAccount));
+  const balance = (
+    await api.query.system.account(connectedAccount)
+  ).data.free.toBn();
+  return { allVotings, balance };
 }
 
 class DBReady implements Readyable<IDBDatabase>, Destroyable {
@@ -433,6 +448,8 @@ export class Updater {
       type: 'SetConnectedAccountAction',
       connectedAccount,
     });
+
+    // TODO UpdateState
   }
 
   async addReport(report: Report) {
@@ -619,11 +636,20 @@ async function dispatchEndpointsChange(
   // TODO listen for deconnection/stales and update accordingly
 
   return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
+    const state = stateAccessor();
     const apiAt = await api.at(header.hash);
     // TODO rely on subs, do not re-fetch whole state each block
     const chain = await measured('fetch-chain-state', () =>
       fetchChainState(apiAt)
     );
+
+    const connectedAccount = state.connectedAccount;
+    let account: AccountChainState | undefined;
+    if (connectedAccount) {
+      account = await measured('fetch-account-chain-state', () =>
+        fetchAccountChainState(apiAt, connectedAccount)
+      );
+    }
 
     // New block has been received, we are up-to-date with the chain
     dispatch({
@@ -631,10 +657,10 @@ async function dispatchEndpointsChange(
       endpoints,
       block: header.number.toNumber(),
       chain,
+      account,
     });
 
     // Trigger load of details for new referenda
-    const state = stateAccessor();
     const previousReferendaIndexes = Array.from(state.details.keys());
     const newReferendaIndexes = Array.from(
       filterOngoingReferenda(chain.referenda).keys()
