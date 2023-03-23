@@ -22,11 +22,11 @@ export function newApi(options?: ApiOptions): Promise<ApiPromise> {
 export function batchAll(
   api: { tx: SubmittableExtrinsics<'promise'> },
   calls: IMethod[]
-) {
+): SubmittableExtrinsic<'promise', SubmittableResult> {
   return api.tx.utility.batchAll([...calls]);
 }
 
-export async function submitBatch(
+export async function signAndSend(
   address: string,
   signer: Signer,
   extrinsic: SubmittableExtrinsic<'promise', SubmittableResult>

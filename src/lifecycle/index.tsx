@@ -7,8 +7,12 @@ import React, {
   useContext,
   createContext,
 } from 'react';
-import { ApiPromise } from '@polkadot/api';
-import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
+import { ApiPromise, SubmittableResult } from '@polkadot/api';
+import {
+  QueryableConsts,
+  QueryableStorage,
+  SubmittableExtrinsic,
+} from '@polkadot/api/types';
 import {
   createBatchVotes,
   delegate,
@@ -30,7 +34,7 @@ import { Cache, Destroyable, Readyable } from '../utils/cache.js';
 import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db.js';
 import { all, clear, open, save } from '../utils/indexeddb.js';
 import { measured } from '../utils/performance.js';
-import { batchAll, newApi, submitBatch } from '../utils/polkadot-api.js';
+import { batchAll, newApi, signAndSend } from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
 import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
 import {
@@ -419,7 +423,7 @@ export class Updater {
       const db = await DB_CACHE.getOrCreate(dbNameFor(state.network));
       const api = await API_CACHE.getOrCreate(connectivity.endpoints);
       const votes = createBatchVotes(api, accountVotes);
-      await submitBatch(account.address, signer, votes);
+      await signAndSend(account.address, signer, votes);
 
       // Clear user votes
       await clear(db, VOTE_STORE_NAME);
@@ -440,22 +444,23 @@ export class Updater {
     return null;
   }
 
-  async signAndSendDelegation(
-    { account, signer }: SigningAccount,
+  async delegate(
     address: string,
     tracks: number[],
     balance: BN,
     conviction: Conviction
-  ) {
+  ): Promise<Result<SubmittableExtrinsic<'promise', SubmittableResult>>> {
     const state = this.#stateAccessor();
     const api = await this.getApi(state);
     if (api) {
       const txs = tracks.map((track) =>
         delegate(api, track, address, conviction, balance)
       );
-      await submitBatch(account.address, signer, batchAll(api, txs));
+      return ok(batchAll(api, txs));
     } else {
-      await this.addReport(incorrectTransitionError(state));
+      const report = incorrectTransitionError(state);
+      await this.addReport(report);
+      return err(new Error(report.message));
     }
   }
 
