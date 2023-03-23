@@ -179,7 +179,7 @@ export function DelegationPanel() {
 
   // get delegations
   const allVotings =
-    state.type === 'ConnectedState' ? state.chain.allVotings : undefined;
+    state.type === 'ConnectedState' ? state.account?.allVotings : undefined;
   const delegations: Map<number, VotingDelegating> = useMemo(() => {
     if (allVotings && connectedAddress) {
       return getAllDelegations(connectedAddress, allVotings);

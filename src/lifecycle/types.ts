@@ -4,19 +4,11 @@ import type {
   ReferendumDetails,
   Track,
   Voting,
+  SigningAccount,
 } from '../types.js';
-
-import type { Account, WalletMetadata } from '@polkadot-onboard/core';
-import type { Signer } from '@polkadot/types/types';
 
 import BN from 'bn.js';
 import { Network } from '../network.js';
-
-export type SigningAccount = {
-  account: Account;
-  signer: Signer;
-  sourceMetadata: WalletMetadata;
-};
 
 export type Defaults = {
   network: Network;

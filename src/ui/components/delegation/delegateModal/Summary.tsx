@@ -1,13 +1,15 @@
+import type { TrackType } from '../types';
+import type { SigningAccount } from '../../../../types';
+
 import BN from 'bn.js';
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
 import { Modal, Button, ButtonSecondary } from '../../../lib';
 import { useAppLifeCycle } from '../../../../lifecycle';
 import { Delegate, State } from '../../../../lifecycle/types';
 import { Accounticon } from '../../accounts/Accounticon.js';
-import type { TrackType } from '../types';
 import { Conviction } from '../../../../types';
 import { SimpleAnalytics } from '../../../../analytics';
-import { SigningAccount, useAccount } from '../../../.././contexts';
+import { useAccount } from '../../../.././contexts';
 import { signAndSend } from '../../../../utils/polkadot-api';
 
 function extractBalance(state: State): BN | undefined {

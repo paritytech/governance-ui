@@ -1,4 +1,4 @@
-import type { SigningAccount } from '../lifecycle/index.js';
+import type { SigningAccount } from '../types';
 
 import React, { useContext, createContext, useState, useEffect } from 'react';
 import { useAppLifeCycle } from '../lifecycle/index.js';

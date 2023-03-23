@@ -1,3 +1,14 @@
+import type { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
+import type {
+  AccountVote,
+  Conviction,
+  Referendum,
+  ReferendumOngoing,
+  Voting,
+  VotingDelegating,
+  SigningAccount,
+} from '../types.js';
+
 import React, {
   Dispatch,
   useCallback,
@@ -20,16 +31,7 @@ import {
 } from '../chain/conviction-voting.js';
 import { getAllMembers } from '../chain/fellowship-collective.js';
 import { getAllReferenda, getAllTracks } from '../chain/referenda.js';
-import { AccountStorage, SigningAccount } from '../contexts/index.js';
 import { DEFAULT_NETWORK, endpointsFor, Network, parse } from '../network.js';
-import {
-  AccountVote,
-  Conviction,
-  Referendum,
-  ReferendumOngoing,
-  Voting,
-  VotingDelegating,
-} from '../types.js';
 import { err, ok, Result } from '../utils/index.js';
 import { Cache, Destroyable, Readyable } from '../utils/cache.js';
 import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db.js';
@@ -206,10 +208,10 @@ function reducer(previousState: State, action: Action): State {
           account: undefined,
         };
       } else {
-        return withNewReport(
-          previousState,
-          incorrectTransitionError(previousState)
-        );
+        return {
+          ...previousState,
+          connectedAccount,
+        };
       }
     }
     case 'SetRestored': {
@@ -254,6 +256,7 @@ function reducer(previousState: State, action: Action): State {
         return {
           ...previousState,
           chain: previousState.chain,
+          account: details,
         };
       } else if (previousState.type == 'RestoredState') {
         // First block received

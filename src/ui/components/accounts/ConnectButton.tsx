@@ -1,4 +1,4 @@
-import type { SigningAccount } from '../../../contexts/Account.js';
+import type { SigningAccount } from '../../../types';
 
 import { useEffect, useState } from 'react';
 import { BaseWallet } from '@polkadot-onboard/core';
