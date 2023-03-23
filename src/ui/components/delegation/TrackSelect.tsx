@@ -11,6 +11,7 @@ import ProgressStepper from '../ProgressStepper';
 import { ReferendumDetails, ReferendumOngoing } from '../../../types';
 import { Accounticon } from '../accounts/Accounticon';
 import { Network } from '../../../network';
+import { CloseIcon } from '../../icons';
 
 interface ICheckBoxProps {
   title?: string;
@@ -91,7 +92,7 @@ function ReferendaLinkIcon({
 }: {
   index: number;
   network: Network;
-}): JSX.Element {
+}) {
   return (
     <a
       href={`https://${network.toLowerCase()}.polkassembly.io/referenda/${index}`}
@@ -101,11 +102,14 @@ function ReferendaLinkIcon({
   );
 }
 
-const TallyBadgeBox = memo(function ({ tally }: { tally: Tally }): JSX.Element {
+const TallyBadgeBox = memo(function ({ tally }: { tally: Tally }) {
   const { ayes, nays } = tally;
   const total = ayes.add(nays);
-  const ayePerc = ayes.muln(100).div(total).toNumber();
-  const nayPerc = 100 - ayePerc;
+
+  // if total===0 means no vote is casted
+  const ayePerc = !total.eqn(0) ? ayes.muln(100).div(total).toNumber() : 0;
+  const nayPerc = !total.eqn(0) ? 100 - ayePerc : 0;
+
   const ayeClass =
     ayePerc > nayPerc ? 'rounded bg-green-500 text-white' : 'text-green-500';
   const nayClass =
@@ -122,6 +126,19 @@ const TallyBadgeBox = memo(function ({ tally }: { tally: Tally }): JSX.Element {
   );
 });
 
+function InnerCard({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className: string;
+}) {
+  return (
+    <div className={`flex flex-col rounded-2xl p-3 ${className}`}>
+      {children}
+    </div>
+  );
+}
 function ReferendaDetails({
   index,
   details,
@@ -132,9 +149,9 @@ function ReferendaDetails({
   details: Map<number, ReferendumDetails>;
   referendum: ReferendumOngoing;
   network: Network;
-}): JSX.Element {
+}) {
   return (
-    <div className="flex flex-col gap-2 rounded-2xl border-2 border-solid border-gray-100 p-3">
+    <InnerCard className="gap-2  border-2 border-solid border-gray-100">
       <div className="flex flex-row gap-2">
         <div className="grow text-sm font-medium leading-tight">
           {referendaTitle(index, details)}
@@ -151,11 +168,28 @@ function ReferendaDetails({
         />
         <TallyBadgeBox tally={referendum.tally} />
       </div>
-    </div>
+    </InnerCard>
   );
 }
 
-function NoActiveReferendum(): JSX.Element {
+function TrackDelegation({ delegation }: { delegation: VotingDelegating }) {
+  const { target } = delegation;
+  return (
+    <InnerCard className="gap-2 bg-[#FFE4F3]">
+      <div className="text-sm font-normal">Delegated to</div>
+      <div className="flex flex-row justify-between">
+        <Accounticon
+          textClassName="font-semibold text-base"
+          address={target}
+          size={24}
+        />
+        <CloseIcon />
+      </div>
+    </InnerCard>
+  );
+}
+
+function NoActiveReferendum() {
   return <div className="text-sm text-slate-300">No active referendum</div>;
 }
 
@@ -176,6 +210,7 @@ export function TrackCheckableCard({
         {expanded && (
           <div className="text-sm leading-tight">{track?.description}</div>
         )}
+        {delegation && <TrackDelegation delegation={delegation} />}
         {referenda.size ? (
           Array.from(referenda.entries()).map(([index, referendum]) => (
             <ReferendaDetails
@@ -227,7 +262,7 @@ export function TrackSelect({
   const { selectedTracks, setTrackSelection } = useDelegation();
 
   return (
-    <div className="flex flex-col gap-12 px-3 lg:px-8 lg:pb-12">
+    <div className="flex w-full flex-col gap-12 px-3 lg:px-8 lg:pb-12">
       <SectionTitle
         title="Delegate by Track"
         description="Select the tracks you&lsquo;d like to delegate."

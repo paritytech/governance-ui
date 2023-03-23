@@ -194,7 +194,7 @@ export function DelegationPanel() {
       <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-16 pt-14 md:pt-20">
         <Headline />
         <DelegatesBar />
-        <div ref={trackSectionRef}>
+        <div className="w-full" ref={trackSectionRef}>
           <TrackSelect
             network={network}
             details={state.details}
@@ -203,7 +203,7 @@ export function DelegationPanel() {
             delegateHandler={() => gotoSection(delegateSectionRef)}
           />
         </div>
-        <div ref={delegateSectionRef}>
+        <div className="w-full" ref={delegateSectionRef}>
           <DelegateSection />
         </div>
       </main>
