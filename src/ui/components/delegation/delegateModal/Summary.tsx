@@ -8,6 +8,7 @@ import type { TrackType } from '../types';
 import { Conviction } from '../../../../types';
 import { SimpleAnalytics } from '../../../../analytics';
 import { SigningAccount, useAccount } from '../../../.././contexts';
+import { signAndSend } from 'src/utils/polkadot-api';
 
 function extractBalance(state: State): BN | undefined {
   if (state.type == 'ConnectedState') {
@@ -33,19 +34,23 @@ export function DelegateModal({
   const { name, address } = delegate;
   const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();
-  const delegateHandler = (connectedAccount: SigningAccount, balance: BN) => {
+  const delegateHandler = async (
+    { account: { address }, signer }: SigningAccount,
+    balance: BN
+  ) => {
     try {
       // Use a default conviction voting for now
-      updater.signAndSendDelegation(
-        connectedAccount,
+      const txs = await updater.delegate(
         address,
         tracks.map((track) => track.id),
         balance,
         Conviction.None
       );
+      if (txs.type == 'ok') {
+        await signAndSend(address, signer, txs.value);
 
-      // Submit analytics
-      SimpleAnalytics.track('Delegate');
+        SimpleAnalytics.track('Delegate');
+      }
     } finally {
       // close modal
       onClose();

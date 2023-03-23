@@ -81,7 +81,6 @@ export type RestoredState = BaseRestoredState & {
 
 export type ConnectedState = BaseRestoredState & {
   type: 'ConnectedState';
-  block: number;
   chain: ChainState;
   account?: AccountChainState;
 };
@@ -90,41 +89,43 @@ export type State = InitialState | RestoredState | ConnectedState;
 
 // Actions
 
-export type AddReportAction = {
-  type: 'AddReportAction';
+export type AddReport = {
+  type: 'AddReport';
   report: Report;
 };
 
-export type RemoveReportAction = {
-  type: 'RemoveReportAction';
+export type RemoveReport = {
+  type: 'RemoveReport';
   index: number;
 };
 
-export type SetRestoredAction = PersistedDataContext & {
-  type: 'SetRestoredAction';
+export type SetRestored = PersistedDataContext & {
+  type: 'SetRestored';
   network: Network;
 };
 
-export type SetConnectedAccountAction = {
-  type: 'SetConnectedAccountAction';
+export type SetConnectedAccount = {
+  type: 'SetConnectedAccount';
   connectedAccount: Address | null;
 };
 
-export type UpdateConnectivityAction = {
-  type: 'UpdateConnectivityAction';
+export type UpdateConnectivity = {
+  type: 'UpdateConnectivity';
   connectivity: Connectivity;
 };
 
-export type AddFinalizedBlockAction = {
-  type: 'AddFinalizedBlockAction';
-  block: number;
-  chain: ChainState;
-  account: AccountChainState | undefined;
-  endpoints: string[];
+export type UpdateChainDetails = {
+  type: 'UpdateChainDetails';
+  details: ChainState;
 };
 
-export type StoreReferendumDetailsAction = {
-  type: 'StoreReferendumDetailsAction';
+export type UpdateChainAccountDetails = {
+  type: 'UpdateChainAccountDetails';
+  details: AccountChainState;
+};
+
+export type StoreReferendumDetails = {
+  type: 'StoreReferendumDetails';
   details: Map<number, ReferendumDetails>;
 };
 
@@ -139,6 +140,7 @@ type Online = {
 type BaseConnected = {
   type: 'Connected' | 'Following';
   endpoints: string[];
+  block: number;
 };
 
 type Connected = BaseConnected & {
@@ -158,14 +160,14 @@ export const isAtLeastConnected = (
   return type == 'Connected' || type == 'Following';
 };
 
-export type CastVoteAction = {
-  type: 'CastVoteAction';
+export type CastVote = {
+  type: 'CastVote';
   index: number;
   vote: AccountVote;
 };
 
-export type ClearVotesAction = {
-  type: 'ClearVotesAction';
+export type ClearVotes = {
+  type: 'ClearVotes';
 };
 
 export type SetIndexes = {
@@ -179,14 +181,15 @@ export type SetDelegates = {
 };
 
 export type Action =
-  | AddReportAction
-  | RemoveReportAction
-  | SetConnectedAccountAction
-  | SetRestoredAction
-  | UpdateConnectivityAction
-  | AddFinalizedBlockAction
-  | StoreReferendumDetailsAction
-  | CastVoteAction
-  | ClearVotesAction
+  | AddReport
+  | RemoveReport
+  | SetConnectedAccount
+  | SetRestored
+  | UpdateConnectivity
+  | UpdateChainDetails
+  | UpdateChainAccountDetails
+  | StoreReferendumDetails
+  | CastVote
+  | ClearVotes
   | SetIndexes
   | SetDelegates;
