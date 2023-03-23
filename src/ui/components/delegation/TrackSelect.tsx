@@ -177,7 +177,7 @@ function TrackDelegation({ delegation }: { delegation: VotingDelegating }) {
   return (
     <InnerCard className="gap-2 bg-[#FFE4F3]">
       <div className="text-sm font-normal">Delegated to</div>
-      <div className="flex flex-row justify-between">
+      <div className="flex flex-row items-center justify-between">
         <Accounticon
           textClassName="font-semibold text-base"
           address={target}
