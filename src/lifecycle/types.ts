@@ -1,12 +1,13 @@
-import BN from 'bn.js';
-import { Network } from '../network.js';
-import {
+import type {
   AccountVote,
   Referendum,
   ReferendumDetails,
   Track,
   Voting,
 } from '../types.js';
+
+import BN from 'bn.js';
+import { Network } from '../network.js';
 
 export type Defaults = {
   network: Network;
@@ -59,7 +60,7 @@ export type Delegate = {
 
 type BaseState = {
   reports?: Report[];
-  connectedAccount: string | null;
+  connectedAddress: string | null;
   connectivity: Connectivity;
   details: Map<number, ReferendumDetails>;
   indexes: Record<string, object>;
@@ -104,9 +105,9 @@ export type SetRestored = PersistedDataContext & {
   network: Network;
 };
 
-export type SetConnectedAccount = {
-  type: 'SetConnectedAccount';
-  connectedAccount: Address | null;
+export type SetConnectedAddress = {
+  type: 'SetConnectedAddress';
+  connectedAddress: string | null;
 };
 
 export type UpdateConnectivity = {
@@ -183,7 +184,7 @@ export type SetDelegates = {
 export type Action =
   | AddReport
   | RemoveReport
-  | SetConnectedAccount
+  | SetConnectedAddress
   | SetRestored
   | UpdateConnectivity
   | UpdateChainDetails

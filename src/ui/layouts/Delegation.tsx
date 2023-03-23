@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 import { ButtonOutline } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { DelegateModal } from '../components/delegation/delegateModal/Summary.js';
@@ -9,8 +9,13 @@ import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
 import { ConnectedState, State } from '../../lifecycle/types.js';
-import { useAppLifeCycle, filterOngoingReferenda } from '../../lifecycle';
-import { ReferendumOngoing } from '../../types';
+import {
+  useAppLifeCycle,
+  filterOngoingReferenda,
+  getAllDelegations,
+} from '../../lifecycle';
+import { ReferendumOngoing, VotingDelegating } from '../../types';
+import { useAccount } from '../../contexts';
 
 const placeholderUrl = new URL(
   '../../../assets/images/temp-placeholder.png',
@@ -154,7 +159,7 @@ export const DelegateSection = () => {
 };
 
 function exportReferenda(state: State): Map<number, ReferendumOngoing> {
-  if (state.type == 'ConnectedState') {
+  if (state.type === 'ConnectedState') {
     return filterOngoingReferenda(state.chain.referenda);
   }
   return new Map();
@@ -162,6 +167,8 @@ function exportReferenda(state: State): Map<number, ReferendumOngoing> {
 
 export function DelegationPanel() {
   const { state } = useAppLifeCycle();
+  const { connectedAccount } = useAccount();
+  const connectedAddress = connectedAccount?.account?.address;
   const delegateSectionRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef(null);
   const trackSectionRef: React.MutableRefObject<HTMLDivElement | null> =
@@ -169,21 +176,34 @@ export function DelegationPanel() {
   const gotoSection = (section: any) => {
     section?.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+  // get delegations
+  const allVotings =
+    state.type === 'ConnectedState' ? state.account?.allVotings : undefined;
+  const delegations: Map<number, VotingDelegating> = useMemo(() => {
+    if (allVotings && connectedAddress) {
+      return getAllDelegations(connectedAddress, allVotings);
+    } else {
+      return new Map();
+    }
+  }, [allVotings, connectedAddress]);
+
   const network = (state as ConnectedState).network;
   return (
     <DelegationProvider>
       <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-16 pt-14 md:pt-20">
         <Headline />
         <DelegatesBar />
-        <div ref={trackSectionRef}>
+        <div className="w-full" ref={trackSectionRef}>
           <TrackSelect
             network={network}
             details={state.details}
             referenda={exportReferenda(state)}
+            delegations={delegations}
             delegateHandler={() => gotoSection(delegateSectionRef)}
           />
         </div>
-        <div ref={delegateSectionRef}>
+        <div className="w-full" ref={delegateSectionRef}>
           <DelegateSection />
         </div>
       </main>

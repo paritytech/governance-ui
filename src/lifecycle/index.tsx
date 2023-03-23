@@ -1,3 +1,13 @@
+import type {
+  AccountVote,
+  Conviction,
+  Referendum,
+  ReferendumOngoing,
+  Voting,
+  VotingDelegating,
+  SigningAccount,
+} from '../types.js';
+
 import React, {
   Dispatch,
   useCallback,
@@ -20,15 +30,7 @@ import {
 } from '../chain/conviction-voting.js';
 import { getAllMembers } from '../chain/fellowship-collective.js';
 import { getAllReferenda, getAllTracks } from '../chain/referenda.js';
-import { SigningAccount } from '../contexts/index.js';
 import { DEFAULT_NETWORK, endpointsFor, Network, parse } from '../network.js';
-import {
-  AccountVote,
-  Conviction,
-  Referendum,
-  ReferendumOngoing,
-  Voting,
-} from '../types.js';
 import { err, ok, Result } from '../utils/index.js';
 import { Cache, Destroyable, Readyable } from '../utils/cache.js';
 import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db.js';
@@ -79,9 +81,11 @@ function filterOldVotes(
 }
 
 /**
- * @param votings
- * @param referenda
- * @returns
+ * Extracts user's votes for a set of referenda
+ * @param address user's account address
+ * @param allVotings all votings retrieved from conviction pallet state
+ * @param referenda a map of referenda to extracts the votings for
+ * @returns a map of catsing votes for the target referenda by the account
  */
 function extractUserVotes(
   address: Address,
@@ -105,16 +109,39 @@ function extractUserVotes(
   return votes;
 }
 
+/**
+ * return all delegations for a specific address
+ * @param address the address to extract the delegations for.
+ * @param allVotings all votings retrieved from conviction pallet state
+ * @returns a map of delegations by the account per each track
+ */
+export function getAllDelegations(
+  address: Address,
+  allVotings: Map<Address, Map<number, Voting>>
+): Map<number, VotingDelegating> {
+  const delegates = new Map<number, VotingDelegating>();
+  const votings = allVotings.get(address);
+  if (votings) {
+    votings.forEach((voting, trackId) => {
+      // filter the delegatings.
+      if (voting.type === 'delegating') {
+        delegates.set(trackId, voting);
+      }
+    });
+  }
+  return delegates;
+}
+
 export function getAllVotes(
   votes: Map<number, AccountVote>,
   allVotings: Map<Address, Map<number, Voting>>,
   referenda: Map<number, ReferendumOngoing>,
-  connectedAccount: Address | null
+  connectedAddress: Address | null
 ): Map<number, AccountVote> {
   const currentVotes = filterOldVotes(votes, referenda);
-  if (connectedAccount) {
+  if (connectedAddress) {
     const onChainVotes = extractUserVotes(
-      connectedAccount,
+      connectedAddress,
       allVotings,
       referenda
     );
@@ -170,20 +197,20 @@ function reducer(previousState: State, action: Action): State {
   // Note that unlucky timing might lead to overstepping changes (triggered via listeners registered just above)
   // So applying changes must be indempotent
   switch (action.type) {
-    case 'SetConnectedAccount': {
-      const { connectedAccount } = action;
+    case 'SetConnectedAddress': {
+      const { connectedAddress } = action;
       if (previousState.type == 'ConnectedState') {
         return {
           ...previousState,
-          connectedAccount,
+          connectedAddress,
           // Clear previous account data
           account: undefined,
         };
       } else {
-        return withNewReport(
-          previousState,
-          incorrectTransitionError(previousState)
-        );
+        return {
+          ...previousState,
+          connectedAddress,
+        };
       }
     }
     case 'SetRestored': {
@@ -335,11 +362,11 @@ export async function fetchAccountChainState(
     consts: QueryableConsts<'promise'>;
     query: QueryableStorage<'promise'>;
   },
-  connectedAccount: Address
+  connectedAddress: Address
 ): Promise<AccountChainState> {
   const allVotings = new Map<Address, Map<number, Voting>>();
-  allVotings.set(connectedAccount, await getVotingFor(api, connectedAccount));
-  const account = await api.query.system.account(connectedAccount);
+  allVotings.set(connectedAddress, await getVotingFor(api, connectedAddress));
+  const account = await api.query.system.account(connectedAddress);
   const balance = account.data.free.toBn();
   return { allVotings, balance };
 }
@@ -464,18 +491,21 @@ export class Updater {
     }
   }
 
-  async setConnectedAccount(connectedAccount: Address) {
+  async setConnectedAddress(connectedAddress: string | null) {
     this.#dispatch({
-      type: 'SetConnectedAccount',
-      connectedAccount,
+      type: 'SetConnectedAddress',
+      connectedAddress,
     });
 
-    const state = this.#stateAccessor();
-    const api = await this.getApi(state);
-    if (api) {
-      await updateChainDetails(api, this.#dispatch, connectedAccount);
-    } else {
-      await this.addReport(incorrectTransitionError(state));
+    // connectedAddress exists, fetch associated chain info
+    if (connectedAddress) {
+      const state = this.#stateAccessor();
+      const api = await this.getApi(state);
+      if (api) {
+        await updateChainDetails(api, this.#dispatch, connectedAddress);
+      } else {
+        await this.addReport(incorrectTransitionError(state));
+      }
     }
   }
 
@@ -497,7 +527,7 @@ export class Updater {
 const DEFAULT_INITIAL_STATE: State = {
   type: 'InitialState',
   connectivity: { type: navigator.onLine ? 'Online' : 'Offline' },
-  connectedAccount: null,
+  connectedAddress: null,
   details: new Map(),
   indexes: {},
   delegates: [],
@@ -686,6 +716,7 @@ async function dispatchEndpointsChange(
   });
 
   return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
+    // New block has been received, we are up-to-date with the chain
     dispatch({
       type: 'UpdateConnectivity',
       connectivity: {
@@ -702,15 +733,14 @@ async function dispatchEndpointsChange(
       fetchChainState(apiAt)
     );
 
-    // New block has been received, we are up-to-date with the chain
     dispatch({
       type: 'UpdateChainDetails',
       details,
     });
 
-    const connectedAccount = state.connectedAccount;
-    if (connectedAccount) {
-      await updateChainDetails(apiAt, dispatch, connectedAccount);
+    const connectedAddress = state.connectedAddress;
+    if (connectedAddress) {
+      await updateChainDetails(apiAt, dispatch, connectedAddress);
     }
 
     // Trigger fetch of missing referenda metadata
