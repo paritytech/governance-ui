@@ -25,7 +25,7 @@ export class AccountStorage {
 }
 
 const AccountProvider = ({ children }: { children: React.ReactNode }) => {
-  const { state, updater } = useAppLifeCycle();
+  const { updater } = useAppLifeCycle();
   const [_connectedAccount, _setConnectedAccount] = useState<
     SigningAccount | undefined
   >();
