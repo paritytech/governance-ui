@@ -4,18 +4,11 @@ import type { SigningAccount, VotingDelegating } from '../../../../types';
 import BN from 'bn.js';
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
 import { Modal, Button, ButtonSecondary } from '../../../lib';
-import { useAppLifeCycle } from '../../../../lifecycle';
-import { State } from '../../../../lifecycle/types';
+import { useAppLifeCycle, extractBalance } from '../../../../lifecycle';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { SimpleAnalytics } from '../../../../analytics';
 import { useAccount } from '../../../../contexts';
 import { signAndSend } from '../../../../utils/polkadot-api';
-
-function extractBalance(state: State): BN | undefined {
-  if (state.type == 'ConnectedState') {
-    return state.account?.balance;
-  }
-}
 
 interface IUndelegateModalProps {
   delegation: VotingDelegating;

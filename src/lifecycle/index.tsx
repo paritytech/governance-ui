@@ -179,6 +179,12 @@ export function filterToBeVotedReferenda(
   return new Map([...referenda].filter(([index]) => !votes.has(index)));
 }
 
+export function extractBalance(state: State): BN | undefined {
+  if (state.type == 'ConnectedState') {
+    return state.account?.balance;
+  }
+}
+
 function incorrectTransitionError(previousState: State): Report {
   return {
     type: 'Error',
