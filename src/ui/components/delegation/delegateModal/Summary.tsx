@@ -8,7 +8,7 @@ import type { TrackType } from '../types';
 import { Conviction } from '../../../../types';
 import { SimpleAnalytics } from '../../../../analytics';
 import { SigningAccount, useAccount } from '../../../.././contexts';
-import { signAndSend } from 'src/utils/polkadot-api';
+import { signAndSend } from '../../../../utils/polkadot-api';
 
 function extractBalance(state: State): BN | undefined {
   if (state.type == 'ConnectedState') {
