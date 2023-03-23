@@ -9,7 +9,7 @@ import { Delegate, State } from '../../../../lifecycle/types';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { Conviction } from '../../../../types';
 import { SimpleAnalytics } from '../../../../analytics';
-import { useAccount } from '../../../.././contexts';
+import { useAccount } from '../../../../contexts';
 import { signAndSend } from '../../../../utils/polkadot-api';
 
 function extractBalance(state: State): BN | undefined {
