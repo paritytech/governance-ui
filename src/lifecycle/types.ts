@@ -4,7 +4,6 @@ import type {
   ReferendumDetails,
   Track,
   Voting,
-  SigningAccount,
 } from '../types.js';
 
 import BN from 'bn.js';
@@ -61,7 +60,7 @@ export type Delegate = {
 
 type BaseState = {
   reports?: Report[];
-  connectedAccount: SigningAccount | undefined;
+  connectedAddress: string | null;
   connectivity: Connectivity;
   details: Map<number, ReferendumDetails>;
   indexes: Record<string, object>;
@@ -106,9 +105,9 @@ export type SetRestored = PersistedDataContext & {
   network: Network;
 };
 
-export type SetConnectedAccountAction = {
-  type: 'SetConnectedAccountAction';
-  connectedAccount: SigningAccount | null;
+export type SetConnectedAddress = {
+  type: 'SetConnectedAddress';
+  connectedAddress: string | null;
 };
 
 export type UpdateConnectivity = {
@@ -185,7 +184,7 @@ export type SetDelegates = {
 export type Action =
   | AddReport
   | RemoveReport
-  | SetConnectedAccount
+  | SetConnectedAddress
   | SetRestored
   | UpdateConnectivity
   | UpdateChainDetails

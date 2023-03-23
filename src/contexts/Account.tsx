@@ -82,9 +82,10 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const setConnectedAccount = (signingAccount: SigningAccount | undefined) => {
-    AccountStorage.setConnectedAddress(signingAccount?.account.address || '');
+    const connectedAddress = signingAccount?.account.address;
+    AccountStorage.setConnectedAddress(connectedAddress || '');
     _setConnectedAccount(signingAccount);
-    updater.setConnectedAccount(signingAccount);
+    updater.setConnectedAddress(connectedAddress || null);
   };
 
   // load connected account from storage

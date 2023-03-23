@@ -1,4 +1,3 @@
-import type { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
 import type {
   AccountVote,
   Conviction,
@@ -198,19 +197,19 @@ function reducer(previousState: State, action: Action): State {
   // Note that unlucky timing might lead to overstepping changes (triggered via listeners registered just above)
   // So applying changes must be indempotent
   switch (action.type) {
-    case 'SetConnectedAccount': {
-      const { connectedAccount } = action;
+    case 'SetConnectedAddress': {
+      const { connectedAddress } = action;
       if (previousState.type == 'ConnectedState') {
         return {
           ...previousState,
-          connectedAccount,
+          connectedAddress,
           // Clear previous account data
           account: undefined,
         };
       } else {
         return {
           ...previousState,
-          connectedAccount,
+          connectedAddress,
         };
       }
     }
@@ -256,7 +255,6 @@ function reducer(previousState: State, action: Action): State {
         return {
           ...previousState,
           chain: previousState.chain,
-          account: details,
         };
       } else if (previousState.type == 'RestoredState') {
         // First block received
@@ -364,11 +362,11 @@ export async function fetchAccountChainState(
     consts: QueryableConsts<'promise'>;
     query: QueryableStorage<'promise'>;
   },
-  connectedAccount: Address
+  connectedAddress: Address
 ): Promise<AccountChainState> {
   const allVotings = new Map<Address, Map<number, Voting>>();
-  allVotings.set(connectedAccount, await getVotingFor(api, connectedAccount));
-  const account = await api.query.system.account(connectedAccount);
+  allVotings.set(connectedAddress, await getVotingFor(api, connectedAddress));
+  const account = await api.query.system.account(connectedAddress);
   const balance = account.data.free.toBn();
   return { allVotings, balance };
 }
@@ -493,18 +491,21 @@ export class Updater {
     }
   }
 
-  async setConnectedAccount(connectedAccount: SigningAccount | undefined) {
+  async setConnectedAddress(connectedAddress: string | null) {
     this.#dispatch({
-      type: 'SetConnectedAccount',
-      connectedAccount,
+      type: 'SetConnectedAddress',
+      connectedAddress,
     });
 
-    const state = this.#stateAccessor();
-    const api = await this.getApi(state);
-    if (api) {
-      await updateChainDetails(api, this.#dispatch, connectedAccount);
-    } else {
-      await this.addReport(incorrectTransitionError(state));
+    // connectedAddress exists, fetch associated chain info
+    if (connectedAddress) {
+      const state = this.#stateAccessor();
+      const api = await this.getApi(state);
+      if (api) {
+        await updateChainDetails(api, this.#dispatch, connectedAddress);
+      } else {
+        await this.addReport(incorrectTransitionError(state));
+      }
     }
   }
 
@@ -526,7 +527,7 @@ export class Updater {
 const DEFAULT_INITIAL_STATE: State = {
   type: 'InitialState',
   connectivity: { type: navigator.onLine ? 'Online' : 'Offline' },
-  connectedAccount: undefined,
+  connectedAddress: null,
   details: new Map(),
   indexes: {},
   delegates: [],
@@ -715,6 +716,7 @@ async function dispatchEndpointsChange(
   });
 
   return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
+    // New block has been received, we are up-to-date with the chain
     dispatch({
       type: 'UpdateConnectivity',
       connectivity: {
@@ -731,23 +733,14 @@ async function dispatchEndpointsChange(
       fetchChainState(apiAt)
     );
 
-    const connectedAddress = state.connectedAccount?.account?.address;
-    let account: AccountChainState | undefined;
-    if (connectedAddress) {
-      account = await measured('fetch-account-chain-state', () =>
-        fetchAccountChainState(apiAt, connectedAddress)
-      );
-    }
-
-    // New block has been received, we are up-to-date with the chain
     dispatch({
       type: 'UpdateChainDetails',
       details,
     });
 
-    const connectedAccount = state.connectedAccount;
-    if (connectedAccount) {
-      await updateChainDetails(apiAt, dispatch, connectedAccount);
+    const connectedAddress = state.connectedAddress;
+    if (connectedAddress) {
+      await updateChainDetails(apiAt, dispatch, connectedAddress);
     }
 
     // Trigger fetch of missing referenda metadata
