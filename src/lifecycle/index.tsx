@@ -26,6 +26,7 @@ import {
 import {
   createBatchVotes,
   delegate,
+  undelegate,
   getVotingFor,
 } from '../chain/conviction-voting.js';
 import { getAllMembers } from '../chain/fellowship-collective.js';
@@ -176,6 +177,12 @@ export function filterToBeVotedReferenda(
   votes: Map<number, AccountVote>
 ): Map<number, ReferendumOngoing> {
   return new Map([...referenda].filter(([index]) => !votes.has(index)));
+}
+
+export function extractBalance(state: State): BN | undefined {
+  if (state.type == 'ConnectedState') {
+    return state.account?.balance;
+  }
 }
 
 function incorrectTransitionError(previousState: State): Report {
@@ -483,6 +490,22 @@ export class Updater {
       const txs = tracks.map((track) =>
         delegate(api, track, address, conviction, balance)
       );
+      return ok(batchAll(api, txs));
+    } else {
+      const report = incorrectTransitionError(state);
+      await this.addReport(report);
+      return err(new Error(report.message));
+    }
+  }
+
+  async undelegate(
+    address: string,
+    tracks: number[]
+  ): Promise<Result<SubmittableExtrinsic<'promise', SubmittableResult>>> {
+    const state = this.#stateAccessor();
+    const api = await this.getApi(state);
+    if (api) {
+      const txs = tracks.map((track) => undelegate(api, track));
       return ok(batchAll(api, txs));
     } else {
       const report = incorrectTransitionError(state);

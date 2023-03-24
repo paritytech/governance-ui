@@ -1,57 +1,45 @@
 import type { TrackType } from '../types';
-import type { SigningAccount } from '../../../../types';
+import type { SigningAccount, VotingDelegating } from '../../../../types';
 
 import BN from 'bn.js';
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
 import { Modal, Button, ButtonSecondary } from '../../../lib';
-import { useAppLifeCycle } from '../../../../lifecycle';
-import { Delegate, State } from '../../../../lifecycle/types';
+import { useAppLifeCycle, extractBalance } from '../../../../lifecycle';
 import { Accounticon } from '../../accounts/Accounticon.js';
-import { Conviction } from '../../../../types';
 import { SimpleAnalytics } from '../../../../analytics';
-import { useAccount } from '../../../.././contexts';
+import { useAccount } from '../../../../contexts';
 import { signAndSend } from '../../../../utils/polkadot-api';
 
-function extractBalance(state: State): BN | undefined {
-  if (state.type == 'ConnectedState') {
-    return state.account?.balance;
-  }
-}
-
-interface IDelegateModalProps {
-  delegate: Delegate;
+interface IUndelegateModalProps {
+  delegation: VotingDelegating;
   tracks: TrackType[];
   open: boolean;
   onClose: () => void;
 }
-export function DelegateModal({
-  delegate,
+export function UndelegateModal({
+  delegation,
   tracks,
   open,
   onClose,
-}: IDelegateModalProps) {
+}: IUndelegateModalProps) {
   const { state, updater } = useAppLifeCycle();
   const { connectedAccount } = useAccount();
   const balance = extractBalance(state);
-  const { name, address } = delegate;
+  const { target: address } = delegation;
   const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();
-  const delegateHandler = async (
+  const undelegateHandler = async (
     { account: { address }, signer }: SigningAccount,
     balance: BN
   ) => {
     try {
-      // Use a default conviction voting for now
-      const txs = await updater.delegate(
+      const txs = await updater.undelegate(
         address,
-        tracks.map((track) => track.id),
-        balance,
-        Conviction.None
+        tracks.map((track) => track.id)
       );
       if (txs.type == 'ok') {
         await signAndSend(address, signer, txs.value);
-
-        SimpleAnalytics.track('Delegate');
+        SimpleAnalytics.track('Undelegate');
       }
     } finally {
       // close modal
@@ -65,25 +53,26 @@ export function DelegateModal({
           <div className="text-left">
             <h2 className="mb-2 text-3xl font-medium">Summary</h2>
             <p className="text-base">
-              You’re about to submit a transaction to delegate your voting power
-              for the following tracks to <b>{name}</b> Delegate.
+              You’re about to submit a transaction to undelegate some of your
+              delegated tracks.
             </p>
           </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm">Your delegate</div>
-            <div className="flex gap-2">
-              <Accounticon
-                textClassName="font-medium"
-                address={address}
-                size={24}
-              />
-              <div className="capitalize">{name}</div>
+          <div className="columns-2">
+            <div className="flex w-full flex-col gap-1">
+              <div className="text-sm">Tracks to undelegate</div>
+              <div className="flex gap-2">
+                <div className="text-base font-medium">{tracksCaption}</div>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm">Tracks to delegate</div>
-            <div className="flex gap-2">
-              <div className="text-base font-medium">{tracksCaption}</div>
+            <div className="flex w-full flex-col gap-1">
+              <div className="text-sm">Your delegate</div>
+              <div className="flex gap-2">
+                <Accounticon
+                  textClassName="font-medium"
+                  address={address}
+                  size={24}
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -96,9 +85,9 @@ export function DelegateModal({
             balance && ( // Check for non-null balance?
               // TODO Probably better to allow for button to be disabled
               <Button
-                onClick={() => delegateHandler(connectedAccount, balance)}
+                onClick={() => undelegateHandler(connectedAccount, balance)}
               >
-                <div>Delegate Now</div>
+                <div>Undelegate Tracks</div>
                 <ChevronRightIcon />
               </Button>
             )}

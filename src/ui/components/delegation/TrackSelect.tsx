@@ -1,7 +1,7 @@
 import type { Tally, VotingDelegating } from '../../../types';
 import type { TrackType } from './types';
 
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { tracksMetadata } from '../../../chain/mocks';
 import { useDelegation } from '../../../contexts/Delegation.js';
 import { ButtonSecondary, Card } from '../../lib';
@@ -12,6 +12,7 @@ import { ReferendumDetails, ReferendumOngoing } from '../../../types';
 import { Accounticon } from '../accounts/Accounticon';
 import { Network } from '../../../network';
 import { CloseIcon } from '../../icons';
+import { UndelegateModal } from './delegateModal/Undelegate';
 
 interface ICheckBoxProps {
   title?: string;
@@ -63,7 +64,7 @@ export function CheckBox({
 }
 
 interface ITrackCheckableCardProps {
-  track?: TrackType;
+  track: TrackType;
   referenda: Map<number, ReferendumOngoing>;
   details: Map<number, ReferendumDetails>;
   delegation: VotingDelegating | undefined;
@@ -172,20 +173,43 @@ function ReferendaDetails({
   );
 }
 
-function TrackDelegation({ delegation }: { delegation: VotingDelegating }) {
+function TrackDelegation({
+  track,
+  delegation,
+}: {
+  track: TrackType;
+  delegation: VotingDelegating;
+}) {
   const { target } = delegation;
+  const [showModal, setShowModal] = useState(false);
+  const closeModal = () => {
+    setShowModal(false);
+  };
+  const openModal = () => {
+    setShowModal(true);
+  };
   return (
-    <InnerCard className="gap-2 bg-[#FFE4F3]">
-      <div className="text-sm font-normal">Delegated to</div>
-      <div className="flex flex-row items-center justify-between">
-        <Accounticon
-          textClassName="font-semibold text-base"
-          address={target}
-          size={24}
-        />
-        <CloseIcon />
-      </div>
-    </InnerCard>
+    <>
+      <InnerCard className="gap-2 bg-[#FFE4F3]">
+        <div className="text-sm font-normal">Delegated to</div>
+        <div className="flex flex-row items-center justify-between">
+          <Accounticon
+            textClassName="font-semibold text-base"
+            address={target}
+            size={24}
+          />
+          <div className="hover:scale-[1.01]" onClick={() => openModal()}>
+            <CloseIcon />
+          </div>
+        </div>
+      </InnerCard>
+      <UndelegateModal
+        onClose={closeModal}
+        open={showModal}
+        tracks={(track && [track]) || []}
+        delegation={delegation}
+      />
+    </>
   );
 }
 
@@ -210,7 +234,9 @@ export function TrackCheckableCard({
         {expanded && (
           <div className="text-sm leading-tight">{track?.description}</div>
         )}
-        {delegation && <TrackDelegation delegation={delegation} />}
+        {delegation && (
+          <TrackDelegation track={track} delegation={delegation} />
+        )}
         {referenda.size ? (
           Array.from(referenda.entries()).map(([index, referendum]) => (
             <ReferendaDetails

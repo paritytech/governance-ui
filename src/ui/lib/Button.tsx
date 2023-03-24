@@ -27,7 +27,7 @@ export function Button({
 }: ClickableProps): JSX.Element {
   return (
     <button
-      className={`hover: flex min-w-min appearance-none items-center  justify-center  gap-2 rounded-full bg-primary py-2 px-4 text-sm  text-white transition-transform duration-150 hover:scale-[1.01] ${
+      className={`flex min-w-min appearance-none items-center  justify-center  gap-2 rounded-full bg-primary py-2 px-4 text-sm  text-white transition-transform duration-150 hover:scale-[1.01] ${
         className || ''
       }`}
       style={{ ...style }}
@@ -46,7 +46,7 @@ export function ButtonSecondary({
 }: ClickableProps): JSX.Element {
   return (
     <button
-      className={`hover: flex min-w-min appearance-none items-center  justify-center gap-2 rounded-full bg-secondary py-2 px-4 text-sm  text-white transition-transform duration-150 hover:scale-[1.01] ${
+      className={`flex min-w-min appearance-none items-center  justify-center gap-2 rounded-full bg-secondary py-2 px-4 text-sm  text-white transition-transform duration-150 hover:scale-[1.01] ${
         className || ''
       }`}
       style={{ ...style }}

@@ -1,7 +1,7 @@
 import React, { useMemo, useRef, useState } from 'react';
 import { ButtonOutline } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
-import { DelegateModal } from '../components/delegation/delegateModal/Summary.js';
+import { DelegateModal } from '../components/delegation/delegateModal/Delegate.js';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
 import { tracksMetadata } from '../../chain/mocks';
 import { AddIcon, ChevronDownIcon } from '../icons';
