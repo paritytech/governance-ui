@@ -1,4 +1,4 @@
-import type { SigningAccount } from '../../../contexts/Account.js';
+import type { SigningAccount } from '../../../types';
 import { useMemo } from 'react';
 import Account from './Account.js';
 

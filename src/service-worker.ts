@@ -5,6 +5,7 @@ import {
   filterToBeVotedReferenda,
   fetchChainState,
   getAllVotes,
+  fetchAccountChainState,
 } from './lifecycle/index.js';
 import { endpointsFor, Network } from './network.js';
 import { AccountVote, Referendum } from './types.js';
@@ -115,7 +116,7 @@ async function networks(): Promise<Network[]> {
 
 self.addEventListener('periodicsync', async (event: SyncEvent) => {
   if (event.tag === REFERENDA_UPDATES_TAG) {
-    const connectedAccount = AccountStorage.getConnectedAddress();
+    const connectedAddress = AccountStorage.getConnectedAddress();
     // Retrieve referenda updates
     for (const network of await networks()) {
       const api = await newApi({
@@ -127,7 +128,11 @@ self.addEventListener('periodicsync', async (event: SyncEvent) => {
       // Get referenda for latest block
       const hash = await api.rpc.chain.getBlockHash(number);
       const apiAt = await api.at(hash);
-      const { allVotings, referenda } = await fetchChainState(apiAt);
+      const { referenda } = await fetchChainState(apiAt);
+      let account;
+      if (connectedAddress) {
+        account = await fetchAccountChainState(apiAt, connectedAddress);
+      }
 
       // Extract to be voted on referenda based on current votes
       const ongoingReferenda = filterOngoingReferenda(referenda);
@@ -137,9 +142,9 @@ self.addEventListener('periodicsync', async (event: SyncEvent) => {
       >;
       const allVotes = getAllVotes(
         votes,
-        allVotings,
+        account?.allVotings || new Map(),
         ongoingReferenda,
-        connectedAccount
+        connectedAddress
       );
       const referendaToBeVotedOn = filterToBeVotedReferenda(
         ongoingReferenda,

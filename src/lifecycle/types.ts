@@ -1,11 +1,13 @@
-import { Network } from '../network.js';
-import {
+import type {
   AccountVote,
   Referendum,
   ReferendumDetails,
   Track,
   Voting,
 } from '../types.js';
+
+import BN from 'bn.js';
+import { Network } from '../network.js';
 
 export type Defaults = {
   network: Network;
@@ -21,11 +23,15 @@ export type Fellow = {
   rank: number;
 };
 
+export type AccountChainState = {
+  allVotings: Map<Address, Map<number, Voting>>;
+  balance: BN;
+};
+
 export type ChainState = {
   tracks: Map<number, Track>;
   referenda: Map<number, Referendum>;
   fellows: Map<Address, Fellow>;
-  allVotings: Map<Address, Map<number, Voting>>;
 };
 
 export type PersistedDataContext = {
@@ -54,7 +60,7 @@ export type Delegate = {
 
 type BaseState = {
   reports?: Report[];
-  connectedAccount: string | null;
+  connectedAddress: string | null;
   connectivity: Connectivity;
   details: Map<number, ReferendumDetails>;
   indexes: Record<string, object>;
@@ -76,47 +82,51 @@ export type RestoredState = BaseRestoredState & {
 
 export type ConnectedState = BaseRestoredState & {
   type: 'ConnectedState';
-  block: number;
   chain: ChainState;
+  account?: AccountChainState;
 };
 
 export type State = InitialState | RestoredState | ConnectedState;
 
 // Actions
 
-export type AddReportAction = {
-  type: 'AddReportAction';
+export type AddReport = {
+  type: 'AddReport';
   report: Report;
 };
 
-export type RemoveReportAction = {
-  type: 'RemoveReportAction';
+export type RemoveReport = {
+  type: 'RemoveReport';
   index: number;
 };
 
-export type SetRestoredAction = PersistedDataContext & {
-  type: 'SetRestoredAction';
+export type SetRestored = PersistedDataContext & {
+  type: 'SetRestored';
   network: Network;
 };
 
-export type SetConnectedAccountAction = {
-  type: 'SetConnectedAccountAction';
-  connectedAccount: Address | null;
+export type SetConnectedAddress = {
+  type: 'SetConnectedAddress';
+  connectedAddress: string | null;
 };
 
-export type UpdateConnectivityAction = {
-  type: 'UpdateConnectivityAction';
+export type UpdateConnectivity = {
+  type: 'UpdateConnectivity';
   connectivity: Connectivity;
 };
 
-export type AddFinalizedBlockAction = BaseConnected & {
-  type: 'AddFinalizedBlockAction';
-  block: number;
-  chain: ChainState;
+export type UpdateChainDetails = {
+  type: 'UpdateChainDetails';
+  details: ChainState;
 };
 
-export type StoreReferendumDetailsAction = {
-  type: 'StoreReferendumDetailsAction';
+export type UpdateChainAccountDetails = {
+  type: 'UpdateChainAccountDetails';
+  details: AccountChainState;
+};
+
+export type StoreReferendumDetails = {
+  type: 'StoreReferendumDetails';
   details: Map<number, ReferendumDetails>;
 };
 
@@ -129,7 +139,9 @@ type Online = {
 };
 
 type BaseConnected = {
+  type: 'Connected' | 'Following';
   endpoints: string[];
+  block: number;
 };
 
 type Connected = BaseConnected & {
@@ -142,14 +154,21 @@ type Following = BaseConnected & {
 
 export type Connectivity = Offline | Online | Connected | Following;
 
-export type CastVoteAction = {
-  type: 'CastVoteAction';
+export const isAtLeastConnected = (
+  connectivity: Connectivity
+): connectivity is BaseConnected => {
+  const { type } = connectivity;
+  return type == 'Connected' || type == 'Following';
+};
+
+export type CastVote = {
+  type: 'CastVote';
   index: number;
   vote: AccountVote;
 };
 
-export type ClearVotesAction = {
-  type: 'ClearVotesAction';
+export type ClearVotes = {
+  type: 'ClearVotes';
 };
 
 export type SetIndexes = {
@@ -163,14 +182,15 @@ export type SetDelegates = {
 };
 
 export type Action =
-  | AddReportAction
-  | RemoveReportAction
-  | SetConnectedAccountAction
-  | SetRestoredAction
-  | UpdateConnectivityAction
-  | AddFinalizedBlockAction
-  | StoreReferendumDetailsAction
-  | CastVoteAction
-  | ClearVotesAction
+  | AddReport
+  | RemoveReport
+  | SetConnectedAddress
+  | SetRestored
+  | UpdateConnectivity
+  | UpdateChainDetails
+  | UpdateChainAccountDetails
+  | StoreReferendumDetails
+  | CastVote
+  | ClearVotes
   | SetIndexes
   | SetDelegates;

@@ -1,3 +1,13 @@
+import type {
+  AccountVote,
+  Conviction,
+  Referendum,
+  ReferendumOngoing,
+  Voting,
+  VotingDelegating,
+  SigningAccount,
+} from '../types.js';
+
 import React, {
   Dispatch,
   useCallback,
@@ -7,36 +17,42 @@ import React, {
   useContext,
   createContext,
 } from 'react';
-import { ApiPromise } from '@polkadot/api';
-import { QueryableConsts, QueryableStorage } from '@polkadot/api/types';
-import { getVotingFor, submitBatchVotes } from '../chain/conviction-voting.js';
+import { ApiPromise, SubmittableResult } from '@polkadot/api';
+import {
+  QueryableConsts,
+  QueryableStorage,
+  SubmittableExtrinsic,
+} from '@polkadot/api/types';
+import {
+  createBatchVotes,
+  delegate,
+  undelegate,
+  getVotingFor,
+} from '../chain/conviction-voting.js';
 import { getAllMembers } from '../chain/fellowship-collective.js';
 import { getAllReferenda, getAllTracks } from '../chain/referenda.js';
-import { SigningAccount } from '../contexts/index.js';
 import { DEFAULT_NETWORK, endpointsFor, Network, parse } from '../network.js';
-import {
-  AccountVote,
-  Referendum,
-  ReferendumOngoing,
-  Voting,
-} from '../types.js';
 import { err, ok, Result } from '../utils/index.js';
 import { Cache, Destroyable, Readyable } from '../utils/cache.js';
 import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db.js';
 import { all, clear, open, save } from '../utils/indexeddb.js';
 import { measured } from '../utils/performance.js';
-import { newApi } from '../utils/polkadot-api.js';
+import { batchAll, newApi, signAndSend } from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
 import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
-import type {
+import {
+  AccountChainState,
   Action,
   Address,
   ChainState,
   Delegate,
+  isAtLeastConnected,
   PersistedDataContext,
   Report,
   State,
 } from './types.js';
+import { fetchReferenda } from '../utils/polkassembly.js';
+import BN from 'bn.js';
 
 // Auto follow chain updates? Only if user settings? Show notif? Only if impacting change?
 // Revisit if/when ChainState is persisted
@@ -66,9 +82,11 @@ function filterOldVotes(
 }
 
 /**
- * @param votings
- * @param referenda
- * @returns
+ * Extracts user's votes for a set of referenda
+ * @param address user's account address
+ * @param allVotings all votings retrieved from conviction pallet state
+ * @param referenda a map of referenda to extracts the votings for
+ * @returns a map of catsing votes for the target referenda by the account
  */
 function extractUserVotes(
   address: Address,
@@ -92,16 +110,39 @@ function extractUserVotes(
   return votes;
 }
 
+/**
+ * return all delegations for a specific address
+ * @param address the address to extract the delegations for.
+ * @param allVotings all votings retrieved from conviction pallet state
+ * @returns a map of delegations by the account per each track
+ */
+export function getAllDelegations(
+  address: Address,
+  allVotings: Map<Address, Map<number, Voting>>
+): Map<number, VotingDelegating> {
+  const delegates = new Map<number, VotingDelegating>();
+  const votings = allVotings.get(address);
+  if (votings) {
+    votings.forEach((voting, trackId) => {
+      // filter the delegatings.
+      if (voting.type === 'delegating') {
+        delegates.set(trackId, voting);
+      }
+    });
+  }
+  return delegates;
+}
+
 export function getAllVotes(
   votes: Map<number, AccountVote>,
   allVotings: Map<Address, Map<number, Voting>>,
   referenda: Map<number, ReferendumOngoing>,
-  connectedAccount: Address | null
+  connectedAddress: Address | null
 ): Map<number, AccountVote> {
   const currentVotes = filterOldVotes(votes, referenda);
-  if (connectedAccount) {
+  if (connectedAddress) {
     const onChainVotes = extractUserVotes(
-      connectedAccount,
+      connectedAddress,
       allVotings,
       referenda
     );
@@ -138,6 +179,12 @@ export function filterToBeVotedReferenda(
   return new Map([...referenda].filter(([index]) => !votes.has(index)));
 }
 
+export function extractBalance(state: State): BN | undefined {
+  if (state.type == 'ConnectedState') {
+    return state.account?.balance;
+  }
+}
+
 function incorrectTransitionError(previousState: State): Report {
   return {
     type: 'Error',
@@ -157,14 +204,23 @@ function reducer(previousState: State, action: Action): State {
   // Note that unlucky timing might lead to overstepping changes (triggered via listeners registered just above)
   // So applying changes must be indempotent
   switch (action.type) {
-    case 'SetConnectedAccountAction': {
-      const { connectedAccount } = action;
-      return {
-        ...previousState,
-        connectedAccount,
-      };
+    case 'SetConnectedAddress': {
+      const { connectedAddress } = action;
+      if (previousState.type == 'ConnectedState') {
+        return {
+          ...previousState,
+          connectedAddress,
+          // Clear previous account data
+          account: undefined,
+        };
+      } else {
+        return {
+          ...previousState,
+          connectedAddress,
+        };
+      }
     }
-    case 'SetRestoredAction': {
+    case 'SetRestored': {
       const { network, votes } = action;
       return {
         ...previousState,
@@ -173,7 +229,7 @@ function reducer(previousState: State, action: Action): State {
         votes,
       };
     }
-    case 'UpdateConnectivityAction': {
+    case 'UpdateConnectivity': {
       const { connectivity } = action;
       if ('connectivity' in previousState) {
         return {
@@ -187,10 +243,10 @@ function reducer(previousState: State, action: Action): State {
         );
       }
     }
-    case 'AddReportAction': {
+    case 'AddReport': {
       return withNewReport(previousState, action.report);
     }
-    case 'RemoveReportAction': {
+    case 'RemoveReport': {
       const previousReports = previousState.reports || [];
       previousReports.splice(action.index, 1);
       return {
@@ -198,15 +254,13 @@ function reducer(previousState: State, action: Action): State {
         reports: [...previousReports],
       };
     }
-    case 'AddFinalizedBlockAction': {
-      const { endpoints, block, chain } = action;
+    case 'UpdateChainDetails': {
+      const { details } = action;
       if (previousState.type == 'ConnectedState') {
         // Already connected, update connectivity
         // But do not update chain details
         return {
           ...previousState,
-          connectivity: { type: 'Following', endpoints },
-          block: previousState.block,
           chain: previousState.chain,
         };
       } else if (previousState.type == 'RestoredState') {
@@ -214,8 +268,7 @@ function reducer(previousState: State, action: Action): State {
         return {
           ...previousState,
           type: 'ConnectedState',
-          block,
-          chain,
+          chain: details,
           details: new Map(),
         };
       } else {
@@ -225,7 +278,21 @@ function reducer(previousState: State, action: Action): State {
         );
       }
     }
-    case 'StoreReferendumDetailsAction': {
+    case 'UpdateChainAccountDetails': {
+      const { details } = action;
+      if (previousState.type == 'ConnectedState') {
+        return {
+          ...previousState,
+          account: details,
+        };
+      } else {
+        return withNewReport(
+          previousState,
+          incorrectTransitionError(previousState)
+        );
+      }
+    }
+    case 'StoreReferendumDetails': {
       const { details } = action;
       const previousDetails = previousState.details;
 
@@ -234,7 +301,7 @@ function reducer(previousState: State, action: Action): State {
         details: new Map([...previousDetails, ...details]),
       };
     }
-    case 'CastVoteAction':
+    case 'CastVote':
       if ('votes' in previousState) {
         const newVotes = previousState.votes || new Map();
         newVotes.set(action.index, action.vote);
@@ -248,7 +315,7 @@ function reducer(previousState: State, action: Action): State {
           incorrectTransitionError(previousState)
         );
       }
-    case 'ClearVotesAction':
+    case 'ClearVotes':
       if ('votes' in previousState) {
         return {
           ...previousState,
@@ -287,21 +354,28 @@ async function restorePersisted(
   };
 }
 
-export async function fetchChainState(
+export async function fetchChainState(api: {
+  consts: QueryableConsts<'promise'>;
+  query: QueryableStorage<'promise'>;
+}): Promise<ChainState> {
+  const tracks = getAllTracks(api);
+  const referenda = await getAllReferenda(api);
+  const fellows = await getAllMembers(api);
+  return { tracks, referenda, fellows };
+}
+
+export async function fetchAccountChainState(
   api: {
     consts: QueryableConsts<'promise'>;
     query: QueryableStorage<'promise'>;
   },
-  connectedAccount?: Address
-): Promise<ChainState> {
-  const tracks = getAllTracks(api);
-  const referenda = await getAllReferenda(api);
-  const fellows = await getAllMembers(api);
+  connectedAddress: Address
+): Promise<AccountChainState> {
   const allVotings = new Map<Address, Map<number, Voting>>();
-  if (connectedAccount) {
-    allVotings.set(connectedAccount, await getVotingFor(api, connectedAccount));
-  }
-  return { tracks, referenda, allVotings, fellows };
+  allVotings.set(connectedAddress, await getVotingFor(api, connectedAddress));
+  const account = await api.query.system.account(connectedAddress);
+  const balance = account.data.free.toBn();
+  return { allVotings, balance };
 }
 
 class DBReady implements Readyable<IDBDatabase>, Destroyable {
@@ -358,7 +432,7 @@ export class Updater {
 
   async castVote(index: number, vote: AccountVote) {
     this.#dispatch({
-      type: 'CastVoteAction',
+      type: 'CastVote',
       index,
       vote,
     });
@@ -378,42 +452,96 @@ export class Updater {
     accountVotes: Map<number, AccountVote>
   ) {
     const state = this.#stateAccessor();
-    if (
-      state.type == 'ConnectedState' &&
-      state.connectivity.type == 'Connected'
-    ) {
+    const { type, connectivity } = state;
+    if (type == 'ConnectedState' && isAtLeastConnected(connectivity)) {
       const db = await DB_CACHE.getOrCreate(dbNameFor(state.network));
-      const api = await API_CACHE.getOrCreate(state.connectivity.endpoints);
-      await submitBatchVotes(api, account.address, signer, accountVotes);
+      const api = await API_CACHE.getOrCreate(connectivity.endpoints);
+      const votes = createBatchVotes(api, accountVotes);
+      await signAndSend(account.address, signer, votes);
 
       // Clear user votes
       await clear(db, VOTE_STORE_NAME);
 
       this.#dispatch({
-        type: 'ClearVotesAction',
+        type: 'ClearVotes',
       });
     } else {
       await this.addReport(incorrectTransitionError(state));
     }
   }
 
-  async setConnectedAccount(connectedAccount: Address) {
+  async getApi(state: State): Promise<ApiPromise | null> {
+    const { type, connectivity } = state;
+    if (type == 'ConnectedState' && isAtLeastConnected(connectivity)) {
+      return await API_CACHE.getOrCreate(connectivity.endpoints);
+    }
+    return null;
+  }
+
+  async delegate(
+    address: string,
+    tracks: number[],
+    balance: BN,
+    conviction: Conviction
+  ): Promise<Result<SubmittableExtrinsic<'promise', SubmittableResult>>> {
+    const state = this.#stateAccessor();
+    const api = await this.getApi(state);
+    if (api) {
+      const txs = tracks.map((track) =>
+        delegate(api, track, address, conviction, balance)
+      );
+      return ok(batchAll(api, txs));
+    } else {
+      const report = incorrectTransitionError(state);
+      await this.addReport(report);
+      return err(new Error(report.message));
+    }
+  }
+
+  async undelegate(
+    address: string,
+    tracks: number[]
+  ): Promise<Result<SubmittableExtrinsic<'promise', SubmittableResult>>> {
+    const state = this.#stateAccessor();
+    const api = await this.getApi(state);
+    if (api) {
+      const txs = tracks.map((track) => undelegate(api, track));
+      return ok(batchAll(api, txs));
+    } else {
+      const report = incorrectTransitionError(state);
+      await this.addReport(report);
+      return err(new Error(report.message));
+    }
+  }
+
+  async setConnectedAddress(connectedAddress: string | null) {
     this.#dispatch({
-      type: 'SetConnectedAccountAction',
-      connectedAccount,
+      type: 'SetConnectedAddress',
+      connectedAddress,
     });
+
+    // connectedAddress exists, fetch associated chain info
+    if (connectedAddress) {
+      const state = this.#stateAccessor();
+      const api = await this.getApi(state);
+      if (api) {
+        await updateChainDetails(api, this.#dispatch, connectedAddress);
+      } else {
+        await this.addReport(incorrectTransitionError(state));
+      }
+    }
   }
 
   async addReport(report: Report) {
     this.#dispatch({
-      type: 'AddReportAction',
+      type: 'AddReport',
       report,
     });
   }
 
   async removeReport(index: number) {
     this.#dispatch({
-      type: 'RemoveReportAction',
+      type: 'RemoveReport',
       index,
     });
   }
@@ -422,7 +550,7 @@ export class Updater {
 const DEFAULT_INITIAL_STATE: State = {
   type: 'InitialState',
   connectivity: { type: navigator.onLine ? 'Online' : 'Offline' },
-  connectedAccount: null,
+  connectedAddress: null,
   details: new Map(),
   indexes: {},
   delegates: [],
@@ -473,6 +601,7 @@ async function fetchDelegates(network: Network): Promise<Result<Delegate[]>> {
  * @param dispatch
  */
 async function dispatchNetworkChange(
+  stateAccessor: () => State,
   dispatch: Dispatch<Action>,
   network: Network,
   rpcParam: string | null
@@ -482,7 +611,7 @@ async function dispatchNetworkChange(
     restorePersisted(db)
   );
   dispatch({
-    type: 'SetRestoredAction',
+    type: 'SetRestored',
     network,
     votes,
   });
@@ -501,17 +630,23 @@ async function dispatchNetworkChange(
     });
   }
 
-  return dispatchEndpointsParamChange(dispatch, network, rpcParam);
+  return dispatchEndpointsParamChange(
+    stateAccessor,
+    dispatch,
+    network,
+    rpcParam
+  );
 }
 
 function dispatchAddReport(dispatch: Dispatch<Action>, report: Report) {
   dispatch({
-    type: 'AddReportAction',
+    type: 'AddReport',
     report,
   });
 }
 
 async function dispatchEndpointsParamChange(
+  stateAccessor: () => State,
   dispatch: Dispatch<Action>,
   network: Network,
   rpcParam: string | null
@@ -519,7 +654,12 @@ async function dispatchEndpointsParamChange(
   if (rpcParam) {
     const endpoints = extractEndpointsFromParam(rpcParam);
     if (endpoints.type == 'ok') {
-      return await dispatchEndpointsChange(dispatch, endpoints.value);
+      return await dispatchEndpointsChange(
+        stateAccessor,
+        dispatch,
+        network,
+        endpoints.value
+      );
     } else {
       dispatchAddReport(dispatch, {
         type: 'Error',
@@ -527,32 +667,118 @@ async function dispatchEndpointsParamChange(
       });
     }
   } else {
-    return await dispatchEndpointsChange(dispatch, endpointsFor(network));
+    return await dispatchEndpointsChange(
+      stateAccessor,
+      dispatch,
+      network,
+      endpointsFor(network)
+    );
   }
 }
 
-async function dispatchEndpointsChange(
+async function loadAndDispatchReferendaMetaData(
   dispatch: Dispatch<Action>,
+  referendaIndexes: Array<number>,
+  network: Network
+) {
+  const indexes = Array.from(referendaIndexes);
+  indexes.forEach(async (index) => {
+    const details = await measured('fetch-referenda', () =>
+      fetchReferenda(network, index)
+    );
+    if (details.type == 'ok') {
+      dispatch({
+        type: 'StoreReferendumDetails',
+        details: new Map([[index, details.value]]),
+      });
+    } else {
+      dispatchAddReport(dispatch, {
+        type: 'Error',
+        message: `Error while accessing referenda details: ${details.error}`,
+      });
+    }
+  });
+}
+
+async function updateChainDetails(
+  api: {
+    consts: QueryableConsts<'promise'>;
+    query: QueryableStorage<'promise'>;
+  },
+  dispatch: Dispatch<Action>,
+  connectedAccount: string
+) {
+  const details = await measured('fetch-account-chain-details', () =>
+    fetchAccountChainState(api, connectedAccount)
+  );
+
+  dispatch({
+    type: 'UpdateChainAccountDetails',
+    details,
+  });
+}
+
+async function dispatchEndpointsChange(
+  stateAccessor: () => State,
+  dispatch: Dispatch<Action>,
+  network: Network,
   endpoints: string[]
 ): Promise<VoidFunction> {
+  const api = await API_CACHE.getOrCreate(endpoints);
+  // TODO listen for deconnection/stales and update accordingly
+
+  // Connection has been established
+  const lastHeader = await api.rpc.chain.getHeader();
   dispatch({
-    type: 'UpdateConnectivityAction',
-    connectivity: { type: 'Connected', endpoints },
+    type: 'UpdateConnectivity',
+    connectivity: {
+      type: 'Connected',
+      endpoints,
+      block: lastHeader.number.toNumber(),
+    },
   });
 
-  const api = await API_CACHE.getOrCreate(endpoints);
   return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
+    // New block has been received, we are up-to-date with the chain
+    dispatch({
+      type: 'UpdateConnectivity',
+      connectivity: {
+        type: 'Following',
+        endpoints,
+        block: header.number.toNumber(),
+      },
+    });
+
+    const state = stateAccessor();
     const apiAt = await api.at(header.hash);
     // TODO rely on subs, do not re-fetch whole state each block
-    const chain = await measured('fetch-chain-state', () =>
+    const details = await measured('fetch-chain-details', () =>
       fetchChainState(apiAt)
     );
+
     dispatch({
-      type: 'AddFinalizedBlockAction',
-      endpoints,
-      block: header.number.toNumber(),
-      chain,
+      type: 'UpdateChainDetails',
+      details,
     });
+
+    const connectedAddress = state.connectedAddress;
+    if (connectedAddress) {
+      await updateChainDetails(apiAt, dispatch, connectedAddress);
+    }
+
+    // Trigger fetch of missing referenda metadata
+    const previousReferendaIndexes = Array.from(state.details.keys());
+    const newReferendaIndexes = Array.from(
+      filterOngoingReferenda(details.referenda).keys()
+    );
+    const missingReferendaIndexes = newReferendaIndexes.filter(
+      (index) => !previousReferendaIndexes.includes(index)
+    );
+    await loadAndDispatchReferendaMetaData(
+      dispatch,
+      missingReferendaIndexes,
+      network
+    );
   });
 }
 
@@ -661,7 +887,12 @@ async function updateChainState(
             if (state.network != network.value) {
               // Only react to network changes
               updateUnsub(
-                await dispatchNetworkChange(dispatch, network.value, rpcParam)
+                await dispatchNetworkChange(
+                  stateAccessor,
+                  dispatch,
+                  network.value,
+                  rpcParam
+                )
               );
             }
           } else {
@@ -674,6 +905,7 @@ async function updateChainState(
           // Only `rpc` param is set, reconnect using those
           updateUnsub(
             await dispatchEndpointsParamChange(
+              stateAccessor,
               dispatch,
               state.network,
               rpcParam
@@ -688,14 +920,14 @@ async function updateChainState(
 
   window.addEventListener('online', async () => {
     dispatch({
-      type: 'UpdateConnectivityAction',
+      type: 'UpdateConnectivity',
       connectivity: { type: 'Online' },
     });
   });
 
   window.addEventListener('offline', () =>
     dispatch({
-      type: 'UpdateConnectivityAction',
+      type: 'UpdateConnectivity',
       connectivity: { type: 'Offline' },
     })
   );
@@ -723,7 +955,14 @@ async function updateChainState(
   const { networkParam, rpcParam } = currentParams();
   const network = getNetwork(networkParam);
   if (network.type == 'ok') {
-    updateUnsub(await dispatchNetworkChange(dispatch, network.value, rpcParam));
+    updateUnsub(
+      await dispatchNetworkChange(
+        stateAccessor,
+        dispatch,
+        network.value,
+        rpcParam
+      )
+    );
   } else {
     dispatchAddReport(dispatch, {
       type: 'Error',
