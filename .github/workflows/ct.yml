@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: github-pages
     container:
-      image: mcr.microsoft.com/playwright:v1.31.2-focal
+      image: mcr.microsoft.com/playwright:v1.32.0-focal
     strategy:
       fail-fast: false
       matrix:

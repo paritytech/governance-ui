@@ -1,5 +1,14 @@
 import BN from 'bn.js';
 
+import type { Account, WalletMetadata } from '@polkadot-onboard/core';
+import type { Signer } from '@polkadot/types/types';
+
+export type SigningAccount = {
+  account: Account;
+  signer: Signer;
+  sourceMetadata: WalletMetadata;
+};
+
 export type Vote = {
   aye: boolean;
   conviction: Conviction;
@@ -96,13 +105,9 @@ export type Referendum =
   | ReferendumKilled
   | Unknown;
 
-export type Post = {
+export type ReferendumDetails = {
   title: string;
   content: string;
-};
-
-export type ReferendumDetails = {
-  posts: Array<Post>;
 };
 
 export type PriorLock = {

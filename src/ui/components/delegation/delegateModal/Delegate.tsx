@@ -1,10 +1,16 @@
+import type { TrackType } from '../types';
+import type { SigningAccount } from '../../../../types';
+
+import BN from 'bn.js';
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
 import { Modal, Button, ButtonSecondary } from '../../../lib';
+import { useAppLifeCycle, extractBalance } from '../../../../lifecycle';
 import { Delegate } from '../../../../lifecycle/types';
-
 import { Accounticon } from '../../accounts/Accounticon.js';
-import type { TrackType } from '../types';
+import { Conviction } from '../../../../types';
 import { SimpleAnalytics } from '../../../../analytics';
+import { useAccount } from '../../../../contexts';
+import { signAndSend } from '../../../../utils/polkadot-api';
 
 interface IDelegateModalProps {
   delegate: Delegate;
@@ -18,17 +24,33 @@ export function DelegateModal({
   open,
   onClose,
 }: IDelegateModalProps) {
+  const { state, updater } = useAppLifeCycle();
+  const { connectedAccount } = useAccount();
+  const balance = extractBalance(state);
   const { name, address } = delegate;
   const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();
-  const delegateHandler = () => {
-    // TODO: submit delegate tx
+  const delegateHandler = async (
+    { account: { address }, signer }: SigningAccount,
+    balance: BN
+  ) => {
+    try {
+      // Use a default conviction voting for now
+      const txs = await updater.delegate(
+        address,
+        tracks.map((track) => track.id),
+        balance,
+        Conviction.None
+      );
+      if (txs.type == 'ok') {
+        await signAndSend(address, signer, txs.value);
 
-    // Submit analytics
-    SimpleAnalytics.track('Delegate');
-
-    // close modal
-    onClose();
+        SimpleAnalytics.track('Delegate');
+      }
+    } finally {
+      // close modal
+      onClose();
+    }
   };
   return (
     <Modal size="md" open={open} onClose={() => onClose()}>
@@ -64,10 +86,16 @@ export function DelegateModal({
             <CloseIcon />
             <div>Cancel</div>
           </ButtonSecondary>
-          <Button onClick={delegateHandler}>
-            <div>Delegate Now</div>
-            <ChevronRightIcon />
-          </Button>
+          {connectedAccount &&
+            balance && ( // Check for non-null balance?
+              // TODO Probably better to allow for button to be disabled
+              <Button
+                onClick={() => delegateHandler(connectedAccount, balance)}
+              >
+                <div>Delegate Now</div>
+                <ChevronRightIcon />
+              </Button>
+            )}
         </div>
       </div>
     </Modal>

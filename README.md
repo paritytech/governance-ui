@@ -3,6 +3,9 @@
 
 Governance UI is a [PWA](https://web.dev/learn/pwa/) - or Progressive Web App - with a focus on efficiency and offline support in the context of [Web3](https://polkadot.network/).
 
+As a pure web application, it doesn't depend on remote backend to operate but connects to [Polkadot](https://polkadot.network/) nodes.
+Some data will be fetched to enhance the experience from `github.com` and `polkassembly.io/`, although the plan short term is to become fully decentralized.
+
 # Use
 
 ## Register as a delegate
@@ -18,11 +21,14 @@ The following table outlines the structure of a `delegate` entry:
 | Delegate Name    | `name`       | Yes      | The chosen name of the delegate.                                                            |
 | Delegate Address | `address`    | Yes      | The chain address of the delegate.                                                          |
 | Manifesto        | `manifesto`  | Yes      | A description of your goals as a delegate. Supports markdown.                               | 
+
 # Build
 
-A local dev environment can be started using `yarn dev`. The full website can be started using `yarn build`.
+The full website can be started using `PUBLIC_URL=https://... yarn build` where `PUBLIC_URL` is the final root URL for the considered deplyment environment.
 
 # Development
+
+A local dev environment can be started using `yarn dev`.
 
 ## Testing
 

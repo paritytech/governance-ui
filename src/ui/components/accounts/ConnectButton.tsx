@@ -1,4 +1,4 @@
-import type { SigningAccount } from '../../../contexts/Account.js';
+import type { SigningAccount } from '../../../types';
 
 import { useEffect, useState } from 'react';
 import { BaseWallet } from '@polkadot-onboard/core';
@@ -23,7 +23,6 @@ const WalletView = ({
   const { wallets, walletState } = useWallets();
   const { walletsAccounts } = useAccount();
   const loadedAccountsCount = walletsAccounts ? walletsAccounts.size : 0;
-  console.log(loadedAccountsCount);
   return (
     <>
       <div className="flex flex-col items-start gap-4 border-b">
