@@ -1,7 +1,6 @@
 import type { TrackType } from '../types';
 import type { SigningAccount, VotingDelegating } from '../../../../types';
 
-import BN from 'bn.js';
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
 import { Modal, Button, ButtonSecondary } from '../../../lib';
 import { useAppLifeCycle, extractBalance } from '../../../../lifecycle';
@@ -28,15 +27,12 @@ export function UndelegateModal({
   const { target: address } = delegation;
   const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();
-  const undelegateHandler = async (
-    { account: { address }, signer }: SigningAccount,
-    balance: BN
-  ) => {
+  const undelegateHandler = async ({
+    account: { address },
+    signer,
+  }: SigningAccount) => {
     try {
-      const txs = await updater.undelegate(
-        address,
-        tracks.map((track) => track.id)
-      );
+      const txs = await updater.undelegate(tracks.map((track) => track.id));
       if (txs.type == 'ok') {
         await signAndSend(address, signer, txs.value);
         SimpleAnalytics.track('Undelegate');
@@ -84,9 +80,7 @@ export function UndelegateModal({
           {connectedAccount &&
             balance && ( // Check for non-null balance?
               // TODO Probably better to allow for button to be disabled
-              <Button
-                onClick={() => undelegateHandler(connectedAccount, balance)}
-              >
+              <Button onClick={() => undelegateHandler(connectedAccount)}>
                 <div>Undelegate Tracks</div>
                 <ChevronRightIcon />
               </Button>
