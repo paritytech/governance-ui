@@ -185,11 +185,20 @@ export function extractBalance(state: State): BN | undefined {
   }
 }
 
-function incorrectTransitionError(previousState: State): Report {
+function error(message: string): Report {
   return {
     type: 'Error',
-    message: `Incorrect transition: ${previousState.type}`,
+    message,
   };
+}
+
+function incorrectTransitionError(
+  previousState: State,
+  action: Action
+): Report {
+  return error(
+    `Incorrect transition, can't apply ${action.type} to ${previousState.type}`
+  );
 }
 
 function withNewReport(previousState: State, report: Report): State {
@@ -239,7 +248,7 @@ function reducer(previousState: State, action: Action): State {
       } else {
         return withNewReport(
           previousState,
-          incorrectTransitionError(previousState)
+          incorrectTransitionError(previousState, action)
         );
       }
     }
@@ -274,7 +283,7 @@ function reducer(previousState: State, action: Action): State {
       } else {
         return withNewReport(
           previousState,
-          incorrectTransitionError(previousState)
+          incorrectTransitionError(previousState, action)
         );
       }
     }
@@ -288,7 +297,7 @@ function reducer(previousState: State, action: Action): State {
       } else {
         return withNewReport(
           previousState,
-          incorrectTransitionError(previousState)
+          incorrectTransitionError(previousState, action)
         );
       }
     }
@@ -312,7 +321,7 @@ function reducer(previousState: State, action: Action): State {
       } else {
         return withNewReport(
           previousState,
-          incorrectTransitionError(previousState)
+          incorrectTransitionError(previousState, action)
         );
       }
     case 'ClearVotes':
@@ -324,7 +333,7 @@ function reducer(previousState: State, action: Action): State {
       } else {
         return withNewReport(
           previousState,
-          incorrectTransitionError(previousState)
+          incorrectTransitionError(previousState, action)
         );
       }
     case 'SetIndexes':
@@ -422,7 +431,7 @@ export class Updater {
     try {
       this.unsub = await updateChainState(this.#stateAccessor, this.#dispatch);
     } catch (e: any) {
-      await this.addReport({ type: 'Error', message: e.toString() });
+      await this.addReport(error(e.toString()));
     }
   }
 
@@ -443,7 +452,7 @@ export class Updater {
       const db = await DB_CACHE.getOrCreate(dbNameFor(state.network));
       await save(db, VOTE_STORE_NAME, index, vote);
     } else {
-      await this.addReport(incorrectTransitionError(state));
+      await this.addReport(error('Must be connected to cast a vote'));
     }
   }
 
@@ -466,7 +475,7 @@ export class Updater {
         type: 'ClearVotes',
       });
     } else {
-      await this.addReport(incorrectTransitionError(state));
+      await this.addReport(error('Must be connected to send votes'));
     }
   }
 
@@ -492,14 +501,13 @@ export class Updater {
       );
       return ok(batchAll(api, txs));
     } else {
-      const report = incorrectTransitionError(state);
+      const report = error('Failed to retrieve Api');
       await this.addReport(report);
       return err(new Error(report.message));
     }
   }
 
   async undelegate(
-    address: string,
     tracks: number[]
   ): Promise<Result<SubmittableExtrinsic<'promise', SubmittableResult>>> {
     const state = this.#stateAccessor();
@@ -508,7 +516,7 @@ export class Updater {
       const txs = tracks.map((track) => undelegate(api, track));
       return ok(batchAll(api, txs));
     } else {
-      const report = incorrectTransitionError(state);
+      const report = error('Failed to retrieve Api');
       await this.addReport(report);
       return err(new Error(report.message));
     }
@@ -526,9 +534,9 @@ export class Updater {
       const api = await this.getApi(state);
       if (api) {
         await updateChainDetails(api, this.#dispatch, connectedAddress);
-      } else {
-        await this.addReport(incorrectTransitionError(state));
       }
+      // When restoring address during startup API won't be available; ignoring.
+      // Will become irrelevant once this is persisted via the state.
     }
   }
 
@@ -661,10 +669,10 @@ async function dispatchEndpointsParamChange(
         endpoints.value
       );
     } else {
-      dispatchAddReport(dispatch, {
-        type: 'Error',
-        message: `Invalid 'rpc' param ${rpcParam}: ${endpoints.error}`,
-      });
+      dispatchAddReport(
+        dispatch,
+        error(`Invalid 'rpc' param ${rpcParam}: ${endpoints.error}`)
+      );
     }
   } else {
     return await dispatchEndpointsChange(
@@ -692,10 +700,10 @@ async function loadAndDispatchReferendaMetaData(
         details: new Map([[index, details.value]]),
       });
     } else {
-      dispatchAddReport(dispatch, {
-        type: 'Error',
-        message: `Error while accessing referenda details: ${details.error}`,
-      });
+      dispatchAddReport(
+        dispatch,
+        error(`Error while accessing referenda details: ${details.error}`)
+      );
     }
   });
 }
@@ -875,10 +883,10 @@ async function updateChainState(
       // Only consider ConnectedState
       const { networkParam, rpcParam } = currentParams();
       if (networkParam && rpcParam) {
-        dispatchAddReport(dispatch, {
-          type: 'Error',
-          message: `Both rpc and network params can't be set at the same time`,
-        });
+        dispatchAddReport(
+          dispatch,
+          error(`Both rpc and network params can't be set at the same time`)
+        );
       } else {
         if (networkParam) {
           // `network` param is set and takes precedence, `endpoints` might
@@ -896,10 +904,10 @@ async function updateChainState(
               );
             }
           } else {
-            dispatchAddReport(dispatch, {
-              type: 'Error',
-              message: `Invalid 'network' param ${networkParam}: ${network.error}`,
-            });
+            dispatchAddReport(
+              dispatch,
+              error(`Invalid 'network' param ${networkParam}: ${network.error}`)
+            );
           }
         } else if (rpcParam) {
           // Only `rpc` param is set, reconnect using those
@@ -933,10 +941,10 @@ async function updateChainState(
   );
 
   window.addEventListener('unhandledrejection', (event) =>
-    dispatchAddReport(dispatch, {
-      type: 'Error',
-      message: `Unhandled promise rejection for ${event.promise}: ${event.reason}`,
-    })
+    dispatchAddReport(
+      dispatch,
+      error(`Unhandled promise rejection for ${event.promise}: ${event.reason}`)
+    )
   );
 
   function getNetwork(networkParam: string | null): Result<Network> {
@@ -964,10 +972,7 @@ async function updateChainState(
       )
     );
   } else {
-    dispatchAddReport(dispatch, {
-      type: 'Error',
-      message: network.error.message,
-    });
+    dispatchAddReport(dispatch, error(network.error.message));
   }
 
   return () => {
