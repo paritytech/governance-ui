@@ -31,7 +31,7 @@ import {
 } from '../chain/conviction-voting.js';
 import { getAllMembers } from '../chain/fellowship-collective.js';
 import { getAllReferenda, getAllTracks } from '../chain/referenda.js';
-import { DEFAULT_NETWORK, endpointsFor, Network, parse } from '../network.js';
+import { defaultNetwork, endpointsFor, Network, parse } from '../network.js';
 import { err, ok, Result } from '../utils/index.js';
 import { Cache, Destroyable, Readyable } from '../utils/cache.js';
 import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db.js';
@@ -947,7 +947,9 @@ async function updateChainState(
     )
   );
 
-  function getNetwork(networkParam: string | null): Result<Network> {
+  async function getNetwork(
+    networkParam: string | null
+  ): Promise<Result<Network>> {
     if (networkParam) {
       const network = parse(networkParam);
       if (network.type == 'ok') {
@@ -956,13 +958,15 @@ async function updateChainState(
         return network;
       }
     } else {
-      return ok(DEFAULT_NETWORK);
+      return ok(await defaultNetwork());
     }
   }
 
   const { networkParam, rpcParam } = currentParams();
-  const network = getNetwork(networkParam);
+  const network = await getNetwork(networkParam);
   if (network.type == 'ok') {
+    console.log(`Using network ${network.value}`);
+
     updateUnsub(
       await dispatchNetworkChange(
         stateAccessor,

@@ -3,7 +3,7 @@ import { ButtonOutline } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { DelegateModal } from '../components/delegation/delegateModal/Delegate.js';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
-import { tracksMetadata } from '../../chain/mocks';
+import { tracksMetadata } from '../../chain';
 import { AddIcon, ChevronDownIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';

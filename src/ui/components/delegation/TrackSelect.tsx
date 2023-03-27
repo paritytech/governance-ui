@@ -2,7 +2,7 @@ import type { Tally, VotingDelegating } from '../../../types';
 import type { TrackType } from './types';
 
 import { memo, useState } from 'react';
-import { tracksMetadata } from '../../../chain/mocks';
+import { tracksMetadata } from '../../../chain';
 import { useDelegation } from '../../../contexts/Delegation.js';
 import { ButtonSecondary, Card } from '../../lib';
 import { CheckIcon, ChevronDownIcon } from '../../icons';
