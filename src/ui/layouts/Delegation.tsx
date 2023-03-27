@@ -90,6 +90,7 @@ export const DelegateSection = () => {
   const { state } = useAppLifeCycle();
   const { delegates } = state;
   const [visible, setVisible] = useState(false);
+  const [search, setSearch] = useState<string>();
   const { selectedTracks } = useDelegation();
   const tracks = tracksMetadata
     .map((track) => track.subtracks)
@@ -116,6 +117,7 @@ export const DelegateSection = () => {
               <input
                 placeholder="Search"
                 className="w-full self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70 lg:w-fit"
+                onChange={(event) => setSearch(event.target.value)}
               />
               <ButtonOutline className="w-fit">
                 <AddIcon />
@@ -134,15 +136,19 @@ export const DelegateSection = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 flex-wrap items-center justify-start gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
-            {delegates?.map((delegate, idx) => (
-              <DelegateCard
-                key={idx}
-                delegate={delegate}
-                state={state}
-                delegateHandler={openModal}
-                variant="some"
-              />
-            ))}
+            {delegates
+              ?.filter((delegate) =>
+                search ? delegate.name.includes(search) : true
+              )
+              .map((delegate, idx) => (
+                <DelegateCard
+                  key={idx}
+                  delegate={delegate}
+                  state={state}
+                  delegateHandler={openModal}
+                  variant="some"
+                />
+              ))}
           </div>
         </div>
         {delegates && delegates.length > 0 && (
