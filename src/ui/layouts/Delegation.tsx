@@ -85,8 +85,16 @@ export function DelegatesBar() {
   );
 }
 
+function DescriptionLabel({ delegates }: { delegates: number }): JSX.Element {
+  return (
+    <div className="text-sm">
+      There are currently <span className="text-m font-bold">{delegates}</span>{' '}
+      delegates.
+    </div>
+  );
+}
+
 export const DelegateSection = () => {
-  // ToDo : Move Modal to a context
   const { state } = useAppLifeCycle();
   const { delegates } = state;
   const [visible, setVisible] = useState(false);
@@ -107,7 +115,7 @@ export const DelegateSection = () => {
       <div className="mb-48 mt-6 flex w-full flex-col gap-16 px-3 md:px-8">
         <SectionTitle
           title="Browse Delegates"
-          description="Lorem ipsum dolor sit amet"
+          description={<DescriptionLabel delegates={delegates.length} />}
         >
           <ProgressStepper step={1} />
         </SectionTitle>

@@ -1,6 +1,6 @@
 interface SectionTitleProps {
   title: string;
-  description?: string;
+  description?: JSX.Element;
   children?: JSX.Element;
 }
 
@@ -13,7 +13,7 @@ export default function SectionTitle({
     <div className="items-top flex h-auto flex-col justify-between gap-6 lg:flex-row">
       <div className="prose prose-sm  pt-1">
         <h2 className="mb-2">{title}</h2>
-        <div className="text-sm">{description}</div>
+        {description}
       </div>
       {children}
     </div>

@@ -291,7 +291,11 @@ export function TrackSelect({
     <div className="flex w-full flex-col gap-12 px-3 lg:px-8 lg:pb-12">
       <SectionTitle
         title="Delegate by Track"
-        description="Select the tracks you&lsquo;d like to delegate."
+        description={
+          <div className="text-sm">
+            Select the tracks you&lsquo;d like to delegate.
+          </div>
+        }
         step={0}
       >
         <ProgressStepper step={0} />
