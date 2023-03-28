@@ -73,5 +73,5 @@ export default function ProgressStepper({ step, steps }: ProgressStepperProps) {
 
 ProgressStepper.defaultProps = {
   step: 0,
-  steps: ['Select Track', 'Select Delegate', 'Sign Transaction'],
+  steps: ['Select Tracks', 'Select Delegate', 'Sign Transaction'],
 };
