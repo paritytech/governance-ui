@@ -30,8 +30,8 @@ function Headline() {
           Governance is now <span className="text-primary">open</span>
         </h1>
         <div className="m-auto max-w-[500px] px-3 text-center text-base">
-          Not ready to do the research? Contribute without the hassle: delegate
-          your votes to experts.
+          No time to vote? Keep Polkadot running smoothly by delegating to an
+          expert instead.
         </div>
       </div>
       <div className="aspect-video w-[600px] max-w-full">
@@ -58,8 +58,7 @@ export function DelegatesBar() {
       <div className="prose prose-lg max-w-none pb-4 text-center">
         <h2 className="m-0">It’s on you</h2>
         <div className="mb-4 text-base">
-          Contribute without the hassle: delegate your votes to experts. More
-          options
+          Contribute without the hassle: delegate your votes to experts.
         </div>
       </div>
       <div className="flex max-w-full gap-7 overflow-x-scroll px-3 pb-1 lg:px-6	">
