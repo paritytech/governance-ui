@@ -1,10 +1,14 @@
-import { useMemo } from 'react';
+import type { DelegateRoleType, StatType, TrackType } from './types';
+import { useMemo, useState } from 'react';
 import { Remark } from 'react-remark';
-import type { DelegateRoleType, StatType } from './types';
 import { ChevronRightIcon, DelegateIcon } from '../../icons';
 import { Button, ButtonSecondary, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
-import { Delegate, State } from '../../../lifecycle/types';
+import type { Delegate, State } from '../../../lifecycle/types';
+import { extractDelegations } from '../../../lifecycle';
+import { trackCategories, deduplicateTracks } from '../../../chain/index';
+import { DelegateModal } from './delegateModal/Delegate';
+import { useDelegation } from '../../../contexts';
 
 const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
   nominator: { title: 'nominator', twColor: 'bg-green-300' },
@@ -55,6 +59,15 @@ function extractRole(address: string, state: State): DelegateRoleType[] {
   return [];
 }
 
+function filterUndelegatedTracks(state: State): TrackType[] {
+  const delegatedTrackIds = new Set(extractDelegations(state).keys());
+  const undelegatedTracks = trackCategories
+    .map((track) => track.tracks)
+    .flat()
+    .filter((t) => !delegatedTrackIds.has(t.id));
+  return deduplicateTracks(undelegatedTracks);
+}
+
 function manifestoPreview(
   str: string,
   maxLen: number
@@ -67,12 +80,10 @@ function manifestoPreview(
 export function DelegateCard({
   delegate,
   state,
-  delegateHandler,
   variant,
 }: {
   delegate: Delegate;
   state: State;
-  delegateHandler: () => void;
   variant: 'all' | 'some';
 }) {
   const { name, address, manifesto } = delegate;
@@ -81,6 +92,25 @@ export function DelegateCard({
     () => manifestoPreview(manifesto, 200),
     [manifesto]
   );
+
+  const [visible, setVisible] = useState(false);
+  const closeModal = () => {
+    setVisible(false);
+  };
+  const openModal = () => {
+    setVisible(true);
+  };
+  const delegateHandler = () => openModal();
+
+  // extract tracks
+  const undelegatedTracks = filterUndelegatedTracks(state);
+  const { selectedTracks } = useDelegation();
+  const someTracks = trackCategories
+    .map((track) => track.tracks)
+    .flat()
+    .filter((track) => selectedTracks.has(track.id));
+  const tracks = variant === 'all' ? undelegatedTracks : someTracks;
+
   return (
     <>
       <Card
@@ -117,12 +147,18 @@ export function DelegateCard({
         </div>
         <StatBar stats={[]} />
         {variant === 'all' && (
-          <Button onClick={delegateHandler}>
+          <Button onClick={() => openModal()}>
             <div>Delegate All Votes</div>
             <DelegateIcon />
           </Button>
         )}
       </Card>
+      <DelegateModal
+        open={visible}
+        onClose={closeModal}
+        delegate={delegate}
+        tracks={tracks}
+      />
     </>
   );
 }

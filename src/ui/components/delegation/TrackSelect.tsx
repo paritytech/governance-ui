@@ -13,6 +13,7 @@ import { Accounticon } from '../accounts/Accounticon';
 import { Network } from '../../../network';
 import { CloseIcon } from '../../icons';
 import { UndelegateModal } from './delegateModal/Undelegate';
+import { useAppLifeCycle, extractDelegations } from '../../../lifecycle';
 
 interface ICheckBoxProps {
   title?: string;
@@ -272,7 +273,6 @@ interface ITrackSelectProps {
   network: Network;
   referenda: Map<number, ReferendumOngoing>;
   details: Map<number, ReferendumDetails>;
-  delegations: Map<number, VotingDelegating>;
   expanded?: boolean;
   delegateHandler: () => void;
 }
@@ -281,7 +281,6 @@ export function TrackSelect({
   network,
   referenda,
   details,
-  delegations,
   expanded,
   delegateHandler,
 }: ITrackSelectProps) {
@@ -291,6 +290,8 @@ export function TrackSelect({
     (acc, [, track]) => acc + track.size,
     0
   );
+  const { state } = useAppLifeCycle();
+  const delegations = extractDelegations(state);
   return (
     <div className="flex w-full flex-col gap-12 px-3 lg:px-8 lg:pb-12">
       <SectionTitle

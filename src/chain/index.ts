@@ -1,6 +1,7 @@
 import { endpointsFor, Network } from '../network';
 import { WsReconnectProvider } from '../utils/ws-reconnect-provider';
 import { newApi } from '../utils/polkadot-api';
+import { TrackType } from 'src/ui/components/delegation/types';
 
 export async function supportsOpenGov(network: Network): Promise<boolean> {
   const api = await newApi({
@@ -113,3 +114,18 @@ export const trackCategories = [
     ],
   },
 ];
+
+/**
+ * removes the duplicates tracks from the list and returns a list of unique tracks
+ */
+export function deduplicateTracks(tracks: TrackType[]) {
+  const visited = new Set();
+  const dedupped = [];
+  for (const track of tracks) {
+    if (!visited.has(track.id)) {
+      dedupped.push(track);
+      visited.add(track.id);
+    }
+  }
+  return dedupped;
+}

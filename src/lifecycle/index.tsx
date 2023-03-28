@@ -185,6 +185,17 @@ export function extractBalance(state: State): BN | undefined {
   }
 }
 
+export function extractDelegations(state: State) {
+  // get delegations
+  const allVotings =
+    state.type === 'ConnectedState' ? state.account?.allVotings : undefined;
+  let delegations: Map<number, VotingDelegating> = new Map();
+  if (allVotings && state.connectedAddress) {
+    delegations = getAllDelegations(state.connectedAddress, allVotings);
+  }
+  return delegations;
+}
+
 function error(message: string): Report {
   return {
     type: 'Error',

@@ -2,6 +2,7 @@ import type { TrackType } from '../types';
 import type { SigningAccount } from '../../../../types';
 
 import BN from 'bn.js';
+import { useEffect, useState } from 'react';
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
 import { Modal, Button, ButtonSecondary } from '../../../lib';
 import { useAppLifeCycle, extractBalance } from '../../../../lifecycle';
@@ -10,41 +11,78 @@ import { Accounticon } from '../../accounts/Accounticon.js';
 import { Conviction } from '../../../../types';
 import { SimpleAnalytics } from '../../../../analytics';
 import { useAccount } from '../../../../contexts';
-import { signAndSend } from '../../../../utils/polkadot-api';
+import { signAndSend, calcEstimatedFee } from '../../../../utils/polkadot-api';
+import { formatBalance } from '@polkadot/util';
+import { LabeledBox } from './common/LabeledBox';
 
-interface IDelegateModalProps {
-  delegate: Delegate;
-  tracks: TrackType[];
-  open: boolean;
-  onClose: () => void;
-}
 export function DelegateModal({
   delegate,
   tracks,
   open,
   onClose,
-}: IDelegateModalProps) {
+}: {
+  delegate: Delegate;
+  tracks: TrackType[];
+  open: boolean;
+  onClose: () => void;
+}) {
   const { state, updater } = useAppLifeCycle();
   const { connectedAccount } = useAccount();
+  const [usableBalance, setUsableBalance] = useState<BN>();
+  const [fee, setFee] = useState<BN>();
   const balance = extractBalance(state);
-  const { name, address } = delegate;
-  const tracksCaption = tracks.map((track) => track.title).join(', ');
+  const { name, address: delegateAddress } = delegate;
+  const tracksCaption = tracks
+    .slice(0, 2)
+    .map((track) => track.title)
+    .join(', ');
+  const remainingCount = Math.max(tracks.length - 2, 0);
+
+  const connectedAddress = connectedAccount?.account?.address;
+
+  useEffect(() => {
+    if (
+      open &&
+      delegateAddress &&
+      connectedAddress &&
+      balance &&
+      tracks.length > 0
+    ) {
+      // Use a default conviction voting for now
+      updater
+        .delegate(
+          delegateAddress,
+          tracks.map((track) => track.id),
+          balance,
+          Conviction.None
+        )
+        .then(async (tx) => {
+          if (tx.type === 'ok') {
+            const fee = await calcEstimatedFee(tx.value, connectedAddress);
+            // usable balance is calculated as (balance - 3 * fees), to leave enough balance in account for undelegate tx fees.
+            const usableBalance = BN.max(balance.sub(fee.muln(3)), new BN(0));
+            setFee(fee);
+            setUsableBalance(usableBalance);
+          }
+        });
+    }
+  }, [open]);
+
   const cancelHandler = () => onClose();
   const delegateHandler = async (
     { account: { address }, signer }: SigningAccount,
-    balance: BN
+    amount: BN
   ) => {
     try {
-      // Use a default conviction voting for now
-      const txs = await updater.delegate(
-        address,
-        tracks.map((track) => track.id),
-        balance,
+      const trackIds = tracks.map((track) => track.id);
+      const tx = await updater.delegate(
+        delegateAddress,
+        trackIds,
+        amount,
         Conviction.None
       );
-      if (txs.type == 'ok') {
-        await signAndSend(address, signer, txs.value);
-
+      if (tx.type === 'ok') {
+        await signAndSend(address, signer, tx.value);
         SimpleAnalytics.track('Delegate');
       }
     } finally {
@@ -63,22 +101,40 @@ export function DelegateModal({
               <b>{name}</b> for the following tracks:
             </p>
           </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm">Your delegate</div>
-            <div className="flex gap-2">
-              <Accounticon
-                textClassName="font-medium"
-                address={address}
-                size={24}
-              />
-              <div className="capitalize">{name}</div>
-            </div>
+          <div className="grid w-full grid-cols-3 grid-rows-2 gap-4">
+            <LabeledBox className="col-span-2" title="Tracks to delegate">
+              <div>
+                {tracksCaption}
+                {!!remainingCount && (
+                  <>
+                    {' and'} <a>{`${remainingCount} more`}</a>
+                  </>
+                )}
+              </div>
+            </LabeledBox>
+            <LabeledBox title="Tokens to delegate">
+              <div>
+                {(usableBalance &&
+                  formatBalance(usableBalance, { decimals: 12 })) ||
+                  '...'}
+              </div>
+            </LabeledBox>
+            <LabeledBox className="col-span-2" title="Your delegate">
+              <div className="flex gap-2">
+                <Accounticon
+                  textClassName="font-medium"
+                  address={delegateAddress}
+                  size={24}
+                />
+              </div>
+            </LabeledBox>
+            <LabeledBox title="Max Conviction">
+              <div>x0.01</div>
+            </LabeledBox>
           </div>
-          <div className="flex flex-col gap-1">
-            <div className="text-sm">Tracks to delegate</div>
-            <div className="flex gap-2">
-              <div className="text-base font-medium">{tracksCaption}</div>
-            </div>
+          <hr className="w-full bg-gray-400" />
+          <div className="w-full">
+            {(fee && formatBalance(fee, { decimals: 12 })) || '...'}
           </div>
         </div>
         <div className="flex w-full flex-row justify-end gap-4">
@@ -86,16 +142,18 @@ export function DelegateModal({
             <CloseIcon />
             <div>Cancel</div>
           </ButtonSecondary>
-          {connectedAccount &&
-            balance && ( // Check for non-null balance?
-              // TODO Probably better to allow for button to be disabled
-              <Button
-                onClick={() => delegateHandler(connectedAccount, balance)}
-              >
-                <div>Delegate Now</div>
-                <ChevronRightIcon />
-              </Button>
-            )}
+
+          <Button
+            onClick={() =>
+              connectedAccount &&
+              usableBalance?.gtn(0) &&
+              delegateHandler(connectedAccount, usableBalance)
+            }
+            disabled={!connectedAccount || !usableBalance?.gtn(0)}
+          >
+            <div>Delegate Now</div>
+            <ChevronRightIcon />
+          </Button>
         </div>
       </div>
     </Modal>

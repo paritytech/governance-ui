@@ -24,6 +24,7 @@ export function Button({
   className,
   style,
   onClick,
+  ...rest
 }: ClickableProps): JSX.Element {
   return (
     <button
@@ -32,6 +33,7 @@ export function Button({
       }`}
       style={{ ...style }}
       onClick={onClick}
+      {...rest}
     >
       {children}
     </button>
@@ -43,6 +45,7 @@ export function ButtonSecondary({
   className,
   style,
   onClick,
+  ...rest
 }: ClickableProps): JSX.Element {
   return (
     <button
@@ -51,6 +54,7 @@ export function ButtonSecondary({
       }`}
       style={{ ...style }}
       onClick={onClick}
+      {...rest}
     >
       {children}
     </button>

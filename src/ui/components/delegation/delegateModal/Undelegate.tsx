@@ -1,32 +1,50 @@
 import type { TrackType } from '../types';
 import type { SigningAccount, VotingDelegating } from '../../../../types';
 
+import { useState, useEffect } from 'react';
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
 import { Modal, Button, ButtonSecondary } from '../../../lib';
 import { useAppLifeCycle, extractBalance } from '../../../../lifecycle';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { SimpleAnalytics } from '../../../../analytics';
 import { useAccount } from '../../../../contexts';
-import { signAndSend } from '../../../../utils/polkadot-api';
+import { signAndSend, calcEstimatedFee } from '../../../../utils/polkadot-api';
+import { LabeledBox } from './common/LabeledBox';
+import BN from 'bn.js';
+import { formatBalance } from '@polkadot/util';
 
-interface IUndelegateModalProps {
-  delegation: VotingDelegating;
-  tracks: TrackType[];
-  open: boolean;
-  onClose: () => void;
-}
 export function UndelegateModal({
   delegation,
   tracks,
   open,
   onClose,
-}: IUndelegateModalProps) {
+}: {
+  delegation: VotingDelegating;
+  tracks: TrackType[];
+  open: boolean;
+  onClose: () => void;
+}) {
+  const [fee, setFee] = useState<BN>();
   const { state, updater } = useAppLifeCycle();
   const { connectedAccount } = useAccount();
+  const connectedAddress = connectedAccount?.account?.address;
   const balance = extractBalance(state);
   const { target: address } = delegation;
   const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();
+
+  // set fee
+  useEffect(() => {
+    if (open && connectedAddress && balance && tracks.length > 0) {
+      updater.undelegate(tracks.map((track) => track.id)).then(async (tx) => {
+        if (tx.type === 'ok') {
+          const fee = await calcEstimatedFee(tx.value, connectedAddress);
+          setFee(fee);
+        }
+      });
+    }
+  }, [open]);
+
   const undelegateHandler = async ({
     account: { address },
     signer,
@@ -52,23 +70,21 @@ export function UndelegateModal({
               Submitting this transaction will undelegate the following tracks:
             </p>
           </div>
-          <div className="columns-2">
-            <div className="flex w-full flex-col gap-1">
-              <div className="text-sm">Tracks to undelegate</div>
-              <div className="flex gap-2">
-                <div className="text-base font-medium">{tracksCaption}</div>
-              </div>
-            </div>
-            <div className="flex w-full flex-col gap-1">
-              <div className="text-sm">Your delegate</div>
-              <div className="flex gap-2">
-                <Accounticon
-                  textClassName="font-medium"
-                  address={address}
-                  size={24}
-                />
-              </div>
-            </div>
+          <div className="grid w-full grid-cols-2 gap-4">
+            <LabeledBox title="Tracks to undelegate">
+              {tracksCaption}
+            </LabeledBox>
+            <LabeledBox title="Delegate">
+              <Accounticon
+                textClassName="font-medium"
+                address={address}
+                size={24}
+              />
+            </LabeledBox>
+          </div>
+          <hr className="w-full bg-gray-400" />
+          <div className="w-full">
+            {(fee && formatBalance(fee, { decimals: 12 })) || '...'}
           </div>
         </div>
         <div className="flex w-full flex-row justify-end gap-4">
