@@ -7,7 +7,7 @@ export default function Headline() {
   return (
     <div className=" flex max-w-full flex-col items-center justify-center gap-24">
       <div className="flex flex-col items-center gap-0">
-        <span className="text-center font-unbounded text-h1 font-bold">
+        <span className="text-center font-unbounded text-h1">
           Governance is now <span className="text-primary">open</span>
         </span>
         <span className="px-3 text-center text-body">

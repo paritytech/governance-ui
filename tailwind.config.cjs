@@ -10,7 +10,7 @@ module.exports = {
       fontSize: {
         body: "1rem",
         "body-2": "0.875rem",
-        h1: "4rem",
+        h1: ["4rem", { fontWeight: 700 }],
         h2: "3rem",
         h3: "2rem",
         h4: "1.625rem",
