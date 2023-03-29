@@ -11,18 +11,25 @@ import { Accounticon } from '../../accounts/Accounticon.js';
 import { Conviction } from '../../../../types';
 import { SimpleAnalytics } from '../../../../analytics';
 import { useAccount } from '../../../../contexts';
-import { signAndSend, calcEstimatedFee } from '../../../../utils/polkadot-api';
-import { formatBalance } from '@polkadot/util';
+import {
+  signAndSend,
+  calcEstimatedFee,
+  formatBalance,
+} from '../../../../utils/polkadot-api';
 import { LabeledBox } from './common/LabeledBox';
 
 export function DelegateModal({
   delegate,
   tracks,
+  decimals,
+  unit,
   open,
   onClose,
 }: {
   delegate: Delegate;
   tracks: TrackType[];
+  decimals?: number;
+  unit?: string;
   open: boolean;
   onClose: () => void;
 }) {
@@ -115,7 +122,9 @@ export function DelegateModal({
             <LabeledBox title="Tokens to delegate">
               <div>
                 {(usableBalance &&
-                  formatBalance(usableBalance, { decimals: 12 })) ||
+                  unit &&
+                  decimals &&
+                  formatBalance(usableBalance, decimals, unit)) ||
                   '...'}
               </div>
             </LabeledBox>
@@ -128,13 +137,14 @@ export function DelegateModal({
                 />
               </div>
             </LabeledBox>
-            <LabeledBox title="Max Conviction">
+            <LabeledBox title="Conviction">
               <div>x0.01</div>
             </LabeledBox>
           </div>
           <hr className="w-full bg-gray-400" />
           <div className="w-full">
-            {(fee && formatBalance(fee, { decimals: 12 })) || '...'}
+            {(unit && decimals && fee && formatBalance(fee, decimals, unit)) ||
+              '...'}
           </div>
         </div>
         <div className="flex w-full flex-row justify-end gap-4">

@@ -23,6 +23,7 @@ import {
   QueryableStorage,
   SubmittableExtrinsic,
 } from '@polkadot/api/types';
+import { Registry } from '@polkadot/types-codec/types';
 import {
   createBatchVotes,
   delegate,
@@ -44,6 +45,7 @@ import {
   AccountChainState,
   Action,
   Address,
+  ChainProperties,
   ChainState,
   Delegate,
   isAtLeastConnected,
@@ -194,6 +196,18 @@ export function extractDelegations(state: State) {
     delegations = getAllDelegations(state.connectedAddress, allVotings);
   }
   return delegations;
+}
+
+export function extractDecimals(state: State): number | undefined {
+  if (state.type == 'ConnectedState') {
+    return state.chain.properties.tokenDecimals[0];
+  }
+}
+
+export function extractUnit(state: State): string | undefined {
+  if (state.type == 'ConnectedState') {
+    return state.chain.properties.tokenSymbols[0];
+  }
 }
 
 function error(message: string): Report {
@@ -374,14 +388,34 @@ async function restorePersisted(
   };
 }
 
-export async function fetchChainState(api: {
-  consts: QueryableConsts<'promise'>;
-  query: QueryableStorage<'promise'>;
-}): Promise<ChainState> {
+function getProperties(registry: Registry): ChainProperties {
+  const properties = registry.getChainProperties();
+  if (properties) {
+    return {
+      ss58Format: properties.ss58Format.unwrapOr(undefined)?.toNumber(),
+      tokenDecimals: properties.tokenDecimals
+        .unwrapOrDefault()
+        .map((s) => s.toNumber()),
+      tokenSymbols: properties.tokenSymbol
+        .unwrapOrDefault()
+        .map((s) => s.toString()),
+    };
+  }
+  return { tokenDecimals: [], tokenSymbols: [] };
+}
+
+export async function fetchChainState(
+  api: {
+    consts: QueryableConsts<'promise'>;
+    query: QueryableStorage<'promise'>;
+  },
+  registry: Registry
+): Promise<ChainState> {
   const tracks = getAllTracks(api);
   const referenda = await getAllReferenda(api);
   const fellows = await getAllMembers(api);
-  return { tracks, referenda, fellows };
+  const properties = getProperties(registry);
+  return { properties, tracks, referenda, fellows };
 }
 
 export async function fetchAccountChainState(
@@ -772,7 +806,7 @@ async function dispatchEndpointsChange(
     const apiAt = await api.at(header.hash);
     // TODO rely on subs, do not re-fetch whole state each block
     const details = await measured('fetch-chain-details', () =>
-      fetchChainState(apiAt)
+      fetchChainState(apiAt, api.registry)
     );
 
     dispatch({

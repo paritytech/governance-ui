@@ -128,7 +128,7 @@ self.addEventListener('periodicsync', async (event: SyncEvent) => {
       // Get referenda for latest block
       const hash = await api.rpc.chain.getBlockHash(number);
       const apiAt = await api.at(hash);
-      const { referenda } = await fetchChainState(apiAt);
+      const { referenda } = await fetchChainState(apiAt, api.registry);
       let account;
       if (connectedAddress) {
         account = await fetchAccountChainState(apiAt, connectedAddress);

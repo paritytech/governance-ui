@@ -6,6 +6,7 @@ import {
   SubmittableExtrinsics,
 } from '@polkadot/api/types';
 import { IMethod } from '@polkadot/types-codec/types/interfaces';
+import { formatBalance as formatBalanceP } from '@polkadot/util';
 import BN from 'bn.js';
 
 const DEFAULT_OPTIONS = {
@@ -60,4 +61,12 @@ export async function calcEstimatedFee(
 ): Promise<BN> {
   const { partialFee } = await tx.paymentInfo(sender);
   return partialFee.muln(130).divn(100); // to count for weights fee = partialFee * 1.3
+}
+
+export function formatBalance(
+  input: BN,
+  decimals: number,
+  unit: string
+): string {
+  return formatBalanceP(input, { decimals, withUnit: unit });
 }

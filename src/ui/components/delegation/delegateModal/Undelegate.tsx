@@ -8,19 +8,26 @@ import { useAppLifeCycle, extractBalance } from '../../../../lifecycle';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { SimpleAnalytics } from '../../../../analytics';
 import { useAccount } from '../../../../contexts';
-import { signAndSend, calcEstimatedFee } from '../../../../utils/polkadot-api';
+import {
+  signAndSend,
+  calcEstimatedFee,
+  formatBalance,
+} from '../../../../utils/polkadot-api';
 import { LabeledBox } from './common/LabeledBox';
 import BN from 'bn.js';
-import { formatBalance } from '@polkadot/util';
 
 export function UndelegateModal({
   delegation,
   tracks,
+  decimals,
+  unit,
   open,
   onClose,
 }: {
   delegation: VotingDelegating;
   tracks: TrackType[];
+  decimals?: number;
+  unit?: string;
   open: boolean;
   onClose: () => void;
 }) {
@@ -84,7 +91,8 @@ export function UndelegateModal({
           </div>
           <hr className="w-full bg-gray-400" />
           <div className="w-full">
-            {(fee && formatBalance(fee, { decimals: 12 })) || '...'}
+            {(unit && decimals && fee && formatBalance(fee, decimals, unit)) ||
+              '...'}
           </div>
         </div>
         <div className="flex w-full flex-row justify-end gap-4">

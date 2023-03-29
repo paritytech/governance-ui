@@ -28,7 +28,14 @@ export type AccountChainState = {
   balance: BN;
 };
 
+export type ChainProperties = {
+  ss58Format?: number;
+  tokenDecimals: Array<number>;
+  tokenSymbols: Array<string>;
+};
+
 export type ChainState = {
+  properties: ChainProperties;
   tracks: Map<number, Track>;
   referenda: Map<number, Referendum>;
   fellows: Map<Address, Fellow>;

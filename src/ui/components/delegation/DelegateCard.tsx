@@ -5,7 +5,11 @@ import { ChevronRightIcon, DelegateIcon } from '../../icons';
 import { Button, ButtonSecondary, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
 import type { Delegate, State } from '../../../lifecycle/types';
-import { extractDelegations } from '../../../lifecycle';
+import {
+  extractDecimals,
+  extractDelegations,
+  extractUnit,
+} from '../../../lifecycle';
 import { trackCategories, deduplicateTracks } from '../../../chain/index';
 import { DelegateModal } from './delegateModal/Delegate';
 import { useDelegation } from '../../../contexts';
@@ -88,6 +92,8 @@ export function DelegateCard({
 }) {
   const { name, address, manifesto } = delegate;
   const roles = extractRole(address, state);
+  const decimals = extractDecimals(state);
+  const unit = extractUnit(state);
   const { preview, truncated } = useMemo(
     () => manifestoPreview(manifesto, 200),
     [manifesto]
@@ -158,6 +164,8 @@ export function DelegateCard({
         onClose={closeModal}
         delegate={delegate}
         tracks={tracks}
+        decimals={decimals}
+        unit={unit}
       />
     </>
   );
