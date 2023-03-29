@@ -1,8 +1,3 @@
-const placeholderUrl = new URL(
-  '../../../assets/images/temp-placeholder.png',
-  import.meta.url
-).toString();
-
 export default function Headline() {
   return (
     <div className=" flex max-w-full flex-col items-center justify-center gap-24">

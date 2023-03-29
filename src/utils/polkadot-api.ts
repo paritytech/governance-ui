@@ -6,6 +6,8 @@ import {
   SubmittableExtrinsics,
 } from '@polkadot/api/types';
 import { IMethod } from '@polkadot/types-codec/types/interfaces';
+import { formatBalance as formatBalanceP } from '@polkadot/util';
+import BN from 'bn.js';
 
 const DEFAULT_OPTIONS = {
   noInitWarn: true,
@@ -35,13 +37,14 @@ export async function signAndSend(
     address,
     { signer },
     (callResult) => {
-      const { status } = callResult;
+      const { status, blockNumber } = callResult;
       // TODO handle result better
       if (status.isInBlock) {
-        console.log('Transaction is in block.');
+        console.log(`Transaction is in block #${blockNumber}.`);
       } else if (status.isBroadcast) {
         console.log('Transaction broadcasted.');
       } else if (status.isFinalized) {
+        console.log(`Transaction is finalized at block #${blockNumber}.`);
         unsub();
       } else if (status.isReady) {
         console.log('Transaction isReady.');
@@ -50,4 +53,20 @@ export async function signAndSend(
       }
     }
   );
+}
+
+export async function calcEstimatedFee(
+  tx: SubmittableExtrinsic<'promise', SubmittableResult>,
+  sender: string
+): Promise<BN> {
+  const { partialFee } = await tx.paymentInfo(sender);
+  return partialFee.muln(130).divn(100); // to count for weights fee = partialFee * 1.3
+}
+
+export function formatBalance(
+  input: BN,
+  decimals: number,
+  unit: string
+): string {
+  return formatBalanceP(input, { decimals, withUnit: unit });
 }
