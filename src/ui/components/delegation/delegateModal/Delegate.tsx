@@ -5,7 +5,11 @@ import BN from 'bn.js';
 import { useEffect, useState } from 'react';
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
 import { Modal, Button, ButtonSecondary } from '../../../lib';
-import { useAppLifeCycle, extractBalance } from '../../../../lifecycle';
+import {
+  useAppLifeCycle,
+  extractBalance,
+  extractChainInfo,
+} from '../../../../lifecycle';
 import { Delegate } from '../../../../lifecycle/types';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { Conviction } from '../../../../types';
@@ -21,15 +25,11 @@ import { LabeledBox } from './common/LabeledBox';
 export function DelegateModal({
   delegate,
   tracks,
-  decimals,
-  unit,
   open,
   onClose,
 }: {
   delegate: Delegate;
   tracks: TrackType[];
-  decimals?: number;
-  unit?: string;
   open: boolean;
   onClose: () => void;
 }) {
@@ -38,6 +38,7 @@ export function DelegateModal({
   const [usableBalance, setUsableBalance] = useState<BN>();
   const [fee, setFee] = useState<BN>();
   const balance = extractBalance(state);
+  const { unit, decimals } = extractChainInfo(state) || {};
   const { name, address: delegateAddress } = delegate;
   const tracksCaption = tracks
     .slice(0, 2)

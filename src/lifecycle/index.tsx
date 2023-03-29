@@ -198,15 +198,19 @@ export function extractDelegations(state: State) {
   return delegations;
 }
 
-export function extractDecimals(state: State): number | undefined {
+export function extractChainInfo(state: State):
+  | {
+      decimals: number | undefined;
+      unit: string | undefined;
+      ss58: number | undefined;
+    }
+  | undefined {
   if (state.type == 'ConnectedState') {
-    return state.chain.properties.tokenDecimals[0];
-  }
-}
-
-export function extractUnit(state: State): string | undefined {
-  if (state.type == 'ConnectedState') {
-    return state.chain.properties.tokenSymbols[0];
+    return {
+      decimals: state.chain.properties.tokenDecimals[0],
+      unit: state.chain.properties.tokenSymbols[0],
+      ss58: state.chain.properties.ss58Format,
+    };
   }
 }
 

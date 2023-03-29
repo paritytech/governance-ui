@@ -13,12 +13,7 @@ import { Accounticon } from '../accounts/Accounticon';
 import { Network } from '../../../network';
 import { CloseIcon } from '../../icons';
 import { UndelegateModal } from './delegateModal/Undelegate';
-import {
-  useAppLifeCycle,
-  extractDelegations,
-  extractDecimals,
-  extractUnit,
-} from '../../../lifecycle';
+import { useAppLifeCycle, extractDelegations } from '../../../lifecycle';
 
 interface ICheckBoxProps {
   title?: string;
@@ -74,8 +69,6 @@ interface ITrackCheckableCardProps {
   referenda: Map<number, ReferendumOngoing>;
   details: Map<number, ReferendumDetails>;
   delegation: VotingDelegating | undefined;
-  decimals?: number;
-  unit?: string;
   checked?: boolean;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
   expanded?: boolean;
@@ -184,13 +177,9 @@ function ReferendaDetails({
 function TrackDelegation({
   track,
   delegation,
-  decimals,
-  unit,
 }: {
   track: TrackType;
   delegation: VotingDelegating;
-  decimals?: number;
-  unit?: string;
 }) {
   const { target } = delegation;
   const [showModal, setShowModal] = useState(false);
@@ -220,8 +209,6 @@ function TrackDelegation({
         open={showModal}
         tracks={(track && [track]) || []}
         delegation={delegation}
-        decimals={decimals}
-        unit={unit}
       />
     </>
   );
@@ -236,8 +223,6 @@ export function TrackCheckableCard({
   referenda,
   details,
   delegation,
-  decimals,
-  unit,
   checked,
   onChange,
   expanded,
@@ -251,12 +236,7 @@ export function TrackCheckableCard({
           <div className="text-sm leading-tight">{track?.description}</div>
         )}
         {delegation && (
-          <TrackDelegation
-            track={track}
-            delegation={delegation}
-            decimals={decimals}
-            unit={unit}
-          />
+          <TrackDelegation track={track} delegation={delegation} />
         )}
         {referenda.size ? (
           Array.from(referenda.entries()).map(([index, referendum]) => (
@@ -312,8 +292,6 @@ export function TrackSelect({
   );
   const { state } = useAppLifeCycle();
   const delegations = extractDelegations(state);
-  const decimals = extractDecimals(state);
-  const unit = extractUnit(state);
   return (
     <div className="flex w-full flex-col gap-12 px-3 lg:px-8 lg:pb-12">
       <SectionTitle
@@ -373,8 +351,6 @@ export function TrackSelect({
                     details={details}
                     referenda={referendaByTrack.get(track.id) || new Map()}
                     delegation={delegations.get(track.id)}
-                    decimals={decimals}
-                    unit={unit}
                     checked={selectedTracks.has(track.id)}
                     onChange={(e) => {
                       const isChecked = e.target.checked;

@@ -4,7 +4,11 @@ import type { SigningAccount, VotingDelegating } from '../../../../types';
 import { useState, useEffect } from 'react';
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
 import { Modal, Button, ButtonSecondary } from '../../../lib';
-import { useAppLifeCycle, extractBalance } from '../../../../lifecycle';
+import {
+  useAppLifeCycle,
+  extractBalance,
+  extractChainInfo,
+} from '../../../../lifecycle';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { SimpleAnalytics } from '../../../../analytics';
 import { useAccount } from '../../../../contexts';
@@ -19,8 +23,6 @@ import BN from 'bn.js';
 export function UndelegateModal({
   delegation,
   tracks,
-  decimals,
-  unit,
   open,
   onClose,
 }: {
@@ -36,10 +38,10 @@ export function UndelegateModal({
   const { connectedAccount } = useAccount();
   const connectedAddress = connectedAccount?.account?.address;
   const balance = extractBalance(state);
+  const { unit, decimals } = extractChainInfo(state) || {};
   const { target: address } = delegation;
   const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();
-
   // set fee
   useEffect(() => {
     if (open && connectedAddress && balance && tracks.length > 0) {
