@@ -6,7 +6,7 @@ import {
   useWallets as _useWallets,
 } from '@polkadot-onboard/react';
 
-const APP_NAME = 'Swipe to Vote';
+const APP_NAME = 'Governance UI';
 
 export type WalletState = 'connected' | 'disconnected';
 export interface IWalletContext {

@@ -3,7 +3,7 @@ import { ButtonOutline } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { DelegateModal } from '../components/delegation/delegateModal/Delegate.js';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
-import { tracksMetadata } from '../../chain/mocks';
+import { trackCategories } from '../../chain';
 import { AddIcon, ChevronDownIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
@@ -30,8 +30,8 @@ function Headline() {
           Governance is now <span className="text-primary">open</span>
         </h1>
         <div className="m-auto max-w-[500px] px-3 text-center text-base">
-          Not ready to do the research? Contribute without the hassle: delegate
-          your votes to experts.
+          No time to vote? Keep Polkadot running smoothly by delegating to an
+          expert instead.
         </div>
       </div>
       <div className="aspect-video w-[600px] max-w-full">
@@ -42,11 +42,10 @@ function Headline() {
 }
 
 export function DelegatesBar() {
-  // ToDo : Move Modal to a context
   const { state } = useAppLifeCycle();
   const { delegates } = state;
   const [visible, setVisible] = useState(false);
-  const allTracks = tracksMetadata.map((track) => track.subtracks).flat();
+  const allTracks = trackCategories.map((category) => category.tracks).flat();
   const closeModal = () => {
     setVisible(false);
   };
@@ -58,8 +57,7 @@ export function DelegatesBar() {
       <div className="prose prose-lg max-w-none pb-4 text-center">
         <h2 className="m-0">It’s on you</h2>
         <div className="mb-4 text-base">
-          Contribute without the hassle: delegate your votes to experts. More
-          options
+          Contribute without the hassle: delegate your votes to experts.
         </div>
       </div>
       <div className="flex max-w-full gap-7 overflow-x-scroll px-3 pb-1 lg:px-6	">
@@ -85,14 +83,23 @@ export function DelegatesBar() {
   );
 }
 
+function DescriptionLabel({ delegates }: { delegates: number }): JSX.Element {
+  return (
+    <div className="text-sm">
+      There are currently <span className="text-m font-bold">{delegates}</span>{' '}
+      delegates.
+    </div>
+  );
+}
+
 export const DelegateSection = () => {
-  // ToDo : Move Modal to a context
   const { state } = useAppLifeCycle();
   const { delegates } = state;
   const [visible, setVisible] = useState(false);
+  const [search, setSearch] = useState<string>();
   const { selectedTracks } = useDelegation();
-  const tracks = tracksMetadata
-    .map((track) => track.subtracks)
+  const tracks = trackCategories
+    .map((category) => category.tracks)
     .flat()
     .filter((track) => selectedTracks.has(track.id));
   const closeModal = () => {
@@ -106,7 +113,7 @@ export const DelegateSection = () => {
       <div className="mb-48 mt-6 flex w-full flex-col gap-16 px-3 md:px-8">
         <SectionTitle
           title="Browse Delegates"
-          description="Lorem ipsum dolor sit amet"
+          description={<DescriptionLabel delegates={delegates.length} />}
         >
           <ProgressStepper step={1} />
         </SectionTitle>
@@ -116,6 +123,7 @@ export const DelegateSection = () => {
               <input
                 placeholder="Search"
                 className="w-full self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70 lg:w-fit"
+                onChange={(event) => setSearch(event.target.value)}
               />
               <ButtonOutline className="w-fit">
                 <AddIcon />
@@ -134,15 +142,19 @@ export const DelegateSection = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 flex-wrap items-center justify-start gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
-            {delegates?.map((delegate, idx) => (
-              <DelegateCard
-                key={idx}
-                delegate={delegate}
-                state={state}
-                delegateHandler={openModal}
-                variant="some"
-              />
-            ))}
+            {delegates
+              ?.filter((delegate) =>
+                search ? delegate.name.includes(search) : true
+              )
+              .map((delegate, idx) => (
+                <DelegateCard
+                  key={idx}
+                  delegate={delegate}
+                  state={state}
+                  delegateHandler={openModal}
+                  variant="some"
+                />
+              ))}
           </div>
         </div>
         {delegates && delegates.length > 0 && (

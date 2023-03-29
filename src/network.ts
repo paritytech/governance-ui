@@ -1,4 +1,5 @@
 import { ApiPromise } from '@polkadot/api';
+import { supportsOpenGov } from './chain/index.js';
 import { err, ok, Result } from './utils/index.js';
 import { capitalizeFirstLetter } from './utils/string.js';
 
@@ -7,10 +8,16 @@ export enum Network {
   Polkadot = 'Polkadot',
 }
 
-const DEFAULT_NETWORK_ENV = process.env.DEFAULT_NETWORK;
-export const DEFAULT_NETWORK = DEFAULT_NETWORK_ENV
-  ? (capitalizeFirstLetter(DEFAULT_NETWORK_ENV) as Network)
-  : Network.Kusama;
+export async function defaultNetwork(): Promise<Network> {
+  const env = process.env.DEFAULT_NETWORK;
+  if (env) {
+    return capitalizeFirstLetter(env) as Network;
+  }
+  // Remove in new release once polkdato supports OpenGov
+  return (await supportsOpenGov(Network.Polkadot))
+    ? Network.Polkadot
+    : Network.Kusama;
+}
 
 export function parse(s: string): Result<Network> {
   const network = capitalizeFirstLetter(s) as Network;
