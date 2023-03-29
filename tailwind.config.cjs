@@ -3,7 +3,23 @@ module.exports = {
   content: ["./src/**/*.{html,js,ts,jsx,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ["Inter"],
+        unbounded: "Unbounded",
+      },
+      fontSize: {
+        body: "1rem",
+        "body-2": "0.875rem",
+        h1: "4rem",
+        h2: "3rem",
+        h3: "2rem",
+        h4: "1.625rem",
+        h5: "1.25rem",
+      },
       colors: {
+        bg: { default: "#F5F4F4" },
+        "p-pink": { 100: "#FFE4F3", 600: "#CB006C" },
+        "p-purple": { 100: "#F3F5FB", 900: "#1C0533" },
         primary: "#e6007a",
         secondary: "#321D47",
       },
@@ -15,6 +31,10 @@ module.exports = {
         lift: {
           "0%": { marginTop: 24, opacity: 0 },
           "100%": { marginTop: 0, opacity: 1 },
+        },
+        fadeIn: {
+          "0%": { background: "rgba(0,0,0,0)" },
+          "100%": { background: "rgba(0,0,0,0.7)" },
         },
       },
     },

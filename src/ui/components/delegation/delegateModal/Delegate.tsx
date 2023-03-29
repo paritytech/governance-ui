@@ -59,8 +59,8 @@ export function DelegateModal({
           <div className="text-left">
             <h2 className="mb-2 text-3xl font-medium">Summary</h2>
             <p className="text-base">
-              You’re about to submit a transaction to delegate your voting power
-              for the following tracks to <b>{name}</b> Delegate.
+              Submitting this transaction will delegate your voting power to{' '}
+              <b>{name}</b> for the following tracks:
             </p>
           </div>
           <div className="flex flex-col gap-1">
