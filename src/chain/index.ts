@@ -9,10 +9,10 @@ export async function supportsOpenGov(network: Network): Promise<boolean> {
   return api.registry.getModuleInstances('', 'referenda') != undefined;
 }
 
-export const tracksMetadata = [
+export const trackCategories = [
   {
     title: 'Admin',
-    subtracks: [
+    tracks: [
       {
         id: 0,
         title: 'Root',
@@ -34,7 +34,7 @@ export const tracksMetadata = [
   },
   {
     title: 'Governance',
-    subtracks: [
+    tracks: [
       {
         id: 12,
         title: 'Lease Admin',
@@ -64,7 +64,7 @@ export const tracksMetadata = [
   },
   {
     title: 'Treasury',
-    subtracks: [
+    tracks: [
       {
         id: 30,
         title: 'Small Tipper',
@@ -99,7 +99,7 @@ export const tracksMetadata = [
   },
   {
     title: 'Fellowship',
-    subtracks: [
+    tracks: [
       {
         id: 1,
         title: 'Whitelisted Caller',

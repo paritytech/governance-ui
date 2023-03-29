@@ -2,7 +2,7 @@ import type { Tally, VotingDelegating } from '../../../types';
 import type { TrackType } from './types';
 
 import { memo, useState } from 'react';
-import { tracksMetadata } from '../../../chain';
+import { trackCategories } from '../../../chain';
 import { useDelegation } from '../../../contexts/Delegation.js';
 import { ButtonSecondary, Card } from '../../lib';
 import { CheckIcon, ChevronDownIcon } from '../../icons';
@@ -255,15 +255,16 @@ export function TrackCheckableCard({
   );
 }
 
-function filterReferendaForTrack(
-  trackIndex: number,
+function partitionReferendaByTrack(
   referenda: Map<number, ReferendumOngoing>
-): Map<number, ReferendumOngoing> {
-  return new Map(
-    Array.from(referenda.entries()).filter(
-      ([, referendum]) => referendum.trackIndex == trackIndex
-    )
-  );
+): Map<number, Map<number, ReferendumOngoing>> {
+  return Array.from(referenda.entries()).reduce((acc, [id, referendum]) => {
+    const trackId = referendum.trackIndex;
+    const tracks = acc.get(trackId) || new Map<number, ReferendumOngoing>();
+    tracks.set(id, referendum);
+    acc.set(trackId, tracks);
+    return acc;
+  }, new Map<number, Map<number, ReferendumOngoing>>());
 }
 
 interface ITrackSelectProps {
@@ -284,16 +285,20 @@ export function TrackSelect({
   expanded,
   delegateHandler,
 }: ITrackSelectProps) {
-  const availableTracks = tracksMetadata;
   const { selectedTracks, setTrackSelection } = useDelegation();
-
+  const referendaByTrack = partitionReferendaByTrack(referenda);
+  const activeReferendaCount = Array.from(referendaByTrack.entries()).reduce(
+    (acc, [, track]) => acc + track.size,
+    0
+  );
   return (
     <div className="flex w-full flex-col gap-12 px-3 lg:px-8 lg:pb-12">
       <SectionTitle
-        title="Delegate by Track"
+        title="Select the tracks you want to delegate"
         description={
           <div className="text-sm">
-            Select the tracks you&lsquo;d like to delegate.
+            There are currently {activeReferendaCount} active proposals on{' '}
+            {referendaByTrack.size} tracks.
           </div>
         }
         step={0}
@@ -309,9 +314,9 @@ export function TrackSelect({
             // how do i check number of available tracks?
             onChange={(e) => {
               const isChecked = e.target.checked;
-              availableTracks.map((track) => {
-                track.subtracks.map((subtracks) => {
-                  setTrackSelection(subtracks.id, isChecked);
+              trackCategories.map((category) => {
+                category.tracks.map((track) => {
+                  setTrackSelection(track.id, isChecked);
                 });
               });
             }}
@@ -330,21 +335,21 @@ export function TrackSelect({
         <div
           className={`flex w-full flex-col justify-between md:flex-row md:gap-4 ${className}`}
         >
-          {availableTracks.map((track, idx) => (
+          {trackCategories.map((category, idx) => (
             <div key={idx} className="flex w-full flex-col gap-2 md:w-1/4">
-              <div className="text-sm">{track.title}</div>
+              <div className="text-sm">{category.title}</div>
               <div className="mb-8 flex flex-col gap-2 lg:gap-4">
-                {track.subtracks.map((subtrack, idx) => (
+                {category.tracks.map((track, idx) => (
                   <TrackCheckableCard
                     key={idx}
-                    track={subtrack}
+                    track={track}
                     details={details}
-                    referenda={filterReferendaForTrack(subtrack.id, referenda)}
-                    delegation={delegations.get(subtrack.id)}
-                    checked={selectedTracks.has(subtrack.id)}
+                    referenda={referendaByTrack.get(track.id) || new Map()}
+                    delegation={delegations.get(track.id)}
+                    checked={selectedTracks.has(track.id)}
                     onChange={(e) => {
                       const isChecked = e.target.checked;
-                      setTrackSelection(subtrack.id, isChecked);
+                      setTrackSelection(track.id, isChecked);
                     }}
                     expanded={expanded}
                     network={network}

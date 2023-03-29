@@ -3,7 +3,7 @@ import { ButtonOutline } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { DelegateModal } from '../components/delegation/delegateModal/Delegate.js';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
-import { tracksMetadata } from '../../chain';
+import { trackCategories } from '../../chain';
 import { AddIcon, ChevronDownIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
@@ -42,11 +42,10 @@ function Headline() {
 }
 
 export function DelegatesBar() {
-  // ToDo : Move Modal to a context
   const { state } = useAppLifeCycle();
   const { delegates } = state;
   const [visible, setVisible] = useState(false);
-  const allTracks = tracksMetadata.map((track) => track.subtracks).flat();
+  const allTracks = trackCategories.map((category) => category.tracks).flat();
   const closeModal = () => {
     setVisible(false);
   };
@@ -99,8 +98,8 @@ export const DelegateSection = () => {
   const [visible, setVisible] = useState(false);
   const [search, setSearch] = useState<string>();
   const { selectedTracks } = useDelegation();
-  const tracks = tracksMetadata
-    .map((track) => track.subtracks)
+  const tracks = trackCategories
+    .map((category) => category.tracks)
     .flat()
     .filter((track) => selectedTracks.has(track.id));
   const closeModal = () => {
