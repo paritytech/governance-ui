@@ -296,9 +296,13 @@ export function TrackSelect({
       <SectionTitle
         title="Select the tracks you want to delegate"
         description={
-          <div className="text-sm">
-            There are currently {activeReferendaCount} active proposals on{' '}
-            {referendaByTrack.size} tracks.
+          <div className="text-body-2">
+            There are currently{' '}
+            <span className="font-bold">
+              {activeReferendaCount} active proposals
+            </span>{' '}
+            on{' '}
+            <span className="font-bold">{referendaByTrack.size} tracks.</span>
           </div>
         }
         step={0}

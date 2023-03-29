@@ -49,8 +49,7 @@ export function UndelegateModal({
           <div className="text-left">
             <h2 className="mb-2 text-3xl font-medium">Summary</h2>
             <p className="text-base">
-              You’re about to submit a transaction to undelegate some of your
-              delegated tracks.
+              Submitting this transaction will undelegate the following tracks:
             </p>
           </div>
           <div className="columns-2">

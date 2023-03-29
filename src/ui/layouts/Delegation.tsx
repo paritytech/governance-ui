@@ -16,30 +16,7 @@ import {
 } from '../../lifecycle';
 import { ReferendumOngoing, VotingDelegating } from '../../types';
 import { useAccount } from '../../contexts';
-
-const placeholderUrl = new URL(
-  '../../../assets/images/temp-placeholder.png',
-  import.meta.url
-).toString();
-
-function Headline() {
-  return (
-    <section className=" flex max-w-full flex-col items-center justify-center gap-3">
-      <div className="prose mb-4 max-w-none md:prose-xl">
-        <h1 className="text-center">
-          Governance is now <span className="text-primary">open</span>
-        </h1>
-        <div className="m-auto max-w-[500px] px-3 text-center text-base">
-          No time to vote? Keep Polkadot running smoothly by delegating to an
-          expert instead.
-        </div>
-      </div>
-      <div className="aspect-video w-[600px] max-w-full">
-        <img className="h-full w-full object-cover" src={placeholderUrl} />
-      </div>
-    </section>
-  );
-}
+import Headline from '../components/Headline';
 
 export function DelegatesBar() {
   const { state } = useAppLifeCycle();
@@ -53,13 +30,10 @@ export function DelegatesBar() {
     setVisible(true);
   };
   return (
-    <section className="flex w-full flex-col items-center justify-center bg-gray-200 py-12">
-      <div className="prose prose-lg max-w-none pb-4 text-center">
-        <h2 className="m-0">It’s on you</h2>
-        <div className="mb-4 text-base">
-          Contribute without the hassle: delegate your votes to experts.
-        </div>
-      </div>
+    <section className="flex w-full flex-col items-center justify-center gap-12 bg-gray-200 py-12">
+      <span className="font-unbounded text-h3 font-semibold">
+        Choose a worthy delegate
+      </span>
       <div className="flex max-w-full gap-7 overflow-x-scroll px-3 pb-1 lg:px-6	">
         {delegates.map((delegate, idx) => (
           <DelegateCard
@@ -85,9 +59,9 @@ export function DelegatesBar() {
 
 function DescriptionLabel({ delegates }: { delegates: number }): JSX.Element {
   return (
-    <div className="text-sm">
-      There are currently <span className="text-m font-bold">{delegates}</span>{' '}
-      delegates.
+    <div className="text-body-2">
+      There are currently{' '}
+      <span className="font-bold">{delegates} delegates.</span>
     </div>
   );
 }
