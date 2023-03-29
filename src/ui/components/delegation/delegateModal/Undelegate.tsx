@@ -91,8 +91,13 @@ export function UndelegateModal({
           </div>
           <hr className="w-full bg-gray-400" />
           <div className="w-full">
-            {(unit && decimals && fee && formatBalance(fee, decimals, unit)) ||
-              '...'}
+            <LabeledBox title="Delegation fee (one time)">
+              {(unit &&
+                decimals &&
+                fee &&
+                formatBalance(fee, decimals, unit)) ||
+                '...'}
+            </LabeledBox>
           </div>
         </div>
         <div className="flex w-full flex-row justify-end gap-4">
