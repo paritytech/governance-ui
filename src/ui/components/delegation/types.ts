@@ -13,5 +13,5 @@ export type TrackType = {
 
 export type TrackCategoryType = {
   title: string;
-  subtracks: TrackType[];
+  tracks: TrackType[];
 };
