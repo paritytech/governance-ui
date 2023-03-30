@@ -206,10 +206,11 @@ export function extractChainInfo(state: State):
     }
   | undefined {
   if (state.type == 'ConnectedState') {
+    // default is set to substrate default
     return {
-      decimals: state.chain.properties.tokenDecimals[0],
-      unit: state.chain.properties.tokenSymbols[0],
-      ss58: state.chain.properties.ss58Format,
+      decimals: state.chain.properties.tokenDecimals[0] || 12,
+      unit: state.chain.properties.tokenSymbols[0] || 'Unit',
+      ss58: state.chain.properties.ss58Format || 42,
     };
   }
 }
