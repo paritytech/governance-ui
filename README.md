@@ -24,7 +24,7 @@ The following table outlines the structure of a `delegate` entry:
 
 # Build
 
-The full website can be started using `PUBLIC_URL=https://... yarn build` where `PUBLIC_URL` is the final root URL for the considered deplyment environment.
+The full website can be started using `yarn build`. `PUBLIC_URL` can be set to the final root URL for the considered deplyment environment if required.
 
 # Development
 
