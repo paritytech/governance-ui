@@ -31,28 +31,21 @@ export function batchAll(
 export async function signAndSend(
   address: string,
   signer: Signer,
-  extrinsic: SubmittableExtrinsic<'promise', SubmittableResult>
-) {
+  extrinsic: SubmittableExtrinsic<'promise', SubmittableResult>,
+  callback: ((result: SubmittableResult) => void) | undefined = undefined
+): Promise<() => void> {
   const unsub = await extrinsic.signAndSend(
     address,
     { signer },
     (callResult) => {
-      const { status, blockNumber } = callResult;
-      // TODO handle result better
-      if (status.isInBlock) {
-        console.log(`Transaction is in block #${blockNumber}.`);
-      } else if (status.isBroadcast) {
-        console.log('Transaction broadcasted.');
-      } else if (status.isFinalized) {
-        console.log(`Transaction is finalized at block #${blockNumber}.`);
+      const { status } = callResult;
+      if (status.isFinalized || status.isInvalid) {
         unsub();
-      } else if (status.isReady) {
-        console.log('Transaction isReady.');
-      } else {
-        console.log(`Other status ${status}`);
       }
+      callback?.(callResult);
     }
   );
+  return unsub;
 }
 
 export async function calcEstimatedFee(
