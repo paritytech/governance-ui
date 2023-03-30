@@ -36,6 +36,10 @@ module.exports = {
           "0%": { background: "rgba(0,0,0,0)" },
           "100%": { background: "rgba(0,0,0,0.7)" },
         },
+        slideInRight: {
+          "0%": { right: -500 },
+          "100%": { right: 0 },
+        },
       },
     },
   },

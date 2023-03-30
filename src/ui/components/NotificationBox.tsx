@@ -1,4 +1,5 @@
 import { useAppLifeCycle } from '../../lifecycle';
+import { CloseIcon } from '../icons';
 import { Card } from '../lib/index.js';
 
 const TRANSIENT_DISPLAY_TIME_MS = 3000; //milliseconds
@@ -24,16 +25,13 @@ export function NotificationBox(): JSX.Element {
   return (
     <>
       {current && (
-        <div className="absolute bottom-4 right-4 z-50 max-w-[50%] text-xs">
+        <div className="fixed bottom-12 right-4 z-50 flex w-[30%] animate-[slideInRight_ease-out_0.23s] gap-4 rounded-md bg-[rgba(0,0,0,0.7)] p-4 text-body-2 text-white backdrop-blur-md ">
+          <span className="w-full">{current.message}</span>
           {!isTransient && (
-            <div
-              className="absolute right-px top-1  z-50 flex h-4 w-4 cursor-pointer justify-center"
-              onClick={removeCurrent}
-            >
-              x
+            <div onClick={removeCurrent}>
+              <CloseIcon />
             </div>
           )}
-          <Card className="pl-2 pr-2">{current.message}</Card>
         </div>
       )}
     </>
