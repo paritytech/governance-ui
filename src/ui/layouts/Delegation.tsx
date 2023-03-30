@@ -56,8 +56,8 @@ export function DelegatesBar({
 function DescriptionLabel({ delegates }: { delegates: number }): JSX.Element {
   return (
     <div className="text-body-2">
-      There are currently{' '}
-      <span className="font-bold">{delegates} delegates.</span>
+      There are currently <span className="font-bold">{delegates}</span>{' '}
+      delegates.
     </div>
   );
 }
