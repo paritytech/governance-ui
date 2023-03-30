@@ -79,7 +79,7 @@ const Content = ({ children, className }: BaseElementProps) => {
     <div
       className={`${
         collapsed ? 'hidden' : 'flex'
-      } absolute top-full left-0 z-20 order-last h-full min-h-screen w-full basis-full flex-col items-center justify-between overflow-y-auto overflow-x-hidden bg-white  md:static md:order-none md:flex md:h-auto md:min-h-min md:w-auto md:basis-auto md:flex-row md:bg-inherit`}
+      } absolute left-0 top-full z-20 order-last h-full min-h-screen w-full basis-full flex-col items-center justify-between overflow-y-auto overflow-x-hidden bg-white  md:static md:order-none md:flex md:h-auto md:min-h-min md:w-auto md:basis-auto md:flex-row md:bg-inherit`}
       id="navbar-content"
     >
       <ul
