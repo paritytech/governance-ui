@@ -22,6 +22,25 @@ export function ChevronDownIcon({ size, className }: IconProps) {
   );
 }
 
+export function ChevronUpIcon({ size, className }: IconProps) {
+  return (
+    <svg
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      width={size ? size : '16'}
+      height={size ? size : '16'}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="3"
+      viewBox="0 0 29 29"
+    >
+      <path d="M3 21.1309L14.011 8.13086L25 21.1309" data-nofill="true"></path>
+    </svg>
+  );
+}
+
 export function ChevronRightIcon({ size, className }: IconProps) {
   return (
     <svg

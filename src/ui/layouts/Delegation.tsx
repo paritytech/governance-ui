@@ -1,8 +1,8 @@
 import React, { useRef, useState } from 'react';
-import { ButtonOutline } from '../lib';
+import { ButtonOutline, Dropdown } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
-import { AddIcon, ChevronDownIcon } from '../icons';
+import { AddIcon } from '../icons';
 import { DelegationProvider } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
@@ -10,6 +10,7 @@ import { ConnectedState, State } from '../../lifecycle/types.js';
 import { useAppLifeCycle, filterOngoingReferenda } from '../../lifecycle';
 import { ReferendumOngoing } from '../../types';
 import Headline from '../components/Headline';
+import { Option } from '../lib/Dropdown';
 
 export function DelegatesBar() {
   const { state } = useAppLifeCycle();
@@ -46,6 +47,13 @@ export const DelegateSection = () => {
   const { state } = useAppLifeCycle();
   const { delegates } = state;
   const [search, setSearch] = useState<string>();
+
+  const aggregateOptions: Option[] = [
+    { value: 0, label: 'All User Types', active: true },
+    { value: 1, label: 'Flowship' },
+    { value: 2, label: 'Validator' },
+    { value: 3, label: 'Nominator' },
+  ];
   return (
     <>
       <div className="mb-48 mt-6 flex w-full flex-col gap-16 px-3 md:px-8">
@@ -69,14 +77,11 @@ export const DelegateSection = () => {
               </ButtonOutline>
             </div>
             <div className="flex w-full flex-row items-center justify-start gap-4 lg:justify-end">
-              <ButtonOutline>
-                <div>Aggregate Best</div>
-                <ChevronDownIcon />
-              </ButtonOutline>
-              <ButtonOutline>
-                <div>Status</div>
-                <ChevronDownIcon />
-              </ButtonOutline>
+              <Dropdown
+                options={aggregateOptions}
+                onSelect={(option) => console.log(option)}
+                menuAlign={'right'}
+              />
             </div>
           </div>
           <div className="grid grid-cols-1 place-items-center  gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">

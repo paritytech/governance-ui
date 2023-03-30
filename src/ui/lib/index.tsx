@@ -4,4 +4,4 @@ export * from './Icons.js';
 export { Loading } from './Loading.js';
 export { Modal } from './Modal.js';
 export { Navbar } from './Navbar.js';
-export { Spacer } from './Spacer.js';
+export { Dropdown } from './Dropdown';
