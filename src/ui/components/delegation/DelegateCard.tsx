@@ -6,7 +6,7 @@ import { Button, ButtonSecondary, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
 import type { Delegate, State } from '../../../lifecycle/types';
 import { extractDelegations } from '../../../lifecycle';
-import { trackCategories, deduplicateTracks } from '../../../chain/index';
+import { trackCategories } from '../../../chain/index';
 import { DelegateModal } from './delegateModal/Delegate';
 import { useDelegation } from '../../../contexts';
 
@@ -61,11 +61,10 @@ function extractRole(address: string, state: State): DelegateRoleType[] {
 
 function filterUndelegatedTracks(state: State): TrackType[] {
   const delegatedTrackIds = new Set(extractDelegations(state).keys());
-  const undelegatedTracks = trackCategories
+  return trackCategories
     .map((track) => track.tracks)
     .flat()
     .filter((t) => !delegatedTrackIds.has(t.id));
-  return deduplicateTracks(undelegatedTracks);
 }
 
 function manifestoPreview(
