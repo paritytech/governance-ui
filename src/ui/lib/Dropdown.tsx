@@ -37,7 +37,7 @@ export const Dropdown = ({
   return (
     <div>
       <div
-        className={`flex min-w-min appearance-none items-center gap-2 rounded-full border border-solid py-2 px-4 hover:border-primary ${
+        className={`flex min-w-min appearance-none items-center gap-2 rounded-full border border-solid px-4 py-2 hover:border-primary ${
           className || ''
         }`}
         onClick={() => setIsOpen(!isOpen)}

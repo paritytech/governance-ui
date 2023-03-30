@@ -8,7 +8,7 @@ export function ButtonOutline({
 }: ClickableProps): JSX.Element {
   return (
     <button
-      className={`flex min-w-min appearance-none items-center justify-center gap-2 rounded-full border border-solid py-2 px-4 hover:border-primary ${
+      className={`flex min-w-min appearance-none items-center justify-center gap-2 rounded-full border border-solid px-4 py-2 hover:border-primary ${
         className || ''
       }`}
       style={{ ...style }}
@@ -28,7 +28,7 @@ export function Button({
 }: ClickableProps): JSX.Element {
   return (
     <button
-      className={`flex min-w-min appearance-none items-center  justify-center  gap-2 rounded-full bg-primary py-2 px-4 text-sm  text-white transition-transform duration-150 hover:scale-[1.01] ${
+      className={`flex min-w-min appearance-none items-center  justify-center  gap-2 rounded-full bg-primary px-4 py-2 text-sm  text-white transition-transform duration-150 hover:scale-[1.01] ${
         className || ''
       }`}
       style={{ ...style }}
@@ -49,7 +49,7 @@ export function ButtonSecondary({
 }: ClickableProps): JSX.Element {
   return (
     <button
-      className={`flex min-w-min appearance-none items-center  justify-center gap-2 rounded-full bg-secondary py-2 px-4 text-sm  text-white transition-transform duration-150 hover:scale-[1.01] ${
+      className={`flex min-w-min appearance-none items-center  justify-center gap-2 rounded-full bg-secondary px-4 py-2 text-sm  text-white transition-transform duration-150 hover:scale-[1.01] ${
         className || ''
       }`}
       style={{ ...style }}
