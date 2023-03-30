@@ -1,11 +1,15 @@
-import type { DelegateRoleType, StatType, TrackType } from './types';
+import type { StatType, TrackType } from './types';
 import { useMemo, useState } from 'react';
 import { Remark } from 'react-remark';
 import { ChevronRightIcon, DelegateIcon } from '../../icons';
 import { Button, ButtonSecondary, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
-import type { Delegate, State } from '../../../lifecycle/types';
-import { extractDelegations } from '../../../lifecycle';
+import type {
+  Delegate,
+  DelegateRoleType,
+  State,
+} from '../../../lifecycle/types';
+import { extractDelegations, extractRoles } from '../../../lifecycle';
 import { trackCategories } from '../../../chain/index';
 import { DelegateModal } from './delegateModal/Delegate';
 import { useDelegation } from '../../../contexts';
@@ -50,15 +54,6 @@ export function StatBar({ stats }: { stats: StatType[] }) {
   );
 }
 
-function extractRole(address: string, state: State): DelegateRoleType[] {
-  if (state.type == 'ConnectedState') {
-    if (state.chain.fellows.has(address)) {
-      return ['fellow'];
-    }
-  }
-  return [];
-}
-
 function filterUndelegatedTracks(state: State): TrackType[] {
   const delegatedTrackIds = new Set(extractDelegations(state).keys());
   return trackCategories
@@ -86,7 +81,7 @@ export function DelegateCard({
   variant: 'all' | 'some';
 }) {
   const { name, address, manifesto } = delegate;
-  const roles = extractRole(address, state);
+  const roles = extractRoles(address, state);
   const { preview, truncated } = useMemo(
     () => manifestoPreview(manifesto, 200),
     [manifesto]

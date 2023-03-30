@@ -48,6 +48,7 @@ import {
   ChainProperties,
   ChainState,
   Delegate,
+  DelegateRoleType,
   isAtLeastConnected,
   PersistedDataContext,
   Report,
@@ -212,6 +213,18 @@ export function extractChainInfo(state: State):
       ss58: state.chain.properties.ss58Format,
     };
   }
+}
+
+export function extractRoles(
+  address: string,
+  state: State
+): DelegateRoleType[] {
+  if (state.type == 'ConnectedState') {
+    if (state.chain.fellows.has(address)) {
+      return ['fellow'];
+    }
+  }
+  return [];
 }
 
 function error(message: string): Report {

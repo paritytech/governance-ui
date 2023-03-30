@@ -1,5 +1,4 @@
 export type StatType = { title: string; value: string };
-export type DelegateRoleType = 'nominator' | 'validator' | 'fellow';
 export type DelegateAccountType = {
   name: string;
   address: string;
