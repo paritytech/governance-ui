@@ -5,7 +5,7 @@ import { memo, useState } from 'react';
 import { trackCategories } from '../../../chain';
 import { useDelegation } from '../../../contexts/Delegation.js';
 import { ButtonSecondary, Card } from '../../lib';
-import { CheckIcon, ChevronDownIcon } from '../../icons';
+import { CheckIcon, ChevronDownIcon, ChevronRightIcon } from '../../icons';
 import SectionTitle from '../SectionTitle';
 import ProgressStepper from '../ProgressStepper';
 import { ReferendumDetails, ReferendumOngoing } from '../../../types';
@@ -290,6 +290,10 @@ export function TrackSelect({
     (acc, [, track]) => acc + track.size,
     0
   );
+  const allTracksCount = Array.from(trackCategories.entries()).reduce(
+    (acc, [, track]) => acc + track.tracks.length,
+    0
+  );
   const { state } = useAppLifeCycle();
   const delegations = extractDelegations(state);
   return (
@@ -298,12 +302,8 @@ export function TrackSelect({
         title="Select the tracks you want to delegate"
         description={
           <div className="text-body-2">
-            There are currently{' '}
-            <span className="font-bold">
-              {activeReferendaCount} active proposals
-            </span>{' '}
-            on{' '}
-            <span className="font-bold">{referendaByTrack.size} tracks.</span>
+            There are currently {activeReferendaCount} active proposals on{' '}
+            {referendaByTrack.size} tracks.
           </div>
         }
         step={0}
@@ -315,7 +315,7 @@ export function TrackSelect({
           <CheckBox
             background
             title="All tracks"
-            checked={selectedTracks.size > 0 ? true : false}
+            checked={selectedTracks.size == allTracksCount}
             // how do i check number of available tracks?
             onChange={(e) => {
               const isChecked = e.target.checked;
@@ -326,16 +326,26 @@ export function TrackSelect({
               });
             }}
           />
-          <ButtonSecondary onClick={delegateHandler}>
-            <div className="flex flex-row items-center justify-center gap-1">
-              <div>
-                {selectedTracks.size > 0
-                  ? 'Delegate Tracks'
-                  : 'Check delegates first'}
-              </div>
-              <ChevronDownIcon />
+          <div className="flex items-center">
+            <div className="mx-4">
+              {selectedTracks.size > 0
+                ? `${selectedTracks.size} tracks selected`
+                : 'No track selected'}
             </div>
-          </ButtonSecondary>
+            <ButtonSecondary
+              disabled={selectedTracks.size == 0}
+              onClick={delegateHandler}
+            >
+              <div className="flex flex-row items-center justify-center gap-1">
+                <div>Select your delegate</div>
+                {selectedTracks.size > 0 ? (
+                  <ChevronDownIcon />
+                ) : (
+                  <ChevronRightIcon />
+                )}
+              </div>
+            </ButtonSecondary>
+          </div>
         </div>
         <div
           className={`flex w-full flex-col justify-between md:flex-row md:gap-4 ${className}`}

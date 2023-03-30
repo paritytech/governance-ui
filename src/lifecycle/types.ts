@@ -9,6 +9,8 @@ import type {
 import BN from 'bn.js';
 import { Network } from '../network.js';
 
+export type DelegateRoleType = 'nominator' | 'validator' | 'fellow';
+
 export type Defaults = {
   network: Network;
 };
