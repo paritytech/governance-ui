@@ -28,7 +28,7 @@ export function DelegateModal({
   open,
   onClose,
 }: {
-  delegate: Delegate;
+  delegate: Delegate | string;
   tracks: TrackType[];
   open: boolean;
   onClose: () => void;
@@ -39,7 +39,9 @@ export function DelegateModal({
   const [fee, setFee] = useState<BN>();
   const balance = extractBalance(state);
   const { unit, decimals } = extractChainInfo(state) || {};
-  const { name, address: delegateAddress } = delegate;
+  const delegateAddress =
+    typeof delegate === 'object' ? delegate.address : delegate;
+  const name = typeof delegate === 'object' ? delegate.name : null;
   const tracksCaption = tracks
     .slice(0, 2)
     .map((track) => track.title)
@@ -108,7 +110,7 @@ export function DelegateModal({
             <h2 className="mb-2 text-3xl font-medium">Summary</h2>
             <p className="text-base">
               Submitting this transaction will delegate your voting power to{' '}
-              <b>{name}</b> for the following tracks:
+              <b>{name || delegateAddress}</b> for the following tracks:
             </p>
           </div>
           <div className="grid w-full grid-cols-3 grid-rows-2 gap-4">
