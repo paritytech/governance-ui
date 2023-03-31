@@ -20,7 +20,7 @@ import {
   calcEstimatedFee,
   formatBalance,
 } from '../../../../utils/polkadot-api';
-import { LabeledBox } from './common/LabeledBox';
+import { LabeledBox } from '../common/LabeledBox';
 
 export function DelegateModal({
   delegate,

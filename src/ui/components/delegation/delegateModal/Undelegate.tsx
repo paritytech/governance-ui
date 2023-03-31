@@ -17,7 +17,7 @@ import {
   calcEstimatedFee,
   formatBalance,
 } from '../../../../utils/polkadot-api';
-import { LabeledBox } from './common/LabeledBox';
+import { LabeledBox } from '../common/LabeledBox';
 import BN from 'bn.js';
 
 export function UndelegateModal({

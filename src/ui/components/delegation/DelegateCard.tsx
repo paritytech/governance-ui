@@ -1,58 +1,17 @@
-import type { StatType, TrackType } from './types';
-import { useMemo, useState } from 'react';
-import { Remark } from 'react-remark';
+import type { TrackType } from './types';
+import type { Delegate, State } from '../../../lifecycle/types';
+import { useState } from 'react';
 import { ChevronRightIcon, DelegateIcon } from '../../icons';
 import { Button, ButtonSecondary, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
-import type {
-  Delegate,
-  DelegateRoleType,
-  State,
-} from '../../../lifecycle/types';
+import { DelegateInfoModal } from './delegateModal/DelegateInfo';
+import { StatBar } from './common/Stats';
+import { RoleTag } from './common/RoleTag';
 import { extractDelegations, extractRoles } from '../../../lifecycle';
 import { trackCategories } from '../../../chain/index';
 import { DelegateModal } from './delegateModal/Delegate';
 import { useDelegation } from '../../../contexts';
-
-const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
-  nominator: { title: 'nominator', twColor: 'bg-green-300' },
-  validator: { title: 'validator', twColor: 'bg-lime-300' },
-  fellow: { title: 'fellowship', twColor: 'bg-yellow-300' },
-};
-export function RoleTag({ role }: { role: DelegateRoleType }) {
-  if (!tag[role]) return <></>;
-  const { title, twColor } = tag[role];
-  return (
-    <div
-      className={`flex min-h-full min-w-[30px] items-start justify-start rounded-full px-2 py-1 ${twColor}`}
-    >
-      <p className="text-xs font-semibold uppercase">{title}</p>
-    </div>
-  );
-}
-
-export function CardStat({ stat }: { stat: StatType }) {
-  const { title, value } = stat;
-  return (
-    <div className="flex flex-col items-start justify-start gap-y-1">
-      <div className="leading-normal">{title}</div>
-      <div className="font-semibold">{value}</div>
-    </div>
-  );
-}
-
-export function StatBar({ stats }: { stats: StatType[] }) {
-  return (
-    <>
-      {stats.length > 0 && <hr />}
-      <div className="prose prose-sm flex flex-row gap-6">
-        {stats.map((stat, idx) => (
-          <CardStat key={idx} stat={stat} />
-        ))}
-      </div>
-    </>
-  );
-}
+import EllipsisTextbox from '../EllipsisTextbox';
 
 function filterUndelegatedTracks(state: State): TrackType[] {
   const delegatedTrackIds = new Set(extractDelegations(state).keys());
@@ -60,15 +19,6 @@ function filterUndelegatedTracks(state: State): TrackType[] {
     .map((track) => track.tracks)
     .flat()
     .filter((t) => !delegatedTrackIds.has(t.id));
-}
-
-function manifestoPreview(
-  str: string,
-  maxLen: number
-): { preview: string; truncated: boolean } {
-  const preview = str.substring(0, maxLen);
-  const truncated = str.length > maxLen;
-  return { preview, truncated };
 }
 
 export function DelegateCard({
@@ -82,19 +32,27 @@ export function DelegateCard({
 }) {
   const { name, address, manifesto } = delegate;
   const roles = extractRoles(address, state);
-  const { preview, truncated } = useMemo(
-    () => manifestoPreview(manifesto, 200),
-    [manifesto]
-  );
 
-  const [visible, setVisible] = useState(false);
-  const closeModal = () => {
-    setVisible(false);
+  const [txVisible, setTxVisible] = useState(false);
+  const [infoVisible, setInfoVisible] = useState(false);
+
+  // transaction Modal handlers
+  const closeTxModal = () => {
+    setTxVisible(false);
   };
-  const openModal = () => {
-    setVisible(true);
+  const openTxModal = () => {
+    setTxVisible(true);
   };
-  const delegateHandler = () => openModal();
+  const delegateHandler = () => openTxModal();
+
+  // more info Modal handlers
+  const closeInfoModal = () => {
+    setInfoVisible(false);
+  };
+  const openInfoModal = () => {
+    setInfoVisible(true);
+  };
+  const expandHandler = () => openInfoModal();
 
   // extract tracks
   const undelegatedTracks = filterUndelegatedTracks(state);
@@ -108,7 +66,7 @@ export function DelegateCard({
   return (
     <>
       <Card
-        className={`flex h-80 shrink-0 grow-0 flex-col gap-4 p-6 shadow-md ${
+        className={`flex h-full shrink-0 grow-0 flex-col gap-4 p-6 shadow-md ${
           variant === 'all' ? 'w-[420px]' : 'w-full'
         }`}
       >
@@ -135,23 +93,31 @@ export function DelegateCard({
             <RoleTag key={role} role={role} />
           ))}
         </div>
-        <div className="prose prose-sm grow overflow-auto text-ellipsis leading-tight">
-          <Remark>{preview}</Remark>
-          {truncated && <span className="text-primary">{'Read more ->'}</span>}
-        </div>
+        <EllipsisTextbox
+          className="h-[6rem]"
+          text={manifesto}
+          expandLinkTitle="Read more->"
+          onExpand={() => expandHandler()}
+        />
         <StatBar stats={[]} />
+        <div className="grow" />
         {variant === 'all' && (
-          <Button onClick={() => openModal()}>
+          <Button onClick={() => openTxModal()}>
             <div>Delegate All Votes</div>
             <DelegateIcon />
           </Button>
         )}
       </Card>
       <DelegateModal
-        open={visible}
-        onClose={closeModal}
+        open={txVisible}
+        onClose={closeTxModal}
         delegate={delegate}
         tracks={tracks}
+      />
+      <DelegateInfoModal
+        open={infoVisible}
+        onClose={closeInfoModal}
+        delegate={delegate}
       />
     </>
   );
