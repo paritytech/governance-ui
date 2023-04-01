@@ -61,7 +61,9 @@ export function UndelegateModal({
     try {
       const txs = await updater.undelegate(tracks.map((track) => track.id));
       if (txs.type == 'ok') {
-        await signAndSend(address, signer, txs.value);
+        await signAndSend(address, signer, txs.value, (result) =>
+          updater.handleCallResult(result)
+        );
         SimpleAnalytics.track('Undelegate');
       }
     } finally {

@@ -57,6 +57,11 @@ export type Error = {
   message: string;
 };
 
+export type Processing = {
+  isTransient: boolean;
+  message: string;
+};
+
 export type Report = Warning | Error;
 
 // States
@@ -69,6 +74,7 @@ export type Delegate = {
 
 type BaseState = {
   reports?: Report[];
+  processingReport?: Processing;
   connectedAddress: string | null;
   connectivity: Connectivity;
   details: Map<number, ReferendumDetails>;
@@ -107,6 +113,11 @@ export type AddReport = {
 export type RemoveReport = {
   type: 'RemoveReport';
   index: number;
+};
+
+export type SetProcessingReport = {
+  type: 'SetProcessing';
+  report: Processing | undefined;
 };
 
 export type SetRestored = PersistedDataContext & {
@@ -193,6 +204,7 @@ export type SetDelegates = {
 export type Action =
   | AddReport
   | RemoveReport
+  | SetProcessingReport
   | SetConnectedAddress
   | SetRestored
   | UpdateConnectivity

@@ -1,39 +1,65 @@
+import React, { useEffect } from 'react';
 import { useAppLifeCycle } from '../../lifecycle';
+import { Loading } from '../lib';
 import { CloseIcon } from '../icons';
-import { Card } from '../lib/index.js';
 
 const TRANSIENT_DISPLAY_TIME_MS = 3000; //milliseconds
 
-export function NotificationBox(): JSX.Element {
+function Notification({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="z-50 flex  w-full animate-[slideInRight_ease-out_0.23s] gap-2 rounded-md bg-[rgba(0,0,0,0.7)] p-4 text-body-2 text-white backdrop-blur-md ">
+      {children}
+    </div>
+  );
+}
+
+export function NotificationBox() {
   const { state, updater } = useAppLifeCycle();
   const reports = state?.reports || [];
+  const processing = state?.processingReport;
   const removeReport = (index: number) => updater?.removeReport(index);
+  const resetProcessing = () => updater?.setProcessingReport(undefined);
   const current = reports?.at(0);
   const removeCurrent = () => {
     if (current) {
       removeReport(0);
     }
   };
-  const isTransient = false;
 
-  if (isTransient) {
+  // ToDo: add effects transient reports
+  const isTransientReport = false;
+  if (isTransientReport) {
     setTimeout(() => {
       removeCurrent();
     }, TRANSIENT_DISPLAY_TIME_MS);
   }
 
+  useEffect(() => {
+    if (processing?.isTransient) {
+      setTimeout(() => {
+        resetProcessing();
+      }, TRANSIENT_DISPLAY_TIME_MS);
+    }
+  }, [processing]);
+
   return (
-    <>
+    <div className="fixed bottom-12 right-4 flex w-[300px] flex-col gap-2">
       {current && (
-        <div className="fixed bottom-12 right-4 z-50 flex w-[30%] animate-[slideInRight_ease-out_0.23s] gap-4 rounded-md bg-[rgba(0,0,0,0.7)] p-4 text-body-2 text-white backdrop-blur-md ">
+        <Notification>
           <span className="w-full">{current.message}</span>
-          {!isTransient && (
+          {!isTransientReport && (
             <div onClick={removeCurrent}>
               <CloseIcon />
             </div>
           )}
-        </div>
+        </Notification>
       )}
-    </>
+      {processing && (
+        <Notification>
+          {!processing.isTransient && <Loading size="xs" />}
+          <span className="w-full">{processing.message}</span>
+        </Notification>
+      )}
+    </div>
   );
 }
