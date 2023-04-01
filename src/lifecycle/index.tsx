@@ -51,6 +51,7 @@ import {
   DelegateRoleType,
   isAtLeastConnected,
   PersistedDataContext,
+  Processing,
   Report,
   State,
 } from './types.js';
@@ -215,6 +216,10 @@ export function extractChainInfo(state: State):
   }
 }
 
+export function extractIsProcessing(state: State): boolean {
+  return !!state?.processingReport;
+}
+
 export function extractRoles(
   address: string,
   state: State
@@ -303,6 +308,12 @@ function reducer(previousState: State, action: Action): State {
       return {
         ...previousState,
         reports: [...previousReports],
+      };
+    }
+    case 'SetProcessing': {
+      return {
+        ...previousState,
+        processingReport: action.report,
       };
     }
     case 'UpdateChainDetails': {
@@ -584,6 +595,26 @@ export class Updater {
     }
   }
 
+  async handleCallResult(callResult: SubmittableResult) {
+    const { status } = callResult;
+    if (status.isBroadcast) {
+      this.setProcessingReport({
+        isTransient: false,
+        message: 'The transaction is submitted.',
+      });
+    } else if (status.isInBlock) {
+      this.setProcessingReport({
+        isTransient: false,
+        message: 'The transaction is included in the block',
+      });
+    } else if (status.isFinalized) {
+      this.setProcessingReport({
+        isTransient: true,
+        message: 'The transaction is finalized.',
+      });
+    }
+  }
+
   async setConnectedAddress(connectedAddress: string | null) {
     this.#dispatch({
       type: 'SetConnectedAddress',
@@ -613,6 +644,13 @@ export class Updater {
     this.#dispatch({
       type: 'RemoveReport',
       index,
+    });
+  }
+
+  async setProcessingReport(processing: Processing | undefined) {
+    this.#dispatch({
+      type: 'SetProcessing',
+      report: processing,
     });
   }
 }

@@ -7,7 +7,11 @@ import { Accounticon } from '../accounts/Accounticon.js';
 import { DelegateInfoModal } from './delegateModal/DelegateInfo';
 import { StatBar } from './common/Stats';
 import { RoleTag } from './common/RoleTag';
-import { extractDelegations, extractRoles } from '../../../lifecycle';
+import {
+  extractDelegations,
+  extractIsProcessing,
+  extractRoles,
+} from '../../../lifecycle';
 import { trackCategories } from '../../../chain/index';
 import { DelegateModal } from './delegateModal/Delegate';
 import { useDelegation } from '../../../contexts';
@@ -32,6 +36,7 @@ export function DelegateCard({
 }) {
   const { name, address, manifesto } = delegate;
   const roles = extractRoles(address, state);
+  const isProcessing = extractIsProcessing(state);
 
   const [txVisible, setTxVisible] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
@@ -80,7 +85,7 @@ export function DelegateCard({
             />
           </div>
           {variant === 'some' && (
-            <ButtonSecondary onClick={delegateHandler}>
+            <ButtonSecondary onClick={delegateHandler} disabled={isProcessing}>
               <div className="flex w-full flex-nowrap items-center justify-center gap-1">
                 <div>Select</div>
                 <ChevronRightIcon />
@@ -102,7 +107,7 @@ export function DelegateCard({
         <StatBar stats={[]} />
         <div className="grow" />
         {variant === 'all' && (
-          <Button onClick={() => openTxModal()}>
+          <Button onClick={() => openTxModal()} disabled={isProcessing}>
             <div>Delegate All Votes</div>
             <DelegateIcon />
           </Button>

@@ -90,7 +90,9 @@ export function DelegateModal({
         Conviction.None
       );
       if (tx.type === 'ok') {
-        await signAndSend(address, signer, tx.value);
+        await signAndSend(address, signer, tx.value, (result) =>
+          updater.handleCallResult(result)
+        );
         SimpleAnalytics.track('Delegate');
       }
     } finally {
