@@ -2,7 +2,7 @@ import { WsProvider } from '@polkadot/api';
 
 export class WsReconnectProvider extends WsProvider {
   static CHECKER_INTERVAL_MS = 5_000;
-  static PER_REQUEST_TIMEOUT_MS = 5_000;
+  static PER_REQUEST_TIMEOUT_MS = 15_000;
 
   #checkerId: ReturnType<typeof setTimeout> | undefined; // Workaround typescript limitation, see https://stackoverflow.com/a/56239226
 
