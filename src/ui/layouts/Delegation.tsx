@@ -1,8 +1,14 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { ButtonOutline, Dropdown } from '../lib';
+import {
+  Button,
+  ButtonOutline,
+  ButtonSecondary,
+  Dropdown,
+  Modal,
+} from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
-import { AddIcon } from '../icons';
+import { AddIcon, ChevronRightIcon, CloseIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
@@ -15,6 +21,63 @@ import {
 import { ReferendumOngoing } from '../../types';
 import Headline from '../components/Headline';
 import { Option } from '../lib/Dropdown';
+import { DelegateModal } from '../components/delegation/delegateModal/Delegate';
+import { trackCategories } from '../../chain';
+import { isValidAddress } from '../../utils/polkadot-api';
+
+export function AddAddressModal({
+  open,
+  onAddressValidated,
+  onClose,
+}: {
+  open: boolean;
+  onAddressValidated: (address: string) => void;
+  onClose: () => void;
+}) {
+  const [address, setAddress] = useState<string>();
+
+  const cancelHandler = () => onClose();
+
+  return (
+    <Modal size="md" open={open} onClose={() => onClose()}>
+      <div className="flex w-full flex-col gap-12 p-4 md:p-12">
+        <div className="flex flex-col items-start justify-start gap-6">
+          <div className="text-left">
+            <h2 className="mb-2 text-3xl font-medium">Add Address</h2>
+            <p className="text-base">
+              Don&apos;t see your delegate in the list? No problem, add them
+              bellow.
+            </p>
+          </div>
+          <div className="flex w-full flex-col">
+            <label htmlFor="address" className="flex items-center py-2 text-sm">
+              Delegate Address
+            </label>
+            <input
+              id="address"
+              placeholder="Polkadot Address"
+              className="w-full self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70"
+              onChange={(event) => setAddress(event.target.value)}
+            />
+          </div>
+        </div>
+        <div className="flex w-full flex-row justify-end gap-4">
+          <ButtonSecondary onClick={cancelHandler}>
+            <CloseIcon />
+            <div>Cancel</div>
+          </ButtonSecondary>
+          <Button
+            onClick={() => address && onAddressValidated(address)}
+            disabled={!(address && isValidAddress(address))}
+          >
+            <div>Add Delegate</div>
+            <ChevronRightIcon />
+          </Button>
+        </div>
+      </div>
+    </Modal>
+  );
+}
 
 function filterVisibleDelegates(delegates: Delegate[]): Delegate[] {
   const shuffledDelegates = new Array(...delegates).sort(
@@ -56,8 +119,8 @@ export function DelegatesBar({
 function DescriptionLabel({ delegates }: { delegates: number }): JSX.Element {
   return (
     <div className="text-body-2">
-      There are currently{' '}
-      <span className="font-bold">{delegates} delegates.</span>
+      There are currently <span className="font-bold">{delegates}</span>{' '}
+      delegates.
     </div>
   );
 }
@@ -80,6 +143,14 @@ export const DelegateSection = () => {
   const { state } = useAppLifeCycle();
   const { delegates } = state;
   const [search, setSearch] = useState<string>();
+  const [addAddressVisible, setAddAddressVisible] = useState(false);
+  const [delegateVisible, setDelegateVisible] = useState(false);
+  const [delegate, setDelegate] = useState('');
+  const { selectedTracks } = useDelegation();
+  const tracks = trackCategories
+    .map((track) => track.tracks)
+    .flat()
+    .filter((track) => selectedTracks.has(track.id));
 
   const aggregateOptions: Option[] = [
     { value: 0, label: 'All User Types', active: true },
@@ -101,22 +172,25 @@ export const DelegateSection = () => {
         </SectionTitle>
         <div className="flex flex-col gap-4">
           <div className="flex w-full flex-col items-center justify-between gap-4 md:flex-row">
-            <div className="flex w-full flex-row items-center justify-between gap-4 lg:justify-start">
-              <input
-                placeholder="Search"
-                className="w-full self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70 lg:w-fit"
-                onChange={(event) => setSearch(event.target.value)}
-              />
-              <ButtonOutline className="w-fit">
-                <AddIcon />
-                <div className="whitespace-nowrap">Add address</div>
-              </ButtonOutline>
-            </div>
-            <div className="flex w-full flex-row items-center justify-start gap-4 lg:justify-end">
+            <div className="flex w-full flex-row items-center justify-start gap-4 lg:justify-start">
               <Dropdown
                 options={aggregateOptions}
                 onSelect={setSelectedOption}
                 menuAlign={'right'}
+              />
+            </div>
+            <div className="flex w-full flex-row items-center justify-between gap-4 lg:justify-end">
+              <ButtonOutline
+                className="w-fit"
+                onClick={() => setAddAddressVisible(true)}
+              >
+                <AddIcon />
+                <div className="whitespace-nowrap">Add address</div>
+              </ButtonOutline>
+              <input
+                placeholder="Search"
+                className="w-full self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70 lg:w-fit"
+                onChange={(event) => setSearch(event.target.value)}
               />
             </div>
           </div>
@@ -136,6 +210,21 @@ export const DelegateSection = () => {
           </div>
         </div>
       </div>
+      <AddAddressModal
+        open={addAddressVisible}
+        onClose={() => setAddAddressVisible(false)}
+        onAddressValidated={(address) => {
+          setDelegate(address);
+          setAddAddressVisible(false);
+          setDelegateVisible(true);
+        }}
+      />
+      <DelegateModal
+        open={delegateVisible}
+        onClose={() => setDelegateVisible(false)}
+        delegate={delegate}
+        tracks={tracks}
+      />
     </>
   );
 };

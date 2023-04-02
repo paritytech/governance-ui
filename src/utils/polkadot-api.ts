@@ -6,7 +6,12 @@ import {
   SubmittableExtrinsics,
 } from '@polkadot/api/types';
 import { IMethod } from '@polkadot/types-codec/types/interfaces';
-import { formatBalance as formatBalanceP } from '@polkadot/util';
+import {
+  formatBalance as formatBalanceP,
+  hexToU8a,
+  isHex,
+} from '@polkadot/util';
+import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import BN from 'bn.js';
 
 const DEFAULT_OPTIONS = {
@@ -62,4 +67,14 @@ export function formatBalance(
   unit: string
 ): string {
   return formatBalanceP(input, { decimals, withUnit: unit });
+}
+
+export function isValidAddress(address: string): boolean {
+  try {
+    encodeAddress(isHex(address) ? hexToU8a(address) : decodeAddress(address));
+
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
