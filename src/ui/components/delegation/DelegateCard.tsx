@@ -71,9 +71,12 @@ export function DelegateCard({
   const tracks = variant === 'all' ? undelegatedTracks : someTracks;
 
   return (
-    <>
+    <div
+      className="flex shrink-0 grow-0"
+      onClick={() => setInfoVisible(!infoVisible)}
+    >
       <Card
-        className={`flex shrink-0 grow-0 flex-col gap-2 p-6 shadow-md md:gap-4 ${
+        className={`flex flex-col gap-2 p-6 shadow-md md:gap-4 ${
           variant === 'all' ? 'w-[340px] md:w-[420px]' : 'w-full'
         }`}
       >
@@ -126,6 +129,6 @@ export function DelegateCard({
         onClose={closeInfoModal}
         delegate={delegate}
       />
-    </>
+    </div>
   );
 }
