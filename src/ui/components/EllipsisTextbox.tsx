@@ -23,7 +23,7 @@ const EllipsisTextbox = ({
     }
   }, [scrollHeight, clientHeight]);
   return (
-    <div className="flex flex-col">
+    <div tabIndex={-1} className="flex flex-col">
       <div
         className={`relative overflow-hidden text-ellipsis text-body-2 md:text-body ${className}`}
         ref={containerRef}

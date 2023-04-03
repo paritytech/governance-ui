@@ -1,3 +1,5 @@
+import { SyntheticEvent } from 'react';
+
 export interface BaseElementProps {
   children?: React.ReactNode;
   className?: string | undefined;
@@ -6,5 +8,5 @@ export interface BaseElementProps {
 }
 
 export interface ClickableProps extends BaseElementProps {
-  onClick?: React.MouseEventHandler<HTMLElement> | undefined;
+  onClick?: (e: SyntheticEvent) => void | undefined;
 }
