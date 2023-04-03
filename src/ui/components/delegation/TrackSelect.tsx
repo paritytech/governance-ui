@@ -5,7 +5,7 @@ import { memo, useState } from 'react';
 import { trackCategories } from '../../../chain';
 import { useDelegation } from '../../../contexts/Delegation.js';
 import { ButtonSecondary, Card } from '../../lib';
-import { CheckIcon, ChevronDownIcon, ChevronRightIcon } from '../../icons';
+import { CheckIcon, ChevronDownIcon } from '../../icons';
 import SectionTitle from '../SectionTitle';
 import ProgressStepper from '../ProgressStepper';
 import { ReferendumDetails, ReferendumOngoing } from '../../../types';

@@ -162,7 +162,7 @@ export const DelegateSection = () => {
 
   return (
     <>
-      <div className="mt-20 mb-48 flex w-full flex-col gap-16 px-3 md:px-8 lg:mt-28">
+      <div className="mb-48 mt-20 flex w-full flex-col gap-16 px-3 md:px-8 lg:mt-28">
         <SectionTitle
           title="Browse Delegates"
           description={<DescriptionLabel delegates={delegates.length} />}
