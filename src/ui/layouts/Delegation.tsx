@@ -35,7 +35,6 @@ export function AddAddressModal({
   onClose: () => void;
 }) {
   const [address, setAddress] = useState<string>();
-
   const cancelHandler = () => onClose();
 
   return (
