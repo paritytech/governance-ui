@@ -20,7 +20,7 @@ export function App(): JSX.Element {
         <WalletProvider>
           <AccountProvider>
             <NotificationBox />
-            <div className="m-auto flex h-screen flex-col">
+            <div className="m-auto flex h-screen w-screen flex-col">
               <Header />
               <DelegationPanel />
             </div>

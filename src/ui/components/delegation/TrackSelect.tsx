@@ -5,7 +5,7 @@ import { memo, useState } from 'react';
 import { trackCategories } from '../../../chain';
 import { useDelegation } from '../../../contexts/Delegation.js';
 import { ButtonSecondary, Card } from '../../lib';
-import { CheckIcon, ChevronDownIcon, ChevronRightIcon } from '../../icons';
+import { CheckIcon, ChevronDownIcon } from '../../icons';
 import SectionTitle from '../SectionTitle';
 import ProgressStepper from '../ProgressStepper';
 import { ReferendumDetails, ReferendumOngoing } from '../../../types';
@@ -30,8 +30,8 @@ export function CheckBox({
   const checkboxId = `${title}-checkbox`;
   return (
     <div
-      className={`flex items-center rounded-md ${
-        background ? `border border-gray-300 bg-gray-200 px-4 py-2` : ''
+      className={`flex h-fit items-center rounded-md ${
+        background ? `border border-gray-300 bg-gray-200 px-2 py-2 lg:px-4` : ''
       } `}
     >
       <input
@@ -58,7 +58,9 @@ export function CheckBox({
             } text-white`}
           />
         </div>
-        <span className="text-sm font-semibold text-gray-900">{title}</span>
+        <span className="whitespace-nowrap text-sm font-semibold text-gray-900">
+          {title}
+        </span>
       </label>
     </div>
   );
@@ -297,7 +299,7 @@ export function TrackSelect({
   const { state } = useAppLifeCycle();
   const delegations = extractDelegations(state);
   return (
-    <div className="flex w-full flex-col gap-12 px-3 lg:px-8 lg:pb-12">
+    <div className="flex w-full flex-col gap-6 px-3 lg:gap-12 lg:px-8 lg:pb-12">
       <SectionTitle
         title="Select the tracks you want to delegate"
         description={
@@ -326,23 +328,19 @@ export function TrackSelect({
               });
             }}
           />
-          <div className="flex items-center">
-            <div className="mx-4">
+          <div className="flex items-center gap-2 ">
+            <div className="mx-0 hidden text-body-2 text-fg-disabled lg:mx-4 lg:block">
               {selectedTracks.size > 0
                 ? `${selectedTracks.size} tracks selected`
-                : 'No track selected'}
+                : 'Select a track'}
             </div>
             <ButtonSecondary
               disabled={selectedTracks.size == 0}
               onClick={delegateHandler}
             >
-              <div className="flex flex-row items-center justify-center gap-1">
-                <div>Select your delegate</div>
-                {selectedTracks.size > 0 ? (
-                  <ChevronDownIcon />
-                ) : (
-                  <ChevronRightIcon />
-                )}
+              <div className="flex flex-row items-center justify-center gap-1 whitespace-nowrap">
+                <div>Select delegate</div>
+                <ChevronDownIcon />
               </div>
             </ButtonSecondary>
           </div>

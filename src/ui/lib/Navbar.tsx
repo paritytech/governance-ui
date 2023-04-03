@@ -95,15 +95,18 @@ const Component = forwardRef<HTMLElement, BaseElementProps>(
   ({ className, children }, ref) => {
     return (
       <nav
-        className={`relative rounded px-2 py-2.5 md:px-4 ${className || ''}`}
+        className={`fixed z-50 w-full rounded bg-bg-default px-2  md:px-4 ${
+          className || ''
+        }`}
         ref={ref}
       >
-        <div className="mx-auto flex flex-wrap items-center justify-between">
+        <div className="mx-auto flex w-full flex-wrap items-center justify-between  py-2 md:py-6">
           <NavbarContextProvider>
             {children}
             <Toggle />
           </NavbarContextProvider>
         </div>
+        <div className="h-[1px] w-full bg-[#E9E9E9]" />
       </nav>
     );
   }

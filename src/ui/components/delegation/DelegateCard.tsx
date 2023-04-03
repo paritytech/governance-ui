@@ -29,10 +29,12 @@ export function DelegateCard({
   delegate,
   state,
   variant,
+  heightFit,
 }: {
   delegate: Delegate;
   state: State;
   variant: 'all' | 'some';
+  heightFit?: boolean;
 }) {
   const { name, address, manifesto } = delegate;
   const roles = extractRoles(address, state);
@@ -69,10 +71,13 @@ export function DelegateCard({
   const tracks = variant === 'all' ? undelegatedTracks : someTracks;
 
   return (
-    <>
+    <div
+      className="flex shrink-0 grow-0"
+      onClick={() => setInfoVisible(!infoVisible)}
+    >
       <Card
-        className={`flex h-full shrink-0 grow-0 flex-col gap-4 p-6 shadow-md ${
-          variant === 'all' ? 'w-[420px]' : 'w-full'
+        className={`flex flex-col gap-2 p-6 shadow-md md:gap-4 ${
+          variant === 'all' ? 'w-[340px] md:w-[420px]' : 'w-full'
         }`}
       >
         <div className="flex items-start justify-between">
@@ -99,7 +104,7 @@ export function DelegateCard({
           ))}
         </div>
         <EllipsisTextbox
-          className="h-[6rem]"
+          className={`${heightFit ? 'max-h-[6rem] lg:h-[6rem]' : 'h-[6rem]'}`}
           text={manifesto}
           expandLinkTitle="Read more->"
           onExpand={() => expandHandler()}
@@ -124,6 +129,6 @@ export function DelegateCard({
         onClose={closeInfoModal}
         delegate={delegate}
       />
-    </>
+    </div>
   );
 }

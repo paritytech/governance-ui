@@ -10,7 +10,7 @@ export default function SectionTitle({
   children,
 }: SectionTitleProps) {
   return (
-    <div className="items-top flex h-auto flex-col justify-between gap-6 lg:flex-row">
+    <div className="items-top flex h-auto flex-col-reverse justify-between gap-3 lg:flex-row lg:gap-6">
       <div className="prose prose-sm  pt-1">
         <h2 className="mb-2">{title}</h2>
         {description}
