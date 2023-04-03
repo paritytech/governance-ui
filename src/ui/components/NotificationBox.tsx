@@ -7,7 +7,7 @@ const TRANSIENT_DISPLAY_TIME_MS = 3000; //milliseconds
 
 function Notification({ children }: { children: React.ReactNode }) {
   return (
-    <div className="z-50 flex  w-full animate-[slideInRight_ease-out_0.23s] gap-2 rounded-md bg-[rgba(0,0,0,0.7)] p-4 text-body-2 text-white backdrop-blur-md ">
+    <div className="z-50 flex  w-full animate-[slideInRight_ease-out_0.23s] gap-2 rounded-md bg-[rgba(0,0,0,0.85)] p-4 text-body-2 text-white backdrop-blur-md ">
       {children}
     </div>
   );

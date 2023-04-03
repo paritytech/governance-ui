@@ -327,22 +327,18 @@ export function TrackSelect({
             }}
           />
           <div className="flex items-center">
-            <div className="mx-4">
+            <div className="mx-4 text-body-2 text-fg-disabled">
               {selectedTracks.size > 0
                 ? `${selectedTracks.size} tracks selected`
-                : 'No track selected'}
+                : 'Select a track to continue'}
             </div>
             <ButtonSecondary
               disabled={selectedTracks.size == 0}
               onClick={delegateHandler}
             >
               <div className="flex flex-row items-center justify-center gap-1">
-                <div>Select your delegate</div>
-                {selectedTracks.size > 0 ? (
-                  <ChevronDownIcon />
-                ) : (
-                  <ChevronRightIcon />
-                )}
+                <div>Select delegate</div>
+                <ChevronDownIcon />
               </div>
             </ButtonSecondary>
           </div>

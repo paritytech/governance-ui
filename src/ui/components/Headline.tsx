@@ -1,6 +1,6 @@
 export default function Headline() {
   return (
-    <div className=" flex max-w-full flex-col items-center justify-center gap-24">
+    <div className=" mt-8 flex max-w-full flex-col items-center justify-center gap-12">
       <div className="flex flex-col items-center gap-0">
         <span className="text-center font-unbounded text-h1">
           Governance is now <span className="text-primary">open</span>
@@ -10,7 +10,7 @@ export default function Headline() {
           expert instead.
         </span>
       </div>
-      <div className="flex w-[640px] flex-col gap-12">
+      <div className="flex w-[640px] flex-col gap-8">
         <div className="flex items-center gap-8">
           <div className="h-[160px] w-[210px] rounded-md bg-gray-200" />
           <div className="flex w-full flex-col gap-1">
