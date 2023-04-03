@@ -1,6 +1,6 @@
 import type { TrackType } from './types';
 import type { Delegate, State } from '../../../lifecycle/types';
-import { useState } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import { ChevronRightIcon, DelegateIcon } from '../../icons';
 import { Button, ButtonSecondary, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
@@ -50,7 +50,10 @@ export function DelegateCard({
   const openTxModal = () => {
     setTxVisible(true);
   };
-  const delegateHandler = () => openTxModal();
+  const delegateHandler = (e: SyntheticEvent) => {
+    e.stopPropagation();
+    openTxModal();
+  };
 
   // more info Modal handlers
   const closeInfoModal = () => {
@@ -59,7 +62,9 @@ export function DelegateCard({
   const openInfoModal = () => {
     setInfoVisible(true);
   };
-  const expandHandler = () => openInfoModal();
+  const expandHandler = () => {
+    openInfoModal();
+  };
 
   // extract tracks
   const undelegatedTracks = filterUndelegatedTracks(state);
@@ -72,13 +77,13 @@ export function DelegateCard({
 
   return (
     <div
-      className="flex shrink-0 grow-0"
-      onClick={() => setInfoVisible(!infoVisible)}
+      className={`flex h-full shrink-0  ${
+        variant === 'all' ? 'w-[320px] md:w-[420px]' : 'w-full'
+      }`}
+      onClick={() => expandHandler()}
     >
       <Card
-        className={`flex flex-col gap-2 p-6 shadow-md md:gap-4 ${
-          variant === 'all' ? 'w-[340px] md:w-[420px]' : 'w-full'
-        }`}
+        className={`flex h-full w-full flex-col gap-2 p-6 shadow-md md:gap-4`}
       >
         <div className="flex items-start justify-between">
           <div className="flex flex-col items-start">
@@ -112,7 +117,7 @@ export function DelegateCard({
         <StatBar stats={[]} />
         <div className="grow" />
         {variant === 'all' && (
-          <Button onClick={() => openTxModal()} disabled={isProcessing}>
+          <Button onClick={delegateHandler} disabled={isProcessing}>
             <div>Delegate All Votes</div>
             <DelegateIcon />
           </Button>
