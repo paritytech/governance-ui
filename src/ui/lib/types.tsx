@@ -8,5 +8,5 @@ export interface BaseElementProps {
 }
 
 export interface ClickableProps extends BaseElementProps {
-  onClick?: (e: SyntheticEvent) => void | undefined;
+  onClick?: (e: SyntheticEvent) => void;
 }

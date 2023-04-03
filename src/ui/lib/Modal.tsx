@@ -5,7 +5,7 @@ type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 type ModalProps = BaseElementProps & {
   size?: ModalSize;
   open: boolean;
-  closeOnEsc: boolean;
+  closeOnEsc?: boolean;
   onClose: () => void;
 };
 const sizeClasses = {
