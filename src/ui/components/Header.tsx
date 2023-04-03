@@ -14,8 +14,8 @@ export function Header(): JSX.Element {
   return (
     <Navbar>
       <Navbar.Brand>
-        <div>
-          <div className="h-8 md:hidden">
+        <div className="w-full">
+          <div className="h-8 w-fit md:hidden">
             <img className="inline h-full" src={tokenUrl} alt="polkadot logo" />
           </div>
           <div className="hidden h-8 items-center gap-2 md:flex">
@@ -27,9 +27,9 @@ export function Header(): JSX.Element {
           </div>
         </div>
       </Navbar.Brand>
-      <Navbar.Content className="w-full">
-        <Navbar.Item className="w-full">
-          <div className="flex w-full  justify-start gap-2 md:justify-end">
+      <Navbar.Content>
+        <Navbar.Item>
+          <div className="flex justify-start gap-2 md:justify-end">
             <ConnectButton />
           </div>
         </Navbar.Item>

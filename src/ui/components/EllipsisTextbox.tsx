@@ -25,19 +25,19 @@ const EllipsisTextbox = ({
   return (
     <div className="flex flex-col">
       <div
-        className={`relative overflow-hidden text-ellipsis text-base ${className}`}
+        className={`relative overflow-hidden text-ellipsis text-body-2 md:text-body ${className}`}
         ref={containerRef}
       >
         <Remark>{text}</Remark>
       </div>
 
-      <div className="mt-2 w-full text-right text-primary">
-        {isOverflowed && (
+      {isOverflowed && (
+        <div className="mt-2 w-full text-primary">
           <span className="cursor-pointer" onClick={() => onExpand()}>
             {expandLinkTitle}
           </span>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

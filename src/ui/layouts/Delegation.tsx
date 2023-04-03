@@ -98,8 +98,8 @@ export function DelegatesBar({
     [delegates]
   );
   return (
-    <section className="flex w-full flex-col items-center justify-center gap-12 bg-gray-200 py-12">
-      <span className="font-unbounded text-h3 font-semibold">
+    <section className="flex w-full flex-col items-center justify-center gap-6 bg-gray-200 py-8 md:gap-12 lg:py-12">
+      <span className="px-4 text-center font-unbounded text-h3 font-semibold">
         Choose a worthy delegate
       </span>
       <div className="flex max-w-full gap-7 overflow-x-scroll px-3 pb-1 lg:px-6	">
@@ -163,7 +163,7 @@ export const DelegateSection = () => {
 
   return (
     <>
-      <div className="mb-48 mt-6 flex w-full flex-col gap-16 px-3 md:px-8">
+      <div className="mt-20 mb-48 flex w-full flex-col gap-16 px-3 md:px-8 lg:mt-28">
         <SectionTitle
           title="Browse Delegates"
           description={<DescriptionLabel delegates={delegates.length} />}
@@ -201,6 +201,7 @@ export const DelegateSection = () => {
               )
               .map((delegate, idx) => (
                 <DelegateCard
+                  heightFit
                   key={idx}
                   delegate={delegate}
                   state={state}
@@ -267,7 +268,7 @@ export function DelegationPanel() {
   const { state } = useAppLifeCycle();
   return (
     <DelegationProvider>
-      <main className="flex max-w-full flex-auto flex-col items-center justify-start gap-16 pt-14 md:pt-20">
+      <main className="flex w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20 lg:gap-16">
         <Headline />
         <DelegatesBar delegates={state.delegates} state={state} />
         <DelegationPanelContent state={state} />

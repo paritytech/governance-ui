@@ -100,7 +100,7 @@ const Component = forwardRef<HTMLElement, BaseElementProps>(
         }`}
         ref={ref}
       >
-        <div className="mx-auto flex flex-wrap items-center justify-between py-6">
+        <div className="mx-auto flex w-full flex-wrap items-center justify-between  py-2 md:py-6">
           <NavbarContextProvider>
             {children}
             <Toggle />
