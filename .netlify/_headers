@@ -1,0 +1,4 @@
+/*
+  Content-Security-Policy: frame-ancestors 'self' https://governance-ui.netlify.app https://governance.polkadot.network
+  X-Frame-Options: SAMEORIGIN
+  X-Content-Type-Options: nosniff
