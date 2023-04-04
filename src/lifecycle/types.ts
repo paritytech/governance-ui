@@ -45,6 +45,7 @@ export type ChainState = {
 
 export type PersistedDataContext = {
   votes: Map<number, AccountVote>;
+  customDelegates: Array<Delegate>;
 };
 
 export type Warning = {
@@ -67,9 +68,9 @@ export type Report = Warning | Error;
 // States
 
 export type Delegate = {
-  name: string;
+  name?: string;
   address: string;
-  manifesto: string;
+  manifesto?: string;
 };
 
 type BaseState = {
@@ -80,6 +81,7 @@ type BaseState = {
   details: Map<number, ReferendumDetails>;
   indexes: Record<string, object>;
   delegates: Array<Delegate>;
+  customDelegates: Array<Delegate>;
 };
 
 type BaseRestoredState = BaseState &
@@ -201,6 +203,16 @@ export type SetDelegates = {
   data: Array<Delegate>;
 };
 
+export type AddCustomDelegate = {
+  type: 'AddCustomDelegate';
+  delegate: Delegate;
+};
+
+export type RemoveCustomDelegate = {
+  type: 'RemoveCustomDelegate';
+  index: number;
+};
+
 export type Action =
   | AddReport
   | RemoveReport
@@ -214,4 +226,6 @@ export type Action =
   | CastVote
   | ClearVotes
   | SetIndexes
-  | SetDelegates;
+  | SetDelegates
+  | AddCustomDelegate
+  | RemoveCustomDelegate;

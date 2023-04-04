@@ -35,8 +35,14 @@ import { getAllReferenda, getAllTracks } from '../chain/referenda.js';
 import { defaultNetwork, endpointsFor, Network, parse } from '../network.js';
 import { err, ok, Result } from '../utils/index.js';
 import { Cache, Destroyable, Readyable } from '../utils/cache.js';
-import { dbNameFor, DB_VERSION, STORES, VOTE_STORE_NAME } from '../utils/db.js';
-import { all, clear, open, save } from '../utils/indexeddb.js';
+import {
+  CUSTOM_DELEGATES_STORE_NAME,
+  dbNameFor,
+  DB_VERSION,
+  STORES,
+  VOTE_STORE_NAME,
+} from '../utils/db.js';
+import { all, allKeys, clear, open, save } from '../utils/indexeddb.js';
 import { measured } from '../utils/performance.js';
 import { batchAll, newApi, signAndSend } from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
@@ -277,12 +283,13 @@ function reducer(previousState: State, action: Action): State {
       }
     }
     case 'SetRestored': {
-      const { network, votes } = action;
+      const { network, votes, customDelegates } = action;
       return {
         ...previousState,
         type: 'RestoredState',
         network,
         votes,
+        customDelegates,
       };
     }
     case 'UpdateConnectivity': {
@@ -399,6 +406,22 @@ function reducer(previousState: State, action: Action): State {
         ...previousState,
         delegates: action.data || [],
       };
+    case 'AddCustomDelegate': {
+      const customDelegates = previousState.customDelegates;
+      customDelegates.push(action.delegate);
+      return {
+        ...previousState,
+        ...customDelegates,
+      };
+    }
+    case 'RemoveCustomDelegate': {
+      const customDelegates = previousState.customDelegates;
+      customDelegates.splice(action.index, 1);
+      return {
+        ...previousState,
+        ...customDelegates,
+      };
+    }
   }
 }
 
@@ -411,8 +434,13 @@ async function restorePersisted(
     number,
     AccountVote
   >;
+  const customDelegates = (await all<Delegate>(
+    db,
+    CUSTOM_DELEGATES_STORE_NAME
+  )) as Map<number, Delegate>;
   return {
     votes,
+    customDelegates: new Array(...customDelegates.values()),
   };
 }
 
@@ -647,6 +675,33 @@ export class Updater {
     });
   }
 
+  async addCustomDelegate(delegate: Delegate) {
+    this.#dispatch({
+      type: 'AddCustomDelegate',
+      delegate,
+    });
+
+    const state = this.#stateAccessor();
+    if (state.type == 'ConnectedState') {
+      const db = await DB_CACHE.getOrCreate(dbNameFor(state.network));
+      const keys = (await allKeys(
+        db,
+        CUSTOM_DELEGATES_STORE_NAME
+      )) as Set<number>;
+      const maxKey = Math.max(...keys);
+      await save(db, CUSTOM_DELEGATES_STORE_NAME, maxKey + 1, delegate);
+    } else {
+      await this.addReport(error('Must be connected to add custom delegate'));
+    }
+  }
+
+  async removeCustomDelegate(index: number) {
+    this.#dispatch({
+      type: 'RemoveCustomDelegate',
+      index,
+    });
+  }
+
   async setProcessingReport(processing: Processing | undefined) {
     this.#dispatch({
       type: 'SetProcessing',
@@ -662,6 +717,7 @@ const DEFAULT_INITIAL_STATE: State = {
   details: new Map(),
   indexes: {},
   delegates: [],
+  customDelegates: [],
 };
 
 type Reducer = (previousState: State, action: Action) => State;
@@ -715,13 +771,13 @@ async function dispatchNetworkChange(
   rpcParam: string | null
 ): Promise<VoidFunction | undefined> {
   const db = await open(dbNameFor(network), STORES, DB_VERSION);
-  const { votes } = await measured('fetch-restored-state', () =>
+  const restoredState = await measured('fetch-restored-state', () =>
     restorePersisted(db)
   );
   dispatch({
     type: 'SetRestored',
     network,
-    votes,
+    ...restoredState,
   });
 
   // Fetch delegates

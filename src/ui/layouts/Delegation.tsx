@@ -28,6 +28,7 @@ export function AddAddressModal({
   onAddressValidated: (address: string) => void;
   onClose: () => void;
 }) {
+  const { updater } = useAppLifeCycle();
   const [address, setAddress] = useState<string>();
   const cancelHandler = () => onClose();
 
@@ -60,7 +61,12 @@ export function AddAddressModal({
             <div>Cancel</div>
           </Button>
           <Button
-            onClick={() => address && onAddressValidated(address)}
+            onClick={() => {
+              if (address) {
+                onAddressValidated(address);
+                updater.addCustomDelegate({ address });
+              }
+            }}
             disabled={!(address && isValidAddress(address))}
           >
             <div>Add Delegate</div>
@@ -188,10 +194,29 @@ export const DelegateSection = () => {
               />
             </div>
           </div>
+          {state.customDelegates && (
+            <>
+              <div className="text-sm">Added manually</div>
+              <div className="grid grid-cols-1 place-items-center  gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
+                {state.customDelegates.map((delegate, idx) => (
+                  <DelegateCard
+                    heightFit
+                    key={idx}
+                    delegate={delegate}
+                    state={state}
+                    variant="some"
+                  />
+                ))}
+              </div>
+              <div className="text-sm">Public Delegates</div>
+            </>
+          )}
           <div className="grid grid-cols-1 place-items-center  gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
             {filterDelegatesByOption(state, delegates, selectedOption)
               .filter((delegate) =>
-                search ? delegate.name.includes(search) : true
+                search
+                  ? delegate.name?.toLowerCase().includes(search.toLowerCase())
+                  : true
               )
               .map((delegate, idx) => (
                 <DelegateCard

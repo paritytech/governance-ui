@@ -37,9 +37,11 @@ export function DelegateInfoModal({
               <RoleTag key={role} role={role} />
             ))}
           </div>
-          <div className={`relative h-full overflow-auto text-base`}>
-            <Remark>{manifesto}</Remark>
-          </div>
+          {manifesto && (
+            <div className={`relative h-full overflow-auto text-base`}>
+              <Remark>{manifesto}</Remark>
+            </div>
+          )}
         </div>
       </div>
     </Modal>

@@ -87,7 +87,7 @@ export function DelegateCard({
       >
         <div className="flex items-start justify-between">
           <div className="flex flex-col items-start">
-            <h2 className="text-xl capitalize">{name}</h2>
+            <h2 className="text-xl capitalize">{name || 'Anonymous'}</h2>
             <Accounticon
               address={address}
               size={24}
@@ -108,12 +108,14 @@ export function DelegateCard({
             <RoleTag key={role} role={role} />
           ))}
         </div>
-        <EllipsisTextbox
-          className={`${heightFit ? 'max-h-[6rem] lg:h-[6rem]' : 'h-[6rem]'}`}
-          text={manifesto}
-          expandLinkTitle="Read more->"
-          onExpand={() => expandHandler()}
-        />
+        {manifesto && (
+          <EllipsisTextbox
+            className={`${heightFit ? 'max-h-[6rem] lg:h-[6rem]' : 'h-[6rem]'}`}
+            text={manifesto}
+            expandLinkTitle="Read more->"
+            onExpand={() => expandHandler()}
+          />
+        )}
         <StatBar stats={[]} />
         <div className="grow" />
         {variant === 'all' && (

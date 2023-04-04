@@ -330,7 +330,9 @@ export function TrackSelect({
           <div className="flex items-center gap-2 ">
             <div className="mx-0 hidden text-body-2 text-fg-disabled lg:mx-4 lg:block">
               {selectedTracks.size > 0
-                ? `${selectedTracks.size} tracks selected`
+                ? selectedTracks.size == 1
+                  ? `1 track selected`
+                  : `${selectedTracks.size} tracks selected`
                 : 'Select a track'}
             </div>
             <Button
