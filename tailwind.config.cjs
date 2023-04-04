@@ -18,8 +18,21 @@ module.exports = {
       },
       colors: {
         bg: { default: "#F5F4F4" },
-        fg: { disabled: "#9D9CAF", contrast: "#201F37", "match-bg": "#F3F5FB" },
-        fill: { primary: "#e6007a", secondary: "#321D47", disabled: "#F9F9FB" },
+        fg: {
+          disabled: "#9D9CAF",
+          contrast: "#201F37",
+          "match-bg": "#F3F5FB",
+          dim: "#201f37",
+        },
+        fill: {
+          primary: "#e6007a",
+          "primary-hover": "#CE056F",
+          "primary-pressed": "#C30567",
+          secondary: "#321D47",
+          "secondary-hover": "#3E2852",
+          "secondary-pressed": "#1C0533",
+          disabled: "#F9F9FB",
+        },
         "p-pink": { 100: "#FFE4F3", 600: "#CB006C" },
         "p-purple": { 100: "#F3F5FB", 900: "#1C0533" },
         primary: "#e6007a",

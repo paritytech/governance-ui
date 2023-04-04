@@ -4,7 +4,7 @@ import type { SigningAccount } from '../../../../types';
 import BN from 'bn.js';
 import { useEffect, useState } from 'react';
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
-import { Modal, Button, ButtonSecondary } from '../../../lib';
+import { Modal, Button } from '../../../lib';
 import {
   useAppLifeCycle,
   extractBalance,
@@ -158,10 +158,10 @@ export function DelegateModal({
           </div>
         </div>
         <div className="flex w-full flex-row justify-end gap-4">
-          <ButtonSecondary onClick={cancelHandler}>
+          <Button onClick={cancelHandler}>
             <CloseIcon />
             <div>Cancel</div>
-          </ButtonSecondary>
+          </Button>
 
           <Button
             onClick={() =>

@@ -16,13 +16,12 @@ export const trackCategories = [
       {
         id: 0,
         title: 'Root',
-        description: 'Root is the track for the most important things',
+        description: 'Origin for upgrades, fixes, and network rescues',
       },
       {
         id: 15,
         title: 'Auction Admin',
-        description:
-          'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris quis dui vitae leo aliquam iaculis. Maecenas faucibus nisi id lacus lacinia ornare. Phasellus in eros dignissim',
+        description: 'Origin for starting auctions',
       },
     ],
   },
@@ -32,27 +31,27 @@ export const trackCategories = [
       {
         id: 12,
         title: 'Lease Admin',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+        description: 'Origin able to force slot leases',
       },
       {
         id: 14,
         title: 'General Admin',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description: 'Origin for managing the registrar',
       },
       {
         id: 20,
         title: 'Referendum Canceler',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description: 'Origin able to cancel referenda',
       },
       {
         id: 21,
         title: 'Referendum Killer',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description: 'Origin able to kill referenda',
       },
       {
         id: 10,
         title: 'Staking Admin',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description: 'Origin for canceling slashes',
       },
     ],
   },
@@ -62,32 +61,38 @@ export const trackCategories = [
       {
         id: 30,
         title: 'Small Tipper',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description:
+          'Origin able to spend up to 1 DOT from the treasury at once',
       },
       {
         id: 31,
         title: 'Big Tipper',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description:
+          'Origin able to spend up to 10 DOT from the treasury at once',
       },
       {
         id: 32,
         title: 'Small Spender',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description:
+          'Origin able to spend up to 100 DOT from the treasury at once',
       },
       {
         id: 33,
         title: 'Medium Spender',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description:
+          'Origin able to spend up to 200 DOT from the treasury at once',
       },
       {
         id: 34,
         title: 'Big Spender',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description:
+          'Origin able to spend up to 400 DOT from the treasury at once',
       },
       {
         id: 11,
         title: 'Treasurer',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description:
+          'Origin for spending (any amount of) funds until the upper limit of 1,000 DOT',
       },
     ],
   },
@@ -97,12 +102,12 @@ export const trackCategories = [
       {
         id: 1,
         title: 'Whitelisted Caller',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description: 'Origin commanded by members of the Polkadot Fellowship',
       },
       {
         id: 13,
         title: 'Fellowship Admin',
-        description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+        description: 'Origin for managing the composition of the fellowship',
       },
     ],
   },

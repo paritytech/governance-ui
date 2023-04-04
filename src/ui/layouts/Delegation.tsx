@@ -1,11 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react';
-import {
-  Button,
-  ButtonOutline,
-  ButtonSecondary,
-  Dropdown,
-  Modal,
-} from '../lib';
+import { Button, Dropdown, Modal } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
 import { AddIcon, ChevronRightIcon, CloseIcon } from '../icons';
@@ -61,10 +55,10 @@ export function AddAddressModal({
           </div>
         </div>
         <div className="flex w-full flex-row justify-end gap-4">
-          <ButtonSecondary onClick={cancelHandler}>
+          <Button onClick={cancelHandler}>
             <CloseIcon />
             <div>Cancel</div>
-          </ButtonSecondary>
+          </Button>
           <Button
             onClick={() => address && onAddressValidated(address)}
             disabled={!(address && isValidAddress(address))}
@@ -179,13 +173,14 @@ export const DelegateSection = () => {
               />
             </div>
             <div className="flex w-full flex-row items-center justify-between gap-4 lg:justify-end">
-              <ButtonOutline
+              <Button
+                variant="outline"
                 className="w-fit"
                 onClick={() => setAddAddressVisible(true)}
               >
                 <AddIcon />
                 <div className="whitespace-nowrap">Add address</div>
-              </ButtonOutline>
+              </Button>
               <input
                 placeholder="Search"
                 className="w-full self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70 lg:w-fit"
