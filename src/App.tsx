@@ -12,10 +12,6 @@ import AccountProvider from './contexts/Account.js';
 export function App(): JSX.Element {
   return (
     <ErrorBoundary>
-      <style>
-        @import
-        url(https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Unbounded:wght@500&display=swap);
-      </style>
       <AppLifeCycleProvider>
         <WalletProvider>
           <AccountProvider>

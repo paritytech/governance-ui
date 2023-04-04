@@ -27,6 +27,9 @@ const ALL_CACHES = [ASSETS_CACHE];
 async function install() {
   // Cache all assets
   const cache = await caches.open(ASSETS_CACHE);
+  const keys = await cache.keys();
+  // Clear existing cached elements
+  await Promise.all(keys.map((key) => cache.delete(key)));
   await cache.addAll(manifest);
 }
 
