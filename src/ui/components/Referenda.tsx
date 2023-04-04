@@ -57,7 +57,7 @@ const ReferendumCard = memo(
       return (
         <Card className="flex h-[640px] w-screen flex-col gap-8 md:w-[640px]">
           <Header index={index} title={title} track={track} />
-          <div className="w-full overflow-y-scroll break-words">
+          <div className="w-full overflow-y-auto break-words">
             <Remark>{content}</Remark>
           </div>
         </Card>
