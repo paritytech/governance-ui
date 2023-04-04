@@ -137,7 +137,7 @@ function InnerCard({
   className: string;
 }) {
   return (
-    <div className={`flex flex-col rounded-2xl p-3 ${className}`}>
+    <div className={`flex flex-col rounded-xl p-3 ${className}`}>
       {children}
     </div>
   );
@@ -228,7 +228,7 @@ export function TrackCheckableCard({
 }: ITrackCheckableCardProps) {
   return (
     <Card>
-      <div className={`p-2} flex flex-col gap-6`}>
+      <div className={`flex flex-col gap-6 p-2`}>
         <div className="flex flex-col gap-2">
           <CheckBox
             title={track?.title}
