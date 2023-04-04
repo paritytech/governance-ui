@@ -4,7 +4,7 @@ import type { TrackType } from './types';
 import { memo, useState } from 'react';
 import { trackCategories } from '../../../chain';
 import { useDelegation } from '../../../contexts/Delegation.js';
-import { ButtonSecondary, Card } from '../../lib';
+import { Button, Card } from '../../lib';
 import { CheckIcon, ChevronDownIcon } from '../../icons';
 import SectionTitle from '../SectionTitle';
 import ProgressStepper from '../ProgressStepper';
@@ -73,7 +73,6 @@ interface ITrackCheckableCardProps {
   delegation: VotingDelegating | undefined;
   checked?: boolean;
   onChange?: React.ChangeEventHandler<HTMLInputElement>;
-  expanded?: boolean;
   network: Network;
 }
 
@@ -225,23 +224,18 @@ export function TrackCheckableCard({
   delegation,
   checked,
   onChange,
-  expanded,
   network,
 }: ITrackCheckableCardProps) {
   return (
     <Card>
-      <div className={`flex flex-col gap-6 ${expanded ? 'p-4' : 'p-2'}`}>
+      <div className={`p-2} flex flex-col gap-6`}>
         <div className="flex flex-col gap-2">
           <CheckBox
             title={track?.title}
             checked={checked}
             onChange={onChange}
           />
-          {expanded && (
-            <div className="text-body-2 leading-tight">
-              {track?.description}
-            </div>
-          )}
+          <div className="text-body-2 leading-tight">{track?.description}</div>
           {delegation && (
             <TrackDelegation track={track} delegation={delegation} />
           )}
@@ -281,7 +275,6 @@ interface ITrackSelectProps {
   network: Network;
   referenda: Map<number, ReferendumOngoing>;
   details: Map<number, ReferendumDetails>;
-  expanded?: boolean;
   delegateHandler: () => void;
 }
 export function TrackSelect({
@@ -289,7 +282,6 @@ export function TrackSelect({
   network,
   referenda,
   details,
-  expanded,
   delegateHandler,
 }: ITrackSelectProps) {
   const { selectedTracks, setTrackSelection } = useDelegation();
@@ -304,8 +296,6 @@ export function TrackSelect({
   );
   const { state } = useAppLifeCycle();
   const delegations = extractDelegations(state);
-
-  const [trackExpanded, setTrackExpanded] = useState(0);
 
   return (
     <div className="flex w-full flex-col gap-6 px-3 lg:gap-12 lg:px-8 lg:pb-12">
@@ -343,7 +333,7 @@ export function TrackSelect({
                 ? `${selectedTracks.size} tracks selected`
                 : 'Select a track'}
             </div>
-            <ButtonSecondary
+            <Button
               disabled={selectedTracks.size == 0}
               onClick={delegateHandler}
             >
@@ -351,7 +341,7 @@ export function TrackSelect({
                 <div>Select delegate</div>
                 <ChevronDownIcon />
               </div>
-            </ButtonSecondary>
+            </Button>
           </div>
         </div>
         <div
@@ -373,7 +363,6 @@ export function TrackSelect({
                       const isChecked = e.target.checked;
                       setTrackSelection(track.id, isChecked);
                     }}
-                    expanded={true}
                     network={network}
                   />
                 ))}

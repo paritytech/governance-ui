@@ -9,4 +9,5 @@ export interface BaseElementProps {
 
 export interface ClickableProps extends BaseElementProps {
   onClick?: (e: SyntheticEvent) => void;
+  variant?: string;
 }

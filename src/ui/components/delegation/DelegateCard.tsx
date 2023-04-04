@@ -2,7 +2,7 @@ import type { TrackType } from './types';
 import type { Delegate, State } from '../../../lifecycle/types';
 import { SyntheticEvent, useState } from 'react';
 import { ChevronRightIcon, DelegateIcon } from '../../icons';
-import { Button, ButtonSecondary, Card } from '../../lib';
+import { Button, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
 import { DelegateInfoModal } from './delegateModal/DelegateInfo';
 import { StatBar } from './common/Stats';
@@ -95,12 +95,12 @@ export function DelegateCard({
             />
           </div>
           {variant === 'some' && (
-            <ButtonSecondary onClick={delegateHandler} disabled={isProcessing}>
+            <Button onClick={delegateHandler} disabled={isProcessing}>
               <div className="flex w-full flex-nowrap items-center justify-center gap-1">
                 <div>Select</div>
                 <ChevronRightIcon />
               </div>
-            </ButtonSecondary>
+            </Button>
           )}
         </div>
         <div className="flex gap-2">
@@ -117,7 +117,11 @@ export function DelegateCard({
         <StatBar stats={[]} />
         <div className="grow" />
         {variant === 'all' && (
-          <Button onClick={delegateHandler} disabled={isProcessing}>
+          <Button
+            variant="primary"
+            onClick={delegateHandler}
+            disabled={isProcessing}
+          >
             <div>Delegate All Votes</div>
             <DelegateIcon />
           </Button>

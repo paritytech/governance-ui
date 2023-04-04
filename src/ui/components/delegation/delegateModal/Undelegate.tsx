@@ -3,7 +3,7 @@ import type { SigningAccount, VotingDelegating } from '../../../../types';
 
 import { useState, useEffect } from 'react';
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
-import { Modal, Button, ButtonSecondary } from '../../../lib';
+import { Modal, Button } from '../../../lib';
 import {
   useAppLifeCycle,
   extractBalance,
@@ -105,10 +105,10 @@ export function UndelegateModal({
           </div>
         </div>
         <div className="flex w-full flex-row justify-end gap-4">
-          <ButtonSecondary onClick={cancelHandler}>
+          <Button onClick={cancelHandler}>
             <CloseIcon />
             <div>Cancel</div>
-          </ButtonSecondary>
+          </Button>
           {connectedAccount &&
             balance && ( // Check for non-null balance?
               // TODO Probably better to allow for button to be disabled
