@@ -15,7 +15,12 @@ export function Accounticon({
   const btnTitle = name || address;
   return (
     <div className="flex flex-nowrap items-center gap-2">
-      <Identicon value={address} theme="polkadot" size={size || 18} />
+      <Identicon
+        style={{ cursor: 'unset' }}
+        value={address}
+        theme="polkadot"
+        size={size || 18}
+      />
       <div className={`${textClassName || ''}`}>
         {stringShorten(btnTitle, 5)}
       </div>
