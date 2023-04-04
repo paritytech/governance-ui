@@ -194,7 +194,7 @@ export const DelegateSection = () => {
               />
             </div>
           </div>
-          {state.customDelegates && (
+          {state.customDelegates.length > 0 && (
             <>
               <div className="text-sm">Added manually</div>
               <div className="grid grid-cols-1 place-items-center  gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
