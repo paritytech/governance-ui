@@ -1,0 +1,3 @@
+[build]
+  command = "yarn build && cp .netlify/_headers dist/_headers"
+  publish = "dist/"
