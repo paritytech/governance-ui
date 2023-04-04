@@ -39,11 +39,11 @@ export function CheckBox({
         type="checkbox"
         checked={checked}
         onChange={onChange}
-        className="hidden h-4 w-4 rounded-lg border border-primary bg-gray-100 accent-primary"
+        className="hidden"
       />
       <label
         htmlFor={checkboxId}
-        className="flex items-center gap-2 text-sm font-semibold text-gray-900"
+        className="flex items-center gap-2 font-semibold text-gray-900"
       >
         <div
           className={`flex h-4 w-4 rounded-sm border-[1px] p-[1px] ${
@@ -58,7 +58,7 @@ export function CheckBox({
             } text-white`}
           />
         </div>
-        <span className="whitespace-nowrap text-sm font-semibold text-gray-900">
+        <span className="-2font-semibold whitespace-nowrap text-body-2 text-gray-900">
           {title}
         </span>
       </label>
@@ -155,9 +155,9 @@ function ReferendaDetails({
   network: Network;
 }) {
   return (
-    <InnerCard className="gap-2  border-2 border-solid border-gray-100">
+    <InnerCard className="gap-2 border-2 border-solid border-gray-100 text-body-2 font-medium">
       <div className="flex flex-row gap-2">
-        <div className="grow text-sm font-medium leading-tight">
+        <div className="grow leading-tight">
           {referendaTitle(index, details)}
         </div>
         <div className="w-[20px] flex-none">
@@ -165,11 +165,7 @@ function ReferendaDetails({
         </div>
       </div>
       <div className="flex flex-row justify-between">
-        <Accounticon
-          textClassName="font-semibold text-sm"
-          address={referendum.submissionDeposit.who}
-          size={24}
-        />
+        <Accounticon address={referendum.submissionDeposit.who} size={24} />
         <TallyBadgeBox tally={referendum.tally} />
       </div>
     </InnerCard>
@@ -217,7 +213,9 @@ function TrackDelegation({
 }
 
 function NoActiveReferendum() {
-  return <div className="text-sm text-slate-300">No active referendum</div>;
+  return (
+    <div className="text-body-2 text-fg-disabled">No active referendum</div>
+  );
 }
 
 export function TrackCheckableCard({
@@ -232,14 +230,22 @@ export function TrackCheckableCard({
 }: ITrackCheckableCardProps) {
   return (
     <Card>
-      <div className={`flex flex-col gap-2 ${expanded ? 'p-4' : 'p-2'}`}>
-        <CheckBox title={track?.title} checked={checked} onChange={onChange} />
-        {expanded && (
-          <div className="text-sm leading-tight">{track?.description}</div>
-        )}
-        {delegation && (
-          <TrackDelegation track={track} delegation={delegation} />
-        )}
+      <div className={`flex flex-col gap-6 ${expanded ? 'p-4' : 'p-2'}`}>
+        <div className="flex flex-col gap-2">
+          <CheckBox
+            title={track?.title}
+            checked={checked}
+            onChange={onChange}
+          />
+          {expanded && (
+            <div className="text-body-2 leading-tight">
+              {track?.description}
+            </div>
+          )}
+          {delegation && (
+            <TrackDelegation track={track} delegation={delegation} />
+          )}
+        </div>
         {referenda.size ? (
           Array.from(referenda.entries()).map(([index, referendum]) => (
             <ReferendaDetails
@@ -298,6 +304,9 @@ export function TrackSelect({
   );
   const { state } = useAppLifeCycle();
   const delegations = extractDelegations(state);
+
+  const [trackExpanded, setTrackExpanded] = useState(0);
+
   return (
     <div className="flex w-full flex-col gap-6 px-3 lg:gap-12 lg:px-8 lg:pb-12">
       <SectionTitle
@@ -364,7 +373,7 @@ export function TrackSelect({
                       const isChecked = e.target.checked;
                       setTrackSelection(track.id, isChecked);
                     }}
-                    expanded={expanded}
+                    expanded={true}
                     network={network}
                   />
                 ))}
