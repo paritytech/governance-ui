@@ -43,7 +43,7 @@ export function CheckBox({
       />
       <label
         htmlFor={checkboxId}
-        className="flex items-center gap-2 font-semibold text-gray-900"
+        className="flex cursor-pointer items-center gap-2 font-semibold text-gray-900"
       >
         <div
           className={`flex h-4 w-4 rounded-sm border-[1px] p-[1px] ${
@@ -196,7 +196,10 @@ function TrackDelegation({
             address={target}
             size={24}
           />
-          <div className="hover:scale-[1.01]" onClick={() => openModal()}>
+          <div
+            className="cursor-pointer hover:scale-[1.01]"
+            onClick={() => openModal()}
+          >
             <CloseIcon />
           </div>
         </div>

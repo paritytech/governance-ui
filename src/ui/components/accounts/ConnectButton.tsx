@@ -132,7 +132,14 @@ export const ConnectButton = () => {
     <>
       <Button onClick={btnClickHandler}>
         <div className="flex flex-nowrap items-center gap-1">
-          {address && <Identicon value={address} theme="polkadot" size={18} />}
+          {address && (
+            <Identicon
+              style={{ cursor: 'unset' }}
+              value={address}
+              theme="polkadot"
+              size={18}
+            />
+          )}
           <div className="text-sm">{btnTitle}</div>
         </div>
       </Button>

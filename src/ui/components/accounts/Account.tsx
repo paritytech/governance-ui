@@ -21,7 +21,12 @@ const Account = ({
       onClick={() => clickHandler && clickHandler()}
     >
       <div className="m-1 flex items-center justify-center">
-        <Identicon value={address} theme="polkadot" size={24} />
+        <Identicon
+          style={{ cursor: 'unset' }}
+          value={address}
+          theme="polkadot"
+          size={48}
+        />
       </div>
       <div className="m-1 flex flex-auto flex-col text-xs">
         <div className="uppercase ">{name}</div>
