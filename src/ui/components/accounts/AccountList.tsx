@@ -32,7 +32,7 @@ export const AccountList = ({
           />
         )}
       </div>
-      <div className="my-2 flex flex-col gap-2 overflow-scroll">
+      <div className="my-2 flex flex-col gap-2 overflow-auto">
         {otherAccounts.map((signingAccount) => {
           const { account } = signingAccount;
           return (

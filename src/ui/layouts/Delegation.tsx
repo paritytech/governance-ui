@@ -101,7 +101,7 @@ export function DelegatesBar({
       <span className="px-4 text-center font-unbounded text-h3 font-semibold">
         Choose a worthy delegate
       </span>
-      <div className="flex max-w-full gap-7 overflow-x-scroll px-3 pb-1 lg:px-6	">
+      <div className="flex max-w-full gap-7 overflow-x-auto px-3 pb-1 lg:px-6	">
         {visibleDelegates.map((delegate, idx) => (
           <DelegateCard
             key={idx}
