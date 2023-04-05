@@ -40,7 +40,7 @@ const Modal = ({
       {open && (
         <div
           tabIndex={-1}
-          className={`fixed left-0 right-0 top-0 z-50 flex h-full w-full animate-[blur_0.23s] animate-[fadeIn_0.23s] overflow-y-auto overflow-x-hidden bg-[rgba(0,0,0,0.7)] p-4 backdrop-blur md:inset-0`}
+          className={`fixed left-0 right-0 top-0 z-50 flex h-full w-full animate-[fadeIn_0.23s] overflow-y-auto overflow-x-hidden bg-[rgba(0,0,0,0.85)] p-4 md:inset-0`}
           onClick={closeHandler}
         >
           <div

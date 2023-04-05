@@ -39,17 +39,13 @@ module.exports = {
         secondary: "#321D47",
       },
       keyframes: {
-        blur: {
-          "0%": { backdropFilter: "blur(2px)" },
-          "100%": { backdropFilter: "blur(8px)" },
-        },
         lift: {
           "0%": { marginTop: 24, opacity: 0 },
           "100%": { marginTop: 0, opacity: 1 },
         },
         fadeIn: {
           "0%": { background: "rgba(0,0,0,0)" },
-          "100%": { background: "rgba(0,0,0,0.7)" },
+          "100%": { background: "rgba(0,0,0,0.85)" },
         },
         slideInRight: {
           "0%": { right: -500 },
