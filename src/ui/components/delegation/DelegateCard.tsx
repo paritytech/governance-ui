@@ -67,11 +67,6 @@ export function DelegateCard({
     openInfoModal();
   };
 
-  const closeInfoAndOpenTx = () => {
-    closeInfoModal;
-    openTxModal;
-  };
-
   // extract tracks
   const undelegatedTracks = filterUndelegatedTracks(state);
   const { selectedTracks } = useDelegation();

@@ -1,6 +1,6 @@
 import type { Delegate } from 'src/lifecycle';
 
-import { Button, Modal } from '../../../lib';
+import { Modal } from '../../../lib';
 import { RoleTag } from '../common/RoleTag';
 import { Accounticon } from '../../accounts/Accounticon';
 import { extractRoles, useAppLifeCycle } from '../../../../lifecycle';
