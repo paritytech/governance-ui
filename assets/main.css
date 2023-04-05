@@ -4,18 +4,47 @@
 @tailwind utilities;
 
 /* css */
+
+/* https://github.com/w3f/unbounded/blob/main/WOFF/ */
+
 @font-face {
   font-family: Unbounded;
-  src: url(/assets/Unbounded-Regular-707bbfc.woff2) format("woff2");
-  font-weight: 400;
+  src: url(/assets/Unbounded-Medium-707bbfc.woff2) format("woff2");
+  font-weight: 500;
   font-style: normal;
   font-display: block;
 }
 
 @font-face {
   font-family: Unbounded;
-  src: url(/assets/Unbounded-Medium-707bbfc.woff2) format("woff2");
+  src: url(/assets/Unbounded-Bold-707bbfc.woff2) format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+
+/* https://github.com/rsms/inter/tree/master/docs/font-files */
+
+@font-face {
+  font-family: Inter;
+  src: url(/assets/Inter-Regular-c57a2aa.woff2) format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: Inter;
+  src: url(/assets/Inter-SemiBold-c57a2aa.woff2) format("woff2");
   font-weight: 600;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: Inter;
+  src: url(/assets/Inter-Bold-c57a2aa.woff2) format("woff2");
+  font-weight: 700;
   font-style: normal;
   font-display: block;
 }
