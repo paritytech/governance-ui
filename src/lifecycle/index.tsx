@@ -856,9 +856,9 @@ async function loadAndDispatchReferendaMetaData(
         details: new Map([[index, details.value]]),
       });
     } else {
-      dispatchAddReport(
-        dispatch,
-        error(`Error while accessing referenda details: ${details.error}`)
+      // Ignore error as it's not blocking
+      console.error(
+        `Error while accessing referenda details: ${details.error.message}`
       );
     }
   });
