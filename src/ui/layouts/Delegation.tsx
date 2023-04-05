@@ -97,10 +97,8 @@ export function DelegatesBar({
     [delegates]
   );
   return (
-    <section className="flex w-full flex-col items-center justify-center gap-6 bg-gray-200 py-8 md:gap-12 lg:py-12">
-      <span className="px-4 text-center font-unbounded text-h3 font-semibold">
-        Choose a worthy delegate
-      </span>
+    <section className="flex w-full flex-col items-center justify-center gap-6 bg-gray-200 py-8 md:gap-12">
+      <SectionTitle title="Choose a worthy delegate" />
       <div className="flex max-w-full gap-7 overflow-x-auto px-3 pb-1 lg:px-6	">
         {visibleDelegates.map((delegate, idx) => (
           <DelegateCard
@@ -112,15 +110,6 @@ export function DelegatesBar({
         ))}
       </div>
     </section>
-  );
-}
-
-function DescriptionLabel({ delegates }: { delegates: number }): JSX.Element {
-  return (
-    <div className="text-body-2">
-      There are currently <span className="font-bold">{delegates}</span>{' '}
-      delegates.
-    </div>
   );
 }
 
@@ -165,7 +154,11 @@ export const DelegateSection = () => {
       <div className="mb-48 mt-20 flex w-full flex-col gap-16 px-3 md:px-8 lg:mt-28">
         <SectionTitle
           title="Browse Delegates"
-          description={<DescriptionLabel delegates={delegates.length} />}
+          description={
+            <span>
+              There are currently <b>{delegates.length}</b> delegates.
+            </span>
+          }
         >
           <ProgressStepper step={1} />
         </SectionTitle>
