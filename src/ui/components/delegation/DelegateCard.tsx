@@ -53,6 +53,7 @@ export function DelegateCard({
   const delegateHandler = (e: SyntheticEvent) => {
     e.stopPropagation();
     openTxModal();
+    setInfoVisible(false); //have to close info modal to make tx modal visible - not ideal, should be replacing content within 1 modal
   };
 
   // more info Modal handlers
@@ -91,7 +92,7 @@ export function DelegateCard({
             <Accounticon
               address={address}
               size={24}
-              textClassName="font-semibold my-2"
+              textClassName="text-body font-semibold my-2"
             />
           </div>
           {variant === 'some' && (
@@ -112,7 +113,7 @@ export function DelegateCard({
           <EllipsisTextbox
             className={`${heightFit ? 'max-h-[6rem] lg:h-[6rem]' : 'h-[6rem]'}`}
             text={manifesto}
-            expandLinkTitle="Read more->"
+            expandLinkTitle="Read more ->"
             onExpand={() => expandHandler()}
           />
         )}
@@ -139,7 +140,18 @@ export function DelegateCard({
         open={infoVisible}
         onClose={closeInfoModal}
         delegate={delegate}
-      />
+      >
+        <Button
+          className="w-fit"
+          onClick={delegateHandler}
+          disabled={isProcessing}
+        >
+          <div className="flex w-full flex-nowrap items-center justify-center gap-1">
+            <div>Select</div>
+            <ChevronRightIcon />
+          </div>
+        </Button>
+      </DelegateInfoModal>
     </div>
   );
 }

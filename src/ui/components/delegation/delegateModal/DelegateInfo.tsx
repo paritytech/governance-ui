@@ -10,10 +10,12 @@ export function DelegateInfoModal({
   delegate,
   open,
   onClose,
+  children,
 }: {
   delegate: Delegate;
   open: boolean;
   onClose: () => void;
+  children?: JSX.Element;
 }) {
   const { state } = useAppLifeCycle();
   const { address, manifesto, name } = delegate;
@@ -43,6 +45,7 @@ export function DelegateInfoModal({
             </div>
           )}
         </div>
+        {children}
       </div>
     </Modal>
   );

@@ -13,6 +13,10 @@ const styles = [
     name: 'outline',
     style: `flex min-w-min appearance-none items-center justify-center gap-2 rounded-full border border-solid px-4 py-2 hover:border-primary`,
   },
+  {
+    name: 'ghost',
+    style: `flex min-w-min appearance-none items-center bg-white/70 justify-center gap-2 rounded-full px-4 py-2 hover:bg-white`,
+  },
 ];
 
 export function Button({

@@ -14,7 +14,7 @@ module.exports = {
         h2: ["3rem", { fontWeight: 700, lineHeight: 1.05 }],
         h3: ["2rem", { fontWeight: 700, lineHeight: 1.05 }],
         h4: "1.625rem",
-        h5: "1.25rem",
+        h5: ["1.25rem", { fontWeight: 500, lineHeight: 1 }],
       },
       colors: {
         bg: { default: "#F5F4F4" },
