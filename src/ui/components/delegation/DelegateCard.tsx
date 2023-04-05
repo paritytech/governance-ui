@@ -53,7 +53,7 @@ export function DelegateCard({
   const delegateHandler = (e: SyntheticEvent) => {
     e.stopPropagation();
     openTxModal();
-    setInfoVisible(false);
+    setInfoVisible(false); //have to close info modal to make tx modal visible - not ideal, should be replacing content within 1 modal
   };
 
   // more info Modal handlers

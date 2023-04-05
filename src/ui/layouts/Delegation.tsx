@@ -173,7 +173,7 @@ export const DelegateSection = () => {
             </div>
             <div className="flex w-full flex-row items-center justify-between gap-4 lg:justify-end">
               <Button
-                variant="outline"
+                variant="ghost"
                 className="w-fit"
                 onClick={() => setAddAddressVisible(true)}
               >

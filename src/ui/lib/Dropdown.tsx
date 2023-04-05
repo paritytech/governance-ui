@@ -37,7 +37,7 @@ export const Dropdown = ({
   return (
     <div>
       <div
-        className={`flex min-w-min appearance-none items-center gap-2 rounded-full border border-solid px-4 py-2 hover:border-primary ${
+        className={`flex min-w-min cursor-pointer select-none appearance-none items-center gap-2 rounded-full bg-white/70 px-4 py-2 text-body hover:bg-white ${
           className || ''
         }`}
         onClick={() => setIsOpen(!isOpen)}
@@ -48,10 +48,14 @@ export const Dropdown = ({
       <div className="relative mt-1 h-0">
         {isOpen && (
           <ul
-            className={`absolute top-0 flex w-full min-w-max flex-col gap-4 rounded-lg border p-3 backdrop-blur-3xl duration-300 ${alignClass[menuAlign]}`}
+            className={`absolute top-1 flex w-full min-w-max flex-col rounded-lg bg-white/80 py-2 shadow-lg backdrop-blur-3xl duration-300 ${alignClass[menuAlign]}`}
           >
             {options.map((option, idx) => (
-              <li key={idx} onClick={() => handleOptionClick(option)}>
+              <li
+                className="cursor-pointer select-none px-4 py-2 hover:bg-bg-default/80"
+                key={idx}
+                onClick={() => handleOptionClick(option)}
+              >
                 {option.label}
               </li>
             ))}

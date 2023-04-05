@@ -1,6 +1,6 @@
 interface SectionTitleProps {
   title: string;
-  description?: JSX.Element | string;
+  description?: JSX.Element;
   children?: JSX.Element;
   center?: boolean;
 }
