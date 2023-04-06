@@ -81,7 +81,6 @@ export function DelegateCard({
       className={`flex h-full shrink-0  ${
         variant === 'all' ? 'w-[320px] md:w-[420px]' : 'w-full'
       }`}
-      onClick={() => expandHandler()}
     >
       <Card
         className={`flex h-full w-full flex-col gap-2 p-6 shadow-md md:gap-4`}
