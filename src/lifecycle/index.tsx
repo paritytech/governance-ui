@@ -28,6 +28,7 @@ import {
   createBatchVotes,
   delegate,
   undelegate,
+  unlock,
   getVotingFor,
 } from '../chain/conviction-voting.js';
 import { getAllMembers } from '../chain/fellowship-collective.js';
@@ -609,12 +610,19 @@ export class Updater {
   }
 
   async undelegate(
-    tracks: number[]
+    tracks: number[],
+    unlockTarget: string
   ): Promise<Result<SubmittableExtrinsic<'promise', SubmittableResult>>> {
     const state = this.#stateAccessor();
     const api = await this.getApi(state);
     if (api) {
-      const txs = tracks.map((track) => undelegate(api, track));
+      let txs = tracks.map((track) => undelegate(api, track));
+      if (unlockTarget) {
+        const unlockTxs = tracks.map((track) =>
+          unlock(api, track, unlockTarget)
+        );
+        txs = [...txs, ...unlockTxs];
+      }
       return ok(batchAll(api, txs));
     } else {
       const report = error('Failed to retrieve Api');
