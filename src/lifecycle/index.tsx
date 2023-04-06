@@ -42,7 +42,7 @@ import {
   STORES,
   VOTE_STORE_NAME,
 } from '../utils/db.js';
-import { all, allKeys, clear, open, save } from '../utils/indexeddb.js';
+import { all, clear, open, save } from '../utils/indexeddb.js';
 import { measured } from '../utils/performance.js';
 import { batchAll, newApi, signAndSend } from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
@@ -684,12 +684,12 @@ export class Updater {
     const state = this.#stateAccessor();
     if (state.type == 'ConnectedState') {
       const db = await DB_CACHE.getOrCreate(dbNameFor(state.network));
-      const keys = (await allKeys(
+      await save(
         db,
-        CUSTOM_DELEGATES_STORE_NAME
-      )) as Set<number>;
-      const maxKey = Math.max(...keys);
-      await save(db, CUSTOM_DELEGATES_STORE_NAME, maxKey + 1, delegate);
+        CUSTOM_DELEGATES_STORE_NAME,
+        state.customDelegates.length + 1,
+        delegate
+      );
     } else {
       await this.addReport(error('Must be connected to add custom delegate'));
     }
