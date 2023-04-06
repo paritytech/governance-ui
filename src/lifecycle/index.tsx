@@ -618,6 +618,8 @@ export class Updater {
     if (api) {
       let txs = tracks.map((track) => undelegate(api, track));
       if (unlockTarget) {
+        // delegation locks are put on balance per each delegated track.
+        // here all tracks that are being undelegated are bateched with an unlock call to lift their locks.
         const unlockTxs = tracks.map((track) =>
           unlock(api, track, unlockTarget)
         );
