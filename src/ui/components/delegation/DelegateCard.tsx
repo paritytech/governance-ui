@@ -12,7 +12,7 @@ import {
   extractRoles,
 } from '../../../lifecycle';
 import { DelegateModal } from './delegateModal/Delegate';
-import { useDelegation } from '../../../contexts';
+import { useAccount, useDelegation } from '../../../contexts';
 import EllipsisTextbox from '../EllipsisTextbox';
 
 function filterUndelegatedTracks(state: State): TrackMetaData[] {
@@ -38,8 +38,11 @@ export function DelegateCard({
   const roles = extractRoles(address, state);
   const isProcessing = extractIsProcessing(state);
 
+  const { connectedAccount } = useAccount();
   const [txVisible, setTxVisible] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
+
+  const connectedAddress = connectedAccount?.account?.address;
 
   // transaction Modal handlers
   const closeTxModal = () => {
@@ -111,7 +114,7 @@ export function DelegateCard({
             className={`${heightFit ? 'max-h-[6rem] lg:h-[6rem]' : 'h-[6rem]'}`}
             text={manifesto}
             expandLinkTitle="Read more ->"
-            onExpand={() => expandHandler()}
+            onExpand={expandHandler}
           />
         )}
         <StatBar stats={[]} />
@@ -120,7 +123,7 @@ export function DelegateCard({
           <Button
             variant="primary"
             onClick={delegateHandler}
-            disabled={isProcessing}
+            disabled={isProcessing || !connectedAddress}
           >
             <div>Delegate All Votes</div>
             <DelegateIcon />
