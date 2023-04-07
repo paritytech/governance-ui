@@ -1,5 +1,5 @@
 import type { Tally, VotingDelegating } from '../../../types';
-import type { TrackType } from './types';
+import type { TrackType } from '../types';
 
 import { memo, useState } from 'react';
 import { trackCategories } from '../../../chain';
@@ -14,6 +14,7 @@ import { Network } from '../../../network';
 import { CloseIcon } from '../../icons';
 import { UndelegateModal } from './delegateModal/Undelegate';
 import { useAppLifeCycle, extractDelegations } from '../../../lifecycle';
+import { InnerCard } from '../common/InnerCard';
 
 interface ICheckBoxProps {
   title?: string;
@@ -129,19 +130,6 @@ const TallyBadgeBox = memo(function ({ tally }: { tally: Tally }) {
   );
 });
 
-function InnerCard({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className: string;
-}) {
-  return (
-    <div className={`flex flex-col rounded-xl p-3 ${className}`}>
-      {children}
-    </div>
-  );
-}
 function ReferendaDetails({
   index,
   details,
@@ -208,7 +196,7 @@ function TrackDelegation({
         onClose={closeModal}
         open={showModal}
         tracks={(track && [track]) || []}
-        delegation={delegation}
+        address={delegation.target}
       />
     </>
   );

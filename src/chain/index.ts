@@ -2,6 +2,17 @@ import { endpointsFor, Network } from '../network';
 import { WsReconnectProvider } from '../utils/ws-reconnect-provider';
 import { newApi } from '../utils/polkadot-api';
 
+export type TrackType = {
+  id: number;
+  title: string;
+  description: string;
+};
+
+export type TrackCategoryType = {
+  title: string;
+  tracks: TrackType[];
+};
+
 export async function supportsOpenGov(network: Network): Promise<boolean> {
   const api = await newApi({
     provider: new WsReconnectProvider(endpointsFor(network)),
@@ -112,3 +123,10 @@ export const trackCategories = [
     ],
   },
 ];
+
+export function filterTracks(filter: (t: TrackType) => boolean): TrackType[] {
+  return trackCategories
+    .map((track) => track.tracks)
+    .flat()
+    .filter(filter);
+}

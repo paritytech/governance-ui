@@ -1,4 +1,4 @@
-import type { TrackType } from '../types';
+import type { TrackType } from '../../types';
 import type { SigningAccount } from '../../../../types';
 
 import BN from 'bn.js';
@@ -20,7 +20,7 @@ import {
   calcEstimatedFee,
   formatBalance,
 } from '../../../../utils/polkadot-api';
-import { LabeledBox } from '../common/LabeledBox';
+import { LabeledBox, TracksLabeledBox } from '../../common/LabeledBox';
 
 export function DelegateModal({
   delegate,
@@ -42,11 +42,6 @@ export function DelegateModal({
   const delegateAddress =
     typeof delegate === 'object' ? delegate.address : delegate;
   const name = typeof delegate === 'object' ? delegate.name : null;
-  const tracksCaption = tracks
-    .slice(0, 2)
-    .map((track) => track.title)
-    .join(', ');
-  const remainingCount = Math.max(tracks.length - 2, 0);
 
   const connectedAddress = connectedAccount?.account?.address;
 
@@ -114,16 +109,11 @@ export function DelegateModal({
             </p>
           </div>
           <div className="grid w-full grid-cols-3 grid-rows-2 gap-4">
-            <LabeledBox className="col-span-2" title="Tracks to delegate">
-              <div>
-                {tracksCaption}
-                {!!remainingCount && (
-                  <>
-                    {' and'} <a>{`${remainingCount} more`}</a>
-                  </>
-                )}
-              </div>
-            </LabeledBox>
+            <TracksLabeledBox
+              title="Tracks to delegate"
+              tracks={tracks}
+              visibleCount={2}
+            />
             <LabeledBox title="Tokens to delegate">
               <div>
                 {(usableBalance &&
