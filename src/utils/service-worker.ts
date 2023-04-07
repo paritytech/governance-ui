@@ -1,7 +1,3 @@
-import { isPeriodicBackgroundSyncGranted } from './permissions.js';
-
-export const REFERENDA_UPDATES_TAG = 'fetch-referenda-updates';
-
 export async function registerServiceWorker() {
   const reg = await navigator.serviceWorker.register(
     new URL('../service-worker.ts', import.meta.url),
@@ -12,18 +8,6 @@ export async function registerServiceWorker() {
 
   // Wait for the service worker to be ready
   await navigator.serviceWorker.ready;
-
-  try {
-    if (await isPeriodicBackgroundSyncGranted()) {
-      await reg.periodicSync.register(REFERENDA_UPDATES_TAG, {
-        minInterval: 24 * 60 * 60 * 1000, // 1 day
-      });
-    } else {
-      console.warn('Permission to register a periodicSync denied');
-    }
-  } catch {
-    console.warn('Periodic Sync could not be registered!');
-  }
 
   reg.addEventListener('updatefound', () => {
     // A wild service worker has appeared in reg.installing!
