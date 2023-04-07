@@ -17,8 +17,9 @@ ReactDOMClient.createRoot(container).render(
   </React.StrictMode>
 );
 
-registerServiceWorker().catch((e) =>
+registerServiceWorker().catch((e: Error) => {
   console.warn(
     `Browser doesn't support ServiceWorker; App won't be available offline: ${e.toString()}`
-  )
-);
+  );
+  console.log(e.stack);
+});
