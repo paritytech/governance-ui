@@ -25,7 +25,7 @@ const Account = ({
           style={{ cursor: 'unset' }}
           value={address}
           theme="polkadot"
-          size={48}
+          size={32}
         />
       </div>
       <div className="m-1 flex flex-auto flex-col text-xs">
