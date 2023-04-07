@@ -1,8 +1,6 @@
 import type { Tally, VotingDelegating } from '../../../types';
-import type { TrackType } from './types';
 
 import { memo, useState } from 'react';
-import { trackCategories } from '../../../chain';
 import { useDelegation } from '../../../contexts/Delegation.js';
 import { Button, Card } from '../../lib';
 import { CheckIcon, ChevronDownIcon } from '../../icons';
@@ -13,7 +11,13 @@ import { Accounticon } from '../accounts/Accounticon';
 import { Network } from '../../../network';
 import { CloseIcon } from '../../icons';
 import { UndelegateModal } from './delegateModal/Undelegate';
-import { useAppLifeCycle, extractDelegations } from '../../../lifecycle';
+import {
+  useAppLifeCycle,
+  extractDelegations,
+  TrackMetaData,
+  TrackCategory,
+  allTracksCount,
+} from '../../../lifecycle';
 
 interface ICheckBoxProps {
   title?: string;
@@ -67,7 +71,7 @@ export function CheckBox({
 }
 
 interface ITrackCheckableCardProps {
-  track: TrackType;
+  track: TrackMetaData;
   referenda: Map<number, ReferendumOngoing>;
   details: Map<number, ReferendumDetails>;
   delegation: VotingDelegating | undefined;
@@ -175,7 +179,7 @@ function TrackDelegation({
   track,
   delegation,
 }: {
-  track: TrackType;
+  track: TrackMetaData;
   delegation: VotingDelegating;
 }) {
   const { target } = delegation;
@@ -278,6 +282,7 @@ interface ITrackSelectProps {
   network: Network;
   referenda: Map<number, ReferendumOngoing>;
   details: Map<number, ReferendumDetails>;
+  tracks: Array<TrackCategory>;
   delegateHandler: () => void;
 }
 export function TrackSelect({
@@ -285,16 +290,13 @@ export function TrackSelect({
   network,
   referenda,
   details,
+  tracks,
   delegateHandler,
 }: ITrackSelectProps) {
   const { selectedTracks, setTrackSelection } = useDelegation();
   const referendaByTrack = partitionReferendaByTrack(referenda);
   const activeReferendaCount = Array.from(referendaByTrack.entries()).reduce(
     (acc, [, track]) => acc + track.size,
-    0
-  );
-  const allTracksCount = Array.from(trackCategories.entries()).reduce(
-    (acc, [, track]) => acc + track.tracks.length,
     0
   );
   const { state } = useAppLifeCycle();
@@ -319,11 +321,10 @@ export function TrackSelect({
           <CheckBox
             background
             title="All tracks"
-            checked={selectedTracks.size == allTracksCount}
-            // how do i check number of available tracks?
+            checked={selectedTracks.size == allTracksCount(tracks)}
             onChange={(e) => {
               const isChecked = e.target.checked;
-              trackCategories.map((category) => {
+              tracks.map((category) => {
                 category.tracks.map((track) => {
                   setTrackSelection(track.id, isChecked);
                 });
@@ -352,7 +353,7 @@ export function TrackSelect({
         <div
           className={`flex w-full flex-col justify-between md:flex-row md:gap-4 ${className}`}
         >
-          {trackCategories.map((category, idx) => (
+          {tracks.map((category, idx) => (
             <div key={idx} className="flex w-full flex-col gap-2 md:w-1/4">
               <div className="text-sm">{category.title}</div>
               <div className="mb-8 flex flex-col gap-2 lg:gap-4">

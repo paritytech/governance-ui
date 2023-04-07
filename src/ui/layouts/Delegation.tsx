@@ -16,7 +16,6 @@ import { ReferendumOngoing } from '../../types';
 import Headline from '../components/Headline';
 import { Option } from '../lib/Dropdown';
 import { DelegateModal } from '../components/delegation/delegateModal/Delegate';
-import { trackCategories } from '../../chain';
 import { isValidAddress } from '../../utils/polkadot-api';
 
 export function AddAddressModal({
@@ -135,7 +134,7 @@ export const DelegateSection = () => {
   const [delegateVisible, setDelegateVisible] = useState(false);
   const [delegate, setDelegate] = useState('');
   const { selectedTracks } = useDelegation();
-  const tracks = trackCategories
+  const tracks = state.tracks
     .map((track) => track.tracks)
     .flat()
     .filter((track) => selectedTracks.has(track.id));
@@ -236,7 +235,7 @@ export const DelegateSection = () => {
         open={delegateVisible}
         onClose={() => setDelegateVisible(false)}
         delegate={delegate}
-        tracks={tracks}
+        selectedTracks={tracks}
       />
     </>
   );
@@ -264,6 +263,7 @@ function DelegationPanelContent({ state }: { state: State }): JSX.Element {
           network={network}
           details={state.details}
           referenda={exportReferenda(state)}
+          tracks={state.tracks}
           delegateHandler={() => gotoSection(delegateSectionRef)}
         />
       </div>

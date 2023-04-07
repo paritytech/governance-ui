@@ -1,5 +1,4 @@
-import type { TrackType } from './types';
-import type { Delegate, State } from '../../../lifecycle/types';
+import type { Delegate, State, TrackMetaData } from '../../../lifecycle/types';
 import { SyntheticEvent, useState } from 'react';
 import { ChevronRightIcon, DelegateIcon } from '../../icons';
 import { Button, Card } from '../../lib';
@@ -12,14 +11,13 @@ import {
   extractIsProcessing,
   extractRoles,
 } from '../../../lifecycle';
-import { trackCategories } from '../../../chain/index';
 import { DelegateModal } from './delegateModal/Delegate';
-import { useDelegation } from '../../../contexts';
+import { useAccount, useDelegation } from '../../../contexts';
 import EllipsisTextbox from '../EllipsisTextbox';
 
-function filterUndelegatedTracks(state: State): TrackType[] {
+function filterUndelegatedTracks(state: State): TrackMetaData[] {
   const delegatedTrackIds = new Set(extractDelegations(state).keys());
-  return trackCategories
+  return state.tracks
     .map((track) => track.tracks)
     .flat()
     .filter((t) => !delegatedTrackIds.has(t.id));
@@ -40,8 +38,11 @@ export function DelegateCard({
   const roles = extractRoles(address, state);
   const isProcessing = extractIsProcessing(state);
 
+  const { connectedAccount } = useAccount();
   const [txVisible, setTxVisible] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
+
+  const connectedAddress = connectedAccount?.account?.address;
 
   // transaction Modal handlers
   const closeTxModal = () => {
@@ -70,7 +71,7 @@ export function DelegateCard({
   // extract tracks
   const undelegatedTracks = filterUndelegatedTracks(state);
   const { selectedTracks } = useDelegation();
-  const someTracks = trackCategories
+  const someTracks = state.tracks
     .map((track) => track.tracks)
     .flat()
     .filter((track) => selectedTracks.has(track.id));
@@ -113,7 +114,7 @@ export function DelegateCard({
             className={`${heightFit ? 'max-h-[6rem] lg:h-[6rem]' : 'h-[6rem]'}`}
             text={manifesto}
             expandLinkTitle="Read more ->"
-            onExpand={() => expandHandler()}
+            onExpand={expandHandler}
           />
         )}
         <StatBar stats={[]} />
@@ -122,7 +123,7 @@ export function DelegateCard({
           <Button
             variant="primary"
             onClick={delegateHandler}
-            disabled={isProcessing}
+            disabled={isProcessing || !connectedAddress}
           >
             <div>Delegate All Votes</div>
             <DelegateIcon />
@@ -133,7 +134,7 @@ export function DelegateCard({
         open={txVisible}
         onClose={closeTxModal}
         delegate={delegate}
-        tracks={tracks}
+        selectedTracks={tracks}
       />
       <DelegateInfoModal
         open={infoVisible}
