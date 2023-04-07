@@ -7,6 +7,7 @@ import {
 } from '@polkadot/api/types';
 import { IMethod } from '@polkadot/types-codec/types/interfaces';
 import {
+  BN_HUNDRED,
   formatBalance as formatBalanceP,
   hexToU8a,
   isHex,
@@ -58,7 +59,11 @@ export async function calcEstimatedFee(
   sender: string
 ): Promise<BN> {
   const { partialFee } = await tx.paymentInfo(sender);
-  return partialFee.muln(130).divn(100); // to count for weights fee = partialFee * 1.3
+  // 'partialFee' is the total fee minus eventual tip
+  // Use some margin to be extra safe (strategy copied from https://github.com/polkadot-js/apps/blob/master/packages/page-accounts/src/modals/Transfer.tsx#L65)
+  // Also see https://polkadot.js.org/docs/api/start/api.tx.subs/#payment-information
+  // and https://wiki.polkadot.network/docs/build-node-interaction#fetching-a-block
+  return partialFee.muln(110).div(BN_HUNDRED);
 }
 
 export function formatBalance(
