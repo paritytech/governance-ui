@@ -235,7 +235,7 @@ export const DelegateSection = () => {
         open={delegateVisible}
         onClose={() => setDelegateVisible(false)}
         delegate={delegate}
-        tracks={tracks}
+        selectedTracks={tracks}
       />
     </>
   );

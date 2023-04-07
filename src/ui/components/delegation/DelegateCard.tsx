@@ -131,7 +131,7 @@ export function DelegateCard({
         open={txVisible}
         onClose={closeTxModal}
         delegate={delegate}
-        tracks={tracks}
+        selectedTracks={tracks}
       />
       <DelegateInfoModal
         open={infoVisible}

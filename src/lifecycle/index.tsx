@@ -771,6 +771,13 @@ async function fetchDelegates(network: Network): Promise<Result<Delegate[]>> {
   }
 }
 
+export function allTracksCount(tracks: TrackCategory[]): number {
+  return Array.from(tracks.entries()).reduce(
+    (acc, [, track]) => acc + track.tracks.length,
+    0
+  );
+}
+
 function tracksFor(network: Network): TrackCategory[] {
   switch (network) {
     case Network.Kusama:

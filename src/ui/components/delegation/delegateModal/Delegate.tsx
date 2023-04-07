@@ -8,8 +8,13 @@ import {
   useAppLifeCycle,
   extractBalance,
   extractChainInfo,
+  allTracksCount,
 } from '../../../../lifecycle';
-import { Delegate, TrackMetaData } from '../../../../lifecycle/types';
+import {
+  Delegate,
+  TrackCategory,
+  TrackMetaData,
+} from '../../../../lifecycle/types';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { Conviction } from '../../../../types';
 import { SimpleAnalytics } from '../../../../analytics';
@@ -21,14 +26,52 @@ import {
 } from '../../../../utils/polkadot-api';
 import { LabeledBox } from '../common/LabeledBox';
 
+function formatConviction(conviction: Conviction): string {
+  switch (conviction) {
+    case Conviction.None:
+      return 'No conviction';
+    default:
+      return conviction.toString();
+  }
+}
+
+function TracksToDelegate({
+  tracks,
+  selectedTracks,
+  remainingCount,
+}: {
+  tracks: TrackCategory[];
+  selectedTracks: TrackMetaData[];
+  remainingCount: number;
+}): JSX.Element {
+  if (allTracksCount(tracks) == selectedTracks.length) {
+    return <>All tracks</>;
+  } else {
+    const tracksCaption = selectedTracks
+      .slice(0, 2)
+      .map((track) => track.title)
+      .join(', ');
+    return (
+      <div>
+        {tracksCaption}
+        {!!remainingCount && (
+          <>
+            {' and'} <a>{`${remainingCount} more`}</a>
+          </>
+        )}
+      </div>
+    );
+  }
+}
+
 export function DelegateModal({
   delegate,
-  tracks,
+  selectedTracks,
   open,
   onClose,
 }: {
   delegate: Delegate | string;
-  tracks: TrackMetaData[];
+  selectedTracks: TrackMetaData[];
   open: boolean;
   onClose: () => void;
 }) {
@@ -41,13 +84,10 @@ export function DelegateModal({
   const delegateAddress =
     typeof delegate === 'object' ? delegate.address : delegate;
   const name = typeof delegate === 'object' ? delegate.name : null;
-  const tracksCaption = tracks
-    .slice(0, 2)
-    .map((track) => track.title)
-    .join(', ');
-  const remainingCount = Math.max(tracks.length - 2, 0);
+  const remainingCount = Math.max(selectedTracks.length - 2, 0);
 
   const connectedAddress = connectedAccount?.account?.address;
+  const conviction = Conviction.None;
 
   useEffect(() => {
     if (
@@ -55,20 +95,27 @@ export function DelegateModal({
       delegateAddress &&
       connectedAddress &&
       balance &&
-      tracks.length > 0
+      selectedTracks.length > 0
     ) {
       // Use a default conviction voting for now
       updater
         .delegate(
           delegateAddress,
-          tracks.map((track) => track.id),
+          selectedTracks.map((track) => track.id),
           balance,
-          Conviction.None
+          conviction
         )
         .then(async (tx) => {
           if (tx.type === 'ok') {
             const fee = await calcEstimatedFee(tx.value, connectedAddress);
-            // usable balance is calculated as (balance - 3 * fees), to leave enough balance in account for undelegate tx fees.
+            // usable balance is calculated as (balance - undelegate fee), to leave enough balance in account for undelegate tx fees.
+            const unde = await updater.undelegate([]);
+            if (unde.type == 'ok') {
+              const undeFee = await calcEstimatedFee(
+                unde.value,
+                connectedAddress
+              );
+            }
             const usableBalance = BN.max(balance.sub(fee.muln(3)), new BN(0));
             setFee(fee);
             setUsableBalance(usableBalance);
@@ -83,12 +130,12 @@ export function DelegateModal({
     amount: BN
   ) => {
     try {
-      const trackIds = tracks.map((track) => track.id);
+      const trackIds = selectedTracks.map((track) => track.id);
       const tx = await updater.delegate(
         delegateAddress,
         trackIds,
         amount,
-        Conviction.None
+        conviction
       );
       if (tx.type === 'ok') {
         await signAndSend(address, signer, tx.value, (result) =>
@@ -114,14 +161,11 @@ export function DelegateModal({
           </div>
           <div className="grid w-full grid-cols-3 grid-rows-2 gap-4">
             <LabeledBox className="col-span-2" title="Tracks to delegate">
-              <div>
-                {tracksCaption}
-                {!!remainingCount && (
-                  <>
-                    {' and'} <a>{`${remainingCount} more`}</a>
-                  </>
-                )}
-              </div>
+              <TracksToDelegate
+                tracks={state.tracks}
+                selectedTracks={selectedTracks}
+                remainingCount={remainingCount}
+              />
             </LabeledBox>
             <LabeledBox title="Tokens to delegate">
               <div>
@@ -142,7 +186,7 @@ export function DelegateModal({
               </div>
             </LabeledBox>
             <LabeledBox title="Conviction">
-              <div>x0.01</div>
+              <div>{formatConviction(conviction)}</div>
             </LabeledBox>
           </div>
           <hr className="w-full bg-gray-400" />
@@ -163,6 +207,7 @@ export function DelegateModal({
           </Button>
 
           <Button
+            variant="primary"
             onClick={() =>
               connectedAccount &&
               usableBalance?.gtn(0) &&

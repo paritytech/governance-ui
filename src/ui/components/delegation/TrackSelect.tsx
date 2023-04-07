@@ -16,6 +16,7 @@ import {
   extractDelegations,
   TrackMetaData,
   TrackCategory,
+  allTracksCount,
 } from '../../../lifecycle';
 
 interface ICheckBoxProps {
@@ -298,10 +299,6 @@ export function TrackSelect({
     (acc, [, track]) => acc + track.size,
     0
   );
-  const allTracksCount = Array.from(tracks.entries()).reduce(
-    (acc, [, track]) => acc + track.tracks.length,
-    0
-  );
   const { state } = useAppLifeCycle();
   const delegations = extractDelegations(state);
 
@@ -324,8 +321,7 @@ export function TrackSelect({
           <CheckBox
             background
             title="All tracks"
-            checked={selectedTracks.size == allTracksCount}
-            // how do i check number of available tracks?
+            checked={selectedTracks.size == allTracksCount(tracks)}
             onChange={(e) => {
               const isChecked = e.target.checked;
               tracks.map((category) => {
