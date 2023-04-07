@@ -1,4 +1,3 @@
-import type { TrackType } from '../types';
 import type { SigningAccount, VotingDelegating } from '../../../../types';
 
 import { useState, useEffect } from 'react';
@@ -8,6 +7,7 @@ import {
   useAppLifeCycle,
   extractBalance,
   extractChainInfo,
+  TrackMetaData,
 } from '../../../../lifecycle';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { SimpleAnalytics } from '../../../../analytics';
@@ -27,7 +27,7 @@ export function UndelegateModal({
   onClose,
 }: {
   delegation: VotingDelegating;
-  tracks: TrackType[];
+  tracks: TrackMetaData[];
   decimals?: number;
   unit?: string;
   open: boolean;

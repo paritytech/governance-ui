@@ -1,5 +1,4 @@
-import type { TrackType } from './types';
-import type { Delegate, State } from '../../../lifecycle/types';
+import type { Delegate, State, TrackMetaData } from '../../../lifecycle/types';
 import { SyntheticEvent, useState } from 'react';
 import { ChevronRightIcon, DelegateIcon } from '../../icons';
 import { Button, Card } from '../../lib';
@@ -12,14 +11,13 @@ import {
   extractIsProcessing,
   extractRoles,
 } from '../../../lifecycle';
-import { trackCategories } from '../../../chain/index';
 import { DelegateModal } from './delegateModal/Delegate';
 import { useDelegation } from '../../../contexts';
 import EllipsisTextbox from '../EllipsisTextbox';
 
-function filterUndelegatedTracks(state: State): TrackType[] {
+function filterUndelegatedTracks(state: State): TrackMetaData[] {
   const delegatedTrackIds = new Set(extractDelegations(state).keys());
-  return trackCategories
+  return state.tracks
     .map((track) => track.tracks)
     .flat()
     .filter((t) => !delegatedTrackIds.has(t.id));
@@ -70,7 +68,7 @@ export function DelegateCard({
   // extract tracks
   const undelegatedTracks = filterUndelegatedTracks(state);
   const { selectedTracks } = useDelegation();
-  const someTracks = trackCategories
+  const someTracks = state.tracks
     .map((track) => track.tracks)
     .flat()
     .filter((track) => selectedTracks.has(track.id));

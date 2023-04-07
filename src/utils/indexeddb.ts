@@ -1,5 +1,4 @@
 import { err, ok, Result } from '.';
-import { areEquals } from './set';
 
 export type OpenOptions = {
   onBlocked?: (event: Event) => void;

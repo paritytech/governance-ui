@@ -73,6 +73,17 @@ export type Delegate = {
   manifesto?: string;
 };
 
+export type TrackMetaData = {
+  id: number;
+  title: string;
+  description: string;
+};
+
+export type TrackCategory = {
+  title: string;
+  tracks: TrackMetaData[];
+};
+
 type BaseState = {
   reports?: Report[];
   processingReport?: Processing;
@@ -80,6 +91,7 @@ type BaseState = {
   connectivity: Connectivity;
   details: Map<number, ReferendumDetails>;
   indexes: Record<string, object>;
+  tracks: Array<TrackCategory>;
   delegates: Array<Delegate>;
   customDelegates: Array<Delegate>;
 };
@@ -125,6 +137,7 @@ export type SetProcessingReport = {
 export type SetRestored = PersistedDataContext & {
   type: 'SetRestored';
   network: Network;
+  tracks: Array<TrackCategory>;
 };
 
 export type SetConnectedAddress = {

@@ -1,4 +1,3 @@
-import type { TrackType } from '../types';
 import type { SigningAccount } from '../../../../types';
 
 import BN from 'bn.js';
@@ -10,7 +9,7 @@ import {
   extractBalance,
   extractChainInfo,
 } from '../../../../lifecycle';
-import { Delegate } from '../../../../lifecycle/types';
+import { Delegate, TrackMetaData } from '../../../../lifecycle/types';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { Conviction } from '../../../../types';
 import { SimpleAnalytics } from '../../../../analytics';
@@ -29,7 +28,7 @@ export function DelegateModal({
   onClose,
 }: {
   delegate: Delegate | string;
-  tracks: TrackType[];
+  tracks: TrackMetaData[];
   open: boolean;
   onClose: () => void;
 }) {

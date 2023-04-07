@@ -61,9 +61,12 @@ import {
   Processing,
   Report,
   State,
+  TrackCategory,
 } from './types.js';
 import { fetchReferenda } from '../utils/polkassembly.js';
 import BN from 'bn.js';
+import kusamaTracks from '../../assets/data/kusama/tracks.json';
+import polkadotTracks from '../../assets/data/polkadot/tracks.json';
 
 // Auto follow chain updates? Only if user settings? Show notif? Only if impacting change?
 // Revisit if/when ChainState is persisted
@@ -284,12 +287,13 @@ function reducer(previousState: State, action: Action): State {
       }
     }
     case 'SetRestored': {
-      const { network, votes, customDelegates } = action;
+      const { network, tracks, votes, customDelegates } = action;
       return {
         ...previousState,
         type: 'RestoredState',
         network,
         votes,
+        tracks,
         customDelegates,
       };
     }
@@ -726,6 +730,7 @@ const DEFAULT_INITIAL_STATE: State = {
   connectedAddress: null,
   details: new Map(),
   indexes: {},
+  tracks: [],
   delegates: [],
   customDelegates: [],
 };
@@ -766,6 +771,15 @@ async function fetchDelegates(network: Network): Promise<Result<Delegate[]>> {
   }
 }
 
+function tracksFor(network: Network): TrackCategory[] {
+  switch (network) {
+    case Network.Kusama:
+      return kusamaTracks;
+    default:
+      return polkadotTracks;
+  }
+}
+
 /**
  * Called when the connected network has changed.
  * Underlying `indexeddb`, `api` and associated resources will refreshed.
@@ -787,6 +801,7 @@ async function dispatchNetworkChange(
   dispatch({
     type: 'SetRestored',
     network,
+    tracks: tracksFor(network),
     ...restoredState,
   });
 
