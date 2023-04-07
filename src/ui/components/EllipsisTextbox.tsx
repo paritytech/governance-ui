@@ -29,7 +29,9 @@ const EllipsisTextbox = ({
       onClick={() => isOverflowed && onExpand()}
     >
       <div
-        className={`relative overflow-hidden text-ellipsis text-body-2 md:text-body ${className}`}
+        className={`relative overflow-hidden text-ellipsis text-body-2 md:text-body ${
+          isOverflowed ? 'cursor-pointer' : ''
+        } ${className}`}
         ref={containerRef}
       >
         <Remark>{text}</Remark>
