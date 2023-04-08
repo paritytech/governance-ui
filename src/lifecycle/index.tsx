@@ -28,6 +28,7 @@ import {
   createBatchVotes,
   delegate,
   undelegate,
+  unlock,
   getVotingFor,
 } from '../chain/conviction-voting.js';
 import { getAllMembers } from '../chain/fellowship-collective.js';
@@ -42,7 +43,7 @@ import {
   STORES,
   VOTE_STORE_NAME,
 } from '../utils/db.js';
-import { all, allKeys, clear, open, save } from '../utils/indexeddb.js';
+import { all, clear, open, save } from '../utils/indexeddb.js';
 import { measured } from '../utils/performance.js';
 import { batchAll, newApi, signAndSend } from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
@@ -60,9 +61,13 @@ import {
   Processing,
   Report,
   State,
+  TrackCategory,
+  TrackMetaData,
 } from './types.js';
 import { fetchReferenda } from '../utils/polkassembly.js';
 import BN from 'bn.js';
+import kusamaTracks from '../../assets/data/kusama/tracks.json';
+import polkadotTracks from '../../assets/data/polkadot/tracks.json';
 
 // Auto follow chain updates? Only if user settings? Show notif? Only if impacting change?
 // Revisit if/when ChainState is persisted
@@ -306,12 +311,13 @@ function reducer(previousState: State, action: Action): State {
       }
     }
     case 'SetRestored': {
-      const { network, votes, customDelegates } = action;
+      const { network, tracks, votes, customDelegates } = action;
       return {
         ...previousState,
         type: 'RestoredState',
         network,
         votes,
+        tracks,
         customDelegates,
       };
     }
@@ -632,12 +638,21 @@ export class Updater {
   }
 
   async undelegate(
-    tracks: number[]
+    tracks: number[],
+    unlockTarget: string
   ): Promise<Result<SubmittableExtrinsic<'promise', SubmittableResult>>> {
     const state = this.#stateAccessor();
     const api = await this.getApi(state);
     if (api) {
-      const txs = tracks.map((track) => undelegate(api, track));
+      let txs = tracks.map((track) => undelegate(api, track));
+      if (unlockTarget) {
+        // delegation locks are put on balance per each delegated track.
+        // here all tracks that are being undelegated are bateched with an unlock call to lift their locks.
+        const unlockTxs = tracks.map((track) =>
+          unlock(api, track, unlockTarget)
+        );
+        txs = [...txs, ...unlockTxs];
+      }
       return ok(batchAll(api, txs));
     } else {
       const report = error('Failed to retrieve Api');
@@ -707,12 +722,12 @@ export class Updater {
     const state = this.#stateAccessor();
     if (state.type == 'ConnectedState') {
       const db = await DB_CACHE.getOrCreate(dbNameFor(state.network));
-      const keys = (await allKeys(
+      await save(
         db,
-        CUSTOM_DELEGATES_STORE_NAME
-      )) as Set<number>;
-      const maxKey = Math.max(...keys);
-      await save(db, CUSTOM_DELEGATES_STORE_NAME, maxKey + 1, delegate);
+        CUSTOM_DELEGATES_STORE_NAME,
+        state.customDelegates.length + 1,
+        delegate
+      );
     } else {
       await this.addReport(error('Must be connected to add custom delegate'));
     }
@@ -739,6 +754,7 @@ const DEFAULT_INITIAL_STATE: State = {
   connectedAddress: null,
   details: new Map(),
   indexes: {},
+  tracks: [],
   delegates: [],
   customDelegates: [],
 };
@@ -779,6 +795,32 @@ async function fetchDelegates(network: Network): Promise<Result<Delegate[]>> {
   }
 }
 
+export function allTracksCount(tracks: TrackCategory[]): number {
+  return Array.from(tracks.entries()).reduce(
+    (acc, [, track]) => acc + track.tracks.length,
+    0
+  );
+}
+
+function tracksFor(network: Network): TrackCategory[] {
+  switch (network) {
+    case Network.Kusama:
+      return kusamaTracks;
+    default:
+      return polkadotTracks;
+  }
+}
+
+export function filterTracks(
+  tracks: TrackCategory[],
+  filter: (t: TrackMetaData) => boolean
+): TrackMetaData[] {
+  return tracks
+    .map((track) => track.tracks)
+    .flat()
+    .filter(filter);
+}
+
 /**
  * Called when the connected network has changed.
  * Underlying `indexeddb`, `api` and associated resources will refreshed.
@@ -800,6 +842,7 @@ async function dispatchNetworkChange(
   dispatch({
     type: 'SetRestored',
     network,
+    tracks: tracksFor(network),
     ...restoredState,
   });
 

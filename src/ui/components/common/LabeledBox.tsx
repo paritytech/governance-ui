@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { TrackType } from '../types';
+import { TrackMetaData } from 'src/lifecycle';
 
 export function LabeledBox({
   title,
@@ -26,7 +26,7 @@ export const TracksLabeledBox = memo(function ({
   visibleCount,
 }: {
   title: string;
-  tracks: TrackType[];
+  tracks: TrackMetaData[];
   visibleCount: number;
 }) {
   const tracksCaption = tracks

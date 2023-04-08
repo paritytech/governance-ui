@@ -1,6 +1,4 @@
-import type { TrackType } from '../types';
-import type { Delegate, State } from '../../../lifecycle/types';
-
+import type { Delegate, State, TrackMetaData } from '../../../lifecycle/types';
 import { SyntheticEvent, useState } from 'react';
 import { ChevronRightIcon, DelegateIcon, CloseIcon } from '../../icons';
 import { Button, Card } from '../../lib';
@@ -13,17 +11,17 @@ import {
   extractIsProcessing,
   extractRoles,
 } from '../../../lifecycle';
-import { filterTracks } from '../../../chain/index';
+import { filterTracks } from '../../../lifecycle';
 import { DelegateModal } from './delegateModal/Delegate';
-import { useDelegation } from '../../../contexts';
 import { InnerCard } from '../common/InnerCard';
+import { useAccount, useDelegation } from '../../../contexts';
 import EllipsisTextbox from '../EllipsisTextbox';
 import { UndelegateModal } from './delegateModal/Undelegate';
 import { TracksLabeledBox } from '../common/LabeledBox';
 
-function filterUndelegatedTracks(state: State): TrackType[] {
+function filterUndelegatedTracks(state: State): TrackMetaData[] {
   const delegatedTrackIds = new Set(extractDelegations(state).keys());
-  return filterTracks((t) => !delegatedTrackIds.has(t.id));
+  return filterTracks(state.tracks, (t) => !delegatedTrackIds.has(t.id));
 }
 
 function DelegatedTracks({
@@ -32,7 +30,7 @@ function DelegatedTracks({
   delegate,
 }: {
   disabled: boolean;
-  tracks: TrackType[];
+  tracks: TrackMetaData[];
   delegate: Delegate;
 }) {
   const [showModal, setShowModal] = useState(false);
@@ -80,8 +78,11 @@ export function DelegateCard({
   const roles = extractRoles(address, state);
   const isProcessing = extractIsProcessing(state);
 
+  const { connectedAccount } = useAccount();
   const [txVisible, setTxVisible] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
+
+  const connectedAddress = connectedAccount?.account?.address;
 
   // transaction Modal handlers
   const closeTxModal = () => {
@@ -107,15 +108,20 @@ export function DelegateCard({
     openInfoModal();
   };
 
-  // extract tracks to be delegated
+  // extract tracks are yet to be delegated
   const undelegatedTracks = filterUndelegatedTracks(state);
   const { selectedTracks } = useDelegation();
-  const someTracks = filterTracks((t) => selectedTracks.has(t.id));
+  const someTracks = filterTracks(state.tracks, (t) =>
+    selectedTracks.has(t.id)
+  );
   const tracks = variant === 'all' ? undelegatedTracks : someTracks;
 
   // extract tracks that are already delegated
   const delegatedTrackSet = new Set(delegate.delegatedTracks);
-  const delegatedTracks = filterTracks((t) => delegatedTrackSet.has(t.id));
+  const delegatedTracks = filterTracks(state.tracks, (t) =>
+    delegatedTrackSet.has(t.id)
+  );
+
   return (
     <div
       className={`flex h-full shrink-0  ${
@@ -153,7 +159,7 @@ export function DelegateCard({
             className="max-h-[6rem] lg:h-[6rem]"
             text={manifesto}
             expandLinkTitle="Read more ->"
-            onExpand={() => expandHandler()}
+            onExpand={expandHandler}
           />
         )}
         <div className="grow" />
@@ -171,7 +177,7 @@ export function DelegateCard({
           <Button
             variant="primary"
             onClick={delegateHandler}
-            disabled={isProcessing}
+            disabled={isProcessing || !connectedAddress}
           >
             <div>Delegate All Votes</div>
             <DelegateIcon />
@@ -182,7 +188,7 @@ export function DelegateCard({
         open={txVisible}
         onClose={closeTxModal}
         delegate={delegate}
-        tracks={tracks}
+        selectedTracks={tracks}
       />
       <DelegateInfoModal
         open={infoVisible}

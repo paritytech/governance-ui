@@ -1,3 +1,5 @@
+import { err, ok, Result } from '.';
+
 export type OpenOptions = {
   onBlocked?: (event: Event) => void;
   onUpgradeNeeded?: (event: Event) => void;
@@ -5,16 +7,171 @@ export type OpenOptions = {
 
 export type ObjectStoreIndex = {
   name: string;
-  keyPath: string;
-  parameters: IDBIndexParameters;
+  keyPath: string | string[];
+  options?: IDBIndexParameters;
 };
 
 export type ObjectStore = {
   name: string;
-  autoIncrement?: boolean;
-  keyPath?: string[];
   indexes?: ObjectStoreIndex[];
+  options?: IDBObjectStoreParameters;
 };
+
+function extractObjectStoreIndex(
+  name: string,
+  store: IDBObjectStore
+): ObjectStoreIndex {
+  const index = store.index(name);
+  return {
+    name,
+    keyPath: index.keyPath,
+  };
+}
+
+function extractIndexes(store: IDBObjectStore): ObjectStoreIndex[] | undefined {
+  if (store.indexNames.length > 0) {
+    return new Array(...store.indexNames).map((name) =>
+      extractObjectStoreIndex(name, store)
+    );
+  }
+}
+
+function extractOptions(
+  store: IDBObjectStore
+): IDBObjectStoreParameters | undefined {
+  const defaultAutoIncrement = store.autoIncrement
+    ? { autoIncrement: store.autoIncrement }
+    : null;
+  const defaultKeyPath = store.keyPath ? { keyPath: store.keyPath } : null;
+  if (defaultAutoIncrement || defaultKeyPath) {
+    return {
+      ...defaultAutoIncrement,
+      ...defaultKeyPath,
+    };
+  }
+}
+
+function extractObjectStore(store: IDBObjectStore): ObjectStore {
+  const indexes = extractIndexes(store);
+  const defaultIndexes = indexes ? { indexes } : null;
+  const options = extractOptions(store);
+  const defaultOptions = options ? { options } : null;
+  return {
+    name: store.name,
+    ...defaultIndexes,
+    ...defaultOptions,
+  };
+}
+
+function extractObjectStoresFromDB(dataBase: IDBDatabase): Array<ObjectStore> {
+  const storeNames = new Array(...dataBase.objectStoreNames);
+  if (storeNames.length > 0) {
+    const transaction = dataBase.transaction(storeNames, 'readonly');
+    return extractObjectStores(storeNames, transaction);
+  }
+  return [];
+}
+
+function extractObjectStores(
+  storeNames: string[],
+  transaction: IDBTransaction
+): Array<ObjectStore> {
+  return storeNames.map((storeName) =>
+    extractObjectStore(transaction.objectStore(storeName))
+  );
+}
+
+function createStore(
+  database: IDBDatabase,
+  { name, indexes, options }: ObjectStore
+) {
+  const store = database.createObjectStore(name, options);
+  if (indexes) {
+    indexes.forEach(({ name, keyPath, options }) => {
+      store.createIndex(name, keyPath, options);
+    });
+  }
+}
+
+function updateStore(
+  transaction: IDBTransaction,
+  { name, options }: ObjectStore
+): Result<boolean> {
+  const objectStore = transaction.objectStore(name);
+  // TODO add support for indexes reconciliation
+  if (options) {
+    const { autoIncrement, keyPath } = options;
+    if (keyPath != objectStore.keyPath) {
+      return err(new Error(`Unsupported keyPath modification: ${keyPath}`));
+    }
+    if (autoIncrement != objectStore.autoIncrement) {
+      return err(
+        new Error(`Unsupported autoIncrement modification: ${autoIncrement}`)
+      );
+    }
+  }
+  return ok(true);
+}
+
+function deleteStore(database: IDBDatabase, name: string): void {
+  database.deleteObjectStore(name);
+}
+
+function isSameIndex(
+  index1: ObjectStoreIndex,
+  index2: ObjectStoreIndex
+): boolean {
+  return (
+    index1.name == index2.name &&
+    index1.keyPath == index2.keyPath &&
+    index1.options?.multiEntry == index2.options?.multiEntry &&
+    index1.options?.unique == index2.options?.unique
+  );
+}
+
+function areSameIndexes(
+  indexes1?: ObjectStoreIndex[],
+  indexes2?: ObjectStoreIndex[]
+): boolean {
+  if (indexes1 == null || indexes2 == null) {
+    return indexes1 == indexes2;
+  }
+  if (indexes1.length != indexes2.length) {
+    return false;
+  }
+  const sort = (a: ObjectStoreIndex, b: ObjectStoreIndex) =>
+    a.name > b.name ? 1 : a.name == b.name ? 0 : -1;
+  const sortedIndexes1 = indexes1.sort(sort);
+  const sortedIndexes2 = indexes2.sort(sort);
+  return sortedIndexes1.every((o, index) =>
+    isSameIndex(o, sortedIndexes2[index])
+  );
+}
+
+function isSameStore(store1: ObjectStore, store2: ObjectStore): boolean {
+  return (
+    store1.name == store2.name &&
+    areSameIndexes(store1.indexes, store2.indexes) &&
+    store1.options?.autoIncrement == store2.options?.autoIncrement &&
+    store1.options?.keyPath == store2.options?.keyPath
+  );
+}
+
+function areSameStores(
+  stores1: ObjectStore[],
+  stores2: ObjectStore[]
+): boolean {
+  if (stores1.length != stores2.length) {
+    return false;
+  }
+  const sort = (a: ObjectStore, b: ObjectStore) =>
+    a.name > b.name ? 1 : a.name == b.name ? 0 : -1;
+  const sortedStores1 = stores1.sort(sort);
+  const sortedStores2 = stores2.sort(sort);
+  return sortedStores1.every((o, index) =>
+    isSameStore(o, sortedStores2[index])
+  );
+}
 
 /**
  * @param name
@@ -26,30 +183,57 @@ export type ObjectStore = {
 export async function open(
   name: string,
   stores: ObjectStore[],
-  version?: number,
+  version: number,
   options: OpenOptions = {}
 ): Promise<IDBDatabase> {
-  return new Promise(function (resolve, reject) {
+  const request = indexedDB.open(name, version);
+  // Fail if no matching stores
+  return new Promise((resolve, reject) => {
     const { onBlocked, onUpgradeNeeded } = options;
-    const request = indexedDB.open(name, version);
     if (onBlocked) {
       // DB needs to be updated but is locked, eventually in another tab
       request.onblocked = onBlocked;
     }
     if (stores.length > 0 || onUpgradeNeeded) {
       request.onupgradeneeded = (event) => {
+        const transaction = request.transaction;
+        if (!transaction) {
+          // Can't happen as we are in an upgrade transaction
+          return;
+        }
+
+        // Will be called before onsuccess, if the transaction version is incremented
         const database = request.result;
-        const objectStoreNames = Array.from(database.objectStoreNames);
-        stores.forEach(({ name, indexes, ...options }) => {
-          if (!objectStoreNames.includes(name)) {
-            const store = database.createObjectStore(name, options);
-            if (indexes) {
-              indexes.forEach(({ name, keyPath, parameters }) => {
-                store.createIndex(name, keyPath || name, parameters);
-              });
-            }
+        const existingStores = new Map(
+          extractObjectStores(
+            new Array(...database.objectStoreNames),
+            transaction
+          ).map((store) => [store.name, store])
+        );
+        // 1. Create new stores
+        const newStores = stores.filter(
+          (store) => !existingStores.has(store.name)
+        );
+        newStores.forEach((store) => {
+          createStore(database, store);
+        });
+        // 2. Updated existing stores with updated definitions
+        stores.forEach((store) => {
+          const existingStore = existingStores.get(store.name);
+          if (existingStore && store != existingStore) {
+            updateStore(transaction, store);
           }
         });
+
+        // 3. Removed now undefined stores
+        const removedStores = new Array(...existingStores.values()).filter(
+          (existingStore) =>
+            !stores.find((store) => store.name == existingStore.name)
+        );
+        removedStores.forEach((store) => {
+          deleteStore(database, store.name);
+        });
+
         if (onUpgradeNeeded) {
           onUpgradeNeeded(event);
         }
@@ -59,6 +243,15 @@ export async function open(
       reject(request.error);
     };
     request.onsuccess = () => {
+      const database = request.result;
+      if (
+        version == database.version &&
+        !areSameStores(stores, extractObjectStoresFromDB(database))
+      ) {
+        reject(
+          new Error(`New store definitions but unchanged version (${version})`)
+        );
+      }
       resolve(request.result);
     };
   });

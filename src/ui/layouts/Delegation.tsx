@@ -12,12 +12,12 @@ import {
   filterOngoingReferenda,
   extractRoles,
   extractDelegatedTracks,
+  filterTracks,
 } from '../../lifecycle';
 import { ReferendumOngoing } from '../../types';
 import Headline from '../components/Headline';
 import { Option } from '../lib/Dropdown';
 import { DelegateModal } from '../components/delegation/delegateModal/Delegate';
-import { filterTracks } from '../../chain';
 import { AddDelegateModal } from '../components/delegation/delegateModal/AddDelegateModal';
 
 function filterVisibleDelegates(delegates: Delegate[]): Delegate[] {
@@ -130,7 +130,7 @@ export const DelegateSection = ({
   const [delegateVisible, setDelegateVisible] = useState(false);
   const [delegate, setDelegate] = useState('');
   const { selectedTracks } = useDelegation();
-  const tracks = filterTracks((t) => selectedTracks.has(t.id));
+  const tracks = filterTracks(state.tracks, (t) => selectedTracks.has(t.id));
 
   const aggregateOptions: Option[] = [
     { value: 0, label: 'All User Types', active: true },
@@ -226,7 +226,7 @@ export const DelegateSection = ({
         open={delegateVisible}
         onClose={() => setDelegateVisible(false)}
         delegate={delegate}
-        tracks={tracks}
+        selectedTracks={tracks}
       />
     </>
   );
@@ -260,6 +260,7 @@ function DelegationPanelContent({
           network={network}
           details={state.details}
           referenda={exportReferenda(state)}
+          tracks={state.tracks}
           delegateHandler={() => gotoSection(delegateSectionRef)}
         />
       </div>

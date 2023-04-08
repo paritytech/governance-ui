@@ -1,5 +1,4 @@
-import type { TrackType } from '../../types';
-import type { SigningAccount, VotingDelegating } from '../../../../types';
+import type { SigningAccount } from '../../../../types';
 
 import { useState, useEffect } from 'react';
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
@@ -8,6 +7,7 @@ import {
   useAppLifeCycle,
   extractBalance,
   extractChainInfo,
+  TrackMetaData,
 } from '../../../../lifecycle';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { SimpleAnalytics } from '../../../../analytics';
@@ -27,7 +27,7 @@ export function UndelegateModal({
   onClose,
 }: {
   address: string;
-  tracks: TrackType[];
+  tracks: TrackMetaData[];
   open: boolean;
   onClose: () => void;
 }) {
@@ -42,7 +42,8 @@ export function UndelegateModal({
   // set fee
   useEffect(() => {
     if (open && connectedAddress && balance && tracks.length > 0) {
-      updater.undelegate(tracks.map((track) => track.id)).then(async (tx) => {
+      const trackIds = tracks.map((track) => track.id);
+      updater.undelegate(trackIds, connectedAddress).then(async (tx) => {
         if (tx.type === 'ok') {
           const fee = await calcEstimatedFee(tx.value, connectedAddress);
           setFee(fee);
@@ -56,7 +57,8 @@ export function UndelegateModal({
     signer,
   }: SigningAccount) => {
     try {
-      const txs = await updater.undelegate(tracks.map((track) => track.id));
+      const trackIds = tracks.map((track) => track.id);
+      const txs = await updater.undelegate(trackIds, address);
       if (txs.type == 'ok') {
         await signAndSend(address, signer, txs.value, (result) =>
           updater.handleCallResult(result)
