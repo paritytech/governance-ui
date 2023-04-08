@@ -1,7 +1,7 @@
-import type { Delegate } from 'src/lifecycle';
+import type { Delegate } from '../../../../lifecycle';
 
 import { Modal } from '../../../lib';
-import { RoleTag } from '../common/RoleTag';
+import { RoleTag } from '../../common/RoleTag';
 import { Accounticon } from '../../accounts/Accounticon';
 import { extractRoles, useAppLifeCycle } from '../../../../lifecycle';
 import { Remark } from 'react-remark';
