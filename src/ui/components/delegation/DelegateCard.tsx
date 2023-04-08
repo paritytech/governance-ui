@@ -1,38 +1,78 @@
 import type { Delegate, State, TrackMetaData } from '../../../lifecycle/types';
 import { SyntheticEvent, useState } from 'react';
-import { ChevronRightIcon, DelegateIcon } from '../../icons';
+import { ChevronRightIcon, DelegateIcon, CloseIcon } from '../../icons';
 import { Button, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
 import { DelegateInfoModal } from './delegateModal/DelegateInfo';
-import { StatBar } from './common/Stats';
-import { RoleTag } from './common/RoleTag';
+import { StatBar } from '../common/Stats';
+import { RoleTag } from '../common/RoleTag';
 import {
   extractDelegations,
   extractIsProcessing,
   extractRoles,
 } from '../../../lifecycle';
+import { filterTracks } from '../../../lifecycle';
 import { DelegateModal } from './delegateModal/Delegate';
+import { InnerCard } from '../common/InnerCard';
 import { useAccount, useDelegation } from '../../../contexts';
 import EllipsisTextbox from '../EllipsisTextbox';
+import { UndelegateModal } from './delegateModal/Undelegate';
+import { TracksLabeledBox } from '../common/LabeledBox';
 
 function filterUndelegatedTracks(state: State): TrackMetaData[] {
   const delegatedTrackIds = new Set(extractDelegations(state).keys());
-  return state.tracks
-    .map((track) => track.tracks)
-    .flat()
-    .filter((t) => !delegatedTrackIds.has(t.id));
+  return filterTracks(state.tracks, (t) => !delegatedTrackIds.has(t.id));
+}
+
+function DelegatedTracks({
+  disabled,
+  tracks,
+  delegate,
+}: {
+  disabled: boolean;
+  tracks: TrackMetaData[];
+  delegate: Delegate;
+}) {
+  const [showModal, setShowModal] = useState(false);
+  const closeModal = () => {
+    setShowModal(false);
+  };
+  const openModal = () => {
+    setShowModal(true);
+  };
+  return (
+    <>
+      <InnerCard className="gap-2 bg-[#FFE4F3]">
+        <TracksLabeledBox
+          title="Tracks delegated"
+          tracks={tracks}
+          visibleCount={2}
+        />
+        <Button variant="ghost" disabled={disabled} onClick={() => openModal()}>
+          <CloseIcon />
+          <div>Undelegate All</div>
+        </Button>
+      </InnerCard>
+      <UndelegateModal
+        onClose={closeModal}
+        open={showModal}
+        tracks={tracks}
+        address={delegate.address}
+      />
+    </>
+  );
 }
 
 export function DelegateCard({
   delegate,
   state,
   variant,
-  heightFit,
+  withTracks = false,
 }: {
   delegate: Delegate;
   state: State;
-  variant: 'all' | 'some';
-  heightFit?: boolean;
+  variant: 'all' | 'some' | 'none';
+  withTracks?: boolean;
 }) {
   const { name, address, manifesto } = delegate;
   const roles = extractRoles(address, state);
@@ -68,14 +108,19 @@ export function DelegateCard({
     openInfoModal();
   };
 
-  // extract tracks
+  // extract tracks are yet to be delegated
   const undelegatedTracks = filterUndelegatedTracks(state);
   const { selectedTracks } = useDelegation();
-  const someTracks = state.tracks
-    .map((track) => track.tracks)
-    .flat()
-    .filter((track) => selectedTracks.has(track.id));
+  const someTracks = filterTracks(state.tracks, (t) =>
+    selectedTracks.has(t.id)
+  );
   const tracks = variant === 'all' ? undelegatedTracks : someTracks;
+
+  // extract tracks that are already delegated
+  const delegatedTrackSet = new Set(delegate.delegatedTracks);
+  const delegatedTracks = filterTracks(state.tracks, (t) =>
+    delegatedTrackSet.has(t.id)
+  );
 
   return (
     <div
@@ -111,14 +156,23 @@ export function DelegateCard({
         </div>
         {manifesto && (
           <EllipsisTextbox
-            className={`${heightFit ? 'max-h-[6rem] lg:h-[6rem]' : 'h-[6rem]'}`}
+            className="max-h-[6rem] lg:h-[6rem]"
             text={manifesto}
             expandLinkTitle="Read more ->"
             onExpand={expandHandler}
           />
         )}
-        <StatBar stats={[]} />
         <div className="grow" />
+
+        {/*<StatBar stats={[]} />*/}
+
+        {withTracks && delegatedTracks?.length && (
+          <DelegatedTracks
+            disabled={isProcessing}
+            delegate={delegate}
+            tracks={delegatedTracks}
+          />
+        )}
         {variant === 'all' && (
           <Button
             variant="primary"

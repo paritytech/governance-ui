@@ -1,4 +1,4 @@
-import type { DelegateRoleType } from 'src/lifecycle';
+import type { DelegateRoleType } from '../../../lifecycle';
 
 const tag: Record<DelegateRoleType, { title: string; twColor: string }> = {
   nominator: { title: 'nominator', twColor: 'bg-green-300' },

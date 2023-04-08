@@ -62,6 +62,7 @@ import {
   Report,
   State,
   TrackCategory,
+  TrackMetaData,
 } from './types.js';
 import { fetchReferenda } from '../utils/polkassembly.js';
 import BN from 'bn.js';
@@ -199,6 +200,11 @@ export function extractBalance(state: State): BN | undefined {
   }
 }
 
+/**
+ * Returns a map of trackIds to delegations for the connected account
+ * @param state state
+ * @returns A map of trackIds to delegations
+ */
 export function extractDelegations(state: State) {
   // get delegations
   const allVotings =
@@ -208,6 +214,24 @@ export function extractDelegations(state: State) {
     delegations = getAllDelegations(state.connectedAddress, allVotings);
   }
   return delegations;
+}
+
+/**
+ * Returns a map of delegate addresses (a.k.a targets) to an array of delegated trackIds
+ * @param state state
+ * @returns A map of targets to an array of delegated trackIds
+ */
+export function extractDelegatedTracks(state: State) {
+  const delegations = extractDelegations(state);
+  const targetDelegations: Map<string, number[]> = new Map();
+  for (const [trackId, delegation] of delegations.entries()) {
+    const target = delegation.target;
+    targetDelegations.set(target, [
+      ...(targetDelegations.get(target) || []),
+      trackId,
+    ]);
+  }
+  return targetDelegations;
 }
 
 export function extractChainInfo(state: State):
@@ -785,6 +809,16 @@ function tracksFor(network: Network): TrackCategory[] {
     default:
       return polkadotTracks;
   }
+}
+
+export function filterTracks(
+  tracks: TrackCategory[],
+  filter: (t: TrackMetaData) => boolean
+): TrackMetaData[] {
+  return tracks
+    .map((track) => track.tracks)
+    .flat()
+    .filter(filter);
 }
 
 /**
