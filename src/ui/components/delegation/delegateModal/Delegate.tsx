@@ -24,7 +24,7 @@ import {
   calcEstimatedFee,
   formatBalance,
 } from '../../../../utils/polkadot-api';
-import { LabeledBox } from '../common/LabeledBox';
+import { LabeledBox, TracksLabeledBox } from '../../common/LabeledBox';
 
 function formatConviction(conviction: Conviction): string {
   switch (conviction) {
@@ -32,35 +32,6 @@ function formatConviction(conviction: Conviction): string {
       return 'No conviction';
     default:
       return conviction.toString();
-  }
-}
-
-function TracksToDelegate({
-  tracks,
-  selectedTracks,
-  remainingCount,
-}: {
-  tracks: TrackCategory[];
-  selectedTracks: TrackMetaData[];
-  remainingCount: number;
-}): JSX.Element {
-  if (allTracksCount(tracks) == selectedTracks.length) {
-    return <>All tracks</>;
-  } else {
-    const tracksCaption = selectedTracks
-      .slice(0, 2)
-      .map((track) => track.title)
-      .join(', ');
-    return (
-      <div>
-        {tracksCaption}
-        {!!remainingCount && (
-          <>
-            {' and'} <a>{`${remainingCount} more`}</a>
-          </>
-        )}
-      </div>
-    );
   }
 }
 
@@ -84,7 +55,6 @@ export function DelegateModal({
   const delegateAddress =
     typeof delegate === 'object' ? delegate.address : delegate;
   const name = typeof delegate === 'object' ? delegate.name : null;
-  const remainingCount = Math.max(selectedTracks.length - 2, 0);
 
   const connectedAddress = connectedAccount?.account?.address;
   const conviction = Conviction.None;
@@ -160,13 +130,11 @@ export function DelegateModal({
             </p>
           </div>
           <div className="grid w-full grid-cols-3 grid-rows-2 gap-4">
-            <LabeledBox className="col-span-2" title="Tracks to delegate">
-              <TracksToDelegate
-                tracks={state.tracks}
-                selectedTracks={selectedTracks}
-                remainingCount={remainingCount}
-              />
-            </LabeledBox>
+            <TracksLabeledBox
+              title="Tracks to delegate"
+              tracks={selectedTracks}
+              visibleCount={2}
+            />
             <LabeledBox title="Tokens to delegate">
               <div>
                 {(usableBalance &&

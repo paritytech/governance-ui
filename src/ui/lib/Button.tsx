@@ -1,23 +1,13 @@
 import type { ClickableProps } from './types.js';
 
-const styles = [
-  {
-    name: 'primary',
-    style: `flex min-w-min appearance-none items-center  justify-center  gap-2 rounded-full bg-fill-primary hover:bg-fill-primary-hover active:bg-fill-primary-pressed px-4 py-2 text-sm  text-white disabled:opacity-50 `,
-  },
-  {
-    name: 'secondary',
-    style: `flex min-w-min appearance-none items-center justify-center  gap-2 rounded-full bg-fill-secondary hover:bg-fill-secondary-hover active:bg-fill-secondary-pres px-4 py-2 text-sm text-white  disabled:bg-gray-200 disabled:text-fg-disabled`,
-  },
-  {
-    name: 'outline',
-    style: `flex min-w-min appearance-none items-center justify-center gap-2 rounded-full border border-solid px-4 py-2 hover:border-primary`,
-  },
-  {
-    name: 'ghost',
-    style: `flex min-w-min appearance-none items-center bg-white/70 justify-center gap-2 rounded-full px-4 py-2 hover:bg-white`,
-  },
-];
+type ViariantType = 'primary' | 'secondary' | 'outline' | 'ghost';
+
+const variantStyles = {
+  primary: `flex min-w-min appearance-none items-center  justify-center  gap-2 rounded-full bg-fill-primary hover:bg-fill-primary-hover active:bg-fill-primary-pressed px-4 py-2 text-sm  text-white disabled:opacity-50 `,
+  secondary: `flex min-w-min appearance-none items-center justify-center  gap-2 rounded-full bg-fill-secondary hover:bg-fill-secondary-hover active:bg-fill-secondary-pres px-4 py-2 text-sm text-white  disabled:bg-gray-200 disabled:text-fg-disabled`,
+  outline: `flex min-w-min appearance-none items-center justify-center gap-2 rounded-full border border-solid px-4 py-2 hover:border-primary`,
+  ghost: `flex min-w-min appearance-none items-center bg-white/70 justify-center gap-2 rounded-full px-4 py-2 hover:bg-white`,
+};
 
 export function Button({
   children,
@@ -26,13 +16,13 @@ export function Button({
   variant,
   className,
   ...rest
-}: ClickableProps): JSX.Element {
-  const current = variant
-    ? styles.find(({ name }) => name === variant)
-    : styles.find(({ name }) => name === 'secondary');
+}: ClickableProps & { variant?: ViariantType }): JSX.Element {
+  const variantClassName = variant
+    ? variantStyles[variant]
+    : variantStyles['secondary'];
   return (
     <button
-      className={`${current?.style} ${className}`}
+      className={`${variantClassName} ${className}`}
       style={{ ...style }}
       onClick={onClick}
       {...rest}

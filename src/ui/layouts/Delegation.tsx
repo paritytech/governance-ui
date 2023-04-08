@@ -1,8 +1,8 @@
 import React, { useMemo, useRef, useState } from 'react';
-import { Button, Dropdown, Modal } from '../lib';
+import { Button, Dropdown } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
-import { AddIcon, ChevronRightIcon, CloseIcon } from '../icons';
+import { AddIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
@@ -11,77 +11,54 @@ import {
   useAppLifeCycle,
   filterOngoingReferenda,
   extractRoles,
+  extractDelegatedTracks,
+  filterTracks,
 } from '../../lifecycle';
 import { ReferendumOngoing } from '../../types';
 import Headline from '../components/Headline';
 import { Option } from '../lib/Dropdown';
 import { DelegateModal } from '../components/delegation/delegateModal/Delegate';
-import { isValidAddress } from '../../utils/polkadot-api';
-
-export function AddAddressModal({
-  open,
-  onAddressValidated,
-  onClose,
-}: {
-  open: boolean;
-  onAddressValidated: (address: string) => void;
-  onClose: () => void;
-}) {
-  const { updater } = useAppLifeCycle();
-  const [address, setAddress] = useState<string>();
-  const cancelHandler = () => onClose();
-
-  return (
-    <Modal size="md" open={open} onClose={() => onClose()}>
-      <div className="flex w-full flex-col gap-12 p-4 md:p-12">
-        <div className="flex flex-col items-start justify-start gap-6">
-          <div className="text-left">
-            <h2 className="mb-2 text-3xl font-medium">Add Address</h2>
-            <p className="text-base">
-              Don&apos;t see your delegate in the list? No problem, add them
-              bellow.
-            </p>
-          </div>
-          <div className="flex w-full flex-col">
-            <label htmlFor="address" className="flex items-center py-2 text-sm">
-              Delegate Address
-            </label>
-            <input
-              id="address"
-              placeholder="Polkadot Address"
-              className="w-full self-stretch rounded-lg bg-[#ebeaea] px-4 py-2 text-left text-sm text-black opacity-70"
-              onChange={(event) => setAddress(event.target.value)}
-            />
-          </div>
-        </div>
-        <div className="flex w-full flex-row justify-end gap-4">
-          <Button onClick={cancelHandler}>
-            <CloseIcon />
-            <div>Cancel</div>
-          </Button>
-          <Button
-            onClick={() => {
-              if (address) {
-                onAddressValidated(address);
-                updater.addCustomDelegate({ address });
-              }
-            }}
-            disabled={!(address && isValidAddress(address))}
-          >
-            <div>Add Delegate</div>
-            <ChevronRightIcon />
-          </Button>
-        </div>
-      </div>
-    </Modal>
-  );
-}
+import { AddDelegateModal } from '../components/delegation/delegateModal/AddDelegateModal';
 
 function filterVisibleDelegates(delegates: Delegate[]): Delegate[] {
   const shuffledDelegates = new Array(...delegates).sort(
     () => 0.5 - Math.random()
   );
   return shuffledDelegates.slice(0, 5);
+}
+
+function filterDelegatesByOption(
+  state: State,
+  delegates: Delegate[],
+  option: Option
+): Delegate[] {
+  switch (option.value) {
+    case 1:
+      return delegates.filter((delegate) =>
+        extractRoles(delegate.address, state).includes('fellow')
+      );
+  }
+  return delegates;
+}
+
+function filterActiveDelegates(delegates: Delegate[]) {
+  return delegates.filter((del) => !!del.delegatedTracks?.length);
+}
+
+function filterInactiveDelegates(delegates: Delegate[]) {
+  return delegates.filter((del) => !del.delegatedTracks?.length);
+}
+
+function decorateDelegatesWithDelegations(
+  state: State,
+  delegates: Delegate[]
+): Delegate[] {
+  const delegatedTracks = extractDelegatedTracks(state);
+  const decorated = delegates.map((delegate) => ({
+    ...delegate,
+    delegatedTracks: delegatedTracks.get(delegate.address),
+  }));
+  return decorated;
 }
 
 export function DelegatesBar({
@@ -112,32 +89,48 @@ export function DelegatesBar({
   );
 }
 
-function filterDelegatesByOption(
-  state: State,
-  delegates: Delegate[],
-  option: Option
-): Delegate[] {
-  switch (option.value) {
-    case 1:
-      return delegates.filter((delegate) =>
-        extractRoles(delegate.address, state).includes('fellow')
-      );
-  }
-  return delegates;
-}
+export const ActiveDelegates = ({
+  state,
+  delegates,
+}: {
+  state: State;
+  delegates: Delegate[];
+}) => {
+  return (
+    <>
+      <div className="mt-8 flex w-full flex-col gap-16 px-3 md:px-8">
+        <SectionTitle title="Active Delegates" />
+        <div className="flex flex-col gap-4">
+          <div className="grid grid-cols-1 place-items-center  gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
+            {delegates.map((delegate, idx) => (
+              <DelegateCard
+                key={idx}
+                delegate={delegate}
+                state={state}
+                variant="none"
+                withTracks
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 
-export const DelegateSection = () => {
-  const { state } = useAppLifeCycle();
-  const { delegates } = state;
+export const DelegateSection = ({
+  state,
+  delegates,
+}: {
+  state: State;
+  delegates: Delegate[];
+}) => {
   const [search, setSearch] = useState<string>();
   const [addAddressVisible, setAddAddressVisible] = useState(false);
   const [delegateVisible, setDelegateVisible] = useState(false);
   const [delegate, setDelegate] = useState('');
   const { selectedTracks } = useDelegation();
-  const tracks = state.tracks
-    .map((track) => track.tracks)
-    .flat()
-    .filter((track) => selectedTracks.has(track.id));
+  const tracks = filterTracks(state.tracks, (t) => selectedTracks.has(t.id));
 
   const aggregateOptions: Option[] = [
     { value: 0, label: 'All User Types', active: true },
@@ -192,7 +185,6 @@ export const DelegateSection = () => {
               <div className="grid grid-cols-1 place-items-center  gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
                 {state.customDelegates.map((delegate, idx) => (
                   <DelegateCard
-                    heightFit
                     key={idx}
                     delegate={delegate}
                     state={state}
@@ -212,7 +204,6 @@ export const DelegateSection = () => {
               )
               .map((delegate, idx) => (
                 <DelegateCard
-                  heightFit
                   key={idx}
                   delegate={delegate}
                   state={state}
@@ -222,7 +213,7 @@ export const DelegateSection = () => {
           </div>
         </div>
       </div>
-      <AddAddressModal
+      <AddDelegateModal
         open={addAddressVisible}
         onClose={() => setAddAddressVisible(false)}
         onAddressValidated={(address) => {
@@ -248,7 +239,13 @@ function exportReferenda(state: State): Map<number, ReferendumOngoing> {
   return new Map();
 }
 
-function DelegationPanelContent({ state }: { state: State }): JSX.Element {
+function DelegationPanelContent({
+  state,
+  delegates,
+}: {
+  state: State;
+  delegates: Delegate[];
+}): JSX.Element {
   const network = (state as ConnectedState).network;
   const delegateSectionRef: React.MutableRefObject<HTMLDivElement | null> =
     useRef(null);
@@ -269,7 +266,7 @@ function DelegationPanelContent({ state }: { state: State }): JSX.Element {
       </div>
       {selectedTracks.size > 0 && (
         <div className="w-full" ref={delegateSectionRef}>
-          <DelegateSection />
+          <DelegateSection state={state} delegates={delegates} />
         </div>
       )}
     </>
@@ -278,12 +275,25 @@ function DelegationPanelContent({ state }: { state: State }): JSX.Element {
 
 export function DelegationPanel() {
   const { state } = useAppLifeCycle();
+
+  // decorate delegates with delegated tracks
+  let { delegates } = state;
+  delegates = decorateDelegatesWithDelegations(state, delegates);
+
+  const activeDelegates = filterActiveDelegates(delegates);
+
   return (
     <DelegationProvider>
       <main className="flex w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20 lg:gap-16">
-        <Headline />
-        <DelegatesBar delegates={state.delegates} state={state} />
-        <DelegationPanelContent state={state} />
+        {activeDelegates.length ? (
+          <ActiveDelegates delegates={activeDelegates} state={state} />
+        ) : (
+          <>
+            <Headline />
+            <DelegatesBar delegates={state.delegates} state={state} />
+          </>
+        )}
+        <DelegationPanelContent delegates={delegates} state={state} />
       </main>
     </DelegationProvider>
   );

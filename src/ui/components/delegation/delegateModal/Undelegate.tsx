@@ -1,4 +1,4 @@
-import type { SigningAccount, VotingDelegating } from '../../../../types';
+import type { SigningAccount } from '../../../../types';
 
 import { useState, useEffect } from 'react';
 import { ChevronRightIcon, CloseIcon } from '../../../icons';
@@ -17,19 +17,17 @@ import {
   calcEstimatedFee,
   formatBalance,
 } from '../../../../utils/polkadot-api';
-import { LabeledBox } from '../common/LabeledBox';
+import { LabeledBox } from '../../common/LabeledBox';
 import BN from 'bn.js';
 
 export function UndelegateModal({
-  delegation,
+  address,
   tracks,
   open,
   onClose,
 }: {
-  delegation: VotingDelegating;
+  address: string;
   tracks: TrackMetaData[];
-  decimals?: number;
-  unit?: string;
   open: boolean;
   onClose: () => void;
 }) {
@@ -39,7 +37,6 @@ export function UndelegateModal({
   const connectedAddress = connectedAccount?.account?.address;
   const balance = extractBalance(state);
   const { unit, decimals } = extractChainInfo(state) || {};
-  const { target: address } = delegation;
   const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();
   // set fee

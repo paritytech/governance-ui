@@ -4,6 +4,7 @@ import type {
   ReferendumDetails,
   Track,
   Voting,
+  VotingDelegating,
 } from '../types.js';
 
 import BN from 'bn.js';
@@ -71,6 +72,7 @@ export type Delegate = {
   name?: string;
   address: string;
   manifesto?: string;
+  delegatedTracks?: number[];
 };
 
 export type TrackMetaData = {

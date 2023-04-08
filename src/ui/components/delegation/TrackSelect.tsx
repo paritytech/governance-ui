@@ -11,6 +11,7 @@ import { Accounticon } from '../accounts/Accounticon';
 import { Network } from '../../../network';
 import { CloseIcon } from '../../icons';
 import { UndelegateModal } from './delegateModal/Undelegate';
+import { InnerCard } from '../common/InnerCard';
 import {
   useAppLifeCycle,
   extractDelegations,
@@ -133,19 +134,6 @@ const TallyBadgeBox = memo(function ({ tally }: { tally: Tally }) {
   );
 });
 
-function InnerCard({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className: string;
-}) {
-  return (
-    <div className={`flex flex-col rounded-xl p-3 ${className}`}>
-      {children}
-    </div>
-  );
-}
 function ReferendaDetails({
   index,
   details,
@@ -212,7 +200,7 @@ function TrackDelegation({
         onClose={closeModal}
         open={showModal}
         tracks={(track && [track]) || []}
-        delegation={delegation}
+        address={delegation.target}
       />
     </>
   );
