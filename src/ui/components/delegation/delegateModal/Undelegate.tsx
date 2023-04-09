@@ -8,6 +8,7 @@ import {
   extractBalance,
   extractChainInfo,
   TrackMetaData,
+  allTracksCount,
 } from '../../../../lifecycle';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { SimpleAnalytics } from '../../../../analytics';
@@ -17,7 +18,7 @@ import {
   calcEstimatedFee,
   formatBalance,
 } from '../../../../utils/polkadot-api';
-import { LabeledBox } from '../../common/LabeledBox';
+import { LabeledBox, TracksLabel } from '../../common/LabeledBox';
 import BN from 'bn.js';
 
 export function UndelegateModal({
@@ -37,7 +38,6 @@ export function UndelegateModal({
   const connectedAddress = connectedAccount?.account?.address;
   const balance = extractBalance(state);
   const { unit, decimals } = extractChainInfo(state) || {};
-  const tracksCaption = tracks.map((track) => track.title).join(', ');
   const cancelHandler = () => onClose();
   // set fee
   useEffect(() => {
@@ -80,9 +80,13 @@ export function UndelegateModal({
               Submitting this transaction will undelegate the following tracks:
             </p>
           </div>
-          <div className="grid w-full grid-cols-2 gap-4">
-            <LabeledBox title="Tracks to undelegate">
-              {tracksCaption}
+          <div className="grid w-full grid-cols-3 gap-4">
+            <LabeledBox className="col-span-2" title="Tracks to undelegate">
+              <TracksLabel
+                allTracksCount={allTracksCount(state.tracks)}
+                tracks={tracks}
+                visibleCount={2}
+              />
             </LabeledBox>
             <LabeledBox title="Delegate">
               <Accounticon

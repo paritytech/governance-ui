@@ -10,11 +10,7 @@ import {
   extractChainInfo,
   allTracksCount,
 } from '../../../../lifecycle';
-import {
-  Delegate,
-  TrackCategory,
-  TrackMetaData,
-} from '../../../../lifecycle/types';
+import { Delegate, TrackMetaData } from '../../../../lifecycle/types';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { Conviction } from '../../../../types';
 import { SimpleAnalytics } from '../../../../analytics';
@@ -24,7 +20,7 @@ import {
   calcEstimatedFee,
   formatBalance,
 } from '../../../../utils/polkadot-api';
-import { LabeledBox, TracksLabeledBox } from '../../common/LabeledBox';
+import { LabeledBox, TracksLabel } from '../../common/LabeledBox';
 
 function formatConviction(conviction: Conviction): string {
   switch (conviction) {
@@ -55,7 +51,6 @@ export function DelegateModal({
   const delegateAddress =
     typeof delegate === 'object' ? delegate.address : delegate;
   const name = typeof delegate === 'object' ? delegate.name : null;
-
   const connectedAddress = connectedAccount?.account?.address;
   const conviction = Conviction.None;
 
@@ -130,11 +125,13 @@ export function DelegateModal({
             </p>
           </div>
           <div className="grid w-full grid-cols-3 grid-rows-2 gap-4">
-            <TracksLabeledBox
-              title="Tracks to delegate"
-              tracks={selectedTracks}
-              visibleCount={2}
-            />
+            <LabeledBox className="col-span-2" title="Tracks to delegate">
+              <TracksLabel
+                allTracksCount={allTracksCount(state.tracks)}
+                tracks={selectedTracks}
+                visibleCount={2}
+              />
+            </LabeledBox>
             <LabeledBox title="Tokens to delegate">
               <div>
                 {(usableBalance &&

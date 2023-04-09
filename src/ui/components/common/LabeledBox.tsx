@@ -20,12 +20,12 @@ export function LabeledBox({
   );
 }
 
-export const TracksLabeledBox = memo(function ({
-  title,
+export const TracksLabel = memo(function ({
+  allTracksCount,
   tracks,
   visibleCount,
 }: {
-  title: string;
+  allTracksCount?: number;
   tracks: TrackMetaData[];
   visibleCount: number;
 }) {
@@ -35,15 +35,19 @@ export const TracksLabeledBox = memo(function ({
     .join(', ');
   const remainingCount = Math.max(tracks.length - visibleCount, 0);
   return (
-    <LabeledBox className="col-span-2" title={title}>
-      <div>
-        {tracksCaption}
-        {!!remainingCount && (
-          <>
-            {' and'} <a>{`${remainingCount} more`}</a>
-          </>
-        )}
-      </div>
-    </LabeledBox>
+    <>
+      {allTracksCount && allTracksCount === tracks.length ? (
+        <div>All tracks</div>
+      ) : (
+        <div>
+          {tracksCaption}
+          {!!remainingCount && (
+            <>
+              {' and'} <a>{`${remainingCount} more`}</a>
+            </>
+          )}
+        </div>
+      )}
+    </>
   );
 });

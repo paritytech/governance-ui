@@ -7,6 +7,7 @@ import { DelegateInfoModal } from './delegateModal/DelegateInfo';
 import { StatBar } from '../common/Stats';
 import { RoleTag } from '../common/RoleTag';
 import {
+  allTracksCount,
   extractDelegations,
   extractIsProcessing,
   extractRoles,
@@ -17,7 +18,7 @@ import { InnerCard } from '../common/InnerCard';
 import { useAccount, useDelegation } from '../../../contexts';
 import EllipsisTextbox from '../EllipsisTextbox';
 import { UndelegateModal } from './delegateModal/Undelegate';
-import { TracksLabeledBox } from '../common/LabeledBox';
+import { LabeledBox, TracksLabel } from '../common/LabeledBox';
 
 function filterUndelegatedTracks(state: State): TrackMetaData[] {
   const delegatedTrackIds = new Set(extractDelegations(state).keys());
@@ -26,10 +27,12 @@ function filterUndelegatedTracks(state: State): TrackMetaData[] {
 
 function DelegatedTracks({
   disabled,
+  allTracksCount,
   tracks,
   delegate,
 }: {
   disabled: boolean;
+  allTracksCount: number;
   tracks: TrackMetaData[];
   delegate: Delegate;
 }) {
@@ -43,11 +46,13 @@ function DelegatedTracks({
   return (
     <>
       <InnerCard className="gap-2 bg-[#FFE4F3]">
-        <TracksLabeledBox
-          title="Tracks delegated"
-          tracks={tracks}
-          visibleCount={2}
-        />
+        <LabeledBox title="Tracks delegated">
+          <TracksLabel
+            allTracksCount={allTracksCount}
+            tracks={tracks}
+            visibleCount={2}
+          />
+        </LabeledBox>
         <Button variant="ghost" disabled={disabled} onClick={() => openModal()}>
           <CloseIcon />
           <div>Undelegate All</div>
@@ -164,11 +169,15 @@ export function DelegateCard({
         )}
         <div className="grow" />
 
-        {/*<StatBar stats={[]} />*/}
+        {
+          // ToDo: Add stats
+          /*<StatBar stats={[]} />*/
+        }
 
         {withTracks && delegatedTracks?.length && (
           <DelegatedTracks
             disabled={isProcessing}
+            allTracksCount={allTracksCount(state.tracks)}
             delegate={delegate}
             tracks={delegatedTracks}
           />
