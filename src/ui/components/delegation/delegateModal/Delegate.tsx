@@ -126,11 +126,11 @@ export function DelegateModal({
           </div>
           <div className="grid w-full grid-cols-3 grid-rows-2 gap-4">
             <LabeledBox className="col-span-2" title="Tracks to delegate">
-              {allTracksCount(state.tracks) === selectedTracks.length ? (
-                <div>All tracks</div>
-              ) : (
-                <TracksLabel tracks={selectedTracks} visibleCount={2} />
-              )}
+              <TracksLabel
+                allTracksCount={allTracksCount(state.tracks)}
+                tracks={selectedTracks}
+                visibleCount={2}
+              />
             </LabeledBox>
             <LabeledBox title="Tokens to delegate">
               <div>

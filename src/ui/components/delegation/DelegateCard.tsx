@@ -7,6 +7,7 @@ import { DelegateInfoModal } from './delegateModal/DelegateInfo';
 import { StatBar } from '../common/Stats';
 import { RoleTag } from '../common/RoleTag';
 import {
+  allTracksCount,
   extractDelegations,
   extractIsProcessing,
   extractRoles,
@@ -26,10 +27,12 @@ function filterUndelegatedTracks(state: State): TrackMetaData[] {
 
 function DelegatedTracks({
   disabled,
+  allTracksCount,
   tracks,
   delegate,
 }: {
   disabled: boolean;
+  allTracksCount: number;
   tracks: TrackMetaData[];
   delegate: Delegate;
 }) {
@@ -44,7 +47,11 @@ function DelegatedTracks({
     <>
       <InnerCard className="gap-2 bg-[#FFE4F3]">
         <LabeledBox title="Tracks delegated">
-          <TracksLabel tracks={tracks} visibleCount={2} />
+          <TracksLabel
+            allTracksCount={allTracksCount}
+            tracks={tracks}
+            visibleCount={2}
+          />
         </LabeledBox>
         <Button variant="ghost" disabled={disabled} onClick={() => openModal()}>
           <CloseIcon />
@@ -170,6 +177,7 @@ export function DelegateCard({
         {withTracks && delegatedTracks?.length && (
           <DelegatedTracks
             disabled={isProcessing}
+            allTracksCount={allTracksCount(state.tracks)}
             delegate={delegate}
             tracks={delegatedTracks}
           />
