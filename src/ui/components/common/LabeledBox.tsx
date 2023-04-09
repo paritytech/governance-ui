@@ -25,7 +25,7 @@ export const TracksLabel = memo(function ({
   tracks,
   visibleCount,
 }: {
-  allTracksCount: number | undefined;
+  allTracksCount?: number;
   tracks: TrackMetaData[];
   visibleCount: number;
 }) {
