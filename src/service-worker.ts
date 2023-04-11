@@ -4,21 +4,37 @@ async function install() {
   // Cache all assets
   const cache = await caches.open(version);
   const keys = await cache.keys();
+  console.debug('Clearing existing keys', keys);
   // Clear existing cached elements
   await Promise.all(keys.map((key) => cache.delete(key)));
+  console.debug('Cachink keys', manifest);
   await cache.addAll(manifest);
 }
 
 // First entry point, only called once per service worker version
 // See https://web.dev/service-worker-lifecycle/
-addEventListener('install', (e) => e.waitUntil(install()));
+addEventListener('install', (e) => {
+  console.log('Installing SW');
+  e.waitUntil(
+    install().catch((err) => {
+      console.error('Error while installing SW', err);
+    })
+  );
+});
 
 async function activate() {
   const keys = await caches.keys();
   await Promise.all(keys.map((key) => key !== version && caches.delete(key)));
 }
 
-addEventListener('activate', (e) => e.waitUntil(activate()));
+addEventListener('activate', (e) => {
+  console.log('Activating SW');
+  e.waitUntil(
+    activate().catch((err) => {
+      console.error('Error while activating SW', err);
+    })
+  );
+});
 
 self.addEventListener('fetch', (event: FetchEvent) => {
   const url = new URL(event.request.url);
