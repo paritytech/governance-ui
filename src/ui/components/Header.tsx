@@ -14,7 +14,7 @@ export function Header(): JSX.Element {
   return (
     <Navbar>
       <Navbar.Brand>
-        <div className="w-full">
+        <div className="sticky top-0 z-50 w-full">
           <div className="h-8 w-fit md:hidden">
             <img className="inline h-full" src={tokenUrl} alt="polkadot logo" />
           </div>

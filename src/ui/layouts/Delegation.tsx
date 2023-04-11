@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button, Dropdown } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
@@ -19,13 +19,7 @@ import Headline from '../components/Headline';
 import { Option } from '../lib/Dropdown';
 import { DelegateModal } from '../components/delegation/delegateModal/Delegate';
 import { AddDelegateModal } from '../components/delegation/delegateModal/AddDelegateModal';
-
-function filterVisibleDelegates(delegates: Delegate[]): Delegate[] {
-  const shuffledDelegates = new Array(...delegates).sort(
-    () => 0.5 - Math.random()
-  );
-  return shuffledDelegates.slice(0, 5);
-}
+import { DelegatesBar } from '../components/DelegatesBar';
 
 function filterDelegatesByOption(
   state: State,
@@ -45,9 +39,9 @@ function filterActiveDelegates(delegates: Delegate[]) {
   return delegates.filter((del) => !!del.delegatedTracks?.length);
 }
 
-function filterInactiveDelegates(delegates: Delegate[]) {
-  return delegates.filter((del) => !del.delegatedTracks?.length);
-}
+// function filterInactiveDelegates(delegates: Delegate[]) {
+//   return delegates.filter((del) => !del.delegatedTracks?.length);
+// }
 
 function decorateDelegatesWithDelegations(
   state: State,
@@ -59,34 +53,6 @@ function decorateDelegatesWithDelegations(
     delegatedTracks: delegatedTracks.get(delegate.address),
   }));
   return decorated;
-}
-
-export function DelegatesBar({
-  state,
-  delegates,
-}: {
-  state: State;
-  delegates: Delegate[];
-}) {
-  const visibleDelegates = useMemo(
-    () => filterVisibleDelegates(delegates),
-    [delegates]
-  );
-  return (
-    <section className="flex w-full flex-col items-center justify-center gap-6 bg-gray-200 py-8 md:gap-12">
-      <SectionTitle title="Choose a worthy delegate" />
-      <div className="flex max-w-full gap-7 overflow-x-auto px-3 pb-1 lg:px-6	">
-        {visibleDelegates.map((delegate, idx) => (
-          <DelegateCard
-            key={idx}
-            delegate={delegate}
-            state={state}
-            variant="all"
-          />
-        ))}
-      </div>
-    </section>
-  );
 }
 
 export const ActiveDelegates = ({
@@ -143,7 +109,7 @@ export const DelegateSection = ({
 
   return (
     <>
-      <div className="mb-48 mt-20 flex w-full flex-col gap-16 px-3 md:px-8 lg:mt-28">
+      <div className="mb-48 flex w-full flex-col gap-16">
         <SectionTitle
           title="Browse Delegates"
           description={
@@ -154,15 +120,13 @@ export const DelegateSection = ({
         >
           <ProgressStepper step={1} />
         </SectionTitle>
-        <div className="flex flex-col gap-4">
-          <div className="flex w-full flex-col items-center justify-between gap-4 md:flex-row">
-            <div className="flex w-full flex-row items-center justify-start gap-4 lg:justify-start">
-              <Dropdown
-                options={aggregateOptions}
-                onSelect={setSelectedOption}
-                menuAlign={'right'}
-              />
-            </div>
+        <div className=" flex flex-col gap-4 px-3 lg:px-8">
+          <div className="sticky top-24 z-50 flex w-full flex-col items-center justify-between gap-4 bg-bg-default/80 py-3 backdrop-blur-md md:flex-row">
+            <Dropdown
+              options={aggregateOptions}
+              onSelect={setSelectedOption}
+              menuAlign={'right'}
+            />
             <div className="flex w-full flex-row items-center justify-between gap-4 lg:justify-end">
               <Button
                 variant="ghost"
@@ -255,15 +219,13 @@ function DelegationPanelContent({
   const { selectedTracks } = useDelegation();
   return (
     <>
-      <div className="w-full">
-        <TrackSelect
-          network={network}
-          details={state.details}
-          referenda={exportReferenda(state)}
-          tracks={state.tracks}
-          delegateHandler={() => gotoSection(delegateSectionRef)}
-        />
-      </div>
+      <TrackSelect
+        network={network}
+        details={state.details}
+        referenda={exportReferenda(state)}
+        tracks={state.tracks}
+        delegateHandler={() => gotoSection(delegateSectionRef)}
+      />
       {selectedTracks.size > 0 && (
         <div className="w-full" ref={delegateSectionRef}>
           <DelegateSection state={state} delegates={delegates} />
@@ -284,7 +246,7 @@ export function DelegationPanel() {
 
   return (
     <DelegationProvider>
-      <main className="flex w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20 lg:gap-16">
+      <main className="flex w-full flex-auto flex-col items-center justify-start pt-14 md:pt-20">
         {activeDelegates.length ? (
           <ActiveDelegates delegates={activeDelegates} state={state} />
         ) : (

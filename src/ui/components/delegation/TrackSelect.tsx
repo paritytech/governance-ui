@@ -291,8 +291,9 @@ export function TrackSelect({
   const delegations = extractDelegations(state);
 
   return (
-    <div className="flex w-full flex-col gap-6 px-3 lg:gap-12 lg:px-8 lg:pb-12">
+    <div className="flex w-full flex-col gap-6 lg:gap-6">
       <SectionTitle
+        className=""
         title="Select the tracks you want to delegate"
         description={
           <span>
@@ -304,8 +305,8 @@ export function TrackSelect({
       >
         <ProgressStepper step={0} />
       </SectionTitle>
-      <div className="flex flex-col gap-2 lg:gap-4">
-        <div className="mb-4 flex flex-row justify-between">
+      <div className="mb-12 flex flex-col gap-2 lg:gap-4 ">
+        <div className="sticky top-24 mb-4 flex flex-row justify-between bg-bg-default/80 px-3 py-3 backdrop-blur-md lg:px-8">
           <CheckBox
             background
             title="All tracks"
@@ -339,12 +340,12 @@ export function TrackSelect({
           </div>
         </div>
         <div
-          className={`flex w-full flex-col justify-between md:flex-row md:gap-4 ${className}`}
+          className={`flex w-full flex-col justify-between px-3 md:flex-row md:gap-4 lg:px-8 ${className}`}
         >
           {tracks.map((category, idx) => (
             <div key={idx} className="flex w-full flex-col gap-2 md:w-1/4">
               <div className="text-sm">{category.title}</div>
-              <div className="mb-8 flex flex-col gap-2 lg:gap-4">
+              <div className="flex flex-col gap-2 lg:gap-4">
                 {category.tracks.map((track, idx) => (
                   <TrackCheckableCard
                     key={idx}

@@ -4,7 +4,6 @@ import type {
   ReferendumDetails,
   Track,
   Voting,
-  VotingDelegating,
 } from '../types.js';
 
 import BN from 'bn.js';

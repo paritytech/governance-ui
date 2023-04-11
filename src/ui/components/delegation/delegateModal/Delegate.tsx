@@ -76,10 +76,10 @@ export function DelegateModal({
             // usable balance is calculated as (balance - undelegate fee), to leave enough balance in account for undelegate tx fees.
             const unde = await updater.undelegate([], connectedAddress);
             if (unde.type == 'ok') {
-              const undeFee = await calcEstimatedFee(
-                unde.value,
-                connectedAddress
-              );
+              // const undeFee = await calcEstimatedFee(
+              //   unde.value,
+              //   connectedAddress
+              // );
             }
             const usableBalance = BN.max(balance.sub(fee.muln(3)), new BN(0));
             setFee(fee);
