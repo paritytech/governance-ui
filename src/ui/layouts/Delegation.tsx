@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Button, Dropdown } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
@@ -19,13 +19,7 @@ import Headline from '../components/Headline';
 import { Option } from '../lib/Dropdown';
 import { DelegateModal } from '../components/delegation/delegateModal/Delegate';
 import { AddDelegateModal } from '../components/delegation/delegateModal/AddDelegateModal';
-
-function filterVisibleDelegates(delegates: Delegate[]): Delegate[] {
-  const shuffledDelegates = new Array(...delegates).sort(
-    () => 0.5 - Math.random()
-  );
-  return shuffledDelegates.slice(0, 5);
-}
+import { DelegatesBar } from '../components/DelegatesBar';
 
 function filterDelegatesByOption(
   state: State,
@@ -59,34 +53,6 @@ function decorateDelegatesWithDelegations(
     delegatedTracks: delegatedTracks.get(delegate.address),
   }));
   return decorated;
-}
-
-export function DelegatesBar({
-  state,
-  delegates,
-}: {
-  state: State;
-  delegates: Delegate[];
-}) {
-  const visibleDelegates = useMemo(
-    () => filterVisibleDelegates(delegates),
-    [delegates]
-  );
-  return (
-    <section className="flex w-full flex-col items-center justify-center gap-6 bg-gray-200 py-8 md:gap-12">
-      <SectionTitle title="Choose a worthy delegate" />
-      <div className="flex max-w-full gap-7 overflow-x-auto px-3 pb-1 lg:px-6	">
-        {visibleDelegates.map((delegate, idx) => (
-          <DelegateCard
-            key={idx}
-            delegate={delegate}
-            state={state}
-            variant="all"
-          />
-        ))}
-      </div>
-    </section>
-  );
 }
 
 export const ActiveDelegates = ({
