@@ -7,8 +7,9 @@ async function install() {
   console.debug('Clearing existing keys', keys);
   // Clear existing cached elements
   await Promise.all(keys.map((key) => cache.delete(key)));
-  console.debug('Cachink keys', manifest);
-  await cache.addAll(manifest);
+  const deduplicatedManifest = Array.from(new Set(manifest));
+  console.debug('Caching keys', deduplicatedManifest);
+  await cache.addAll(deduplicatedManifest);
 }
 
 // First entry point, only called once per service worker version
