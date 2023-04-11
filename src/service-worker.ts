@@ -15,12 +15,10 @@ addEventListener('install', (e) => e.waitUntil(install()));
 
 async function activate() {
   const keys = await caches.keys();
-  await Promise.all(
-    keys.map(key => key !== version && caches.delete(key))
-  );
+  await Promise.all(keys.map((key) => key !== version && caches.delete(key)));
 }
 
-addEventListener('activate', e => e.waitUntil(activate()));
+addEventListener('activate', (e) => e.waitUntil(activate()));
 
 self.addEventListener('fetch', (event: FetchEvent) => {
   const url = new URL(event.request.url);
