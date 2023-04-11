@@ -15,7 +15,7 @@ export default function SectionTitle({
 }: SectionTitleProps) {
   return (
     <div
-      className={`items-top sticky top-0 z-50 flex h-auto flex-col-reverse justify-between gap-3 bg-bg-default px-3 py-6 lg:flex-row lg:gap-6 lg:px-8 ${className}`}
+      className={`items-top sticky top-16 flex h-auto flex-col-reverse justify-between gap-3 bg-bg-default px-3 py-6 lg:flex-row lg:gap-6 lg:px-8 ${className}`}
     >
       <div
         className={`flex flex-col ${

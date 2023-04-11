@@ -64,9 +64,9 @@ export const ActiveDelegates = ({
 }) => {
   return (
     <>
-      <div className="mt-8 flex w-full flex-col gap-16 px-3 md:px-8">
+      <div className="mt-8 flex w-full flex-col gap-16">
         <SectionTitle title="Active Delegates" />
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 px-3 md:px-8">
           <div className="grid grid-cols-1 place-items-center  gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
             {delegates.map((delegate, idx) => (
               <DelegateCard
