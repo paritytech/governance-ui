@@ -4,7 +4,7 @@ import { ChevronRightIcon, DelegateIcon, CloseIcon } from '../../icons';
 import { Button, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
 import { DelegateInfoModal } from './delegateModal/DelegateInfo';
-import { StatBar } from '../common/Stats';
+// import { StatBar } from '../common/Stats';
 import { RoleTag } from '../common/RoleTag';
 import {
   allTracksCount,

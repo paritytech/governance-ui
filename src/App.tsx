@@ -15,11 +15,9 @@ export function App(): JSX.Element {
       <AppLifeCycleProvider>
         <WalletProvider>
           <AccountProvider>
+            <Header />
             <NotificationBox />
-            <div className="m-auto flex h-screen w-screen flex-col">
-              <Header />
-              <DelegationPanel />
-            </div>
+            <DelegationPanel />
             <Footer />
           </AccountProvider>
         </WalletProvider>

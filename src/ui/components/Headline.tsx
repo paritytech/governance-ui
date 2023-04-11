@@ -10,7 +10,7 @@ const headline2Url = new URL(
 
 export default function Headline() {
   return (
-    <div className="mt-8 flex w-full flex-col items-center justify-center gap-12">
+    <div className="mt-8 flex w-full flex-col items-center justify-center gap-12 py-12">
       <div className="flex w-full flex-col items-center gap-3 px-8 lg:gap-0 lg:px-0">
         <span className="text-center font-unbounded text-h3 lg:text-h1">
           Governance is now <span className="text-primary">open</span>

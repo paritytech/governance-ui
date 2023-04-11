@@ -42,7 +42,9 @@ export const Dropdown = ({
         }`}
         onClick={() => setIsOpen(!isOpen)}
       >
-        <div className="grow">{selectedOption ? selectedOption.label : ''}</div>
+        <div className="grow whitespace-nowrap">
+          {selectedOption ? selectedOption.label : ''}
+        </div>
         <div>{isOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}</div>
       </div>
       <div className="relative mt-1 h-0">
