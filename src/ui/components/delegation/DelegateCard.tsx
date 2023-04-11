@@ -73,11 +73,13 @@ export function DelegateCard({
   state,
   variant,
   withTracks = false,
+  className,
 }: {
   delegate: Delegate;
   state: State;
   variant: 'all' | 'some' | 'none';
   withTracks?: boolean;
+  className?: string;
 }) {
   const { name, address, manifesto } = delegate;
   const roles = extractRoles(address, state);
@@ -129,7 +131,7 @@ export function DelegateCard({
 
   return (
     <div
-      className={`flex h-full shrink-0  ${
+      className={`flex h-full shrink-0  ${className} ${
         variant === 'all' ? 'w-[320px] md:w-[420px]' : 'w-full'
       }`}
     >

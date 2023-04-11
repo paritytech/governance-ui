@@ -291,7 +291,7 @@ export function TrackSelect({
   const delegations = extractDelegations(state);
 
   return (
-    <div className="flex w-full flex-col gap-6 lg:gap-12">
+    <div className="flex w-full flex-col gap-6 lg:gap-6">
       <SectionTitle
         className=""
         title="Select the tracks you want to delegate"

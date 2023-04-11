@@ -24,9 +24,10 @@ export function DelegatesBar({
       <div className={`flex flex-col justify-center gap-0`}>
         <span className="font-unbounded text-h4">Choose a Worthy Delegate</span>
       </div>
-      <div className="flex max-w-full gap-7 overflow-x-auto px-3 pb-1 lg:px-6	">
+      <div className="flex max-w-full snap-x scroll-pl-6 gap-7 overflow-x-auto px-3 pb-1 lg:px-6	">
         {visibleDelegates.map((delegate, idx) => (
           <DelegateCard
+            className="snap-start"
             key={idx}
             delegate={delegate}
             state={state}
