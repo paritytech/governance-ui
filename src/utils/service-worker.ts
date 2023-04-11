@@ -36,22 +36,22 @@ export async function registerServiceWorker() {
   });
 
   navigator.serviceWorker.addEventListener('message', () => {
-    console.log('New message');
+    console.debug('New message');
   });
 
   navigator.serviceWorker.addEventListener('messageerror', () => {
-    console.log('New message error');
+    console.debug('New message error');
   });
 
   window.addEventListener('beforeinstallprompt', () => {
     // This fires when the service worker controlling this page
     // changes, eg a new worker has skipped waiting and become
     // the new active worker.
-    console.log('About to be installed');
+    console.debug('About to be installed');
   });
 
   window.addEventListener('appinstalled', () => {
     // This fires when the app has been installed
-    console.log('App installed');
+    console.debug('App installed');
   });
 }

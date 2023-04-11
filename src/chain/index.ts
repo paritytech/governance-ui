@@ -6,5 +6,9 @@ export async function supportsOpenGov(network: Network): Promise<boolean> {
   const api = await newApi({
     provider: new WsReconnectProvider(endpointsFor(network)),
   });
-  return api.registry.getModuleInstances('', 'referenda') != undefined;
+  try {
+    return api.registry.getModuleInstances('', 'referenda') != undefined;
+  } finally {
+    api.disconnect();
+  }
 }
