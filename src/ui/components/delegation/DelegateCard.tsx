@@ -176,12 +176,7 @@ export function DelegateCard({
         )}
         <div className="grow" />
 
-        {
-          // ToDo: Add stats
-          /*<StatBar stats={[]} />*/
-        }
-
-        {delegatedTracks?.length && (
+        {delegatedTracks.length > 0 && (
           <DelegatedTracks
             disabled={isProcessing}
             allTracksCount={flattenAllTracks(state.tracks).size}
