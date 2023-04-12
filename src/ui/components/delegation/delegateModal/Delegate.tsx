@@ -108,7 +108,7 @@ export function DelegateModal({
               updater
             );
             const updatedUsableBalance = BN.max(
-              balance.sub(fee.add(undelegationFee)),
+              balance.sub(fee.add(undelegationFee.muln(130).divn(100))),
               new BN(0)
             );
             setFee(fee);
