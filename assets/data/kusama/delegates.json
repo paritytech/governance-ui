@@ -1,10 +1,5 @@
 [
   {
-    "name": "Joe",
-    "address": "GcDZZCVPwkPqoWxx8vfLb4Yfpz9yQ1f4XEyqngSH8ygsL9p",
-    "manifesto": "Working on Polkadot since 2018."
-},
-  {
     "address": "H3cSNjAW86NfTecufGPhxutea8KrEcZdPa4XgVKfhTMugej",
     "name": "Novasama Technologies",
     "image": "https://raw.githubusercontent.com/nova-wallet/opengov-delegate-registry/master/images/novasama_technologies.png",
