@@ -6,13 +6,18 @@ import { AddIcon } from '../icons';
 import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
-import { ConnectedState, Delegate, State } from '../../lifecycle/types.js';
+import {
+  ConnectedState,
+  Delegate,
+  State,
+  TrackMetaData,
+} from '../../lifecycle/types.js';
 import {
   useAppLifeCycle,
   filterOngoingReferenda,
   extractRoles,
+  flattenAllTracks,
   extractDelegatedTracks,
-  filterTracks,
 } from '../../lifecycle';
 import { ReferendumOngoing } from '../../types';
 import Headline from '../components/Headline';
@@ -21,6 +26,12 @@ import { DelegateModal } from '../components/delegation/delegateModal/Delegate';
 import { AddDelegateModal } from '../components/delegation/delegateModal/AddDelegateModal';
 import { DelegatesBar } from '../components/DelegatesBar';
 
+/**
+ * @param state
+ * @param delegates
+ * @param option
+ * @returns a set of delegates filtered by 'Option'
+ */
 function filterDelegatesByOption(
   state: State,
   delegates: Delegate[],
@@ -35,32 +46,12 @@ function filterDelegatesByOption(
   return delegates;
 }
 
-function filterActiveDelegates(delegates: Delegate[]) {
-  return delegates.filter((del) => !!del.delegatedTracks?.length);
-}
-
-// function filterInactiveDelegates(delegates: Delegate[]) {
-//   return delegates.filter((del) => !del.delegatedTracks?.length);
-// }
-
-function decorateDelegatesWithDelegations(
-  state: State,
-  delegates: Delegate[]
-): Delegate[] {
-  const delegatedTracks = extractDelegatedTracks(state);
-  const decorated = delegates.map((delegate) => ({
-    ...delegate,
-    delegatedTracks: delegatedTracks.get(delegate.address),
-  }));
-  return decorated;
-}
-
 export const ActiveDelegates = ({
   state,
-  delegates,
+  delegatesWithTracks,
 }: {
   state: State;
-  delegates: Delegate[];
+  delegatesWithTracks: Map<Delegate, TrackMetaData[]>;
 }) => {
   return (
     <>
@@ -68,15 +59,17 @@ export const ActiveDelegates = ({
         <SectionTitle title="Active Delegates" />
         <div className="flex flex-col gap-4">
           <div className="grid grid-cols-1 place-items-center  gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
-            {delegates.map((delegate, idx) => (
-              <DelegateCard
-                key={idx}
-                delegate={delegate}
-                state={state}
-                variant="none"
-                withTracks
-              />
-            ))}
+            {Array.from(delegatesWithTracks.entries()).map(
+              ([delegate, delegatedTracks], idx) => (
+                <DelegateCard
+                  key={idx}
+                  delegate={delegate}
+                  delegatedTracks={delegatedTracks}
+                  state={state}
+                  variant="none"
+                />
+              )
+            )}
           </div>
         </div>
       </div>
@@ -95,8 +88,11 @@ export const DelegateSection = ({
   const [addAddressVisible, setAddAddressVisible] = useState(false);
   const [delegateVisible, setDelegateVisible] = useState(false);
   const [delegate, setDelegate] = useState('');
-  const { selectedTracks } = useDelegation();
-  const tracks = filterTracks(state.tracks, (t) => selectedTracks.has(t.id));
+  const { selectedTrackIndexes } = useDelegation();
+  const allTracks = flattenAllTracks(state.tracks);
+  const selectedTracks = Array.from(selectedTrackIndexes.entries()).map(
+    ([id]) => allTracks.get(id)!
+  );
 
   const aggregateOptions: Option[] = [
     { value: 0, label: 'All User Types', active: true },
@@ -186,12 +182,14 @@ export const DelegateSection = ({
           setDelegateVisible(true);
         }}
       />
-      <DelegateModal
-        open={delegateVisible}
-        onClose={() => setDelegateVisible(false)}
-        delegate={delegate}
-        selectedTracks={tracks}
-      />
+      {delegateVisible && (
+        <DelegateModal
+          open={delegateVisible}
+          onClose={() => setDelegateVisible(false)}
+          delegate={delegate}
+          selectedTracks={selectedTracks}
+        />
+      )}
     </>
   );
 };
@@ -216,7 +214,7 @@ function DelegationPanelContent({
   const gotoSection = (section: any) => {
     section?.current?.scrollIntoView({ behavior: 'smooth' });
   };
-  const { selectedTracks } = useDelegation();
+  const { selectedTrackIndexes } = useDelegation();
   return (
     <>
       <TrackSelect
@@ -226,7 +224,7 @@ function DelegationPanelContent({
         tracks={state.tracks}
         delegateHandler={() => gotoSection(delegateSectionRef)}
       />
-      {selectedTracks.size > 0 && (
+      {selectedTrackIndexes.size > 0 && (
         <div className="w-full" ref={delegateSectionRef}>
           <DelegateSection state={state} delegates={delegates} />
         </div>
@@ -237,22 +235,24 @@ function DelegationPanelContent({
 
 export function DelegationPanel() {
   const { state } = useAppLifeCycle();
+  const { delegates } = state;
 
-  // decorate delegates with delegated tracks
-  let { delegates } = state;
-  delegates = decorateDelegatesWithDelegations(state, delegates);
+  // A map of delegates with asociated tracks. Empty if no tracks are currently delegated.
+  const delegatesWithTracks = extractDelegatedTracks(state);
 
-  const activeDelegates = filterActiveDelegates(delegates);
-
+  // If user has some active delegation,
   return (
     <DelegationProvider>
-      <main className="flex w-full flex-auto flex-col items-center justify-start pt-14 md:pt-20">
-        {activeDelegates.length ? (
-          <ActiveDelegates delegates={activeDelegates} state={state} />
+      <main className="flex w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20 lg:gap-16">
+        {delegatesWithTracks.size ? (
+          <ActiveDelegates
+            delegatesWithTracks={delegatesWithTracks}
+            state={state}
+          />
         ) : (
           <>
             <Headline />
-            <DelegatesBar delegates={state.delegates} state={state} />
+            <DelegatesBar delegates={delegates} state={state} />
           </>
         )}
         <DelegationPanelContent delegates={delegates} state={state} />

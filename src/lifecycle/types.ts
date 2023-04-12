@@ -71,7 +71,6 @@ export type Delegate = {
   name?: string;
   address: string;
   manifesto?: string;
-  delegatedTracks?: number[];
 };
 
 export type TrackMetaData = {

@@ -205,15 +205,15 @@ export function extractBalance(state: State): BN | undefined {
  * @param state state
  * @returns A map of trackIds to delegations
  */
-export function extractDelegations(state: State) {
-  // get delegations
+export function extractDelegations(
+  state: State
+): Map<number, VotingDelegating> {
   const allVotings =
     state.type === 'ConnectedState' ? state.account?.allVotings : undefined;
-  let delegations: Map<number, VotingDelegating> = new Map();
   if (allVotings && state.connectedAddress) {
-    delegations = getAllDelegations(state.connectedAddress, allVotings);
+    return getAllDelegations(state.connectedAddress, allVotings);
   }
-  return delegations;
+  return new Map();
 }
 
 /**
@@ -221,17 +221,28 @@ export function extractDelegations(state: State) {
  * @param state state
  * @returns A map of targets to an array of delegated trackIds
  */
-export function extractDelegatedTracks(state: State) {
+export function extractDelegatedTracks(
+  state: State
+): Map<Delegate, TrackMetaData[]> {
   const delegations = extractDelegations(state);
-  const targetDelegations: Map<string, number[]> = new Map();
+  const targetDelegations: Map<string, TrackMetaData[]> = new Map();
+  const tracks = flattenAllTracks(state.tracks);
   for (const [trackId, delegation] of delegations.entries()) {
+    const track = tracks.get(trackId)!;
     const target = delegation.target;
     targetDelegations.set(target, [
       ...(targetDelegations.get(target) || []),
-      trackId,
+      track,
     ]);
   }
-  return targetDelegations;
+  return new Map(
+    [...targetDelegations].map(([address, tracks]) => {
+      const delegate = state.delegates.find(
+        (delegate) => delegate.address == address
+      ) || { address };
+      return [delegate, tracks];
+    })
+  );
 }
 
 export function extractChainInfo(state: State):
@@ -795,11 +806,13 @@ async function fetchDelegates(network: Network): Promise<Result<Delegate[]>> {
   }
 }
 
-export function allTracksCount(tracks: TrackCategory[]): number {
-  return Array.from(tracks.entries()).reduce(
-    (acc, [, track]) => acc + track.tracks.length,
-    0
-  );
+export function flattenAllTracks(
+  tracks: TrackCategory[]
+): Map<number, TrackMetaData> {
+  return Array.from(tracks.entries()).reduce((acc, [, category]) => {
+    category.tracks.forEach((track) => acc.set(track.id, track));
+    return acc;
+  }, new Map<number, TrackMetaData>());
 }
 
 function tracksFor(network: Network): TrackCategory[] {
@@ -809,16 +822,6 @@ function tracksFor(network: Network): TrackCategory[] {
     default:
       return polkadotTracks;
   }
-}
-
-export function filterTracks(
-  tracks: TrackCategory[],
-  filter: (t: TrackMetaData) => boolean
-): TrackMetaData[] {
-  return tracks
-    .map((track) => track.tracks)
-    .flat()
-    .filter(filter);
 }
 
 /**
@@ -1202,7 +1205,6 @@ async function updateChainState(
   }
 
   return () => {
-    console.log('Unsub');
     currentUnsub?.();
   };
 }

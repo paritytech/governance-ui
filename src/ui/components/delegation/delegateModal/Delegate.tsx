@@ -8,7 +8,8 @@ import {
   useAppLifeCycle,
   extractBalance,
   extractChainInfo,
-  allTracksCount,
+  flattenAllTracks,
+  Updater,
 } from '../../../../lifecycle';
 import { Delegate, TrackMetaData } from '../../../../lifecycle/types';
 import { Accounticon } from '../../accounts/Accounticon.js';
@@ -29,6 +30,33 @@ function formatConviction(conviction: Conviction): string {
     default:
       return conviction.toString();
   }
+}
+
+async function undelegateFee(
+  connectedAddress: string,
+  tracks: number[],
+  updater: Updater
+): Promise<BN> {
+  const unde = await updater.undelegate(tracks, connectedAddress);
+  if (unde.type == 'ok') {
+    return await calcEstimatedFee(unde.value, connectedAddress);
+  }
+  return new BN(50);
+}
+
+function TokensToDelegate({
+  usableBalance,
+  decimals,
+  unit,
+}: {
+  usableBalance?: BN;
+  decimals?: number;
+  unit?: string;
+}): JSX.Element {
+  if (usableBalance && unit && decimals) {
+    return <>{formatBalance(usableBalance, decimals, unit)}</>;
+  }
+  return <>...</>;
 }
 
 export function DelegateModal({
@@ -74,20 +102,21 @@ export function DelegateModal({
           if (tx.type === 'ok') {
             const fee = await calcEstimatedFee(tx.value, connectedAddress);
             // usable balance is calculated as (balance - undelegate fee), to leave enough balance in account for undelegate tx fees.
-            const unde = await updater.undelegate([], connectedAddress);
-            if (unde.type == 'ok') {
-              // const undeFee = await calcEstimatedFee(
-              //   unde.value,
-              //   connectedAddress
-              // );
-            }
-            const usableBalance = BN.max(balance.sub(fee.muln(3)), new BN(0));
+            const undelegationFee = await undelegateFee(
+              connectedAddress,
+              Array.from(flattenAllTracks(state.tracks).keys()),
+              updater
+            );
+            const updatedUsableBalance = BN.max(
+              balance.sub(fee.add(undelegationFee)),
+              new BN(0)
+            );
             setFee(fee);
-            setUsableBalance(usableBalance);
+            setUsableBalance(updatedUsableBalance);
           }
         });
     }
-  }, [open]);
+  }, [open, delegate, connectedAccount, balance, selectedTracks]);
 
   const cancelHandler = () => onClose();
   const delegateHandler = async (
@@ -127,19 +156,17 @@ export function DelegateModal({
           <div className="grid w-full grid-cols-3 grid-rows-2 gap-4">
             <LabeledBox className="col-span-2" title="Tracks to delegate">
               <TracksLabel
-                allTracksCount={allTracksCount(state.tracks)}
+                allTracksCount={flattenAllTracks(state.tracks).size}
                 tracks={selectedTracks}
                 visibleCount={2}
               />
             </LabeledBox>
             <LabeledBox title="Tokens to delegate">
-              <div>
-                {(usableBalance &&
-                  unit &&
-                  decimals &&
-                  formatBalance(usableBalance, decimals, unit)) ||
-                  '...'}
-              </div>
+              <TokensToDelegate
+                usableBalance={usableBalance}
+                decimals={decimals}
+                unit={unit}
+              />
             </LabeledBox>
             <LabeledBox className="col-span-2" title="Your delegate">
               <div className="flex gap-2">
@@ -175,7 +202,7 @@ export function DelegateModal({
             variant="primary"
             onClick={() =>
               connectedAccount &&
-              usableBalance?.gtn(0) &&
+              usableBalance &&
               delegateHandler(connectedAccount, usableBalance)
             }
             disabled={!connectedAccount || !usableBalance?.gtn(0)}
