@@ -4,15 +4,13 @@ import { ChevronRightIcon, DelegateIcon, CloseIcon } from '../../icons';
 import { Button, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
 import { DelegateInfoModal } from './delegateModal/DelegateInfo';
-// import { StatBar } from '../common/Stats';
 import { RoleTag } from '../common/RoleTag';
 import {
-  allTracksCount,
+  flattenAllTracks,
   extractDelegations,
   extractIsProcessing,
   extractRoles,
 } from '../../../lifecycle';
-import { filterTracks } from '../../../lifecycle';
 import { DelegateModal } from './delegateModal/Delegate';
 import { InnerCard } from '../common/InnerCard';
 import { useAccount, useDelegation } from '../../../contexts';
@@ -20,9 +18,21 @@ import EllipsisTextbox from '../EllipsisTextbox';
 import { UndelegateModal } from './delegateModal/Undelegate';
 import { LabeledBox, TracksLabel } from '../common/LabeledBox';
 
-function filterUndelegatedTracks(state: State): TrackMetaData[] {
-  const delegatedTrackIds = new Set(extractDelegations(state).keys());
-  return filterTracks(state.tracks, (t) => !delegatedTrackIds.has(t.id));
+function filterUndelegatedTracks(
+  state: State,
+  allTracks: Map<number, TrackMetaData>
+): TrackMetaData[] {
+  const delegations = extractDelegations(state);
+  return [...allTracks.entries()]
+    .filter(([trackIndex]) => !delegations.has(trackIndex))
+    .map(([, track]) => track);
+}
+
+function getSelectedTracks(
+  indexes: number[],
+  allTracks: Map<number, TrackMetaData>
+): TrackMetaData[] {
+  return Array.from(indexes.values()).map((index) => allTracks.get(index)!);
 }
 
 function DelegatedTracks({
@@ -71,14 +81,14 @@ function DelegatedTracks({
 export function DelegateCard({
   delegate,
   state,
+  delegatedTracks = [],
   variant,
-  withTracks = false,
   className,
 }: {
   delegate: Delegate;
   state: State;
+  delegatedTracks?: TrackMetaData[];
   variant: 'all' | 'some' | 'none';
-  withTracks?: boolean;
   className?: string;
 }) {
   const { name, address, manifesto } = delegate;
@@ -115,19 +125,14 @@ export function DelegateCard({
     openInfoModal();
   };
 
-  // extract tracks are yet to be delegated
-  const undelegatedTracks = filterUndelegatedTracks(state);
-  const { selectedTracks } = useDelegation();
-  const someTracks = filterTracks(state.tracks, (t) =>
-    selectedTracks.has(t.id)
-  );
-  const tracks = variant === 'all' ? undelegatedTracks : someTracks;
-
-  // extract tracks that are already delegated
-  const delegatedTrackSet = new Set(delegate.delegatedTracks);
-  const delegatedTracks = filterTracks(state.tracks, (t) =>
-    delegatedTrackSet.has(t.id)
-  );
+  // extract tracks yet to be delegated
+  const { selectedTrackIndexes } = useDelegation();
+  const allTracks = flattenAllTracks(state.tracks);
+  // If variant is 'all', select all not yet delegated tracks. If not, rely on current selection
+  const selectedTracks =
+    variant === 'all'
+      ? filterUndelegatedTracks(state, allTracks)
+      : getSelectedTracks(Array.from(selectedTrackIndexes.keys()), allTracks);
 
   return (
     <div
@@ -176,10 +181,10 @@ export function DelegateCard({
           /*<StatBar stats={[]} />*/
         }
 
-        {withTracks && delegatedTracks?.length && (
+        {delegatedTracks?.length && (
           <DelegatedTracks
             disabled={isProcessing}
-            allTracksCount={allTracksCount(state.tracks)}
+            allTracksCount={flattenAllTracks(state.tracks).size}
             delegate={delegate}
             tracks={delegatedTracks}
           />
@@ -195,12 +200,14 @@ export function DelegateCard({
           </Button>
         )}
       </Card>
-      <DelegateModal
-        open={txVisible}
-        onClose={closeTxModal}
-        delegate={delegate}
-        selectedTracks={tracks}
-      />
+      {txVisible && (
+        <DelegateModal
+          open={txVisible}
+          onClose={closeTxModal}
+          delegate={delegate}
+          selectedTracks={selectedTracks}
+        />
+      )}
       <DelegateInfoModal
         open={infoVisible}
         onClose={closeInfoModal}

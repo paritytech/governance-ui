@@ -1,11 +1,11 @@
 import { createContext, useState, useContext } from 'react';
 
 interface IDelegationContext {
-  selectedTracks: Set<number>;
+  selectedTrackIndexes: Set<number>;
   setTrackSelection: (id: number, selection: boolean) => void;
 }
 const delegationContextDefault = {
-  selectedTracks: new Set([]),
+  selectedTrackIndexes: new Set([]),
   setTrackSelection: () => {
     console.error(
       'DelegationContext is used outside of its provider boundary.'
@@ -23,16 +23,20 @@ export function DelegationProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [selectedTracks, _setSelectedTracks] = useState<Set<number>>(new Set());
+  const [selectedTrackIndexes, _setSelectedTrackIndexes] = useState<
+    Set<number>
+  >(new Set());
   const setTrackSelection = (id: number, selection: boolean) => {
-    _setSelectedTracks((oldSelection) => {
+    _setSelectedTrackIndexes((oldSelection) => {
       const newSelection = new Set(oldSelection);
       selection ? newSelection.add(id) : newSelection.delete(id);
       return newSelection;
     });
   };
   return (
-    <DelegationContext.Provider value={{ selectedTracks, setTrackSelection }}>
+    <DelegationContext.Provider
+      value={{ selectedTrackIndexes, setTrackSelection }}
+    >
       {children}
     </DelegationContext.Provider>
   );

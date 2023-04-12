@@ -8,7 +8,7 @@ import {
   extractBalance,
   extractChainInfo,
   TrackMetaData,
-  allTracksCount,
+  flattenAllTracks,
 } from '../../../../lifecycle';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { SimpleAnalytics } from '../../../../analytics';
@@ -83,7 +83,7 @@ export function UndelegateModal({
           <div className="grid w-full grid-cols-3 gap-4">
             <LabeledBox className="col-span-2" title="Tracks to undelegate">
               <TracksLabel
-                allTracksCount={allTracksCount(state.tracks)}
+                allTracksCount={flattenAllTracks(state.tracks).size}
                 tracks={tracks}
                 visibleCount={2}
               />
@@ -112,14 +112,16 @@ export function UndelegateModal({
             <CloseIcon />
             <div>Cancel</div>
           </Button>
-          {connectedAccount &&
-            balance && ( // Check for non-null balance?
-              // TODO Probably better to allow for button to be disabled
-              <Button onClick={() => undelegateHandler(connectedAccount)}>
-                <div>Undelegate Tracks</div>
-                <ChevronRightIcon />
-              </Button>
-            )}
+          <Button
+            variant="primary"
+            onClick={() =>
+              connectedAccount && undelegateHandler(connectedAccount)
+            }
+            disabled={!connectedAccount || !balance?.gtn(0)}
+          >
+            <div>Undelegate Tracks</div>
+            <ChevronRightIcon />
+          </Button>
         </div>
       </div>
     </Modal>

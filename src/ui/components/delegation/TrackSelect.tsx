@@ -17,7 +17,7 @@ import {
   extractDelegations,
   TrackMetaData,
   TrackCategory,
-  allTracksCount,
+  flattenAllTracks,
 } from '../../../lifecycle';
 
 interface ICheckBoxProps {
@@ -281,7 +281,7 @@ export function TrackSelect({
   tracks,
   delegateHandler,
 }: ITrackSelectProps) {
-  const { selectedTracks, setTrackSelection } = useDelegation();
+  const { selectedTrackIndexes, setTrackSelection } = useDelegation();
   const referendaByTrack = partitionReferendaByTrack(referenda);
   const activeReferendaCount = Array.from(referendaByTrack.entries()).reduce(
     (acc, [, track]) => acc + track.size,
@@ -310,7 +310,7 @@ export function TrackSelect({
           <CheckBox
             background
             title="All tracks"
-            checked={selectedTracks.size == allTracksCount(tracks)}
+            checked={selectedTrackIndexes.size == flattenAllTracks(tracks).size}
             onChange={(e) => {
               const isChecked = e.target.checked;
               tracks.map((category) => {
@@ -322,14 +322,14 @@ export function TrackSelect({
           />
           <div className="flex items-center gap-2 ">
             <div className="mx-0 hidden text-body-2 text-fg-disabled lg:mx-4 lg:block">
-              {selectedTracks.size > 0
-                ? selectedTracks.size == 1
+              {selectedTrackIndexes.size > 0
+                ? selectedTrackIndexes.size == 1
                   ? `1 track selected`
-                  : `${selectedTracks.size} tracks selected`
+                  : `${selectedTrackIndexes.size} tracks selected`
                 : 'Select a track'}
             </div>
             <Button
-              disabled={selectedTracks.size == 0}
+              disabled={selectedTrackIndexes.size == 0}
               onClick={delegateHandler}
             >
               <div className="flex flex-row items-center justify-center gap-1 whitespace-nowrap">
@@ -353,7 +353,7 @@ export function TrackSelect({
                     details={details}
                     referenda={referendaByTrack.get(track.id) || new Map()}
                     delegation={delegations.get(track.id)}
-                    checked={selectedTracks.has(track.id)}
+                    checked={selectedTrackIndexes.has(track.id)}
                     onChange={(e) => {
                       const isChecked = e.target.checked;
                       setTrackSelection(track.id, isChecked);

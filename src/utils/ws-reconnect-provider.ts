@@ -15,8 +15,8 @@ export class WsReconnectProvider extends WsProvider {
     );
 
     this.connect();
-    this.on('disconnected', () => console.log('DISCONNECTED'));
-    this.on('error', () => console.log('ERROR'));
+    //this.on('disconnected', () => console.log('DISCONNECTED'));
+    //this.on('error', () => console.log('ERROR'));
   }
 
   async reconnect() {

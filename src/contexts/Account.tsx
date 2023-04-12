@@ -38,12 +38,10 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     SigningAccount | undefined
   > => {
     const walletsAccounts = await getWalletsAccounts();
-    let connectedAccount;
     const connectedAddress = AccountStorage.getConnectedAddress();
     if (connectedAddress) {
-      connectedAccount = walletsAccounts.get(connectedAddress);
+      return walletsAccounts.get(connectedAddress);
     }
-    return connectedAccount;
   };
 
   const getWalletsAccounts = async () => {
