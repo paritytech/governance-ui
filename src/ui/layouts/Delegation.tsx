@@ -120,8 +120,8 @@ export const DelegateSection = ({
         >
           <ProgressStepper step={1} />
         </SectionTitle>
-        <div className=" flex flex-col gap-4 px-3 lg:px-8">
-          <div className="sticky top-24 z-50 flex w-full flex-col items-center justify-between gap-4 bg-bg-default/80 py-3 backdrop-blur-md md:flex-row">
+        <div className=" flex flex-col gap-4 ">
+          <div className="sticky top-44 flex w-full flex-col items-center justify-between gap-4 bg-bg-default/80 px-3 py-3 backdrop-blur-md md:flex-row lg:px-8">
             <Dropdown
               options={aggregateOptions}
               onSelect={setSelectedOption}
@@ -144,7 +144,7 @@ export const DelegateSection = ({
             </div>
           </div>
           {state.customDelegates?.length > 0 && (
-            <>
+            <div className="px-3 lg:px-8">
               <div className="text-sm">Added manually</div>
               <div className="grid grid-cols-1 place-items-center  gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
                 {state.customDelegates.map((delegate, idx) => (
@@ -157,9 +157,9 @@ export const DelegateSection = ({
                 ))}
               </div>
               <div className="text-sm">Public Delegates</div>
-            </>
+            </div>
           )}
-          <div className="grid grid-cols-1 place-items-center  gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
+          <div className="grid grid-cols-1 place-items-center gap-2 px-3  md:grid-cols-2 lg:grid-cols-3 lg:gap-4 lg:px-8">
             {filterDelegatesByOption(state, delegates, selectedOption)
               .filter((delegate) =>
                 search
