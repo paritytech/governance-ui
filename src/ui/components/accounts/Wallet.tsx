@@ -13,7 +13,7 @@ const Wallet = ({ name, state, iconUrl, clickHandler }: IWalletProps) => {
   const isConnected = state === 'connected';
   return (
     <ConnectCard
-      className="flex flex-nowrap gap-2 p-2"
+      className="flex flex-nowrap gap-2 p-2 "
       onClick={() => clickHandler()}
     >
       <div className=" flex items-center justify-center">

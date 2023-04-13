@@ -131,7 +131,7 @@ export function DelegateCard({
       }`}
     >
       <Card
-        className={`flex h-full w-full flex-col gap-2 p-6 shadow-md md:gap-4`}
+        className={` flex h-full w-full flex-col gap-2 p-6 shadow-md md:gap-4`}
       >
         <div className="flex items-start justify-between">
           <div className="flex flex-col items-start">

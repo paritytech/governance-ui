@@ -95,7 +95,7 @@ const Component = forwardRef<HTMLElement, BaseElementProps>(
   ({ className, children }, ref) => {
     return (
       <nav
-        className={`fixed z-50 w-full rounded bg-bg-default px-2  md:px-4 ${
+        className={`fixed z-10 w-full rounded bg-bg-default px-2  md:px-4 ${
           className || ''
         }`}
         ref={ref}
