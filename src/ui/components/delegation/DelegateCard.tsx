@@ -126,13 +126,11 @@ export function DelegateCard({
 
   return (
     <div
-      className={`flex h-full shrink-0  ${className} ${
+      className={`flex min-h-full shrink-0  ${className} ${
         variant === 'all' ? 'w-[320px] md:w-[420px]' : 'w-full'
       }`}
     >
-      <Card
-        className={` flex h-full w-full flex-col gap-2 p-6 shadow-md md:gap-4`}
-      >
+      <Card className={` flex w-full flex-col gap-2 p-6 shadow-md md:gap-4`}>
         <div className="flex items-start justify-between">
           <div className="flex flex-col items-start">
             <h2 className="text-xl capitalize">{name || 'Anonymous'}</h2>
