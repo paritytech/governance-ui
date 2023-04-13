@@ -19,6 +19,7 @@ import {
   TrackCategory,
   flattenAllTracks,
   filterUndelegatedTracks,
+  extractIsProcessing,
 } from '../../../lifecycle';
 
 export function CheckBox({
@@ -35,12 +36,11 @@ export function CheckBox({
   disabled?: boolean;
 }) {
   const checkboxId = `${title}-checkbox`;
-
   const getCheckboxStyle = (checked: boolean, disabled: boolean) => {
     let classNames = 'flex h-4 w-4 rounded-sm border-[1px] p-[1px]';
     if (disabled) {
-      classNames = `${classNames} border-gray-200 text-fg-disabled ${
-        checked ? 'bg-gray-200' : 'bg-white'
+      classNames = `${classNames} border-gray-300 text-fg-disabled ${
+        checked ? 'bg-gray-300' : 'bg-white'
       } `;
     } else {
       classNames = `${classNames} ${
@@ -188,6 +188,8 @@ function TrackDelegation({
   track: TrackMetaData;
   delegation: VotingDelegating;
 }) {
+  const { state } = useAppLifeCycle();
+  const isProcessing = extractIsProcessing(state);
   const { target } = delegation;
   const [showModal, setShowModal] = useState(false);
   const closeModal = () => {
@@ -207,8 +209,12 @@ function TrackDelegation({
             size={24}
           />
           <div
-            className="cursor-pointer hover:scale-[1.01]"
-            onClick={() => openModal()}
+            className={`${
+              !isProcessing
+                ? 'cursor-pointer hover:scale-[1.01]'
+                : 'text-fg-disabled'
+            }`}
+            onClick={() => !isProcessing && openModal()}
           >
             <CloseIcon />
           </div>
@@ -239,17 +245,26 @@ export function TrackCheckableCard({
   onChange,
   network,
 }: ITrackCheckableCardProps) {
+  const { state } = useAppLifeCycle();
+  const isProcessing = extractIsProcessing(state);
+  const disabled = !!delegation || isProcessing;
   return (
     <Card>
-      <div className={`flex flex-col gap-6 p-2`}>
-        <div className="flex flex-col gap-2">
+      <div className={`flex flex-col gap-2 p-2`}>
+        <div className="mb-4 flex flex-col gap-2">
           <CheckBox
             title={track?.title}
             checked={checked}
             onChange={onChange}
-            disabled={!!delegation}
+            disabled={disabled}
           />
-          <div className="text-body-2 leading-tight">{track?.description}</div>
+          <div
+            className={`${
+              disabled ? 'text-fg-disabled' : ''
+            } text-body-2 leading-tight`}
+          >
+            {track?.description}
+          </div>
           {delegation && (
             <TrackDelegation track={track} delegation={delegation} />
           )}
@@ -301,6 +316,7 @@ export function TrackSelect({
   delegateHandler,
 }: ITrackSelectProps) {
   const { state } = useAppLifeCycle();
+  const isProcessing = extractIsProcessing(state);
   const delegations = extractDelegations(state);
   const { selectedTrackIndexes, setTrackSelection } = useDelegation();
   const allTracks = flattenAllTracks(tracks);
@@ -341,6 +357,7 @@ export function TrackSelect({
                 setTrackSelection(track.id, isChecked);
               });
             }}
+            disabled={isProcessing}
           />
           <div className="flex items-center gap-2 ">
             <div className="mx-0 hidden text-body-2 text-fg-disabled lg:mx-4 lg:block">
