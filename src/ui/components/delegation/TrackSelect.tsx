@@ -18,7 +18,6 @@ import {
   TrackMetaData,
   TrackCategory,
   flattenAllTracks,
-  extractIsProcessing,
   filterUndelegatedTracks,
 } from '../../../lifecycle';
 
