@@ -98,7 +98,7 @@ export function UndelegateModal({
           </div>
           <hr className="w-full bg-gray-400" />
           <div className="w-full">
-            <LabeledBox title="Delegation fee (one time)">
+            <LabeledBox title="Undelegation fee (one time)">
               {(unit &&
                 decimals &&
                 fee &&
