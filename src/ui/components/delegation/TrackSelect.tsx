@@ -12,6 +12,7 @@ import { Network } from '../../../network';
 import { CloseIcon } from '../../icons';
 import { UndelegateModal } from './delegateModal/Undelegate';
 import { InnerCard } from '../common/InnerCard';
+import { useAccount } from '../../../contexts';
 import {
   useAppLifeCycle,
   extractDelegations,
@@ -316,6 +317,7 @@ export function TrackSelect({
   delegateHandler,
 }: ITrackSelectProps) {
   const { state } = useAppLifeCycle();
+  const { connectedAccount } = useAccount();
   const isProcessing = extractIsProcessing(state);
   const delegations = extractDelegations(state);
   const { selectedTrackIndexes, setTrackSelection } = useDelegation();
@@ -350,14 +352,19 @@ export function TrackSelect({
           <CheckBox
             background
             title={allTrackCheckboxTitle}
-            checked={selectedTrackIndexes.size === undelegatedTracks.length}
+            checked={
+              !!undelegatedTracks.length &&
+              selectedTrackIndexes.size === undelegatedTracks.length
+            }
             onChange={(e) => {
               const isChecked = e.target.checked;
               undelegatedTracks.map((track) => {
                 setTrackSelection(track.id, isChecked);
               });
             }}
-            disabled={isProcessing}
+            disabled={
+              isProcessing || (connectedAccount && !undelegatedTracks.length)
+            }
           />
           <div className="flex items-center gap-2 ">
             <div className="mx-0 hidden text-body-2 text-fg-disabled lg:mx-4 lg:block">
