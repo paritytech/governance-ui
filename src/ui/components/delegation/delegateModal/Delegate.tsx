@@ -72,7 +72,7 @@ export function DelegateModal({
 }) {
   const { state, updater } = useAppLifeCycle();
   const { connectedAccount } = useAccount();
-  const { clearTrackSelection } = useDelegation();
+  const { clearTrackSelection, scrollToSection } = useDelegation();
   const [usableBalance, setUsableBalance] = useState<BN>();
   const [fee, setFee] = useState<BN>();
   const balance = extractBalance(state);
@@ -138,6 +138,7 @@ export function DelegateModal({
           // clear track selection when delegation tx is finalized.
           if (result.status.isFinalized) {
             clearTrackSelection();
+            scrollToSection('top');
           }
         });
         SimpleAnalytics.track('Delegate');
