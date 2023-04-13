@@ -1,9 +1,9 @@
-import React, { useRef, useState } from 'react';
+import { useState } from 'react';
 import { Button, Dropdown } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
 import { AddIcon } from '../icons';
-import { DelegationProvider, useDelegation } from '../../contexts/Delegation';
+import { useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
 import {
@@ -209,12 +209,10 @@ function DelegationPanelContent({
   delegates: Delegate[];
 }): JSX.Element {
   const network = (state as ConnectedState).network;
-  const delegateSectionRef: React.MutableRefObject<HTMLDivElement | null> =
-    useRef(null);
-  const gotoSection = (section: any) => {
-    section?.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-  const { selectedTrackIndexes } = useDelegation();
+
+  const { selectedTrackIndexes, sectionRefs, scrollToSection } =
+    useDelegation();
+
   return (
     <>
       <TrackSelect
@@ -222,10 +220,10 @@ function DelegationPanelContent({
         details={state.details}
         referenda={exportReferenda(state)}
         tracks={state.tracks}
-        delegateHandler={() => gotoSection(delegateSectionRef)}
+        delegateHandler={() => scrollToSection('delegation')}
       />
       {selectedTrackIndexes.size > 0 && (
-        <div className="w-full" ref={delegateSectionRef}>
+        <div className="w-full" ref={sectionRefs.get('delegation')}>
           <DelegateSection state={state} delegates={delegates} />
         </div>
       )}
@@ -236,27 +234,29 @@ function DelegationPanelContent({
 export function DelegationPanel() {
   const { state } = useAppLifeCycle();
   const { delegates } = state;
+  const { sectionRefs } = useDelegation();
 
   // A map of delegates with asociated tracks. Empty if no tracks are currently delegated.
   const delegatesWithTracks = extractDelegatedTracks(state);
 
   // If user has some active delegation,
   return (
-    <DelegationProvider>
-      <main className="flex w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20 lg:gap-16">
-        {delegatesWithTracks.size ? (
-          <ActiveDelegates
-            delegatesWithTracks={delegatesWithTracks}
-            state={state}
-          />
-        ) : (
-          <>
-            <Headline />
-            <DelegatesBar delegates={delegates} state={state} />
-          </>
-        )}
-        <DelegationPanelContent delegates={delegates} state={state} />
-      </main>
-    </DelegationProvider>
+    <main
+      className="flex w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20 lg:gap-16"
+      ref={sectionRefs.get('top')}
+    >
+      {delegatesWithTracks.size ? (
+        <ActiveDelegates
+          delegatesWithTracks={delegatesWithTracks}
+          state={state}
+        />
+      ) : (
+        <>
+          <Headline />
+          <DelegatesBar delegates={delegates} state={state} />
+        </>
+      )}
+      <DelegationPanelContent delegates={delegates} state={state} />
+    </main>
   );
 }

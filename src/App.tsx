@@ -8,6 +8,7 @@ import {
 import { DelegationPanel } from './ui/layouts/Delegation.js';
 import WalletProvider from './contexts/Wallets.js';
 import AccountProvider from './contexts/Account.js';
+import { DelegationProvider } from './contexts/Delegation.js';
 
 export function App(): JSX.Element {
   return (
@@ -15,10 +16,12 @@ export function App(): JSX.Element {
       <AppLifeCycleProvider>
         <WalletProvider>
           <AccountProvider>
-            <Header />
-            <NotificationBox />
-            <DelegationPanel />
-            <Footer />
+            <DelegationProvider>
+              <Header />
+              <NotificationBox />
+              <DelegationPanel />
+              <Footer />
+            </DelegationProvider>
           </AccountProvider>
         </WalletProvider>
       </AppLifeCycleProvider>
