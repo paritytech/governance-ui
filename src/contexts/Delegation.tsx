@@ -3,10 +3,16 @@ import { createContext, useState, useContext } from 'react';
 interface IDelegationContext {
   selectedTrackIndexes: Set<number>;
   setTrackSelection: (id: number, selection: boolean) => void;
+  clearTrackSelection: () => void;
 }
 const delegationContextDefault = {
   selectedTrackIndexes: new Set([]),
   setTrackSelection: () => {
+    console.error(
+      'DelegationContext is used outside of its provider boundary.'
+    );
+  },
+  clearTrackSelection: () => {
     console.error(
       'DelegationContext is used outside of its provider boundary.'
     );
@@ -33,9 +39,12 @@ export function DelegationProvider({
       return newSelection;
     });
   };
+  const clearTrackSelection = () => {
+    _setSelectedTrackIndexes(new Set([]));
+  };
   return (
     <DelegationContext.Provider
-      value={{ selectedTrackIndexes, setTrackSelection }}
+      value={{ selectedTrackIndexes, setTrackSelection, clearTrackSelection }}
     >
       {children}
     </DelegationContext.Provider>
