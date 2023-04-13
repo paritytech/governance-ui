@@ -815,6 +815,16 @@ export function flattenAllTracks(
   }, new Map<number, TrackMetaData>());
 }
 
+export function filterUndelegatedTracks(
+  state: State,
+  allTracks: Map<number, TrackMetaData>
+): TrackMetaData[] {
+  const delegations = extractDelegations(state);
+  return [...allTracks.entries()]
+    .filter(([trackIndex]) => !delegations.has(trackIndex))
+    .map(([, track]) => track);
+}
+
 function tracksFor(network: Network): TrackCategory[] {
   switch (network) {
     case Network.Kusama:

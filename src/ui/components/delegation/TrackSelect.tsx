@@ -18,21 +18,40 @@ import {
   TrackMetaData,
   TrackCategory,
   flattenAllTracks,
+  filterUndelegatedTracks,
+  extractIsProcessing,
 } from '../../../lifecycle';
 
-interface ICheckBoxProps {
-  title?: string;
-  checked?: boolean;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
-  background?: boolean;
-}
 export function CheckBox({
   title,
   checked,
   onChange,
   background,
-}: ICheckBoxProps) {
+  disabled,
+}: {
+  title?: string;
+  checked?: boolean;
+  onChange?: React.ChangeEventHandler<HTMLInputElement>;
+  background?: boolean;
+  disabled?: boolean;
+}) {
   const checkboxId = `${title}-checkbox`;
+  const getCheckboxStyle = (checked: boolean, disabled: boolean) => {
+    let classNames = 'flex h-4 w-4 rounded-sm border-[1px] p-[1px]';
+    if (disabled) {
+      classNames = `${classNames} border-gray-300 text-fg-disabled ${
+        checked ? 'bg-gray-300' : 'bg-white'
+      } `;
+    } else {
+      classNames = `${classNames} ${
+        checked
+          ? 'border-primary bg-primary hover:brightness-95'
+          : 'border-gray-500  bg-white hover:brightness-95'
+      }`;
+    }
+    return classNames;
+  };
+
   return (
     <div
       className={`flex h-fit items-center rounded-md ${
@@ -45,25 +64,24 @@ export function CheckBox({
         checked={checked}
         onChange={onChange}
         className="hidden"
+        disabled={disabled}
       />
       <label
         htmlFor={checkboxId}
-        className="flex cursor-pointer items-center gap-2 font-semibold text-gray-900"
+        className="flex cursor-pointer items-center gap-2"
       >
-        <div
-          className={`flex h-4 w-4 rounded-sm border-[1px] p-[1px] ${
-            checked
-              ? 'border-primary bg-primary hover:brightness-95'
-              : 'border-gray-500  bg-white hover:brightness-95'
-          }`}
-        >
+        <div className={getCheckboxStyle(!!checked, !!disabled)}>
           <CheckIcon
             className={`h-full w-full ${
               checked ? 'block' : 'hidden'
             } text-white`}
           />
         </div>
-        <span className="-2font-semibold whitespace-nowrap text-body-2 text-gray-900">
+        <span
+          className={`whitespace-nowrap text-body-2 font-semibold ${
+            disabled ? 'text-fg-disabled' : 'text-gray-900'
+          }`}
+        >
           {title}
         </span>
       </label>
@@ -170,6 +188,8 @@ function TrackDelegation({
   track: TrackMetaData;
   delegation: VotingDelegating;
 }) {
+  const { state } = useAppLifeCycle();
+  const isProcessing = extractIsProcessing(state);
   const { target } = delegation;
   const [showModal, setShowModal] = useState(false);
   const closeModal = () => {
@@ -189,8 +209,12 @@ function TrackDelegation({
             size={24}
           />
           <div
-            className="cursor-pointer hover:scale-[1.01]"
-            onClick={() => openModal()}
+            className={`${
+              !isProcessing
+                ? 'cursor-pointer hover:scale-[1.01]'
+                : 'text-fg-disabled'
+            }`}
+            onClick={() => !isProcessing && openModal()}
           >
             <CloseIcon />
           </div>
@@ -221,16 +245,26 @@ export function TrackCheckableCard({
   onChange,
   network,
 }: ITrackCheckableCardProps) {
+  const { state } = useAppLifeCycle();
+  const isProcessing = extractIsProcessing(state);
+  const disabled = !!delegation || isProcessing;
   return (
     <Card>
-      <div className={`flex flex-col gap-6 p-2`}>
-        <div className="flex flex-col gap-2">
+      <div className={`flex flex-col gap-2 p-2`}>
+        <div className="mb-4 flex flex-col gap-2">
           <CheckBox
             title={track?.title}
             checked={checked}
             onChange={onChange}
+            disabled={disabled}
           />
-          <div className="text-body-2 leading-tight">{track?.description}</div>
+          <div
+            className={`${
+              disabled ? 'text-fg-disabled' : ''
+            } text-body-2 leading-tight`}
+          >
+            {track?.description}
+          </div>
           {delegation && (
             <TrackDelegation track={track} delegation={delegation} />
           )}
@@ -281,14 +315,20 @@ export function TrackSelect({
   tracks,
   delegateHandler,
 }: ITrackSelectProps) {
+  const { state } = useAppLifeCycle();
+  const isProcessing = extractIsProcessing(state);
+  const delegations = extractDelegations(state);
   const { selectedTrackIndexes, setTrackSelection } = useDelegation();
+  const allTracks = flattenAllTracks(tracks);
+  const undelegatedTracks = filterUndelegatedTracks(state, allTracks);
+  const allTrackCheckboxTitle = `All ${
+    undelegatedTracks.length !== allTracks.size ? 'undelegated' : ''
+  } tracks`;
   const referendaByTrack = partitionReferendaByTrack(referenda);
   const activeReferendaCount = Array.from(referendaByTrack.entries()).reduce(
     (acc, [, track]) => acc + track.size,
     0
   );
-  const { state } = useAppLifeCycle();
-  const delegations = extractDelegations(state);
 
   return (
     <div className="flex w-full flex-col gap-6 lg:gap-6">
@@ -309,16 +349,15 @@ export function TrackSelect({
         <div className="sticky top-24 mb-4 flex flex-row justify-between bg-bg-default/80 px-3 py-3 backdrop-blur-md lg:px-8">
           <CheckBox
             background
-            title="All tracks"
-            checked={selectedTrackIndexes.size == flattenAllTracks(tracks).size}
+            title={allTrackCheckboxTitle}
+            checked={selectedTrackIndexes.size === undelegatedTracks.length}
             onChange={(e) => {
               const isChecked = e.target.checked;
-              tracks.map((category) => {
-                category.tracks.map((track) => {
-                  setTrackSelection(track.id, isChecked);
-                });
+              undelegatedTracks.map((track) => {
+                setTrackSelection(track.id, isChecked);
               });
             }}
+            disabled={isProcessing}
           />
           <div className="flex items-center gap-2 ">
             <div className="mx-0 hidden text-body-2 text-fg-disabled lg:mx-4 lg:block">

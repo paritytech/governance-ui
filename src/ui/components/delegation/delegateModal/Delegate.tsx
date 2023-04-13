@@ -15,7 +15,7 @@ import { Delegate, TrackMetaData } from '../../../../lifecycle/types';
 import { Accounticon } from '../../accounts/Accounticon.js';
 import { Conviction } from '../../../../types';
 import { SimpleAnalytics } from '../../../../analytics';
-import { useAccount } from '../../../../contexts';
+import { useAccount, useDelegation } from '../../../../contexts';
 import {
   signAndSend,
   calcEstimatedFee,
@@ -72,6 +72,7 @@ export function DelegateModal({
 }) {
   const { state, updater } = useAppLifeCycle();
   const { connectedAccount } = useAccount();
+  const { clearTrackSelection } = useDelegation();
   const [usableBalance, setUsableBalance] = useState<BN>();
   const [fee, setFee] = useState<BN>();
   const balance = extractBalance(state);
@@ -132,9 +133,13 @@ export function DelegateModal({
         conviction
       );
       if (tx.type === 'ok') {
-        await signAndSend(address, signer, tx.value, (result) =>
-          updater.handleCallResult(result)
-        );
+        await signAndSend(address, signer, tx.value, (result) => {
+          updater.handleCallResult(result);
+          // clear track selection when delegation tx is finalized.
+          if (result.status.isFinalized) {
+            clearTrackSelection();
+          }
+        });
         SimpleAnalytics.track('Delegate');
       }
     } finally {

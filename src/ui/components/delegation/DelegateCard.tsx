@@ -7,7 +7,7 @@ import { DelegateInfoModal } from './delegateModal/DelegateInfo';
 import { RoleTag } from '../common/RoleTag';
 import {
   flattenAllTracks,
-  extractDelegations,
+  filterUndelegatedTracks,
   extractIsProcessing,
   extractRoles,
 } from '../../../lifecycle';
@@ -17,16 +17,6 @@ import { useAccount, useDelegation } from '../../../contexts';
 import EllipsisTextbox from '../EllipsisTextbox';
 import { UndelegateModal } from './delegateModal/Undelegate';
 import { LabeledBox, TracksLabel } from '../common/LabeledBox';
-
-function filterUndelegatedTracks(
-  state: State,
-  allTracks: Map<number, TrackMetaData>
-): TrackMetaData[] {
-  const delegations = extractDelegations(state);
-  return [...allTracks.entries()]
-    .filter(([trackIndex]) => !delegations.has(trackIndex))
-    .map(([, track]) => track);
-}
 
 function getSelectedTracks(
   indexes: number[],

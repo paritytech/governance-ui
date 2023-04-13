@@ -69,10 +69,14 @@ const WalletProviderInner = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    initiateWallets(wallets);
+    if (wallets) {
+      initiateWallets(wallets);
+    }
   }, [wallets]);
   return (
-    <WalletContext.Provider value={{ wallets, walletState, setWalletState }}>
+    <WalletContext.Provider
+      value={{ wallets: wallets || [], walletState, setWalletState }}
+    >
       {children}
     </WalletContext.Provider>
   );
