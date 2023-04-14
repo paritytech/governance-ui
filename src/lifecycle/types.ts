@@ -40,7 +40,6 @@ export type ChainState = {
   properties: ChainProperties;
   tracks: Map<number, Track>;
   referenda: Map<number, Referendum>;
-  fellows: Map<Address, Fellow>;
 };
 
 export type PersistedDataContext = {

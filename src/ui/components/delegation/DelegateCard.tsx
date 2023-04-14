@@ -4,12 +4,10 @@ import { ChevronRightIcon, DelegateIcon, CloseIcon } from '../../icons';
 import { Button, Card } from '../../lib';
 import { Accounticon } from '../accounts/Accounticon.js';
 import { DelegateInfoModal } from './delegateModal/DelegateInfo';
-import { RoleTag } from '../common/RoleTag';
 import {
   flattenAllTracks,
   filterUndelegatedTracks,
   extractIsProcessing,
-  extractRoles,
 } from '../../../lifecycle';
 import { DelegateModal } from './delegateModal/Delegate';
 import { InnerCard } from '../common/InnerCard';
@@ -82,7 +80,6 @@ export function DelegateCard({
   className?: string;
 }) {
   const { name, address, manifesto } = delegate;
-  const roles = extractRoles(address, state);
   const isProcessing = extractIsProcessing(state);
 
   const { connectedAccount } = useAccount();
@@ -148,11 +145,6 @@ export function DelegateCard({
               </div>
             </Button>
           )}
-        </div>
-        <div className="flex gap-2">
-          {roles.map((role) => (
-            <RoleTag key={role} role={role} />
-          ))}
         </div>
         {manifesto && (
           <EllipsisTextbox
