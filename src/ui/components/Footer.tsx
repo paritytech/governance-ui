@@ -13,7 +13,12 @@ export default function Footer() {
       </div>
       <div className="flex items-center gap-2">
         <MessageIcon size="14" />
-        <a href="" target="_blank" className=" underline">
+        <a
+          href="https://polkadot-governance-ui.canny.io/feedback"
+          target="_blank"
+          className=" underline"
+          rel="noreferrer"
+        >
           Feedback
         </a>
       </div>
