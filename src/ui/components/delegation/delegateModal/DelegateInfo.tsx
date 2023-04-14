@@ -1,9 +1,7 @@
 import type { Delegate } from '../../../../lifecycle';
 
 import { Modal } from '../../../lib';
-import { RoleTag } from '../../common/RoleTag';
 import { Accounticon } from '../../accounts/Accounticon';
-import { extractRoles, useAppLifeCycle } from '../../../../lifecycle';
 import { Remark } from 'react-remark';
 
 export function DelegateInfoModal({
@@ -17,9 +15,7 @@ export function DelegateInfoModal({
   onClose: () => void;
   children?: JSX.Element;
 }) {
-  const { state } = useAppLifeCycle();
   const { address, manifesto, name } = delegate;
-  const roles = extractRoles(address, state);
   return (
     <Modal size="md" open={open} onClose={() => onClose()}>
       <div className="flex max-h-[90vh] w-full flex-col gap-12 p-4 md:p-12">
@@ -33,11 +29,6 @@ export function DelegateInfoModal({
                 textClassName="font-semibold my-2"
               />
             </div>
-          </div>
-          <div className="flex gap-2">
-            {roles.map((role) => (
-              <RoleTag key={role} role={role} />
-            ))}
           </div>
           {manifesto && (
             <div className={`relative h-full overflow-auto text-base`}>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Dropdown } from '../lib';
+import { Button } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
 import { AddIcon } from '../icons';
@@ -15,36 +15,14 @@ import {
 import {
   useAppLifeCycle,
   filterOngoingReferenda,
-  extractRoles,
   flattenAllTracks,
   extractDelegatedTracks,
 } from '../../lifecycle';
 import { ReferendumOngoing } from '../../types';
 import Headline from '../components/Headline';
-import { Option } from '../lib/Dropdown';
 import { DelegateModal } from '../components/delegation/delegateModal/Delegate';
 import { AddDelegateModal } from '../components/delegation/delegateModal/AddDelegateModal';
 import { DelegatesBar } from '../components/DelegatesBar';
-
-/**
- * @param state
- * @param delegates
- * @param option
- * @returns a set of delegates filtered by 'Option'
- */
-function filterDelegatesByOption(
-  state: State,
-  delegates: Delegate[],
-  option: Option
-): Delegate[] {
-  switch (option.value) {
-    case 1:
-      return delegates.filter((delegate) =>
-        extractRoles(delegate.address, state).includes('fellow')
-      );
-  }
-  return delegates;
-}
 
 export const ActiveDelegates = ({
   state,
@@ -94,15 +72,6 @@ export const DelegateSection = ({
     ([id]) => allTracks.get(id)!
   );
 
-  const aggregateOptions: Option[] = [
-    { value: 0, label: 'All User Types', active: true },
-    { value: 1, label: 'Fellows' },
-  ];
-
-  const [selectedOption, setSelectedOption] = useState<Option>(
-    aggregateOptions[0]
-  );
-
   return (
     <>
       <div className="mb-48 flex w-full flex-col gap-16">
@@ -118,11 +87,6 @@ export const DelegateSection = ({
         </SectionTitle>
         <div className=" flex flex-col gap-4 ">
           <div className="sticky top-44 flex w-full flex-col items-center justify-between gap-4 bg-bg-default/80 px-3 py-3 backdrop-blur-md md:flex-row lg:px-8">
-            <Dropdown
-              options={aggregateOptions}
-              onSelect={setSelectedOption}
-              menuAlign={'right'}
-            />
             <div className="flex w-full flex-row items-center justify-between gap-4 lg:justify-end">
               <Button
                 variant="ghost"
@@ -156,7 +120,7 @@ export const DelegateSection = ({
             </div>
           )}
           <div className="grid grid-cols-1 place-items-center gap-2 px-3  md:grid-cols-2 lg:grid-cols-3 lg:gap-4 lg:px-8">
-            {filterDelegatesByOption(state, delegates, selectedOption)
+            {delegates
               .filter((delegate) =>
                 search
                   ? delegate.name?.toLowerCase().includes(search.toLowerCase())

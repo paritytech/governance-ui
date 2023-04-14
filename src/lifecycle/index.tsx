@@ -31,7 +31,6 @@ import {
   unlock,
   getVotingFor,
 } from '../chain/conviction-voting.js';
-import { getAllMembers } from '../chain/fellowship-collective.js';
 import { getAllReferenda, getAllTracks } from '../chain/referenda.js';
 import { defaultNetwork, endpointsFor, Network, parse } from '../network.js';
 import { err, ok, Result } from '../utils/index.js';
@@ -55,7 +54,6 @@ import {
   ChainProperties,
   ChainState,
   Delegate,
-  DelegateRoleType,
   isAtLeastConnected,
   PersistedDataContext,
   Processing,
@@ -263,18 +261,6 @@ export function extractChainInfo(state: State):
 
 export function extractIsProcessing(state: State): boolean {
   return !!state?.processingReport;
-}
-
-export function extractRoles(
-  address: string,
-  state: State
-): DelegateRoleType[] {
-  if (state.type == 'ConnectedState') {
-    if (state.chain.fellows.has(address)) {
-      return ['fellow'];
-    }
-  }
-  return [];
 }
 
 function error(message: string): Report {
@@ -509,9 +495,8 @@ export async function fetchChainState(
 ): Promise<ChainState> {
   const tracks = getAllTracks(api);
   const referenda = await getAllReferenda(api);
-  const fellows = await getAllMembers(api);
   const properties = getProperties(registry);
-  return { properties, tracks, referenda, fellows };
+  return { properties, tracks, referenda };
 }
 
 export async function fetchAccountChainState(
