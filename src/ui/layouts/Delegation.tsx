@@ -140,7 +140,7 @@ export const DelegateSection = ({
             </div>
           </div>
           {state.customDelegates?.length > 0 && (
-            <div className="px-3 lg:px-8">
+            <div className="flex flex-col gap-4 px-3 lg:px-8">
               <div className="text-sm">Added manually</div>
               <div className="grid grid-cols-1 place-items-center  gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
                 {state.customDelegates.map((delegate, idx) => (
