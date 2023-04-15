@@ -27,7 +27,7 @@
   ],
   "dependencies": {
     "@parcel/service-worker": "2.8.3",
-    "@polkadot-onboard/core": "0.0.6-beta",
+    "@polkadot-onboard/core": "0.0.9",
     "@polkadot-onboard/injected-wallets": "0.0.6-beta",
     "@polkadot-onboard/react": "0.0.6-beta",
     "@polkadot/api": "10.3.2",
