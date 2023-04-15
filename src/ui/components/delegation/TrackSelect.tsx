@@ -167,7 +167,7 @@ function ReferendaDetails({
   return (
     <InnerCard className="gap-2 border-2 border-solid border-gray-100 text-body-2 font-medium">
       <div className="flex flex-row gap-2">
-        <div className="grow leading-tight">
+        <div className="grow overflow-hidden text-ellipsis leading-tight">
           {referendaTitle(index, details)}
         </div>
         <div className="w-[20px] flex-none">
