@@ -170,7 +170,7 @@ export function DelegateCard({
             onClick={delegateHandler}
             disabled={isProcessing || !connectedAddress}
           >
-            <div>Delegate All Votes</div>
+            <div>Delegate all tracks</div>
             <DelegateIcon />
           </Button>
         )}

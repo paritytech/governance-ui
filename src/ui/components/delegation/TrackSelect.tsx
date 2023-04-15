@@ -336,7 +336,7 @@ export function TrackSelect({
     <div className="flex w-full flex-col gap-6 lg:gap-6">
       <SectionTitle
         className=""
-        title="Select the tracks you want to delegate"
+        title="Track Based Delegation"
         description={
           <span>
             There are currently <b>{activeReferendaCount}</b> active proposals
