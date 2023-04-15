@@ -1395,13 +1395,13 @@
     "@polkadot-onboard/core" "^0.0.6-beta"
     "@polkadot/extension-inject" "^0.44.8"
 
-"@polkadot-onboard/react@0.0.6-beta":
-  version "0.0.6-beta"
-  resolved "https://registry.yarnpkg.com/@polkadot-onboard/react/-/react-0.0.6-beta.tgz#e4c46a43dd70f1a10bfd20406e70063da4f557b4"
-  integrity sha512-QFHxQmQLNG5pUZix0XsSikO1b2mpET8jPvEaE093nEWPSWVeeDR2hN50qwYI854ikY80weHiLJw4HDK687ox+g==
+"@polkadot-onboard/react@0.0.9":
+  version "0.0.9"
+  resolved "https://registry.yarnpkg.com/@polkadot-onboard/react/-/react-0.0.9.tgz#5a06291906ea6b705c75509bcdcb0c6cb52bb889"
+  integrity sha512-HexZFL0gkX8qNjd/t0IPHQhHhYEaLaMucbNoSQ5pEIFlSEdxylO1ApKMO1g9q4CgACW5Y21Lz//ql7r6u34oDw==
   dependencies:
-    react "^18.2.0"
-    react-dom "^18.2.0"
+    react "18.2.0"
+    react-dom "18.2.0"
 
 "@polkadot/api-augment@10.3.2":
   version "10.3.2"
@@ -5943,7 +5943,7 @@ react-copy-to-clipboard@^5.1.0:
     copy-to-clipboard "^3.3.1"
     prop-types "^15.8.1"
 
-react-dom@18.2.0, react-dom@^18.2.0:
+react-dom@18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react-dom/-/react-dom-18.2.0.tgz#22aaf38708db2674ed9ada224ca4aa708d821e3d"
   integrity sha512-6IMTriUmvsjHUjNtEDudZfuDQUoWXVxKHhlEGSk81n4YFS+r/Kl99wXiwlVXtPBtJenozv2P+hxDsw9eA7Xo6g==
@@ -5986,7 +5986,7 @@ react-remark@2.1.0:
     remark-rehype "^8.0.0"
     unified "^9.0.0"
 
-react@18.2.0, react@^18.2.0:
+react@18.2.0:
   version "18.2.0"
   resolved "https://registry.yarnpkg.com/react/-/react-18.2.0.tgz#555bd98592883255fa00de14f1151a917b5d77d5"
   integrity sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==
