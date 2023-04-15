@@ -71,7 +71,12 @@ export function formatBalance(
   decimals: number,
   unit: string
 ): string {
-  return formatBalanceP(input, { decimals, withUnit: unit });
+  return `${formatBalanceP(input, {
+    decimals,
+    withUnit: unit,
+    forceUnit: 'Unit',
+    withSi: false,
+  })} ${unit}`;
 }
 
 export function isValidAddress(address: string): boolean {
