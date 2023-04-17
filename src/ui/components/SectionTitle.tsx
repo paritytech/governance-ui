@@ -15,14 +15,14 @@ export default function SectionTitle({
 }: SectionTitleProps) {
   return (
     <div
-      className={`items-top sticky top-20 flex h-auto flex-col-reverse justify-between gap-3 bg-bg-default px-3 py-6 lg:flex-row lg:gap-6 lg:px-8 ${className}`}
+      className={`sticky top-20 flex h-auto flex-col-reverse items-center justify-between gap-3 bg-bg-default px-3 py-6 lg:flex-row lg:gap-6 lg:px-8 ${className}`}
     >
       <div
-        className={`flex flex-col ${
+        className={`flex flex-col gap-2 ${
           center ? 'justify-center' : 'justify-start'
         }  gap-0`}
       >
-        <span className="font-unbounded text-h4">{title}</span>
+        <span className="font-unbounded text-h5">{title}</span>
         <span className="text-body-2">{description}</span>
       </div>
       {children}

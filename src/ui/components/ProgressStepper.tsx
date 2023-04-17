@@ -18,7 +18,7 @@ export default function ProgressStepper({ step, steps }: ProgressStepperProps) {
 
   return (
     <div className="flex w-full flex-col gap-2 font-medium lg:w-1/2">
-      <div className="flex h-[32px] rounded-full bg-gray-200 p-1">
+      <div className="flex h-[24px] rounded-full bg-gray-200 p-[1px]">
         <div
           className={`flex items-center justify-center px-2 ${
             step < 1 ? 'rounded-full' : ' rounded-l-full'
@@ -73,5 +73,5 @@ export default function ProgressStepper({ step, steps }: ProgressStepperProps) {
 
 ProgressStepper.defaultProps = {
   step: 0,
-  steps: ['Select Tracks', 'Select Delegate', 'Sign Transaction'],
+  steps: ['Tracks', 'Delegate', 'Sign'],
 };

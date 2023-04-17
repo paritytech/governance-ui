@@ -2,16 +2,11 @@ import { useState } from 'react';
 import { Button } from '../lib';
 import { DelegateCard } from '../components/delegation/DelegateCard';
 import { TrackSelect } from '../components/delegation/TrackSelect.js';
-import { AddIcon } from '../icons';
+import { AddIcon, ChevronDownIcon } from '../icons';
 import { useDelegation } from '../../contexts/Delegation';
 import SectionTitle from '../components/SectionTitle';
 import ProgressStepper from '../components/ProgressStepper.js';
-import {
-  ConnectedState,
-  Delegate,
-  State,
-  TrackMetaData,
-} from '../../lifecycle/types.js';
+import { ConnectedState, Delegate, State } from '../../lifecycle/types.js';
 import {
   useAppLifeCycle,
   filterOngoingReferenda,
@@ -23,37 +18,7 @@ import Headline from '../components/Headline';
 import { DelegateModal } from '../components/delegation/delegateModal/Delegate';
 import { AddDelegateModal } from '../components/delegation/delegateModal/AddDelegateModal';
 import { DelegatesBar } from '../components/DelegatesBar';
-
-export const ActiveDelegates = ({
-  state,
-  delegatesWithTracks,
-}: {
-  state: State;
-  delegatesWithTracks: Map<Delegate, TrackMetaData[]>;
-}) => {
-  return (
-    <>
-      <div className="mt-8 flex w-full flex-col gap-16">
-        <SectionTitle title="Active Delegates" />
-        <div className="flex flex-col gap-4 px-3 md:px-8">
-          <div className="grid grid-cols-1 place-items-center  gap-2 md:grid-cols-2 lg:grid-cols-3 lg:gap-4">
-            {Array.from(delegatesWithTracks.entries()).map(
-              ([delegate, delegatedTracks], idx) => (
-                <DelegateCard
-                  key={idx}
-                  delegate={delegate}
-                  delegatedTracks={delegatedTracks}
-                  state={state}
-                  variant="none"
-                />
-              )
-            )}
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
+import { ActiveDelegates } from '../components/ActiveDelegates';
 
 export const DelegateSection = ({
   state,
@@ -87,7 +52,7 @@ export const DelegateSection = ({
         </SectionTitle>
         <div className=" flex flex-col gap-4 ">
           <div className="sticky top-44 flex w-full flex-col items-center justify-between gap-4 bg-bg-default/80 px-3 py-3 backdrop-blur-md md:flex-row lg:px-8">
-            <div className="flex w-full flex-row items-center justify-between gap-4 lg:justify-end">
+            <div className="flex w-full flex-row items-center justify-between gap-4">
               <Button
                 variant="ghost"
                 className="w-fit"
@@ -177,8 +142,33 @@ function DelegationPanelContent({
   const { selectedTrackIndexes, sectionRefs, scrollToSection } =
     useDelegation();
 
+  const delegatesWithTracks = extractDelegatedTracks(state);
+
   return (
     <>
+      {delegatesWithTracks.size ? (
+        <div className="flex snap-start flex-col items-center">
+          <span className="px-3 font-unbounded text-h4">
+            Expand your delegation
+          </span>
+          <p className="text-body">
+            You can always delegate undelegated tracks without locking any more
+            tokens.
+          </p>
+          <ChevronDownIcon className="mt-4" />
+        </div>
+      ) : (
+        <div className="flex snap-start flex-col items-center">
+          <span className="px-3 font-unbounded text-h4">
+            Set up your delegation preferences
+          </span>
+          <p className="text-body">
+            First, select the tracks you would like to delegate, then pick the
+            address you&apos;d like to delegate to.
+          </p>
+        </div>
+      )}
+
       <TrackSelect
         network={network}
         details={state.details}
@@ -206,7 +196,7 @@ export function DelegationPanel() {
   // If user has some active delegation,
   return (
     <main
-      className="flex w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20 lg:gap-16"
+      className="flex w-full flex-auto snap-y flex-col items-center justify-start gap-8 pt-14 md:pt-20 lg:gap-16"
       ref={sectionRefs.get('top')}
     >
       {delegatesWithTracks.size ? (
