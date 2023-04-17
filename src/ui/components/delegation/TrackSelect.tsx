@@ -396,7 +396,6 @@ export function TrackSelect({
                   checked={category.tracks.every((elem) =>
                     selectedTrackIndexes.has(elem.id)
                   )}
-                  // category.tracks.every(elem => trackSelection.includes(elem))
                   onChange={(e) => {
                     const isChecked = e.target.checked;
                     category.tracks.map((track) => {
@@ -405,7 +404,7 @@ export function TrackSelect({
                   }}
                   disabled={
                     isProcessing ||
-                    (connectedAccount && !undelegatedTracks.length)
+                    category.tracks.every((elem) => delegations.has(elem.id))
                   }
                 />
               </div>
