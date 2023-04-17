@@ -23,6 +23,7 @@ import {
   extractIsProcessing,
   extractDelegatedTracks,
 } from '../../../lifecycle';
+import Tooltip from '../Tooltip';
 
 export function CheckBox({
   title,
@@ -56,8 +57,10 @@ export function CheckBox({
 
   return (
     <div
-      className={`flex h-fit items-center rounded-md ${
-        background ? `border border-gray-300 bg-gray-200 px-2 py-2 lg:px-4` : ''
+      className={`flex h-fit w-fit items-center rounded-md ${
+        background
+          ? `border border-gray-300 bg-gray-200   px-2 py-2 lg:px-4`
+          : ''
       } `}
     >
       <input
@@ -68,25 +71,33 @@ export function CheckBox({
         className="hidden"
         disabled={disabled}
       />
-      <label
-        htmlFor={checkboxId}
-        className="flex cursor-pointer items-center gap-2"
+      <Tooltip
+        content={
+          <div className="flex-nowrap text-white">
+            Heyhafsafafasfa&nbsp;oaasfdasf
+          </div>
+        }
       >
-        <div className={getCheckboxStyle(!!checked, !!disabled)}>
-          <CheckIcon
-            className={`h-full w-full ${
-              checked ? 'block' : 'hidden'
-            } text-white`}
-          />
-        </div>
-        <span
-          className={`select-none whitespace-nowrap text-body-2 font-semibold ${
-            disabled ? 'text-fg-disabled' : 'text-gray-900'
-          }`}
+        <label
+          htmlFor={checkboxId}
+          className="flex cursor-pointer items-center gap-2"
         >
-          {title}
-        </span>
-      </label>
+          <div className={getCheckboxStyle(!!checked, !!disabled)}>
+            <CheckIcon
+              className={`h-full w-full ${
+                checked ? 'block' : 'hidden'
+              } text-white`}
+            />
+          </div>
+          <span
+            className={`select-none whitespace-nowrap text-body-2 font-semibold ${
+              disabled ? 'text-fg-disabled' : 'text-gray-900'
+            }`}
+          >
+            {title}
+          </span>
+        </label>
+      </Tooltip>
     </div>
   );
 }
