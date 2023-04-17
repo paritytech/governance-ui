@@ -21,6 +21,7 @@ import {
   flattenAllTracks,
   filterUndelegatedTracks,
   extractIsProcessing,
+  extractDelegatedTracks,
 } from '../../../lifecycle';
 
 export function CheckBox({
@@ -308,6 +309,7 @@ interface ITrackSelectProps {
   tracks: Array<TrackCategory>;
   delegateHandler: () => void;
 }
+
 export function TrackSelect({
   className,
   network,
@@ -332,8 +334,32 @@ export function TrackSelect({
     0
   );
 
+  const delegatesWithTracks = extractDelegatedTracks(state);
+
   return (
     <div className="flex w-full flex-col gap-6 lg:gap-6">
+      {delegatesWithTracks.size ? (
+        <div className="flex snap-start flex-col items-center">
+          <span className="px-3 font-unbounded text-h4">
+            Expand your delegation
+          </span>
+          <p className="text-body">
+            You can always delegate undelegated tracks without locking any more
+            tokens.
+          </p>
+          <ChevronDownIcon className="mt-4" />
+        </div>
+      ) : (
+        <div className="flex snap-start flex-col items-center">
+          <span className="px-3 font-unbounded text-h4">
+            Set up your delegation preferences
+          </span>
+          <p className="text-body">
+            First, select the tracks you would like to delegate, then pick the
+            address you&apos;d like to delegate to.
+          </p>
+        </div>
+      )}
       <SectionTitle
         className=""
         title="Select Tracks to Delegate"
