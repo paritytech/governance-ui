@@ -179,6 +179,15 @@ function DelegationPanelContent({
 
   return (
     <>
+      <div className="flex flex-col items-center">
+        <span className="px-3 font-unbounded text-h4">
+          Set up your delegation preferences
+        </span>
+        <p className="text-body">
+          First, select the tracks you would like to delegate, then pick the
+          address you&apos;d like to delegate to.
+        </p>
+      </div>
       <TrackSelect
         network={network}
         details={state.details}

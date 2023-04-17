@@ -10,7 +10,7 @@ const headline2Url = new URL(
 
 export default function Headline() {
   return (
-    <div className="mt-8 flex w-full flex-col items-center justify-center gap-12 py-12">
+    <div className="flex w-full flex-col items-center justify-center gap-6 pt-6">
       <div className="flex w-full flex-col items-center gap-3 px-8 lg:gap-0 lg:px-0">
         <span className="text-center font-unbounded text-h3 lg:text-h1">
           Governance is now <span className="text-primary">open</span>
@@ -20,7 +20,7 @@ export default function Headline() {
           expert instead.
         </span>
       </div>
-      <div className="flex w-full flex-col gap-8 md:w-[640px]">
+      <div className="flex w-full flex-col gap-2 md:w-[640px]">
         <div className="flex items-center gap-4 px-4 lg:gap-8 lg:px-0">
           <img width={200} src={headline1Url} alt="Headline image 1" />
           <div className="flex w-full flex-col gap-1">
@@ -33,6 +33,7 @@ export default function Headline() {
           </div>
         </div>
         <div className="flex items-center gap-4 px-4  lg:gap-8 lg:px-0">
+          <img width={200} src={headline2Url} alt="Headline image 1" />
           <div className="flex w-full flex-col gap-1">
             <span className="text-h6 font-semibold">
               Engage in governance, when it suits you
@@ -43,7 +44,6 @@ export default function Headline() {
               completely.
             </span>
           </div>
-          <img width={200} src={headline2Url} alt="Headline image 1" />
         </div>
       </div>
     </div>

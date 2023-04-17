@@ -79,7 +79,7 @@ export function CheckBox({
           />
         </div>
         <span
-          className={`whitespace-nowrap text-body-2 font-semibold ${
+          className={`select-none whitespace-nowrap text-body-2 font-semibold ${
             disabled ? 'text-fg-disabled' : 'text-gray-900'
           }`}
         >
@@ -336,7 +336,7 @@ export function TrackSelect({
     <div className="flex w-full flex-col gap-6 lg:gap-6">
       <SectionTitle
         className=""
-        title="Track Based Delegation"
+        title="Select Tracks to Delegate"
         description={
           <span>
             There are currently <b>{activeReferendaCount}</b> active proposals
@@ -372,7 +372,7 @@ export function TrackSelect({
                 ? selectedTrackIndexes.size == 1
                   ? `1 track selected`
                   : `${selectedTrackIndexes.size} tracks selected`
-                : 'Select a track'}
+                : '0 tracks selected'}
             </div>
             <Button
               disabled={selectedTrackIndexes.size == 0}
@@ -390,7 +390,25 @@ export function TrackSelect({
         >
           {tracks.map((category, idx) => (
             <div key={idx} className="flex w-full flex-col gap-2 md:w-1/4">
-              <div className="text-sm">{category.title}</div>
+              <div className="px-4 pb-2">
+                <CheckBox
+                  title={category.title}
+                  checked={category.tracks.every((elem) =>
+                    selectedTrackIndexes.has(elem.id)
+                  )}
+                  // category.tracks.every(elem => trackSelection.includes(elem))
+                  onChange={(e) => {
+                    const isChecked = e.target.checked;
+                    category.tracks.map((track) => {
+                      setTrackSelection(track.id, isChecked);
+                    });
+                  }}
+                  disabled={
+                    isProcessing ||
+                    (connectedAccount && !undelegatedTracks.length)
+                  }
+                />
+              </div>
               <div className="flex flex-col gap-2 lg:gap-4">
                 {category.tracks.map((track, idx) => (
                   <TrackCheckableCard
