@@ -10,7 +10,7 @@ import { Button } from '../../lib';
 import { AddIcon } from '../../icons/index.js';
 import { DelegateCard } from './DelegateCard.js';
 import { AddDelegateModal } from './delegateModal/AddDelegateModal.js';
-import { DelegateModal } from './delegateModal/Delegate.js';
+import { TxnModal } from './delegateModal/TxnModal.js';
 
 export const DelegateSection = ({
   state,
@@ -104,7 +104,7 @@ export const DelegateSection = ({
         }}
       />
       {delegateVisible && (
-        <DelegateModal
+        <TxnModal
           open={delegateVisible}
           onClose={() => setDelegateVisible(false)}
           delegate={delegate}
