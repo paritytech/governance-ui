@@ -3,7 +3,7 @@ import type { Tally, VotingDelegating } from '../../../types';
 import { memo, useState } from 'react';
 import { useDelegation } from '../../../contexts/Delegation.js';
 import { Button, Card } from '../../lib';
-import { CheckIcon, ChevronDownIcon } from '../../icons';
+import { ChevronDownIcon } from '../../icons';
 import SectionTitle from '../SectionTitle';
 import ProgressStepper from '../ProgressStepper';
 import { ReferendumDetails, ReferendumOngoing } from '../../../types';
@@ -23,84 +23,7 @@ import {
   extractIsProcessing,
   extractDelegatedTracks,
 } from '../../../lifecycle';
-import Tooltip from '../Tooltip';
-
-export function CheckBox({
-  title,
-  checked,
-  onChange,
-  background,
-  disabled,
-}: {
-  title?: string;
-  checked?: boolean;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
-  background?: boolean;
-  disabled?: boolean;
-}) {
-  const checkboxId = `${title}-checkbox`;
-  const getCheckboxStyle = (checked: boolean, disabled: boolean) => {
-    let classNames = 'flex h-4 w-4 rounded-sm border-[1px] p-[1px]';
-    if (disabled) {
-      classNames = `${classNames} border-gray-300 text-fg-disabled ${
-        checked ? 'bg-gray-300' : 'bg-white'
-      } `;
-    } else {
-      classNames = `${classNames} ${
-        checked
-          ? 'border-primary bg-primary hover:brightness-95'
-          : 'border-gray-500  bg-white hover:brightness-95'
-      }`;
-    }
-    return classNames;
-  };
-
-  return (
-    <div
-      className={`flex h-fit w-fit items-center rounded-md ${
-        background
-          ? `border border-gray-300 bg-gray-200   px-2 py-2 lg:px-4`
-          : ''
-      } `}
-    >
-      <input
-        id={checkboxId}
-        type="checkbox"
-        checked={checked}
-        onChange={onChange}
-        className="hidden"
-        disabled={disabled}
-      />
-      <Tooltip
-        content={
-          <div className="flex-nowrap text-white">
-            Heyhafsafafasfa&nbsp;oaasfdasf
-          </div>
-        }
-      >
-        <label
-          htmlFor={checkboxId}
-          className="flex cursor-pointer items-center gap-2"
-        >
-          <div className={getCheckboxStyle(!!checked, !!disabled)}>
-            <CheckIcon
-              className={`h-full w-full ${
-                checked ? 'block' : 'hidden'
-              } text-white`}
-            />
-          </div>
-          <span
-            className={`select-none whitespace-nowrap text-body-2 font-semibold ${
-              disabled ? 'text-fg-disabled' : 'text-gray-900'
-            }`}
-          >
-            {title}
-          </span>
-        </label>
-      </Tooltip>
-    </div>
-  );
-}
+import { CheckBox } from '../CheckBox';
 
 interface ITrackCheckableCardProps {
   track: TrackMetaData;
@@ -385,7 +308,7 @@ export function TrackSelect({
         <ProgressStepper step={0} />
       </SectionTitle>
       <div className="flex flex-col gap-2 lg:gap-4 ">
-        <div className="sticky top-44 mb-4 flex flex-row justify-between bg-bg-default/80 px-3 py-3 backdrop-blur-md lg:px-8">
+        <div className="sticky top-44 mb-4 flex flex-row justify-between overflow-visible bg-bg-default/80 px-3 py-3 backdrop-blur-md lg:px-8">
           <CheckBox
             background
             title={allTrackCheckboxTitle}
@@ -403,7 +326,7 @@ export function TrackSelect({
               isProcessing || (connectedAccount && !undelegatedTracks.length)
             }
           />
-          <div className="flex items-center gap-2 ">
+          <div className="flex items-center gap-2">
             <div className="mx-0 hidden text-body-2 text-fg-disabled lg:mx-4 lg:block">
               {selectedTrackIndexes.size > 0
                 ? selectedTrackIndexes.size == 1
