@@ -9,12 +9,12 @@ import {
   filterUndelegatedTracks,
   extractIsProcessing,
 } from '../../../lifecycle';
-import { DelegateModal } from './delegateModal/Delegate';
 import { InnerCard } from '../common/InnerCard';
 import { useAccount, useDelegation } from '../../../contexts';
 import EllipsisTextbox from '../EllipsisTextbox';
 import { UndelegateModal } from './delegateModal/Undelegate';
 import { LabeledBox, TracksLabel } from '../common/LabeledBox';
+import { TxnModal } from './delegateModal/TxnModal';
 
 function getSelectedTracks(
   indexes: number[],
@@ -176,7 +176,7 @@ export function DelegateCard({
         )}
       </Card>
       {txVisible && (
-        <DelegateModal
+        <TxnModal
           open={txVisible}
           onClose={closeTxModal}
           delegate={delegate}

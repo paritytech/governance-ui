@@ -5,7 +5,7 @@ import {
   Header,
   NotificationBox,
 } from './ui/components/index.js';
-import { DelegationPanel } from './ui/layouts/Delegation.js';
+import { DelegationPanel } from './ui/layouts/DelegationPanel.js';
 import WalletProvider from './contexts/Wallets.js';
 import AccountProvider from './contexts/Account.js';
 import { DelegationProvider } from './contexts/Delegation.js';

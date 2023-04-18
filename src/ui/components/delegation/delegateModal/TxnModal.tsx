@@ -1,9 +1,7 @@
-import type { SigningAccount } from '../../../../types';
-
-import BN from 'bn.js';
 import { useEffect, useState } from 'react';
-import { ChevronRightIcon, CloseIcon } from '../../../icons';
-import { Modal, Button } from '../../../lib';
+import BN from 'bn.js';
+import { Delegate, TrackMetaData } from '../../../../lifecycle/types';
+import { Conviction, SigningAccount } from '../../../../types';
 import {
   useAppLifeCycle,
   extractBalance,
@@ -11,10 +9,6 @@ import {
   flattenAllTracks,
   Updater,
 } from '../../../../lifecycle';
-import { Delegate, TrackMetaData } from '../../../../lifecycle/types';
-import { Accounticon } from '../../accounts/Accounticon.js';
-import { Conviction } from '../../../../types';
-import { SimpleAnalytics } from '../../../../analytics';
 import { useAccount, useDelegation } from '../../../../contexts';
 import {
   signAndSend,
@@ -22,15 +16,11 @@ import {
   formatBalance,
 } from '../../../../utils/polkadot-api';
 import { LabeledBox, TracksLabel } from '../../common/LabeledBox';
-
-function formatConviction(conviction: Conviction): string {
-  switch (conviction) {
-    case Conviction.None:
-      return 'No conviction';
-    default:
-      return conviction.toString();
-  }
-}
+import { SimpleAnalytics } from '../../../../analytics';
+import { CloseIcon, ChevronRightIcon } from '../../../../ui/icons/index';
+import { Accounticon } from '../../accounts/Accounticon';
+import { Modal } from '../../../../ui/lib/Modal';
+import { Button } from '../../../../ui/lib/Button';
 
 async function undelegateFee(
   connectedAddress: string,
@@ -59,7 +49,16 @@ function TokensToDelegate({
   return <>...</>;
 }
 
-export function DelegateModal({
+function formatConviction(conviction: Conviction): string {
+  switch (conviction) {
+    case Conviction.None:
+      return 'No conviction';
+    default:
+      return conviction.toString();
+  }
+}
+
+export function TxnModal({
   delegate,
   selectedTracks,
   open,
@@ -183,7 +182,16 @@ export function DelegateModal({
                 />
               </div>
             </LabeledBox>
-            <LabeledBox title="Conviction">
+            <LabeledBox
+              title="Conviction"
+              tooltipContent={
+                <p>
+                  No conviction means your tokens will are only locked while
+                  they are delegated. <br /> Once you unlock them, you can use
+                  them again.{' '}
+                </p>
+              }
+            >
               <div>{formatConviction(conviction)}</div>
             </LabeledBox>
           </div>
