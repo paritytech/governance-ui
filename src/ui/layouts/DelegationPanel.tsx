@@ -19,7 +19,11 @@ function exportReferenda(state: State): Map<number, ReferendumOngoing> {
   return new Map();
 }
 
-export function DelegationPanel() {
+export function DelegationPanel({
+  selectedDelegate,
+}: {
+  selectedDelegate?: string;
+}) {
   const { state } = useAppLifeCycle();
   const { delegates } = state;
 
@@ -45,7 +49,11 @@ export function DelegationPanel() {
       ) : (
         <>
           <Headline />
-          <DelegatesBar delegates={delegates} state={state} />
+          <DelegatesBar
+            delegates={delegates}
+            selectedDelegate={selectedDelegate}
+            state={state}
+          />
         </>
       )}
       <TrackSelect

@@ -1,3 +1,4 @@
+import { Route } from 'wouter';
 import { AppLifeCycleProvider } from './lifecycle/index.js';
 import Footer from './ui/components/Footer.js';
 import {
@@ -10,6 +11,21 @@ import WalletProvider from './contexts/Wallets.js';
 import AccountProvider from './contexts/Account.js';
 import { DelegationProvider } from './contexts/Delegation.js';
 
+function Main({
+  selectedDelegate,
+}: {
+  selectedDelegate?: string;
+}): JSX.Element {
+  return (
+    <>
+      <Header />
+      <NotificationBox />
+      <DelegationPanel selectedDelegate={selectedDelegate} />
+      <Footer />
+    </>
+  );
+}
+
 export function App(): JSX.Element {
   return (
     <ErrorBoundary>
@@ -17,10 +33,12 @@ export function App(): JSX.Element {
         <WalletProvider>
           <AccountProvider>
             <DelegationProvider>
-              <Header />
-              <NotificationBox />
-              <DelegationPanel />
-              <Footer />
+              <Route path="/:address">
+                {({ address }) => <Main selectedDelegate={address} />}
+              </Route>
+              <Route path="/">
+                <Main />
+              </Route>
             </DelegationProvider>
           </AccountProvider>
         </WalletProvider>

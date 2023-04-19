@@ -69,12 +69,14 @@ function DelegatedTracks({
 export function DelegateCard({
   delegate,
   state,
+  selectedDelegate = undefined,
   delegatedTracks = [],
   variant,
   className,
 }: {
   delegate: Delegate;
   state: State;
+  selectedDelegate?: string;
   delegatedTracks?: TrackMetaData[];
   variant: 'all' | 'some' | 'none';
   className?: string;
@@ -87,6 +89,8 @@ export function DelegateCard({
   const [infoVisible, setInfoVisible] = useState(false);
 
   const connectedAddress = connectedAccount?.account?.address;
+
+  console.log(selectedDelegate);
 
   // transaction Modal handlers
   const closeTxModal = () => {
