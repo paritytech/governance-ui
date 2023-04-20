@@ -4,9 +4,9 @@ import '@polkadot/api-augment';
 import '@polkadot/rpc-augment';
 import '@polkadot/types-augment';
 import './index.css';
-import '../node_modules/3ui/src/theme/light.css';
-import '../node_modules/3ui/src/theme/dark.css';
-import '../node_modules/3ui/src/theme/global.css';
+import '3ui/src/theme/light.css';
+import '3ui/src/theme/dark.css';
+import '3ui/src/theme/global.css';
 
 import React from 'react';
 import * as ReactDOMClient from 'react-dom/client';
