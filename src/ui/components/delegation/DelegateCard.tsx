@@ -15,6 +15,7 @@ import EllipsisTextbox from '../EllipsisTextbox';
 import { UndelegateModal } from './delegateModal/Undelegate';
 import { LabeledBox, TracksLabel } from '../common/LabeledBox';
 import { TxnModal } from './delegateModal/TxnModal';
+import { SimpleAnalytics } from '../../../analytics';
 
 function getSelectedTracks(
   indexes: number[],
@@ -99,6 +100,8 @@ export function DelegateCard({
     e.stopPropagation();
     openTxModal();
     setInfoVisible(false); //have to close info modal to make tx modal visible - not ideal, should be replacing content within 1 modal
+
+    SimpleAnalytics.track('Click', { target: 'Delegate', variant });
   };
 
   // more info Modal handlers

@@ -5,6 +5,7 @@ import {
   useCallback,
   useRef,
 } from 'react';
+import { SimpleAnalytics } from '../analytics';
 
 type PageSection = 'top' | 'delegation';
 
@@ -82,6 +83,8 @@ export function DelegationProvider({
       const sectionRef = sectionRefs.get(section);
       if (sectionRef?.current) {
         gotoSection(sectionRef);
+
+        SimpleAnalytics.track('Scroll', { target: section });
       } else {
         console.error(`No ${section} section was found to scroll to.`);
       }
