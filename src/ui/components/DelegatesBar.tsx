@@ -8,11 +8,9 @@ function filterVisibleDelegates(delegates: Delegate[]): Delegate[] {
 export function DelegatesBar({
   state,
   delegates,
-  selectedDelegate,
 }: {
   state: State;
   delegates: Delegate[];
-  selectedDelegate?: string;
 }) {
   const visibleDelegates = useMemo(
     () => filterVisibleDelegates(delegates),
@@ -29,7 +27,6 @@ export function DelegatesBar({
             className="snap-start"
             key={idx}
             delegate={delegate}
-            selectedDelegate={selectedDelegate}
             state={state}
             variant="all"
           />

@@ -13,6 +13,7 @@ import {
   isHex,
 } from '@polkadot/util';
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
+import { addressEq } from '@polkadot/util-crypto';
 import BN from 'bn.js';
 
 const DEFAULT_OPTIONS = {
@@ -87,4 +88,10 @@ export function isValidAddress(address: string): boolean {
   } catch (error) {
     return false;
   }
+}
+
+export function addressEqual(addr1: string, addr2: string) {
+  return (
+    isValidAddress(addr1) && isValidAddress(addr2) && addressEq(addr1, addr2)
+  );
 }

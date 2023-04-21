@@ -44,7 +44,12 @@ import {
 } from '../utils/db.js';
 import { all, clear, open, save } from '../utils/indexeddb.js';
 import { measured } from '../utils/performance.js';
-import { batchAll, newApi, signAndSend } from '../utils/polkadot-api.js';
+import {
+  batchAll,
+  newApi,
+  signAndSend,
+  addressEqual,
+} from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
 import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
 import {
@@ -241,6 +246,16 @@ export function extractDelegatedTracks(
       return [delegate, tracks];
     })
   );
+}
+
+export function lookupDelegateByAddress(
+  delegates: Delegate[],
+  address: string
+): Delegate | undefined {
+  const delegate = delegates.filter((delegate) =>
+    addressEqual(delegate.address, address)
+  )[0];
+  return delegate;
 }
 
 export function extractChainInfo(state: State):

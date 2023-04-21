@@ -31,7 +31,7 @@ export const DelegateSection = ({
 
   return (
     <>
-      <div className="mb-48 flex w-full flex-col gap-16">
+      <div className="flex w-full flex-col gap-16">
         <SectionTitle
           title="Browse Delegates"
           description={

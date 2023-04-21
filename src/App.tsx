@@ -1,30 +1,9 @@
-import { Route } from 'wouter';
 import { AppLifeCycleProvider } from './lifecycle/index.js';
-import Footer from './ui/components/Footer.js';
-import {
-  ErrorBoundary,
-  Header,
-  NotificationBox,
-} from './ui/components/index.js';
-import { DelegationPanel } from './ui/layouts/DelegationPanel.js';
+import { ErrorBoundary } from './ui/components/index.js';
 import WalletProvider from './contexts/Wallets.js';
 import AccountProvider from './contexts/Account.js';
 import { DelegationProvider } from './contexts/Delegation.js';
-
-function Main({
-  selectedDelegate,
-}: {
-  selectedDelegate?: string;
-}): JSX.Element {
-  return (
-    <>
-      <Header />
-      <NotificationBox />
-      <DelegationPanel selectedDelegate={selectedDelegate} />
-      <Footer />
-    </>
-  );
-}
+import { DelegationLayout } from './ui/layouts/Delegation/DelegationLayout.js';
 
 export function App(): JSX.Element {
   return (
@@ -33,12 +12,7 @@ export function App(): JSX.Element {
         <WalletProvider>
           <AccountProvider>
             <DelegationProvider>
-              <Route path="/:address">
-                {({ address }) => <Main selectedDelegate={address} />}
-              </Route>
-              <Route path="/">
-                <Main />
-              </Route>
+              <DelegationLayout />
             </DelegationProvider>
           </AccountProvider>
         </WalletProvider>
