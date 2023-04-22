@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { TrackMetaData } from 'src/lifecycle';
+import { TrackMetaData } from '../../../lifecycle';
 import Tooltip from '../Tooltip';
 
 export function LabeledBox({

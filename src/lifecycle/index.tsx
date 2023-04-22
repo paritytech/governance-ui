@@ -1163,7 +1163,7 @@ async function updateChainState(
   window.addEventListener('unhandledrejection', (event) =>
     dispatchAddReport(
       dispatch,
-      error(`Unhandled promise rejection for ${event.promise}: ${event.reason}`)
+      error(`Unhandled promise rejection: ${event.reason}`)
     )
   );
 

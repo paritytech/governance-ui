@@ -24,6 +24,7 @@ import {
   extractDelegatedTracks,
 } from '../../../lifecycle';
 import { CheckBox } from '../CheckBox';
+import { SimpleAnalytics } from '../../../analytics';
 
 interface ITrackCheckableCardProps {
   track: TrackMetaData;
@@ -321,6 +322,7 @@ export function TrackSelect({
               undelegatedTracks.map((track) => {
                 setTrackSelection(track.id, isChecked);
               });
+              SimpleAnalytics.track('Select', { target: 'AllTracks' });
             }}
             disabled={
               isProcessing || (connectedAccount && !undelegatedTracks.length)
@@ -361,6 +363,10 @@ export function TrackSelect({
                     category.tracks.map((track) => {
                       setTrackSelection(track.id, isChecked);
                     });
+                    SimpleAnalytics.track('Select', {
+                      target: 'Category',
+                      id: category.title,
+                    });
                   }}
                   disabled={
                     isProcessing ||
@@ -380,6 +386,10 @@ export function TrackSelect({
                     onChange={(e) => {
                       const isChecked = e.target.checked;
                       setTrackSelection(track.id, isChecked);
+                      SimpleAnalytics.track('Select', {
+                        target: 'Track',
+                        id: track.id.toString(),
+                      });
                     }}
                     network={network}
                   />
