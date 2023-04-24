@@ -46,7 +46,6 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const getWalletsAccounts = async () => {
-    console.log('get accounts');
     let signingAccounts = new Map<string, SigningAccount>();
     for (const wallet of wallets) {
       const {
@@ -89,9 +88,12 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     return walletState.get(title) === 'connected';
   };
 
-  const setConnectedAccount = (signingAccount: SigningAccount | undefined) => {
+  const setConnectedAccount = (
+    signingAccount: SigningAccount | undefined,
+    persist = true
+  ) => {
     const connectedAddress = signingAccount?.account.address;
-    AccountStorage.setConnectedAddress(connectedAddress || '');
+    persist && AccountStorage.setConnectedAddress(connectedAddress || '');
     _setConnectedAccount(signingAccount);
     updater.setConnectedAddress(connectedAddress || null);
   };
@@ -102,7 +104,12 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     if (storedConnectedAddress) {
       loadConnectedAccount().then((signingAccount) => {
         if (signingAccount) {
-          setConnectedAccount(signingAccount);
+          // connected account might have changed, persist the address in storage
+          setConnectedAccount(signingAccount, true);
+        } else {
+          // was not able to load the connected account based on storedConnectedAddress,
+          // hence (persist=false) to reset the state but not clearing the local storage value .
+          setConnectedAccount(undefined, false);
         }
       });
     }
