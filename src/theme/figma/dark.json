@@ -1,0 +1,288 @@
+{
+  "boxShadow": {
+    "pop": {
+      "value": {
+        "color": "#00000030",
+        "type": "dropShadow",
+        "x": "0",
+        "y": "8",
+        "blur": "24",
+        "spread": "0"
+      },
+      "type": "boxShadow"
+    },
+    "idle": {
+      "value": {
+        "x": "0",
+        "y": "2",
+        "blur": "4",
+        "spread": "0",
+        "color": "rgba(0,0,0,0.85)",
+        "type": "dropShadow"
+      },
+      "type": "boxShadow"
+    },
+    "hover": {
+      "value": {
+        "color": "#00000008",
+        "type": "dropShadow",
+        "x": "0",
+        "y": "8",
+        "blur": "8",
+        "spread": "0"
+      },
+      "type": "boxShadow"
+    }
+  },
+  "colors": {
+    "background": {
+      "default": {
+        "value": "{colors.p-purple.900}",
+        "type": "color"
+      },
+      "system": {
+        "value": "#101015",
+        "type": "color"
+      },
+      "float": {
+        "value": "{colors.p-purple.700}",
+        "type": "color"
+      },
+      "dip": {
+        "value": "{colors.p-purple.950}",
+        "type": "color"
+      }
+    },
+    "fill": {
+      "primary": {
+        "value": "{colors.p-pink.500}",
+        "type": "color"
+      },
+      "primary-hover": {
+        "value": "{colors.fill.primary}",
+        "type": "color",
+        "$extensions": {
+          "studio.tokens": {
+            "modify": {
+              "type": "darken",
+              "value": "0.1",
+              "space": "p3"
+            }
+          }
+        }
+      },
+      "primary-down": {
+        "value": "{colors.fill.primary}",
+        "type": "color",
+        "$extensions": {
+          "studio.tokens": {
+            "modify": {
+              "type": "darken",
+              "value": "0.15",
+              "space": "p3"
+            }
+          }
+        }
+      },
+      "secondary": {
+        "value": "{colors.p-purple.100}",
+        "type": "color",
+        "$extensions": {
+          "studio.tokens": {
+            "modify": {
+              "type": "darken",
+              "value": "0.02",
+              "space": "p3"
+            }
+          }
+        }
+      },
+      "secondary-hover": {
+        "value": "{colors.fill.secondary}",
+        "type": "color",
+        "$extensions": {
+          "studio.tokens": {
+            "modify": {
+              "type": "lighten",
+              "value": "0.5",
+              "space": "p3"
+            }
+          }
+        }
+      },
+      "secondary-down": {
+        "value": "{colors.fill.secondary}",
+        "type": "color"
+      },
+      "ghost": {
+        "value": "{colors.p-purple.700}",
+        "type": "color"
+      },
+      "ghost-hover": {
+        "value": "{colors.fill.ghost}",
+        "type": "color",
+        "$extensions": {
+          "studio.tokens": {
+            "modify": {
+              "type": "darken",
+              "value": "0.1",
+              "space": "p3"
+            }
+          }
+        }
+      },
+      "ghost-down": {
+        "value": "{colors.fill.ghost}",
+        "type": "color"
+      },
+      "match-background": {
+        "value": "{colors.background.default}",
+        "type": "color"
+      },
+      "disabled": {
+        "value": "{colors.p-white-transparent.100}",
+        "type": "color"
+      },
+      "danger": {
+        "value": "{colors.p-red.400}",
+        "type": "color"
+      },
+      "danger-hover": {
+        "value": "{colors.p-red.400}",
+        "type": "color",
+        "$extensions": {
+          "studio.tokens": {
+            "modify": {
+              "type": "darken",
+              "value": "0.1",
+              "space": "p3"
+            }
+          }
+        }
+      },
+      "danger-pressed": {
+        "value": "{colors.p-red.400}",
+        "type": "color",
+        "$extensions": {
+          "studio.tokens": {
+            "modify": {
+              "type": "darken",
+              "value": "0.15",
+              "space": "p3"
+            }
+          }
+        }
+      },
+      "elevate-1": {
+        "value": "{colors.p-white-transparent.700}",
+        "type": "color"
+      },
+      "overlay": {
+        "value": "{colors.p-white-transparent.600}",
+        "type": "color"
+      },
+      "selected": {
+        "value": "{colors.p-purple.200}",
+        "type": "color"
+      },
+      "white": {
+        "value": "{colors.white}",
+        "type": "color"
+      },
+      "separator": {
+        "value": "{colors.p-white-transparent.200}",
+        "type": "color"
+      }
+    },
+    "border": {
+      "contrast": {
+        "value": "{colors.p-gray.800}",
+        "type": "color",
+        "description": "\n\n"
+      },
+      "dimmed": {
+        "value": "{colors.p-black-transparent.500}",
+        "type": "color"
+      },
+      "primary": {
+        "value": "{colors.p-pink.500}",
+        "type": "color"
+      },
+      "danger": {
+        "value": "{colors.p-red.500}",
+        "type": "color"
+      },
+      "hint": {
+        "value": "{colors.p-white-transparent.200}",
+        "type": "color"
+      },
+      "disabled": {
+        "value": "{colors.p-black-transparent.200}",
+        "type": "color"
+      },
+      "focus": {
+        "value": "{colors.p-gray.800}",
+        "type": "color"
+      }
+    },
+    "foreground": {
+      "contrast": {
+        "value": "{colors.white}",
+        "type": "color",
+        "description": "Contrast to background color (in both dark and light modes)."
+      },
+      "dimmed": {
+        "value": "{colors.p-white-transparent.500}",
+        "type": "color",
+        "description": "Use for less important text and icons - eg. icons you'll find if you need them but don't need to"
+      },
+      "match-background": {
+        "value": "{colors.background.default}",
+        "type": "color",
+        "description": "Matches background color (in both dark and light modes)."
+      },
+      "primary": {
+        "value": "{colors.p-pink.500}",
+        "type": "color",
+        "description": "Use for most important action."
+      },
+      "white": {
+        "value": "{colors.white}",
+        "type": "color",
+        "description": "Stays white both in dark and light themes."
+      },
+      "disabled": {
+        "value": "{colors.p-white-transparent.400}",
+        "type": "color"
+      },
+      "danger": {
+        "value": "{colors.p-red.400}",
+        "type": "color",
+        "description": "Use for errors and to signify dangerous actions."
+      },
+      "emphasized": {
+        "value": "{colors.p-pink.300}",
+        "type": "color",
+        "description": "Use to emphasize actions - eg. filters selected"
+      }
+    },
+    "accent": {
+      "cyan": {
+        "value": "#00D0FF",
+        "type": "color"
+      },
+      "green": {
+        "value": "#56F39A",
+        "type": "color"
+      },
+      "lime": {
+        "value": "#D3FF33",
+        "type": "color"
+      },
+      "random": {
+        "value": "#abcabc",
+        "type": "color"
+      }
+    }
+  }
+}
