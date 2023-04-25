@@ -31,6 +31,7 @@ export type AccountChainState = {
 };
 
 export type ChainProperties = {
+  genesisHash?: `0x${string}`;
   ss58Format?: number;
   tokenDecimals: Array<number>;
   tokenSymbols: Array<string>;
