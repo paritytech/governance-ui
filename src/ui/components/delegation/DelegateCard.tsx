@@ -126,7 +126,7 @@ export function DelegateCard({
 
   return (
     <div
-      className={`flex min-h-full shrink-0  ${className} ${
+      className={`flex min-h-full shrink-0 ${className} ${
         variant === 'all' ? 'w-[320px] md:w-[420px]' : 'w-full'
       }`}
     >

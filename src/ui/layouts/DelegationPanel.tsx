@@ -34,7 +34,7 @@ export function DelegationPanel() {
   // If user has some active delegation,
   return (
     <main
-      className="flex w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20 lg:gap-16"
+      className="bg-background-default flex w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20 lg:gap-16"
       ref={sectionRefs.get('top')}
     >
       {delegatesWithTracks.size ? (

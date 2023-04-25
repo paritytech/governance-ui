@@ -17,9 +17,11 @@ export function DelegatesBar({
     [delegates]
   );
   return (
-    <section className="flex w-full flex-col items-center justify-center gap-6 bg-gray-200 py-8 md:gap-12">
+    <section className="bg-background-dip flex w-full flex-col items-center justify-center gap-6 py-8 md:gap-12 ">
       <div className={`flex flex-col justify-center gap-0`}>
-        <span className="px-3 font-unbounded text-h4">Volunteer Delegates</span>
+        <span className="text-foreground-contrast px-3 font-unbounded text-h4">
+          Volunteer Delegates
+        </span>
       </div>
       <div className="flex max-w-full snap-x scroll-pl-6 gap-7 overflow-x-auto px-3 pb-1 lg:px-6	">
         {visibleDelegates.map((delegate, idx) => (

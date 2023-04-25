@@ -1,0 +1,16 @@
+:root {
+  --desktop-h1: 700 2.25rem/36 Unbounded;
+  --desktop-h2: 700 2rem/32 Unbounded;
+  --desktop-h3: 400 1.75rem/36 Inter;
+  --desktop-h4: 700 1.5rem/36 Inter;
+  --desktop-h5: 500 1.25rem/40 Inter;
+  --desktop-h6: 500 1rem/24 Inter;
+  --desktop-body: 400 1rem/24 Inter;
+  --desktop-body-medium: 500 1rem/24 Inter;
+  --desktop-body-2: 400 0.875rem/20 Inter;
+  --desktop-body-2-medium: 500 0.875rem/20 Inter;
+  --desktop-subtitle: 500 1.5rem/36 Inter;
+  --desktop-subtitle-2: 500 1rem/24 Inter;
+  --desktop-caption: 400 12px/16 Inter;
+  --pill: 9999px;
+}

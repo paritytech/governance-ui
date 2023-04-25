@@ -3,6 +3,7 @@
 import '@polkadot/api-augment';
 import '@polkadot/rpc-augment';
 import '@polkadot/types-augment';
+import './index.css';
 
 import React from 'react';
 import * as ReactDOMClient from 'react-dom/client';

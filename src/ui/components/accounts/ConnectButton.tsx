@@ -130,7 +130,10 @@ export const ConnectButton = () => {
 
   return (
     <>
-      <Button onClick={btnClickHandler}>
+      <Button
+        className="text-foreground-matchBackground bg-fill-secondary"
+        onClick={btnClickHandler}
+      >
         <div className="flex flex-nowrap items-center gap-1">
           {address && (
             <Identicon
@@ -140,7 +143,9 @@ export const ConnectButton = () => {
               size={18}
             />
           )}
-          <div className="text-sm">{btnTitle}</div>
+          <div className="text-body2 font-inter select-none font-medium">
+            {btnTitle}
+          </div>
         </div>
       </Button>
       <Modal open={visible} onClose={() => closeModal()}>

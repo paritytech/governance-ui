@@ -95,7 +95,7 @@ const Component = forwardRef<HTMLElement, BaseElementProps>(
   ({ className, children }, ref) => {
     return (
       <nav
-        className={`fixed z-10 w-full rounded bg-bg-default px-2  md:px-4 ${
+        className={`bg-background-default fixed z-10 w-full rounded px-2  md:px-4 ${
           className || ''
         }`}
         ref={ref}
@@ -106,7 +106,7 @@ const Component = forwardRef<HTMLElement, BaseElementProps>(
             <Toggle />
           </NavbarContextProvider>
         </div>
-        <div className="h-[1px] w-full bg-[#E9E9E9]" />
+        <div className="bg-fill-separator h-[1px] w-full" />
       </nav>
     );
   }

@@ -272,9 +272,9 @@ export function TrackSelect({
   const delegatesWithTracks = extractDelegatedTracks(state);
 
   return (
-    <div className="flex w-full flex-col gap-6 lg:gap-6">
+    <div className="text-foreground-contrast flex w-full flex-col gap-6 lg:gap-6">
       {delegatesWithTracks.size ? (
-        <div className="flex snap-start flex-col items-center">
+        <div className="mb-12 flex snap-start flex-col items-center">
           <span className="px-3 font-unbounded text-h4">
             Expand your delegation
           </span>
@@ -285,7 +285,7 @@ export function TrackSelect({
           <ChevronDownIcon className="mt-4" />
         </div>
       ) : (
-        <div className="flex snap-start flex-col items-center">
+        <div className="mb-12 flex snap-start flex-col items-center">
           <span className="px-3 font-unbounded text-h4">
             Set up your delegation preferences
           </span>
@@ -339,8 +339,15 @@ export function TrackSelect({
             <Button
               disabled={selectedTrackIndexes.size == 0}
               onClick={delegateHandler}
+              className="bg-fill-secondary disabled:bg-fill-disabled"
             >
-              <div className="flex flex-row items-center justify-center gap-1 whitespace-nowrap">
+              <div
+                className={`${
+                  selectedTrackIndexes.size == 0
+                    ? 'text-foreground-disabled'
+                    : 'text-foreground-matchBackground'
+                } flex flex-row items-center justify-center gap-1 whitespace-nowrap`}
+              >
                 <div>Select delegate</div>
                 <ChevronDownIcon />
               </div>
