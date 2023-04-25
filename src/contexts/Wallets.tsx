@@ -87,7 +87,10 @@ const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     new InjectedWalletProvider({}, APP_NAME),
   ]);
   return (
-    <PolkadotWalletsContextProvider walletAggregator={walletAggregator}>
+    <PolkadotWalletsContextProvider
+      walletAggregator={walletAggregator}
+      initialWaitMs={20}
+    >
       <WalletProviderInner>{children}</WalletProviderInner>
     </PolkadotWalletsContextProvider>
   );

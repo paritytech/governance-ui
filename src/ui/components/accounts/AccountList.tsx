@@ -1,14 +1,17 @@
 import type { SigningAccount } from '../../../types';
 import { useMemo } from 'react';
 import Account from './Account.js';
+import { encodeAddress } from '@polkadot/keyring';
 
 export const AccountList = ({
   accounts,
   connectedAccount,
+  ss58Format,
   accountConnectHandler,
 }: {
   accounts: Map<string, SigningAccount>;
   connectedAccount: SigningAccount | undefined;
+  ss58Format: number | undefined;
   accountConnectHandler: (account: SigningAccount | undefined) => void;
 }) => {
   const otherAccounts = useMemo(() => {
@@ -23,7 +26,10 @@ export const AccountList = ({
         {connectedAccount?.account && (
           <Account
             name={connectedAccount.account.name || ''}
-            address={connectedAccount.account.address}
+            address={encodeAddress(
+              connectedAccount.account.address,
+              ss58Format
+            )}
             state={{ isConnected: true }}
             clickHandler={() => {
               // disconnect
@@ -39,7 +45,7 @@ export const AccountList = ({
             <Account
               key={account.address}
               name={account.name || ''}
-              address={account.address}
+              address={encodeAddress(account.address, ss58Format)}
               state={{ isConnected: false }}
               clickHandler={() => accountConnectHandler(signingAccount)}
             />

@@ -1,4 +1,9 @@
-export type AnalyticEvent = 'Delegate' | 'Undelegate';
+export type AnalyticEvent =
+  | 'Click'
+  | 'Select'
+  | 'Scroll'
+  | 'Delegate'
+  | 'Undelegate';
 
 declare global {
   interface Window {

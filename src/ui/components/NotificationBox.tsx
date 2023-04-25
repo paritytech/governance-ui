@@ -43,7 +43,7 @@ export function NotificationBox() {
   }, [processing]);
 
   return (
-    <div className="fixed bottom-12 right-4 flex w-[300px] flex-col gap-2">
+    <div className="fixed bottom-12 right-4 z-50 flex w-[300px] flex-col gap-2">
       {current && (
         <Notification>
           <span className="w-full">{current.message}</span>

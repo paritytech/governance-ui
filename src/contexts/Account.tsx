@@ -1,7 +1,7 @@
 import type { SigningAccount } from '../types';
 
 import React, { useContext, createContext, useState, useEffect } from 'react';
-import { useAppLifeCycle } from '../lifecycle/index.js';
+import { extractChainInfo, useAppLifeCycle } from '../lifecycle/index.js';
 import { useWallets } from './Wallets.js';
 
 export interface IAccountContext {
@@ -25,7 +25,8 @@ export class AccountStorage {
 }
 
 const AccountProvider = ({ children }: { children: React.ReactNode }) => {
-  const { updater } = useAppLifeCycle();
+  const { state, updater } = useAppLifeCycle();
+  const { genesisHash } = extractChainInfo(state) || {};
   const [_connectedAccount, _setConnectedAccount] = useState<
     SigningAccount | undefined
   >();
@@ -53,7 +54,15 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
       } = wallet;
       if (signer && walletState.get(title) === 'connected') {
         const walletSigningAccounts = new Map<string, SigningAccount>();
-        const accounts = await wallet.getAccounts();
+
+        // filter accounts that match the genesis hash.
+        const accounts = (await wallet.getAccounts()).filter(
+          (account) =>
+            !account.genesisHash ||
+            !genesisHash ||
+            account.genesisHash === genesisHash
+        );
+
         if (accounts.length > 0) {
           for (const account of accounts) {
             walletSigningAccounts.set(account.address, {
@@ -79,9 +88,12 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     return walletState.get(title) === 'connected';
   };
 
-  const setConnectedAccount = (signingAccount: SigningAccount | undefined) => {
+  const setConnectedAccount = (
+    signingAccount: SigningAccount | undefined,
+    persist = true
+  ) => {
     const connectedAddress = signingAccount?.account.address;
-    AccountStorage.setConnectedAddress(connectedAddress || '');
+    persist && AccountStorage.setConnectedAddress(connectedAddress || '');
     _setConnectedAccount(signingAccount);
     updater.setConnectedAddress(connectedAddress || null);
   };
@@ -92,7 +104,12 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     if (storedConnectedAddress) {
       loadConnectedAccount().then((signingAccount) => {
         if (signingAccount) {
-          setConnectedAccount(signingAccount);
+          // connected account might have changed, persist the address in storage
+          setConnectedAccount(signingAccount, true);
+        } else {
+          // was not able to load the connected account based on storedConnectedAddress,
+          // hence (persist=false) to reset the state but not clearing the local storage value .
+          setConnectedAccount(undefined, false);
         }
       });
     }
@@ -103,7 +120,7 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
     getWalletsAccounts().then((accounts: Map<string, SigningAccount>) => {
       setWalletsAccounts(accounts);
     });
-  }, [wallets, walletState]);
+  }, [wallets, walletState, genesisHash]);
 
   const connectedAccount =
     _connectedAccount && accountSourceIsConnected(_connectedAccount)
