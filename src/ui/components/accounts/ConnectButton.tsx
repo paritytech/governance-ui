@@ -10,6 +10,7 @@ import { AccountList } from './AccountList.js';
 import { WalletsList } from './WalletList.js';
 import { ConnectCard } from './ConnectCard.js';
 import { ChevronRightIcon, WalletIcon } from '../../icons/index.js';
+import { extractChainInfo, useAppLifeCycle } from '../../../lifecycle';
 
 type ConnectViews = 'wallets' | 'accounts';
 
@@ -54,6 +55,8 @@ const AccountView = ({
     signingAccount: SigningAccount | undefined
   ) => Promise<void>;
 }) => {
+  const { state } = useAppLifeCycle();
+  const { ss58 } = extractChainInfo(state) || {};
   const { connectedAccount, walletsAccounts } = useAccount();
   return (
     <>
@@ -71,6 +74,7 @@ const AccountView = ({
         accounts={walletsAccounts}
         connectedAccount={connectedAccount}
         accountConnectHandler={accountConnectHandler}
+        ss58Format={ss58}
       />
     </>
   );

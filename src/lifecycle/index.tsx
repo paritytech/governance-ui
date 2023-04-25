@@ -7,6 +7,7 @@ import type {
   VotingDelegating,
   SigningAccount,
 } from '../types.js';
+import type { Registry } from '@polkadot/types-codec/types';
 
 import React, {
   Dispatch,
@@ -23,7 +24,6 @@ import {
   QueryableStorage,
   SubmittableExtrinsic,
 } from '@polkadot/api/types';
-import { Registry } from '@polkadot/types-codec/types';
 import {
   createBatchVotes,
   delegate,
@@ -248,6 +248,7 @@ export function extractChainInfo(state: State):
       decimals: number | undefined;
       unit: string | undefined;
       ss58: number | undefined;
+      genesisHash: `0x${string}` | undefined;
     }
   | undefined {
   if (state.type == 'ConnectedState') {
@@ -255,6 +256,7 @@ export function extractChainInfo(state: State):
       decimals: state.chain.properties.tokenDecimals[0],
       unit: state.chain.properties.tokenSymbols[0],
       ss58: state.chain.properties.ss58Format,
+      genesisHash: state.chain.properties.genesisHash,
     };
   }
 }
@@ -470,7 +472,9 @@ async function restorePersisted(
   };
 }
 
-function getProperties(registry: Registry): ChainProperties {
+function getProperties(
+  registry: Registry
+): Omit<ChainProperties, 'genesisHash'> {
   const properties = registry.getChainProperties();
   if (properties) {
     return {
@@ -491,11 +495,12 @@ export async function fetchChainState(
     consts: QueryableConsts<'promise'>;
     query: QueryableStorage<'promise'>;
   },
-  registry: Registry
+  registry: Registry,
+  genesisHash: `0x${string}`
 ): Promise<ChainState> {
   const tracks = getAllTracks(api);
   const referenda = await getAllReferenda(api);
-  const properties = getProperties(registry);
+  const properties = { genesisHash, ...getProperties(registry) };
   return { properties, tracks, referenda };
 }
 
@@ -981,7 +986,7 @@ async function dispatchEndpointsChange(
     const apiAt = await api.at(header.hash);
     // TODO rely on subs, do not re-fetch whole state each block
     const details = await measured('fetch-chain-details', () =>
-      fetchChainState(apiAt, api.registry)
+      fetchChainState(apiAt, api.registry, api.genesisHash.toHex())
     );
 
     dispatch({
