@@ -21,6 +21,8 @@ export type Settings = {
 
 export type Address = string;
 
+export type TrackId = number;
+
 export type Fellow = {
   rank: number;
 };
@@ -44,7 +46,6 @@ export type ChainState = {
 };
 
 export type PersistedDataContext = {
-  votes: Map<number, AccountVote>;
   customDelegates: Array<Delegate>;
 };
 
@@ -241,8 +242,6 @@ export type Action =
   | UpdateChainDetails
   | UpdateChainAccountDetails
   | StoreReferendumDetails
-  | CastVote
-  | ClearVotes
   | SetIndexes
   | SetDelegates
   | AddCustomDelegate

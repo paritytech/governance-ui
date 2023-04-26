@@ -49,7 +49,7 @@ export function NotificationBox() {
 
   return (
     <div className="fixed bottom-12 right-4 z-50 flex w-[300px] flex-col gap-2">
-      {current && (
+      {current && current.type == 'Error' && (
         <Notification>
           <span className="w-full">{current.message}</span>
           {!isTransientReport && (
