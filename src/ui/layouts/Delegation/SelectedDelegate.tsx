@@ -228,7 +228,7 @@ export function SelectedDelegatePanel({
 }: {
   selectedDelegate: string;
 }) {
-  const { state } = useAppLifeCycle();
+  const { state, updater } = useAppLifeCycle();
   // lookup delegate
   let delegate =
     selectedDelegate &&
@@ -250,7 +250,15 @@ export function SelectedDelegatePanel({
       <div className="flex w-full flex-col gap-6">
         <div className="flex w-full flex-row justify-between">
           <div className="font-unbounded text-h4">{delegate.name}</div>
-          <CopyToClipboard text={generateShareLink()}>
+          <CopyToClipboard
+            text={generateShareLink()}
+            onCopy={() =>
+              updater.addReport({
+                type: 'Info',
+                message: 'Profile link copied to clipboard!',
+              })
+            }
+          >
             <Button variant="ghost">
               <CopyIcon />
               <div>Copy profile link</div>
