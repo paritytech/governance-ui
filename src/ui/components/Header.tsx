@@ -10,7 +10,11 @@ const logoUrl = new URL(
   import.meta.url
 ).toString();
 
-export function Header(): JSX.Element {
+export function Header({
+  activeDelegateCount,
+}: {
+  activeDelegateCount: number;
+}): JSX.Element {
   return (
     <Navbar>
       <Navbar.Brand>
@@ -21,7 +25,10 @@ export function Header(): JSX.Element {
           <div className="hidden h-8 items-center gap-2 md:flex">
             <img className="inline h-full" src={logoUrl} alt="polkadot logo" />
             <div className="h-6 w-[2px] bg-gray-400" />
-            <span className="font-unbounded text-h5">Open Governance</span>
+            <span className="font-unbounded text-h5">Delegatio Dashboard</span>
+            {!!activeDelegateCount && (
+              <span className="font-unbounded text-xl font-normal text-fg-disabled">{`${activeDelegateCount} active`}</span>
+            )}
           </div>
         </div>
       </Navbar.Brand>

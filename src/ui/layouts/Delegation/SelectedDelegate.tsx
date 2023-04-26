@@ -8,7 +8,6 @@ import {
 import {
   extractIsProcessing,
   extractBalance,
-  extractDelegatedTracks,
   flattenAllTracks,
   filterUndelegatedTracks,
 } from '../../../lifecycle';
@@ -18,8 +17,9 @@ import { TracksLabel } from '../../components/common/LabeledBox';
 import { BalanceLabel } from '../../components/common/LabeledBox';
 import { Accounticon } from '../../components/accounts/Accounticon';
 import { Remark } from 'react-remark';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Button } from '../../lib/Button';
-import { ChevronRightIcon } from '../../icons';
+import { ChevronRightIcon, CopyIcon } from '../../icons';
 import { Card } from '../../lib';
 import { TxnModal } from '../../components/delegation/delegateModal/TxnModal';
 import {
@@ -185,6 +185,7 @@ export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
             </div>
             <div className="flex w-full flex-row justify-end gap-4">
               <Button
+                className="w-full"
                 variant="primary"
                 onClick={(event) =>
                   connectedAccount && usableBalance && delegateHandler(event)
@@ -193,7 +194,7 @@ export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
                   isProcessing || !connectedAccount || !usableBalance?.gtn(0)
                 }
               >
-                <div>Delegate Now</div>
+                <div>Delegate all undelegated tracks</div>
                 <ChevronRightIcon />
               </Button>
             </div>
@@ -216,10 +217,6 @@ export function SelectedDelegatePanel({
   selectedDelegate: string;
 }) {
   const { state } = useAppLifeCycle();
-  const delegatesWithTracks = useMemo(
-    () => extractDelegatedTracks(state),
-    [state]
-  );
   // lookup delegate
   let delegate =
     selectedDelegate &&
@@ -227,13 +224,30 @@ export function SelectedDelegatePanel({
   if (!delegate) {
     delegate = {
       name: 'Anonymous',
-      address: selectedDelegate || 'undefined',
-      manifesto: 'Not registered',
+      address: selectedDelegate,
+      manifesto:
+        'This delegate is not currently registered in our registry. However, you can still choose to delegate your votes to them if you trust them and have confidence in their abilities.',
     };
   }
+  function generateShareLink() {
+    return location.href;
+  }
+
   return (
-    <div className="flex w-full max-w-[1280px] flex-row p-8">
-      <div className="w-full">Delegate info {delegatesWithTracks.size}</div>
+    <div className="flex w-full max-w-[1280px] flex-row gap-32 p-8">
+      <div className="flex w-full flex-col gap-6">
+        <div className="flex w-full flex-row justify-between">
+          <div className="font-unbounded text-h4">{delegate.name}</div>
+          <CopyToClipboard text={generateShareLink()}>
+            <Button variant="ghost">
+              <CopyIcon />
+              <div>Copy profile link</div>
+            </Button>
+          </CopyToClipboard>
+        </div>
+        <hr />
+        <Remark>{delegate.manifesto || ''}</Remark>
+      </div>
       <SelectedDelegateCard delegate={delegate} />
     </div>
   );
