@@ -19,7 +19,7 @@ import { Accounticon } from '../../components/accounts/Accounticon';
 import { Remark } from 'react-remark';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Button } from '../../lib/Button';
-import { ChevronRightIcon, CopyIcon } from '../../icons';
+import { ArrowRightIcon, CopyIcon } from '../../icons';
 import { Card } from '../../lib';
 import { TxnModal } from '../../components/delegation/delegateModal/TxnModal';
 import {
@@ -28,6 +28,7 @@ import {
 } from '../../../utils/polkadot-api';
 import BN from 'bn.js';
 import { Conviction } from '../../../types';
+import { Link } from 'wouter';
 
 export function DelegateInfo({ delegate }: { delegate: Delegate }) {
   const { address, manifesto, name } = delegate;
@@ -134,7 +135,7 @@ export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
     <>
       <div>
         <Card className="w-[445px]">
-          <div className="flex w-full flex-col gap-12 p-4 md:p-6">
+          <div className="flex w-full flex-col gap-8 p-4 md:p-6">
             <div className="flex flex-col items-start justify-start gap-6 ">
               <div className="text-left">
                 <h2 className="mb-2 text-3xl font-medium">Delegate Now</h2>
@@ -195,8 +196,19 @@ export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
                 }
               >
                 <div>Delegate all undelegated tracks</div>
-                <ChevronRightIcon />
+                <ArrowRightIcon />
               </Button>
+            </div>
+            <hr />
+            <div className="flex w-full flex-col gap-2 text-sm">
+              <Link href="/" className="flex flex-row items-center gap-1">
+                <div>Discover other delegates</div>
+                <ArrowRightIcon />
+              </Link>
+              <Link href="/" className="flex flex-row items-center gap-1">
+                <div>Manage your active delegations</div>
+                <ArrowRightIcon />
+              </Link>
             </div>
           </div>
         </Card>
