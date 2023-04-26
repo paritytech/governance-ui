@@ -49,6 +49,7 @@ import {
   newApi,
   signAndSend,
   addressEqual,
+  calcEstimatedFee,
 } from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
 import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
@@ -653,6 +654,24 @@ export class Updater {
     }
   }
 
+  async delegateFee(
+    connectedAddress: string,
+    delegateAddress: string,
+    tracks: number[],
+    balance: BN,
+    conviction: Conviction
+  ): Promise<BN | undefined> {
+    const tx = await this.delegate(
+      delegateAddress,
+      tracks,
+      balance,
+      conviction
+    );
+    if (tx.type === 'ok') {
+      return await calcEstimatedFee(tx.value, connectedAddress);
+    }
+  }
+
   async undelegate(
     tracks: number[],
     unlockTarget: string
@@ -674,6 +693,16 @@ export class Updater {
       const report = error('Failed to retrieve Api');
       await this.addReport(report);
       return err(new Error(report.message));
+    }
+  }
+
+  async undelegateFee(
+    connectedAddress: string,
+    tracks: number[]
+  ): Promise<BN | undefined> {
+    const tx = await this.undelegate(tracks, connectedAddress);
+    if (tx.type == 'ok') {
+      return await calcEstimatedFee(tx.value, connectedAddress);
     }
   }
 

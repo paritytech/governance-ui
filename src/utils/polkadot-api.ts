@@ -1,11 +1,12 @@
-import { ApiPromise, SubmittableResult } from '@polkadot/api';
-import {
+import type {
   ApiOptions,
   Signer,
   SubmittableExtrinsic,
   SubmittableExtrinsics,
 } from '@polkadot/api/types';
-import { IMethod } from '@polkadot/types-codec/types/interfaces';
+import type { IMethod } from '@polkadot/types-codec/types/interfaces';
+
+import { ApiPromise, SubmittableResult } from '@polkadot/api';
 import {
   BN_HUNDRED,
   formatBalance as formatBalanceP,
@@ -15,6 +16,7 @@ import {
 import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { addressEq } from '@polkadot/util-crypto';
 import BN from 'bn.js';
+import { Conviction } from '../types';
 
 const DEFAULT_OPTIONS = {
   noInitWarn: true,
@@ -67,6 +69,17 @@ export async function calcEstimatedFee(
   return partialFee.muln(110).div(BN_HUNDRED);
 }
 
+export function calcDelegatableBalance(
+  balance: BN,
+  delegateSelectedFee: BN,
+  undelegateAllFee: BN
+): BN {
+  return BN.max(
+    balance.sub(delegateSelectedFee.add(undelegateAllFee.muln(130).divn(100))),
+    new BN(0)
+  );
+}
+
 export function formatBalance(
   input: BN,
   decimals: number,
@@ -78,6 +91,15 @@ export function formatBalance(
     forceUnit: 'Unit',
     withSi: false,
   })} ${unit}`;
+}
+
+export function formatConviction(conviction: Conviction): string {
+  switch (conviction) {
+    case Conviction.None:
+      return 'No conviction';
+    default:
+      return conviction.toString();
+  }
 }
 
 export function isValidAddress(address: string): boolean {

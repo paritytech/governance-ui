@@ -2,7 +2,7 @@ import { Switch, Route } from 'wouter';
 import Footer from '../../components/Footer.js';
 import { Header, NotificationBox } from '../../components/index.js';
 import { DelegationPanel } from './DelegationPanel.js';
-import { SelectedDelegate } from './SelectedDelegate.js';
+import { SelectedDelegatePanel } from './SelectedDelegate.js';
 import { useDelegation } from '../../../contexts/Delegation.js';
 
 export function DelegationLayout() {
@@ -17,7 +17,9 @@ export function DelegationLayout() {
       >
         <Switch>
           <Route path="/:address">
-            {({ address }) => <SelectedDelegate selectedDelegate={address} />}
+            {({ address }) =>
+              address && <SelectedDelegatePanel selectedDelegate={address} />
+            }
           </Route>
           <Route>
             <DelegationPanel />

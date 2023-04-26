@@ -7,56 +7,19 @@ import {
   extractBalance,
   extractChainInfo,
   flattenAllTracks,
-  Updater,
 } from '../../../../lifecycle';
 import { useAccount, useDelegation } from '../../../../contexts';
 import {
   signAndSend,
-  calcEstimatedFee,
-  formatBalance,
+  formatConviction,
+  calcDelegatableBalance,
 } from '../../../../utils/polkadot-api';
-import { LabeledBox, TracksLabel } from '../../common/LabeledBox';
+import { BalanceLabel, LabeledBox, TracksLabel } from '../../common/LabeledBox';
 import { SimpleAnalytics } from '../../../../analytics';
 import { CloseIcon, ChevronRightIcon } from '../../../../ui/icons/index';
 import { Accounticon } from '../../accounts/Accounticon';
 import { Modal } from '../../../../ui/lib/Modal';
 import { Button } from '../../../../ui/lib/Button';
-
-async function undelegateFee(
-  connectedAddress: string,
-  tracks: number[],
-  updater: Updater
-): Promise<BN> {
-  const unde = await updater.undelegate(tracks, connectedAddress);
-  if (unde.type == 'ok') {
-    return await calcEstimatedFee(unde.value, connectedAddress);
-  }
-  return new BN(50);
-}
-
-function TokensToDelegate({
-  usableBalance,
-  decimals,
-  unit,
-}: {
-  usableBalance?: BN;
-  decimals?: number;
-  unit?: string;
-}): JSX.Element {
-  if (usableBalance && unit && decimals) {
-    return <>{formatBalance(usableBalance, decimals, unit)}</>;
-  }
-  return <>...</>;
-}
-
-function formatConviction(conviction: Conviction): string {
-  switch (conviction) {
-    case Conviction.None:
-      return 'No conviction';
-    default:
-      return conviction.toString();
-  }
-}
 
 export function TxnModal({
   delegate,
@@ -82,6 +45,7 @@ export function TxnModal({
   const connectedAddress = connectedAccount?.account?.address;
   const conviction = Conviction.None;
 
+  // set fee and balance
   useEffect(() => {
     if (
       open &&
@@ -90,33 +54,37 @@ export function TxnModal({
       balance &&
       selectedTracks.length > 0
     ) {
-      // Use a default conviction voting for now
-      updater
-        .delegate(
-          delegateAddress,
-          selectedTracks.map((track) => track.id),
-          balance,
-          conviction
-        )
-        .then(async (tx) => {
-          if (tx.type === 'ok') {
-            const fee = await calcEstimatedFee(tx.value, connectedAddress);
-            // usable balance is calculated as (balance - undelegate fee), to leave enough balance in account for undelegate tx fees.
-            const undelegationFee = await undelegateFee(
-              connectedAddress,
-              Array.from(flattenAllTracks(state.tracks).keys()),
-              updater
-            );
-            const updatedUsableBalance = BN.max(
-              balance.sub(fee.add(undelegationFee.muln(130).divn(100))),
-              new BN(0)
-            );
-            setFee(fee);
-            setUsableBalance(updatedUsableBalance);
-          }
-        });
+      const getFees = async () => {
+        const selectedTrackIds = selectedTracks.map((track) => track.id);
+        const allTrackIds = Array.from(flattenAllTracks(state.tracks).keys());
+        const [delegateSelectedFee, undelegateAllFee] = await Promise.all([
+          updater.delegateFee(
+            connectedAddress,
+            delegateAddress,
+            selectedTrackIds,
+            balance,
+            conviction
+          ),
+          updater.undelegateFee(connectedAddress, allTrackIds),
+        ]);
+
+        const usableBalance =
+          delegateSelectedFee &&
+          undelegateAllFee &&
+          calcDelegatableBalance(
+            balance,
+            delegateSelectedFee,
+            undelegateAllFee
+          );
+
+        return { fee: delegateSelectedFee, usableBalance };
+      };
+      getFees().then(({ fee, usableBalance }) => {
+        setFee(fee);
+        setUsableBalance(usableBalance);
+      });
     }
-  }, [open, delegate, connectedAccount, balance, selectedTracks]);
+  }, [open, delegateAddress, connectedAddress, balance, selectedTracks]);
 
   const cancelHandler = () => onClose();
   const delegateHandler = async (
@@ -167,8 +135,8 @@ export function TxnModal({
               />
             </LabeledBox>
             <LabeledBox title="Tokens to delegate">
-              <TokensToDelegate
-                usableBalance={usableBalance}
+              <BalanceLabel
+                balance={usableBalance}
                 decimals={decimals}
                 unit={unit}
               />
@@ -198,11 +166,7 @@ export function TxnModal({
           <hr className="w-full bg-gray-400" />
           <div className="w-full">
             <LabeledBox title="Delegation fee (one time)">
-              {(unit &&
-                decimals &&
-                fee &&
-                formatBalance(fee, decimals, unit)) ||
-                '...'}
+              <BalanceLabel balance={fee} decimals={decimals} unit={unit} />
             </LabeledBox>
           </div>
         </div>
