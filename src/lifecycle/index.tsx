@@ -44,7 +44,13 @@ import {
 } from '../utils/db.js';
 import { all, clear, open, save } from '../utils/indexeddb.js';
 import { measured } from '../utils/performance.js';
-import { batchAll, newApi, signAndSend } from '../utils/polkadot-api.js';
+import {
+  batchAll,
+  newApi,
+  signAndSend,
+  addressEqual,
+  calcEstimatedFee,
+} from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
 import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
 import {
@@ -241,6 +247,16 @@ export function extractDelegatedTracks(
       return [delegate, tracks];
     })
   );
+}
+
+export function lookupDelegateByAddress(
+  delegates: Delegate[],
+  address: string
+): Delegate | undefined {
+  const delegate = delegates.filter((delegate) =>
+    addressEqual(delegate.address, address)
+  )[0];
+  return delegate;
 }
 
 export function extractChainInfo(state: State):
@@ -638,6 +654,24 @@ export class Updater {
     }
   }
 
+  async delegateFee(
+    connectedAddress: string,
+    delegateAddress: string,
+    tracks: number[],
+    balance: BN,
+    conviction: Conviction
+  ): Promise<BN | undefined> {
+    const tx = await this.delegate(
+      delegateAddress,
+      tracks,
+      balance,
+      conviction
+    );
+    if (tx.type === 'ok') {
+      return await calcEstimatedFee(tx.value, connectedAddress);
+    }
+  }
+
   async undelegate(
     tracks: number[],
     unlockTarget: string
@@ -659,6 +693,16 @@ export class Updater {
       const report = error('Failed to retrieve Api');
       await this.addReport(report);
       return err(new Error(report.message));
+    }
+  }
+
+  async undelegateFee(
+    connectedAddress: string,
+    tracks: number[]
+  ): Promise<BN | undefined> {
+    const tx = await this.undelegate(tracks, connectedAddress);
+    if (tx.type == 'ok') {
+      return await calcEstimatedFee(tx.value, connectedAddress);
     }
   }
 

@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useAppLifeCycle } from '../../lifecycle';
 import { Loading } from '../lib';
 import { CloseIcon } from '../icons';
+import { Report } from '../../lifecycle';
 
 const TRANSIENT_DISPLAY_TIME_MS = 3000; //milliseconds
 
@@ -26,13 +27,17 @@ export function NotificationBox() {
     }
   };
 
-  // ToDo: add effects transient reports
-  const isTransientReport = false;
-  if (isTransientReport) {
-    setTimeout(() => {
-      removeCurrent();
-    }, TRANSIENT_DISPLAY_TIME_MS);
+  function isTransientReport(report: Report) {
+    return report.type === 'Info' || report.type === 'Warning';
   }
+
+  useEffect(() => {
+    if (current && isTransientReport(current)) {
+      setTimeout(() => {
+        removeCurrent();
+      }, TRANSIENT_DISPLAY_TIME_MS);
+    }
+  }, [current]);
 
   useEffect(() => {
     if (processing?.isTransient) {

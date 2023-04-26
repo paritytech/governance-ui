@@ -309,3 +309,49 @@ export function InformationalIcon({ size, className }: IconProps) {
     </svg>
   );
 }
+
+export function CopyIcon({ size, className }: IconProps) {
+  return (
+    <svg
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      width={size ? size : '16'}
+      height={size ? size : '16'}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 29 29"
+    >
+      <g>
+        <path d="M8.99414 8.5V2H25.9941V19H19.4941"></path>
+        <path d="M18.9941 9H1.99414V26H18.9941V9Z"></path>
+      </g>
+    </svg>
+  );
+}
+
+export function ArrowRightIcon({ size, className }: IconProps) {
+  return (
+    <svg
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      width={size ? size : '16'}
+      height={size ? size : '16'}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 29 29"
+    >
+      <path d="M25 14.0086L2 14.0086" fill="none" data-nofill="true"></path>
+      <path
+        d="M15.8003 4L26 14.0086L15.8003 24"
+        fill="none"
+        data-nofill="true"
+      ></path>
+    </svg>
+  );
+}

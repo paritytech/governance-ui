@@ -1,16 +1,16 @@
-import { TrackSelect } from '../components/delegation/TrackSelect.js';
-import { useDelegation } from '../../contexts/Delegation';
-import { ConnectedState, State } from '../../lifecycle/types.js';
+import { TrackSelect } from '../../components/delegation/TrackSelect.js';
+import { useDelegation } from '../../../contexts/Delegation.js';
+import { ConnectedState, State } from '../../../lifecycle/types.js';
 import {
   useAppLifeCycle,
   filterOngoingReferenda,
   extractDelegatedTracks,
-} from '../../lifecycle';
-import { ReferendumOngoing } from '../../types';
-import Headline from '../components/Headline';
-import { DelegatesBar } from '../components/DelegatesBar';
-import { ActiveDelegates } from '../components/ActiveDelegates';
-import { DelegateSection } from '../components/delegation/DelegateSection.js';
+} from '../../../lifecycle/index.js';
+import { ReferendumOngoing } from '../../../types.js';
+import Headline from '../../components/Headline.js';
+import { DelegatesBar } from '../../components/DelegatesBar.js';
+import { ActiveDelegates } from '../../components/ActiveDelegates.js';
+import { DelegateSection } from '../../components/delegation/DelegateSection.js';
 
 function exportReferenda(state: State): Map<number, ReferendumOngoing> {
   if (state.type === 'ConnectedState') {
@@ -33,10 +33,7 @@ export function DelegationPanel() {
 
   // If user has some active delegation,
   return (
-    <main
-      className="flex w-full flex-auto flex-col items-center justify-start gap-8 pt-14 md:pt-20 lg:gap-16"
-      ref={sectionRefs.get('top')}
-    >
+    <>
       {delegatesWithTracks.size ? (
         <ActiveDelegates
           delegatesWithTracks={delegatesWithTracks}
@@ -60,6 +57,6 @@ export function DelegationPanel() {
           <DelegateSection state={state} delegates={delegates} />
         </div>
       )}
-    </main>
+    </>
   );
 }

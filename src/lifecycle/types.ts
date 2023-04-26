@@ -53,6 +53,11 @@ export type Warning = {
   message: string;
 };
 
+export type Info = {
+  type: 'Info';
+  message: string;
+};
+
 export type Error = {
   type: 'Error';
   message: string;
@@ -63,7 +68,7 @@ export type Processing = {
   message: string;
 };
 
-export type Report = Warning | Error;
+export type Report = Warning | Error | Info;
 
 // States
 

@@ -1,6 +1,8 @@
 import { memo } from 'react';
 import { TrackMetaData } from '../../../lifecycle';
 import Tooltip from '../Tooltip';
+import { formatBalance } from '../../../utils/polkadot-api';
+import BN from 'bn.js';
 
 export function LabeledBox({
   title,
@@ -33,13 +35,14 @@ export const TracksLabel = memo(function ({
 }: {
   allTracksCount?: number;
   tracks: TrackMetaData[];
-  visibleCount: number;
+  visibleCount?: number;
 }) {
   const tracksCaption = tracks
     .slice(0, visibleCount)
     .map((track) => track.title)
     .join(', ');
-  const remainingCount = Math.max(tracks.length - visibleCount, 0);
+  const remainingCount =
+    visibleCount !== undefined ? Math.max(tracks.length - visibleCount, 0) : 0;
   return (
     <>
       {allTracksCount && allTracksCount === tracks.length ? (
@@ -57,3 +60,18 @@ export const TracksLabel = memo(function ({
     </>
   );
 });
+
+export function BalanceLabel({
+  balance,
+  decimals,
+  unit,
+}: {
+  balance?: BN;
+  decimals?: number;
+  unit?: string;
+}): JSX.Element {
+  if (balance && unit && decimals) {
+    return <>{formatBalance(balance, decimals, unit)}</>;
+  }
+  return <>...</>;
+}
