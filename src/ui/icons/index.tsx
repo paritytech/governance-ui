@@ -355,3 +355,27 @@ export function ArrowRightIcon({ size, className }: IconProps) {
     </svg>
   );
 }
+
+export function ArrowLeftIcon({ size, className }: IconProps) {
+  return (
+    <svg
+      className={className}
+      xmlns="http://www.w3.org/2000/svg"
+      width={size ? size : '16'}
+      height={size ? size : '16'}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 29 29"
+    >
+      <path d="M3 13.9914L26 13.9914" fill="none" data-nofill="true"></path>
+      <path
+        d="M12.1997 24L2 13.9914L12.1997 4"
+        fill="none"
+        data-nofill="true"
+      ></path>
+    </svg>
+  );
+}
