@@ -108,12 +108,6 @@ export function DelegateCard({
   const closeInfoModal = () => {
     setInfoVisible(false);
   };
-  const openInfoModal = () => {
-    setInfoVisible(true);
-  };
-  const expandHandler = () => {
-    openInfoModal();
-  };
 
   // extract tracks yet to be delegated
   const { selectedTrackIndexes } = useDelegation();
@@ -151,10 +145,10 @@ export function DelegateCard({
         </div>
         {manifesto && (
           <EllipsisTextbox
+            address={delegate.address}
             className="max-h-[6rem] lg:h-[6rem]"
             text={manifesto}
             expandLinkTitle="Read more ->"
-            onExpand={expandHandler}
           />
         )}
         <div className="grow" />

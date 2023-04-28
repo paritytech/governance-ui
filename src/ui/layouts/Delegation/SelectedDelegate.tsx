@@ -246,7 +246,7 @@ export function SelectedDelegatePanel({
   }
 
   return (
-    <div className="flex w-full max-w-[1280px] flex-row gap-32 p-8">
+    <div className="flex w-full max-w-[1280px] flex-row gap-32 p-8 pt-10">
       <div className="flex w-full flex-col gap-6">
         <div className="flex w-full flex-row justify-between">
           <div className="font-unbounded text-h4">{delegate.name}</div>

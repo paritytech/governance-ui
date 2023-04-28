@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Switch, Route, Router, Redirect } from 'wouter';
 import { useLocationProperty, navigate } from 'wouter/use-location';
 import Footer from '../../components/Footer.js';
@@ -11,6 +11,17 @@ import {
   useAppLifeCycle,
   extractDelegatedTracks,
 } from '../../../lifecycle/index.js';
+import { useLocation } from 'wouter';
+
+function ScrollToTop() {
+  const [location] = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location]);
+
+  return null;
+}
 
 function hashLocation() {
   return window.location.hash.replace(/^#/, '') || '/';
@@ -41,6 +52,7 @@ export function DelegationLayout() {
         ref={sectionRefs.get('top')}
       >
         <Router hook={useHashLocation}>
+          <ScrollToTop />
           <Switch>
             <Route path="/:address">
               {({ address }: { address: string }) =>
