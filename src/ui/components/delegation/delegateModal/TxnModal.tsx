@@ -185,7 +185,11 @@ export function TxnModal({
             }
             disabled={!connectedAccount || !usableBalance?.gtn(0)}
           >
-            <div>Delegate Now</div>
+            <div>
+              {!usableBalance?.gtn(0)
+                ? 'Insufficient tokens to delegate'
+                : 'Delegate Now'}
+            </div>
             <ChevronRightIcon />
           </Button>
         </div>

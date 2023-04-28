@@ -195,7 +195,11 @@ export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
                   isProcessing || !connectedAccount || !usableBalance?.gtn(0)
                 }
               >
-                <div>Delegate all undelegated tracks</div>
+                <div>
+                  {!usableBalance?.gtn(0)
+                    ? 'Insufficient tokens to delegate'
+                    : 'Delegate all undelegated tracks'}
+                </div>
                 <ArrowRightIcon />
               </Button>
             </div>
