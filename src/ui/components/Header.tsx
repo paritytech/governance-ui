@@ -38,7 +38,7 @@ export function Header({
               />
               <div className="h-6 w-[2px] bg-gray-400" />
               <span className="font-unbounded text-h5">
-                Delegatio Dashboard
+                Delegation Dashboard
               </span>
               {!!activeDelegateCount && (
                 <span className="font-unbounded text-xl font-normal text-fg-disabled">{`${activeDelegateCount} active`}</span>

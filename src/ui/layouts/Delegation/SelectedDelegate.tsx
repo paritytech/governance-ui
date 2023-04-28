@@ -4,6 +4,7 @@ import {
   extractChainInfo,
   lookupDelegateByAddress,
   useAppLifeCycle,
+  extractDelegatedTracks,
 } from '../../../lifecycle';
 import {
   extractIsProcessing,
@@ -11,6 +12,7 @@ import {
   flattenAllTracks,
   filterUndelegatedTracks,
 } from '../../../lifecycle';
+
 import { useAccount } from '../../../contexts';
 import { LabeledBox } from '../../components/common/LabeledBox';
 import { TracksLabel } from '../../components/common/LabeledBox';
@@ -52,7 +54,6 @@ export function DelegateInfo({ delegate }: { delegate: Delegate }) {
     </div>
   );
 }
-
 export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
   const { state, updater } = useAppLifeCycle();
 
@@ -131,6 +132,9 @@ export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
     e.stopPropagation();
     openTxModal();
   };
+
+  const delegatesWithTracks = extractDelegatedTracks(state);
+
   return (
     <>
       <div>
@@ -195,20 +199,27 @@ export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
                   isProcessing || !connectedAccount || !usableBalance?.gtn(0)
                 }
               >
-                <div>Delegate all undelegated tracks</div>
+                <div>
+                  {!usableBalance?.gtn(0)
+                    ? 'Insufficient tokens to delegate'
+                    : 'Delegate all undelegated tracks'}
+                </div>
                 <ArrowRightIcon />
               </Button>
             </div>
             <hr />
             <div className="flex w-full flex-col gap-2 text-sm">
-              <Link href="/" className="flex flex-row items-center gap-1">
-                <div>Discover other delegates</div>
-                <ArrowRightIcon />
-              </Link>
-              <Link href="/" className="flex flex-row items-center gap-1">
-                <div>Manage your active delegations</div>
-                <ArrowRightIcon />
-              </Link>
+              {delegatesWithTracks.size ? (
+                <Link href="/" className="flex flex-row items-center gap-1">
+                  <div>Manage your active delegations</div>
+                  <ArrowRightIcon />
+                </Link>
+              ) : (
+                <Link href="/" className="flex flex-row items-center gap-1">
+                  <div>Discover other delegates</div>
+                  <ArrowRightIcon />
+                </Link>
+              )}
             </div>
           </div>
         </Card>
@@ -246,7 +257,7 @@ export function SelectedDelegatePanel({
   }
 
   return (
-    <div className="flex w-full max-w-[1280px] flex-row gap-32 p-8">
+    <div className="flex w-full max-w-[1280px] flex-row gap-32 p-8 pt-10">
       <div className="flex w-full flex-col gap-6">
         <div className="flex w-full flex-row justify-between">
           <div className="font-unbounded text-h4">{delegate.name}</div>
