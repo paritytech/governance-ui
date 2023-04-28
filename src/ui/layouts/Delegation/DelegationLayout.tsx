@@ -36,40 +36,63 @@ function useHashLocation(): [string, (path: string) => void] {
   return [location, hashNavigate];
 }
 
-export function DelegationLayout() {
+export function InnerLayout({
+  selectedDelegate,
+}: {
+  selectedDelegate?: string;
+}) {
   const { sectionRefs } = useDelegation();
   const { state } = useAppLifeCycle();
   const delegatesWithTracks = useMemo(
     () => extractDelegatedTracks(state),
     [state]
   );
+  const withBackArrow = useMemo(
+    () => !!selectedDelegate && isValidAddress(selectedDelegate),
+    [selectedDelegate]
+  );
   return (
     <>
-      <Header activeDelegateCount={delegatesWithTracks.size} />
+      <Header
+        activeDelegateCount={delegatesWithTracks.size}
+        withBackArrow={withBackArrow}
+      />
       <NotificationBox />
       <main
         className="flex w-full flex-auto flex-col items-center justify-center gap-8 pb-48 pt-14 md:pt-20 lg:gap-16"
         ref={sectionRefs.get('top')}
       >
-        <Router hook={useHashLocation}>
-          <ScrollToTop />
-          <Switch>
-            <Route path="/:address">
-              {({ address }: { address: string }) =>
-                address && isValidAddress(address) ? (
-                  <SelectedDelegatePanel selectedDelegate={address} />
-                ) : (
-                  <Redirect to={'/'} />
-                )
-              }
-            </Route>
-            <Route>
-              <DelegationPanel />
-            </Route>
-          </Switch>
-        </Router>
+        <ScrollToTop />
+        {selectedDelegate && isValidAddress(selectedDelegate) ? (
+          <SelectedDelegatePanel selectedDelegate={selectedDelegate} />
+        ) : (
+          <DelegationPanel />
+        )}
       </main>
       <Footer />
+    </>
+  );
+}
+
+export function DelegationLayout() {
+  return (
+    <>
+      <Router hook={useHashLocation}>
+        <Switch>
+          <Route path="/:address">
+            {({ address }: { address: string }) =>
+              address && isValidAddress(address) ? (
+                <InnerLayout selectedDelegate={address} />
+              ) : (
+                <Redirect to={'/'} />
+              )
+            }
+          </Route>
+          <Route>
+            <InnerLayout />
+          </Route>
+        </Switch>
+      </Router>
     </>
   );
 }
