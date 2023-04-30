@@ -53,7 +53,14 @@ function DelegatedTracks({
             visibleCount={2}
           />
         </LabeledBox>
-        <Button variant="ghost" disabled={disabled} onClick={() => openModal()}>
+        <Button
+          variant="ghost"
+          disabled={disabled}
+          onClick={(e) => {
+            openModal();
+            e.stopPropagation();
+          }}
+        >
           <CloseIcon />
           <div>Undelegate All</div>
         </Button>
