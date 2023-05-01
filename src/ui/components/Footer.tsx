@@ -14,7 +14,7 @@ export default function Footer() {
       <div className="flex items-center gap-2">
         <MessageIcon size="14" />
         <a
-          href="https://polkadot-governance-ui.canny.io/feedback"
+          href="https://github.com/paritytech/governance-ui/discussions"
           target="_blank"
           className=" underline"
           rel="noreferrer"
