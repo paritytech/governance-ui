@@ -4,6 +4,7 @@ import type {
   Referendum,
   ReferendumOngoing,
   Voting,
+  VotingCasting,
   VotingDelegating,
 } from '../types.js';
 import type { Registry } from '@polkadot/types-codec/types';
@@ -28,6 +29,7 @@ import {
   undelegate,
   unlock,
   getVotingFor,
+  removeVote,
 } from '../chain/conviction-voting.js';
 import { getAllReferenda, getAllTracks } from '../chain/referenda.js';
 import { defaultNetwork, endpointsFor, Network, parse } from '../network.js';
@@ -41,7 +43,12 @@ import {
 } from '../utils/db.js';
 import { all, open, save } from '../utils/indexeddb.js';
 import { measured } from '../utils/performance.js';
-import { batchAll, newApi } from '../utils/polkadot-api.js';
+import {
+  addressEqual,
+  batchAll,
+  calcEstimatedFee,
+  newApi,
+} from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
 import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
 import {
@@ -57,6 +64,7 @@ import {
   Report,
   State,
   TrackCategory,
+  TrackId,
   TrackMetaData,
 } from './types.js';
 import { fetchReferenda } from '../utils/polkassembly.js';
@@ -79,28 +87,38 @@ import polkadotTracks from '../../assets/data/polkadot/tracks.json';
 // endpoints and network: must match network
 // only endpoints: sets network
 
+function filterEmptyValues(value: [number, number[]]): boolean {
+  return value[1].length != 0;
+}
+
 /**
  * @param votes
  * @param referenda
  * @returns filter away `votes` that do not map to `referenda`
  */
-/*function filterOldVotes(
-  votes: Map<TrackId, Map<number, AccountVote>>,
+function filterOldVotes(
+  votes: Map<TrackId, number[]>,
   referenda: Map<number, ReferendumOngoing>
-): Map<TrackId, Map<number, AccountVote>> {
-  return new Map(Array.from(votes).filter(([index]) => referenda.has(index)));
-}*/
+): Map<TrackId, number[]> {
+  const values: [number, number[]][] = Array.from(votes).map(
+    ([trackId, votes]) => [trackId, votes.filter((vote) => referenda.has(vote))]
+  );
+  return new Map(values.filter(filterEmptyValues));
+}
 
-/*function extractCastingVotes(
+function extractCastingVotes(
   votings: Map<TrackId, Voting>
 ): Map<TrackId, number[]> {
   const castingVotings = Array.from(votings.entries()).filter(([, voting]) => {
     return voting.type === 'casting';
   }) as [TrackId, VotingCasting][];
-  return castingVotings.reduce((acc, [, votings]) => {
-    return new Map([...acc, ...votings.votes]);
-  }, new Map<number, AccountVote>());
-}*/
+  return castingVotings.reduce((acc, [trackId, votings]) => {
+    const votes = acc.get(trackId) || [];
+    const allVotes = votes.concat(...votings.votes.keys());
+    acc.set(trackId, allVotes);
+    return acc;
+  }, new Map<number, number[]>());
+}
 
 /**
  * return all delegations for a specific address
@@ -526,20 +544,21 @@ export class Updater {
     const api = await this.getApi(state);
     const { type, connectivity } = state;
     if (api) {
-      // VotingFor
       if (type == 'ConnectedState' && isAtLeastConnected(connectivity)) {
-        //const votings = await getVotingFor(api, state.connectedAddress!);
-        //const { referenda } = state.chain;
-        //const ongoingReferenda = filterOngoingReferenda(referenda);
-        console.log();
-        //const votes = extractCastingVotes(votings);
-        /*const currentVotes = filterOldVotes(
-          
-          ongoingReferenda
-        );*/
-        //removeVote();
-        const txs = tracks.map((track) =>
-          delegate(api, track, address, conviction, balance)
+        const votings = await getVotingFor(api, state.connectedAddress!);
+        const { referenda } = state.chain;
+        const ongoingReferenda = filterOngoingReferenda(referenda);
+        const votes = extractCastingVotes(votings);
+        const existingVotes = filterOldVotes(votes, ongoingReferenda);
+        const removeTxs = [...existingVotes.entries()]
+          .map(([trackId, votes]) =>
+            votes.map((vote) => removeVote(api, trackId, vote))
+          )
+          .flat();
+        const txs = removeTxs.concat(
+          tracks.map((track) =>
+            delegate(api, track, address, conviction, balance)
+          )
         );
         return ok(batchAll(api, txs));
       } else {
