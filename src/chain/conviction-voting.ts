@@ -8,7 +8,7 @@ import type {
   PalletConvictionVotingVoteVoting,
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
-import { Address } from '../lifecycle/types.js';
+import { Address, TrackId } from '../lifecycle/types.js';
 import { AccountVote, Conviction, Voting } from '../types.js';
 import { batchAll } from '../utils/polkadot-api.js';
 
@@ -106,20 +106,20 @@ function toVoting(o: PalletConvictionVotingVoteVoting): Voting {
 
 function toVotings(
   votings: [StorageKey<[AccountId32, u16]>, PalletConvictionVotingVoteVoting][]
-): Map<number, Voting> {
+): Map<TrackId, Voting> {
   return new Map(votings.map((o) => [o[0].args[1].toNumber(), toVoting(o[1])]));
 }
 
 export async function getVotingFor(
   api: { query: QueryableStorage<'promise'> },
   address: Address
-): Promise<Map<number, Voting>> {
+): Promise<Map<TrackId, Voting>> {
   return toVotings(await api.query.convictionVoting.votingFor.entries(address));
 }
 
 function toAllVotings(
   votings: [StorageKey<[AccountId32, u16]>, PalletConvictionVotingVoteVoting][]
-): Map<[string, number], Voting> {
+): Map<[string, TrackId], Voting> {
   return new Map(
     votings.map((o) => [
       [o[0].args[0].toString(), o[0].args[1].toNumber()],
@@ -130,7 +130,7 @@ function toAllVotings(
 
 export async function getAllVotingFor(api: {
   query: QueryableStorage<'promise'>;
-}): Promise<Map<[string, number], Voting>> {
+}): Promise<Map<[string, TrackId], Voting>> {
   return toAllVotings(await api.query.convictionVoting.votingFor.entries());
 }
 
@@ -179,6 +179,14 @@ export function vote(
   accountVote: AccountVote
 ) {
   return api.tx.convictionVoting.vote(index, fromAccountVote(accountVote));
+}
+
+export function removeVote(
+  api: { tx: SubmittableExtrinsics<'promise'> },
+  trackIndex: TrackId,
+  index: number
+) {
+  return api.tx.convictionVoting.removeVote(trackIndex, index);
 }
 
 export function createBatchVotes(

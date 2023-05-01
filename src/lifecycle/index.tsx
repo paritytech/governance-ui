@@ -4,8 +4,8 @@ import type {
   Referendum,
   ReferendumOngoing,
   Voting,
+  VotingCasting,
   VotingDelegating,
-  SigningAccount,
 } from '../types.js';
 import type { Registry } from '@polkadot/types-codec/types';
 
@@ -25,11 +25,11 @@ import {
   SubmittableExtrinsic,
 } from '@polkadot/api/types';
 import {
-  createBatchVotes,
   delegate,
   undelegate,
   unlock,
   getVotingFor,
+  removeVote,
 } from '../chain/conviction-voting.js';
 import { getAllReferenda, getAllTracks } from '../chain/referenda.js';
 import { defaultNetwork, endpointsFor, Network, parse } from '../network.js';
@@ -40,16 +40,14 @@ import {
   dbNameFor,
   DB_VERSION,
   STORES,
-  VOTE_STORE_NAME,
 } from '../utils/db.js';
-import { all, clear, open, save } from '../utils/indexeddb.js';
+import { all, open, save } from '../utils/indexeddb.js';
 import { measured } from '../utils/performance.js';
 import {
-  batchAll,
-  newApi,
-  signAndSend,
   addressEqual,
+  batchAll,
   calcEstimatedFee,
+  newApi,
 } from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
 import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
@@ -66,6 +64,7 @@ import {
   Report,
   State,
   TrackCategory,
+  TrackId,
   TrackMetaData,
 } from './types.js';
 import { fetchReferenda } from '../utils/polkassembly.js';
@@ -88,45 +87,37 @@ import polkadotTracks from '../../assets/data/polkadot/tracks.json';
 // endpoints and network: must match network
 // only endpoints: sets network
 
+function filterEmptyValues(value: [number, number[]]): boolean {
+  return value[1].length != 0;
+}
+
 /**
  * @param votes
  * @param referenda
  * @returns filter away `votes` that do not map to `referenda`
  */
 function filterOldVotes(
-  votes: Map<number, AccountVote>,
+  votes: Map<TrackId, number[]>,
   referenda: Map<number, ReferendumOngoing>
-): Map<number, AccountVote> {
-  return new Map(Array.from(votes).filter(([index]) => referenda.has(index)));
+): Map<TrackId, number[]> {
+  const values: [number, number[]][] = Array.from(votes).map(
+    ([trackId, votes]) => [trackId, votes.filter((vote) => referenda.has(vote))]
+  );
+  return new Map(values.filter(filterEmptyValues));
 }
 
-/**
- * Extracts user's votes for a set of referenda
- * @param address user's account address
- * @param allVotings all votings retrieved from conviction pallet state
- * @param referenda a map of referenda to extracts the votings for
- * @returns a map of catsing votes for the target referenda by the account
- */
-function extractUserVotes(
-  address: Address,
-  allVotings: Map<Address, Map<number, Voting>>,
-  referenda: Map<number, Referendum>
-): Map<number, AccountVote> {
-  // Go through user votes and restore the ones relevant to `referenda`
-  const votes = new Map<number, AccountVote>();
-  const votings = allVotings.get(address);
-  if (votings) {
-    votings.forEach((voting) => {
-      if (voting.type === 'casting') {
-        voting.votes.forEach((accountVote, index) => {
-          if (referenda.has(index)) {
-            votes.set(index, accountVote);
-          }
-        });
-      }
-    });
-  }
-  return votes;
+function extractCastingVotes(
+  votings: Map<TrackId, Voting>
+): Map<TrackId, number[]> {
+  const castingVotings = Array.from(votings.entries()).filter(([, voting]) => {
+    return voting.type === 'casting';
+  }) as [TrackId, VotingCasting][];
+  return castingVotings.reduce((acc, [trackId, votings]) => {
+    const votes = acc.get(trackId) || [];
+    const allVotes = votes.concat(...votings.votes.keys());
+    acc.set(trackId, allVotes);
+    return acc;
+  }, new Map<number, number[]>());
 }
 
 /**
@@ -150,25 +141,6 @@ export function getAllDelegations(
     });
   }
   return delegates;
-}
-
-export function getAllVotes(
-  votes: Map<number, AccountVote>,
-  allVotings: Map<Address, Map<number, Voting>>,
-  referenda: Map<number, ReferendumOngoing>,
-  connectedAddress: Address | null
-): Map<number, AccountVote> {
-  const currentVotes = filterOldVotes(votes, referenda);
-  if (connectedAddress) {
-    const onChainVotes = extractUserVotes(
-      connectedAddress,
-      allVotings,
-      referenda
-    );
-    return new Map([...currentVotes, ...onChainVotes]);
-  } else {
-    return currentVotes;
-  }
 }
 
 /**
@@ -326,12 +298,11 @@ function reducer(previousState: State, action: Action): State {
       }
     }
     case 'SetRestored': {
-      const { network, tracks, votes, customDelegates } = action;
+      const { network, tracks, customDelegates } = action;
       return {
         ...previousState,
         type: 'RestoredState',
         network,
-        votes,
         tracks,
         customDelegates,
       };
@@ -414,32 +385,6 @@ function reducer(previousState: State, action: Action): State {
         details: new Map([...previousDetails, ...details]),
       };
     }
-    case 'CastVote':
-      if ('votes' in previousState) {
-        const newVotes = previousState.votes || new Map();
-        newVotes.set(action.index, action.vote);
-        return {
-          ...previousState,
-          votes: new Map(newVotes),
-        };
-      } else {
-        return withNewReport(
-          previousState,
-          incorrectTransitionError(previousState, action)
-        );
-      }
-    case 'ClearVotes':
-      if ('votes' in previousState) {
-        return {
-          ...previousState,
-          votes: new Map(),
-        };
-      } else {
-        return withNewReport(
-          previousState,
-          incorrectTransitionError(previousState, action)
-        );
-      }
     case 'SetIndexes':
       return {
         ...previousState,
@@ -474,16 +419,11 @@ function reducer(previousState: State, action: Action): State {
 async function restorePersisted(
   db: IDBDatabase
 ): Promise<PersistedDataContext> {
-  const votes = (await all<AccountVote>(db, VOTE_STORE_NAME)) as Map<
-    number,
-    AccountVote
-  >;
   const customDelegates = (await all<Delegate>(
     db,
     CUSTOM_DELEGATES_STORE_NAME
   )) as Map<number, Delegate>;
   return {
-    votes,
     customDelegates: new Array(...customDelegates.values()),
   };
 }
@@ -586,46 +526,6 @@ export class Updater {
     this.unsub?.();
   }
 
-  async castVote(index: number, vote: AccountVote) {
-    this.#dispatch({
-      type: 'CastVote',
-      index,
-      vote,
-    });
-
-    // Persist votes before they are broadcasted on chain
-    const state = this.#stateAccessor();
-    if (state.type == 'ConnectedState') {
-      const db = await DB_CACHE.getOrCreate(dbNameFor(state.network));
-      await save(db, VOTE_STORE_NAME, index, vote);
-    } else {
-      await this.addReport(error('Must be connected to cast a vote'));
-    }
-  }
-
-  async signAndSendVotes(
-    { account, signer }: SigningAccount,
-    accountVotes: Map<number, AccountVote>
-  ) {
-    const state = this.#stateAccessor();
-    const { type, connectivity } = state;
-    if (type == 'ConnectedState' && isAtLeastConnected(connectivity)) {
-      const db = await DB_CACHE.getOrCreate(dbNameFor(state.network));
-      const api = await API_CACHE.getOrCreate(connectivity.endpoints);
-      const votes = createBatchVotes(api, accountVotes);
-      await signAndSend(account.address, signer, votes);
-
-      // Clear user votes
-      await clear(db, VOTE_STORE_NAME);
-
-      this.#dispatch({
-        type: 'ClearVotes',
-      });
-    } else {
-      await this.addReport(error('Must be connected to send votes'));
-    }
-  }
-
   async getApi(state: State): Promise<ApiPromise | null> {
     const { type, connectivity } = state;
     if (type == 'ConnectedState' && isAtLeastConnected(connectivity)) {
@@ -642,11 +542,30 @@ export class Updater {
   ): Promise<Result<SubmittableExtrinsic<'promise', SubmittableResult>>> {
     const state = this.#stateAccessor();
     const api = await this.getApi(state);
+    const { type, connectivity } = state;
     if (api) {
-      const txs = tracks.map((track) =>
-        delegate(api, track, address, conviction, balance)
-      );
-      return ok(batchAll(api, txs));
+      if (type == 'ConnectedState' && isAtLeastConnected(connectivity)) {
+        const votings = await getVotingFor(api, state.connectedAddress!);
+        const { referenda } = state.chain;
+        const ongoingReferenda = filterOngoingReferenda(referenda);
+        const votes = extractCastingVotes(votings);
+        const existingVotes = filterOldVotes(votes, ongoingReferenda);
+        const removeTxs = [...existingVotes.entries()]
+          .map(([trackId, votes]) =>
+            votes.map((vote) => removeVote(api, trackId, vote))
+          )
+          .flat();
+        const txs = removeTxs.concat(
+          tracks.map((track) =>
+            delegate(api, track, address, conviction, balance)
+          )
+        );
+        return ok(batchAll(api, txs));
+      } else {
+        const report = error('Must be connected to send votes');
+        await this.addReport(report);
+        return err(new Error(report.message));
+      }
     } else {
       const report = error('Failed to retrieve Api');
       await this.addReport(report);
@@ -707,7 +626,27 @@ export class Updater {
   }
 
   async handleCallResult(callResult: SubmittableResult) {
-    const { status } = callResult;
+    const { status, dispatchError } = callResult;
+    const state = this.#stateAccessor();
+    const api = await this.getApi(state);
+
+    if (dispatchError) {
+      if (dispatchError.isModule) {
+        // for module errors, we have the section indexed, lookup
+        const decoded = api?.registry.findMetaError(dispatchError.asModule);
+        if (decoded) {
+          const { docs, name, section } = decoded;
+
+          console.log(`${section}.${name}: ${docs.join(' ')}`);
+        } else {
+          console.log('Failed to decode');
+        }
+      } else {
+        // Other, CannotLookup, BadOrigin, no extra info
+        console.log(dispatchError.toString());
+      }
+    }
+
     if (status.isBroadcast) {
       this.setProcessingReport({
         isTransient: false,
@@ -1028,34 +967,44 @@ async function dispatchEndpointsChange(
 
     const state = stateAccessor();
     const apiAt = await api.at(header.hash);
-    // TODO rely on subs, do not re-fetch whole state each block
-    const details = await measured('fetch-chain-details', () =>
-      fetchChainState(apiAt, api.registry, api.genesisHash.toHex())
-    );
+    try {
+      // TODO rely on subs, do not re-fetch whole state each block
+      const details = await measured('fetch-chain-details', () =>
+        fetchChainState(apiAt, api.registry, api.genesisHash.toHex())
+      );
 
-    dispatch({
-      type: 'UpdateChainDetails',
-      details,
-    });
+      dispatch({
+        type: 'UpdateChainDetails',
+        details,
+      });
 
-    const connectedAddress = state.connectedAddress;
-    if (connectedAddress) {
-      await updateChainDetails(apiAt, dispatch, connectedAddress);
+      const connectedAddress = state.connectedAddress;
+      if (connectedAddress) {
+        await updateChainDetails(apiAt, dispatch, connectedAddress);
+      }
+
+      // Trigger fetch of missing referenda metadata
+      const previousReferendaIndexes = Array.from(state.details.keys());
+      const newReferendaIndexes = Array.from(
+        filterOngoingReferenda(details.referenda).keys()
+      );
+      const missingReferendaIndexes = newReferendaIndexes.filter(
+        (index) => !previousReferendaIndexes.includes(index)
+      );
+      await loadAndDispatchReferendaMetaData(
+        dispatch,
+        missingReferendaIndexes,
+        network
+      );
+    } catch (e: any) {
+      dispatch({
+        type: 'AddReport',
+        report: {
+          type: 'Warning',
+          message: e.toString(),
+        },
+      });
     }
-
-    // Trigger fetch of missing referenda metadata
-    const previousReferendaIndexes = Array.from(state.details.keys());
-    const newReferendaIndexes = Array.from(
-      filterOngoingReferenda(details.referenda).keys()
-    );
-    const missingReferendaIndexes = newReferendaIndexes.filter(
-      (index) => !previousReferendaIndexes.includes(index)
-    );
-    await loadAndDispatchReferendaMetaData(
-      dispatch,
-      missingReferendaIndexes,
-      network
-    );
   });
 }
 

@@ -1,5 +1,12 @@
 import { WsProvider } from '@polkadot/api';
 
+/*type Snapshot = {
+  date: number;
+  bytesRecv: number;
+  errors: number;
+  timeout: number;
+};*/
+
 export class WsReconnectProvider extends WsProvider {
   static CHECKER_INTERVAL_MS = 5_000;
   static PER_REQUEST_TIMEOUT_MS = 15_000;
@@ -15,20 +22,20 @@ export class WsReconnectProvider extends WsProvider {
     );
 
     this.connect();
-    //this.on('disconnected', () => console.log('DISCONNECTED'));
-    //this.on('error', () => console.log('ERROR'));
+
+    this.on('disconnected', this.reconnect.bind(this));
+    this.on('error', this.reconnect.bind(this));
   }
+
+  // Called by super.connect()
+  /*protected selectEndpointIndex(endpoints: string[]): number {
+    
+  }*/
 
   async reconnect() {
     await this.disconnect();
     await this.connect();
   }
-
-  // TODO manually handle connect, retry
-  // detect stall: no new heads? no ws message? this.#stats.total.bytesRecv not moving?
-  // when reconnect: change endpoint?
-  // can disconnect manually
-  // Rely on stats
 
   #checker() {
     const { bytesRecv, errors, timeout } = this.stats.total;
@@ -53,14 +60,3 @@ export class WsReconnectProvider extends WsProvider {
     await super.disconnect();
   }
 }
-
-// https://github.com/joewalnes/reconnecting-websocket/blob/master/reconnecting-websocket.js
-// https://stackoverflow.com/questions/13797262/how-to-reconnect-to-websocket-after-close-connection
-// https://stackoverflow.com/questions/3780511/reconnection-of-client-when-server-reboots-in-websocket
-// https://github.com/pladaria/reconnecting-websocket/blob/master/reconnecting-websocket.ts
-
-// TODO rotate URL based on those:
-// https://paritytech.github.io/polkadot_network_directory/chains.json
-// https://paritytech.github.io/polkadot_network_directory/registry.json
-
-// https://github.com/Skepfyr/little-loadshedder
