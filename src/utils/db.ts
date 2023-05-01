@@ -2,7 +2,7 @@ import { Network, parse } from '../network.js';
 
 export const CHAINSTATE_STORE_NAME = 'chain';
 export const CUSTOM_DELEGATES_STORE_NAME = 'customDelegates';
-export const DB_VERSION = 2;
+export const DB_VERSION = 3;
 export const STORES = [
   { name: CHAINSTATE_STORE_NAME },
   { name: CUSTOM_DELEGATES_STORE_NAME },
