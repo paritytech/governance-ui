@@ -2,7 +2,11 @@ import type { BaseElementProps } from './types.js';
 type LoadingSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 type LoadindProps = BaseElementProps & { size?: LoadingSize };
 
-export function Loading({ className, size, style }: LoadindProps): JSX.Element {
+export function Loading({
+  className,
+  size = 'md',
+  style,
+}: LoadindProps): JSX.Element {
   const sizeClasses = {
     xs: 'h-4 w-4',
     sm: 'h-8 w-8',
@@ -10,7 +14,6 @@ export function Loading({ className, size, style }: LoadindProps): JSX.Element {
     lg: 'h-24 w-24',
     xl: 'h-36 w-36',
   };
-  size = size || 'md';
   return (
     <div className="flex items-center">
       <svg

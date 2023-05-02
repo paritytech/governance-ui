@@ -127,16 +127,14 @@ export function DelegateCard({
       : getSelectedTracks(Array.from(selectedTrackIndexes.keys()), allTracks);
 
   return (
-    <Link href={`/${address}`}>
-      <div
-        className={`flex min-h-full shrink-0  ${className} ${
-          variant === 'all' ? 'w-[320px] md:w-[420px]' : 'w-full'
-        }`}
-      >
-        <Card
-          className={` flex w-full cursor-pointer flex-col gap-2 p-6 shadow-md md:gap-4`}
-        >
-          <div className="flex items-start justify-between">
+    <div
+      className={`flex min-h-full shrink-0  ${className} ${
+        variant === 'all' ? 'w-[320px] md:w-[420px]' : 'w-full'
+      }`}
+    >
+      <Card className={` flex w-full flex-col gap-2 p-6 shadow-md md:gap-4`}>
+        <Link href={`/${address}`}>
+          <div className="flex cursor-pointer items-start justify-between">
             <div className="flex flex-col items-start">
               <h2 className="text-xl capitalize">{name || 'Anonymous'}</h2>
               <Accounticon
@@ -163,51 +161,51 @@ export function DelegateCard({
             />
           )}
           <div className="grow" />
+        </Link>
 
-          {delegatedTracks.length > 0 && (
-            <DelegatedTracks
-              disabled={isProcessing}
-              allTracksCount={flattenAllTracks(state.tracks).size}
-              delegate={delegate}
-              tracks={delegatedTracks}
-            />
-          )}
-          {variant === 'all' && (
-            <Button
-              variant="primary"
-              onClick={delegateHandler}
-              disabled={isProcessing || !connectedAddress}
-            >
-              <div>Delegate all tracks</div>
-              <DelegateIcon />
-            </Button>
-          )}
-        </Card>
-        {txVisible && (
-          <TxnModal
-            open={txVisible}
-            onClose={closeTxModal}
+        {delegatedTracks.length > 0 && (
+          <DelegatedTracks
+            disabled={isProcessing}
+            allTracksCount={flattenAllTracks(state.tracks).size}
             delegate={delegate}
-            selectedTracks={selectedTracks}
+            tracks={delegatedTracks}
           />
         )}
-        <DelegateInfoModal
-          open={infoVisible}
-          onClose={closeInfoModal}
-          delegate={delegate}
-        >
+        {variant === 'all' && (
           <Button
-            className="w-fit"
+            variant="primary"
             onClick={delegateHandler}
-            disabled={isProcessing}
+            disabled={isProcessing || !connectedAddress}
           >
-            <div className="flex w-full flex-nowrap items-center justify-center gap-1">
-              <div>Select</div>
-              <ChevronRightIcon />
-            </div>
+            <div>Delegate all tracks</div>
+            <DelegateIcon />
           </Button>
-        </DelegateInfoModal>
-      </div>
-    </Link>
+        )}
+      </Card>
+      {txVisible && (
+        <TxnModal
+          open={txVisible}
+          onClose={closeTxModal}
+          delegate={delegate}
+          selectedTracks={selectedTracks}
+        />
+      )}
+      <DelegateInfoModal
+        open={infoVisible}
+        onClose={closeInfoModal}
+        delegate={delegate}
+      >
+        <Button
+          className="w-fit"
+          onClick={delegateHandler}
+          disabled={isProcessing}
+        >
+          <div className="flex w-full flex-nowrap items-center justify-center gap-1">
+            <div>Select</div>
+            <ChevronRightIcon />
+          </div>
+        </Button>
+      </DelegateInfoModal>
+    </div>
   );
 }
