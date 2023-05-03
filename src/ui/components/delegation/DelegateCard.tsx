@@ -106,6 +106,7 @@ export function DelegateCard({
   };
   const delegateHandler = (e: SyntheticEvent) => {
     e.stopPropagation();
+    e.preventDefault();
     openTxModal();
     setInfoVisible(false); //have to close info modal to make tx modal visible - not ideal, should be replacing content within 1 modal
 
@@ -154,7 +155,6 @@ export function DelegateCard({
           </div>
           {manifesto && (
             <EllipsisTextbox
-              address={delegate.address}
               className="max-h-[6rem] lg:h-[6rem]"
               text={manifesto}
               expandLinkTitle="Read more ->"

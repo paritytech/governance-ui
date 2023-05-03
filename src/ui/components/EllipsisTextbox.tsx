@@ -1,17 +1,14 @@
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Remark } from 'react-remark';
-import { Link } from 'wouter';
 
 const EllipsisTextbox = ({
   text,
   expandLinkTitle,
   className,
-  address,
 }: {
   text: string;
   expandLinkTitle: string;
   className: string;
-  address: string;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isOverflowed, setIsOverflowed] = useState(false);
@@ -24,7 +21,7 @@ const EllipsisTextbox = ({
     }
   }, [scrollHeight, clientHeight]);
   return (
-    <Link href={`/${address}`}>
+    <>
       <div tabIndex={-1} className="flex flex-col">
         <div
           className={`overflow-hidden text-ellipsis text-body-2 md:text-body ${
@@ -41,7 +38,7 @@ const EllipsisTextbox = ({
           </div>
         )}
       </div>
-    </Link>
+    </>
   );
 };
 
