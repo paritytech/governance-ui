@@ -30,7 +30,7 @@ import {
 } from '../../../utils/polkadot-api';
 import BN from 'bn.js';
 import { Conviction } from '../../../types';
-import { Link } from 'wouter';
+import { Link } from 'react-router-dom';
 
 export function DelegateInfo({ delegate }: { delegate: Delegate }) {
   const { address, manifesto, name } = delegate;
@@ -210,12 +210,12 @@ export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
             <hr />
             <div className="flex w-full flex-col gap-2 text-sm">
               {delegatesWithTracks.size ? (
-                <Link href="/" className="flex flex-row items-center gap-1">
+                <Link to="/" className="flex flex-row items-center gap-1">
                   <div>Manage your active delegations</div>
                   <ArrowRightIcon />
                 </Link>
               ) : (
-                <Link href="/" className="flex flex-row items-center gap-1">
+                <Link to="/" className="flex flex-row items-center gap-1">
                   <div>Discover other delegates</div>
                   <ArrowRightIcon />
                 </Link>

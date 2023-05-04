@@ -1,6 +1,6 @@
 import { ConnectButton } from './accounts/ConnectButton.js';
 import { Navbar } from '../lib/index.js';
-import { Link } from 'wouter';
+import { Link } from 'react-router-dom';
 import { ArrowLeftIcon } from '../icons/index.js';
 
 const tokenUrl = new URL(
@@ -22,7 +22,7 @@ export function Header({
   return (
     <Navbar>
       <Navbar.Brand>
-        <Link href="/">
+        <Link to="/">
           <div className="cursor-pointer">
             <div className="sticky top-0 -z-10 w-full">
               <div className="h-8 w-fit md:hidden">

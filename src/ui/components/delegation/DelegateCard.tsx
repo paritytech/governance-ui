@@ -16,7 +16,7 @@ import { UndelegateModal } from './delegateModal/Undelegate';
 import { LabeledBox, TracksLabel } from '../common/LabeledBox';
 import { TxnModal } from './delegateModal/TxnModal';
 import { SimpleAnalytics } from '../../../analytics';
-import { Link } from 'wouter';
+import { Link } from 'react-router-dom';
 
 function getSelectedTracks(
   indexes: number[],
@@ -134,7 +134,7 @@ export function DelegateCard({
       }`}
     >
       <Card className={` flex w-full flex-col gap-2 p-6 shadow-md md:gap-4`}>
-        <Link href={`/${address}`}>
+        <Link to={`/${address}`}>
           <div className="flex cursor-pointer items-start justify-between">
             <div className="flex flex-col items-start">
               <h2 className="text-xl capitalize">{name || 'Anonymous'}</h2>

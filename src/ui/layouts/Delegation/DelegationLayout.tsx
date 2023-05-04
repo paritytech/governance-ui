@@ -1,6 +1,13 @@
-import { useEffect, useMemo } from 'react';
-import { Switch, Route, Router, Redirect } from 'wouter';
-import { useLocationProperty, navigate } from 'wouter/use-location';
+import { useMemo } from 'react';
+import {
+  Route,
+  createHashRouter,
+  RouterProvider,
+  createRoutesFromElements,
+  Navigate,
+  useParams,
+  ScrollRestoration,
+} from 'react-router-dom';
 import Footer from '../../components/Footer.js';
 import { Header, NotificationBox } from '../../components/index.js';
 import { DelegationPanel } from './DelegationPanel.js';
@@ -11,30 +18,6 @@ import {
   useAppLifeCycle,
   extractDelegatedTracks,
 } from '../../../lifecycle/index.js';
-import { useLocation } from 'wouter';
-
-function ScrollToTop() {
-  const [location] = useLocation();
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [location]);
-
-  return null;
-}
-
-function hashLocation() {
-  return window.location.hash.replace(/^#/, '') || '/';
-}
-
-function hashNavigate(path: string) {
-  navigate(`#${path}`);
-}
-
-function useHashLocation(): [string, (path: string) => void] {
-  const location = useLocationProperty(hashLocation);
-  return [location, hashNavigate];
-}
 
 export function InnerLayout({
   selectedDelegate,
@@ -62,7 +45,7 @@ export function InnerLayout({
         className="flex w-full flex-auto flex-col items-center justify-center gap-8 pb-48 pt-14 md:pt-20 lg:gap-16"
         ref={sectionRefs.get('top')}
       >
-        <ScrollToTop />
+        <ScrollRestoration />
         {selectedDelegate && isValidAddress(selectedDelegate) ? (
           <SelectedDelegatePanel selectedDelegate={selectedDelegate} />
         ) : (
@@ -74,25 +57,24 @@ export function InnerLayout({
   );
 }
 
-export function DelegationLayout() {
-  return (
+function InnerLayoutWithAddress(): JSX.Element {
+  const { address } = useParams();
+  if (address && isValidAddress(address)) {
+    return <InnerLayout selectedDelegate={address} />;
+  } else {
+    return <Navigate replace to={'/'} />;
+  }
+}
+
+const router = createHashRouter(
+  createRoutesFromElements(
     <>
-      <Router hook={useHashLocation}>
-        <Switch>
-          <Route path="/:address">
-            {({ address }: { address: string }) =>
-              address && isValidAddress(address) ? (
-                <InnerLayout selectedDelegate={address} />
-              ) : (
-                <Redirect to={'/'} />
-              )
-            }
-          </Route>
-          <Route>
-            <InnerLayout />
-          </Route>
-        </Switch>
-      </Router>
+      <Route path="/" element={<InnerLayout />} />
+      <Route path="/:address" element={<InnerLayoutWithAddress />} />
     </>
-  );
+  )
+);
+
+export function DelegationLayout() {
+  return <RouterProvider router={router} />;
 }
