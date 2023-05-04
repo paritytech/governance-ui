@@ -69,8 +69,8 @@ import {
 } from './types.js';
 import { fetchReferenda } from '../utils/polkassembly.js';
 import BN from 'bn.js';
-import kusamaTracks from '../../assets/data/kusama/tracks.json';
-import polkadotTracks from '../../assets/data/polkadot/tracks.json';
+import { tracks as kusamaTracks } from '../chain/tracks/kusama.js';
+import { tracks as polkadotTracks } from '../chain/tracks/polkadot.js';
 
 // Auto follow chain updates? Only if user settings? Show notif? Only if impacting change?
 // Revisit if/when ChainState is persisted
