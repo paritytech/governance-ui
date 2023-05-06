@@ -256,6 +256,12 @@ export function SelectedDelegatePanel({
     return location.href;
   }
 
+  const delegatesWithTracks = extractDelegatedTracks(state);
+  const tracks =
+    Array.from(delegatesWithTracks.entries()).find(
+      ([delegate]) => delegate.address == selectedDelegate
+    )?.[1] || [];
+
   return (
     <div className="flex w-full max-w-[1280px] flex-row gap-32 p-8 pt-10">
       <div className="flex w-full flex-col gap-6">
@@ -276,6 +282,13 @@ export function SelectedDelegatePanel({
             </Button>
           </CopyToClipboard>
         </div>
+        <LabeledBox title="Tracks delegated">
+          <TracksLabel
+            allTracksCount={flattenAllTracks(state.tracks).size}
+            tracks={tracks}
+            visibleCount={2}
+          />
+        </LabeledBox>
         <hr />
         <Remark>{delegate.manifesto || ''}</Remark>
       </div>
