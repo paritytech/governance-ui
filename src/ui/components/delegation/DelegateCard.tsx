@@ -16,7 +16,7 @@ import { UndelegateModal } from './delegateModal/Undelegate';
 import { LabeledBox, TracksLabel } from '../common/LabeledBox';
 import { TxnModal } from './delegateModal/TxnModal';
 import { SimpleAnalytics } from '../../../analytics';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function getSelectedTracks(
   indexes: number[],
@@ -94,6 +94,7 @@ export function DelegateCard({
   const { connectedAccount } = useAccount();
   const [txVisible, setTxVisible] = useState(false);
   const [infoVisible, setInfoVisible] = useState(false);
+  const navigate = useNavigate();
 
   const connectedAddress = connectedAccount?.account?.address;
 
@@ -127,6 +128,8 @@ export function DelegateCard({
       ? filterUndelegatedTracks(state, allTracks)
       : getSelectedTracks(Array.from(selectedTrackIndexes.keys()), allTracks);
 
+  const navigationTarget = `/${address}`;
+
   return (
     <div
       className={`flex min-h-full shrink-0  ${className} ${
@@ -134,7 +137,7 @@ export function DelegateCard({
       }`}
     >
       <Card className={` flex w-full flex-col gap-2 p-6 shadow-md md:gap-4`}>
-        <Link to={`/${address}`}>
+        <Link to={navigationTarget}>
           <div className="flex cursor-pointer items-start justify-between">
             <div className="flex flex-col items-start">
               <h2 className="text-xl capitalize">{name || 'Anonymous'}</h2>
@@ -153,15 +156,18 @@ export function DelegateCard({
               </Button>
             )}
           </div>
-          {manifesto && (
+        </Link>
+
+        {manifesto && (
+          <div onClick={() => navigate(navigationTarget)}>
             <EllipsisTextbox
               className="max-h-[6rem] lg:h-[6rem]"
               text={manifesto}
               expandLinkTitle="Read more ->"
             />
-          )}
-          <div className="grow" />
-        </Link>
+          </div>
+        )}
+        <div className="grow" />
 
         {delegatedTracks.length > 0 && (
           <DelegatedTracks
