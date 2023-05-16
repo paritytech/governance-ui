@@ -1,62 +1,72 @@
 import { WsProvider } from '@polkadot/api';
 
-/*type Snapshot = {
-  date: number;
+type Stats = {
   bytesRecv: number;
   errors: number;
   timeout: number;
-};*/
+  stallCount: number;
+};
 
 export class WsReconnectProvider extends WsProvider {
+  static RETRY_DELAY = 2_500;
   static CHECKER_INTERVAL_MS = 5_000;
   static PER_REQUEST_TIMEOUT_MS = 15_000;
+  statsHistory = new Map<string, Stats>();
 
   #checkerId: ReturnType<typeof setTimeout> | undefined; // Workaround typescript limitation, see https://stackoverflow.com/a/56239226
 
   constructor(endpoints: string[]) {
     super(
       endpoints,
-      false,
+      WsReconnectProvider.RETRY_DELAY,
       undefined,
       WsReconnectProvider.PER_REQUEST_TIMEOUT_MS
     );
-
-    this.connect();
-
-    this.on('disconnected', this.reconnect.bind(this));
-    this.on('error', this.reconnect.bind(this));
-  }
-
-  // Called by super.connect()
-  /*protected selectEndpointIndex(endpoints: string[]): number {
-    
-  }*/
-
-  async reconnect() {
-    await this.disconnect();
-    await this.connect();
-  }
-
-  #checker() {
-    const { bytesRecv, errors, timeout } = this.stats.total;
-    console.debug('CHECKING', this.endpoint, bytesRecv, errors, timeout);
-  }
-
-  async connect(): Promise<void> {
-    const result = super.connect();
 
     this.#checkerId = setInterval(
       this.#checker.bind(this),
       WsReconnectProvider.CHECKER_INTERVAL_MS
     );
 
-    await result;
+    // Triggered by connect, disconnect or onSocketError
+    super.on('error', super.disconnect.bind(this));
   }
 
-  async disconnect(): Promise<void> {
-    clearInterval(this.#checkerId);
-    this.#checkerId = undefined;
+  #checker() {
+    const { bytesRecv, errors, timeout } = super.stats.total;
+    const previousStats = this.statsHistory.get(super.endpoint);
+    const stalled = previousStats?.bytesRecv == bytesRecv;
+    const newStallCount = stalled ? (previousStats?.stallCount || 0) + 1 : 0;
 
-    await super.disconnect();
+    this.statsHistory.set(super.endpoint, {
+      bytesRecv,
+      errors,
+      timeout,
+      stallCount: newStallCount,
+    });
+
+    try {
+      if (!super.isConnected) {
+        super.connect();
+      }
+    } catch {
+      // Ignore
+    }
+
+    if (newStallCount > 5) {
+      console.debug('No progress, connection is stalled. Force reconnection');
+      super.disconnect();
+    }
+  }
+
+  #clearCheckId() {
+    if (this.#checkerId) {
+      clearInterval(this.#checkerId);
+      this.#checkerId = undefined;
+    }
+  }
+
+  close() {
+    this.#clearCheckId();
   }
 }
