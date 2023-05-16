@@ -1499,7 +1499,7 @@
     "@polkadot/util" "10.4.2"
     "@polkadot/util-crypto" "10.4.2"
 
-"@polkadot/keyring@^12.1.2", "@polkadot/keyring@^12.2.1":
+"@polkadot/keyring@^12.2.1":
   version "12.2.1"
   resolved "https://registry.yarnpkg.com/@polkadot/keyring/-/keyring-12.2.1.tgz#d131375c0436115d1f35139bd2bbbc069dd5b9fa"
   integrity sha512-YqgpU+97OZgnSUL56DEMib937Dpb1bTTDPYHhBiN1yNCKod7UboWXIe4xPh+1Kzugum+dEyPpdV+fHH10rtDzw==
@@ -1526,25 +1526,16 @@
     "@substrate/ss58-registry" "^1.40.0"
     tslib "^2.5.0"
 
-"@polkadot/networks@^12.1.2":
-  version "12.1.2"
-  resolved "https://registry.yarnpkg.com/@polkadot/networks/-/networks-12.1.2.tgz#4631ec701f87f6a1805faaf24f0199ca50f36716"
-  integrity sha512-9gC5GYGFKXHY4oQaMfYvLLxGJ55slT3V8Zc6uk96KKysEvpSMDXdPUAKZJ3SXN9Iz3KaEa9x6RD5ZEf5j6BJ6g==
+"@polkadot/react-identicon@3.4.1":
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/react-identicon/-/react-identicon-3.4.1.tgz#306f19c33ebcc6863b26f7f7154165c61a40813d"
+  integrity sha512-0S8fofxKus3IORdUSSnIaiF0HKA6F+G//3+KdwiAmAlQWyfs94njQKP4IgouFSbueVyYMh4fbthQ8civ65Bkgg==
   dependencies:
-    "@polkadot/util" "12.1.2"
-    "@substrate/ss58-registry" "^1.40.0"
-    tslib "^2.5.0"
-
-"@polkadot/react-identicon@3.3.1":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/react-identicon/-/react-identicon-3.3.1.tgz#c828049b27a58eff1b43b6e56aab5d74481f3acd"
-  integrity sha512-fIY2UuVIxZHRVcK/uCcWLg4xRjsnwkMAR3j9+qoPR0y8U2NE8LDEFPWdJ06FJjN4QZFmxc1l/jQ3TJCd6hIwRw==
-  dependencies:
-    "@polkadot/keyring" "^12.1.2"
-    "@polkadot/ui-settings" "3.3.1"
-    "@polkadot/ui-shared" "3.3.1"
-    "@polkadot/util" "^12.1.2"
-    "@polkadot/util-crypto" "^12.1.2"
+    "@polkadot/keyring" "^12.2.1"
+    "@polkadot/ui-settings" "3.4.1"
+    "@polkadot/ui-shared" "3.4.1"
+    "@polkadot/util" "^12.2.1"
+    "@polkadot/util-crypto" "^12.2.1"
     ethereum-blockies-base64 "^1.0.2"
     jdenticon "3.2.0"
     react-copy-to-clipboard "^5.1.0"
@@ -1726,21 +1717,21 @@
     "@polkadot/util-crypto" "^10.4.2"
     rxjs "^7.8.0"
 
-"@polkadot/ui-settings@3.3.1":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/ui-settings/-/ui-settings-3.3.1.tgz#3e178a9aad2cda79da22a81dcb6874eb62909c43"
-  integrity sha512-cOOjlHaoWWi7//wRKuWwcagfNoTqD4FxhxI19AMXG4xRPBLDh39tMGxzyd3yTsLMruscnDxdxN2Yj0jzn3FYKg==
+"@polkadot/ui-settings@3.4.1":
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/ui-settings/-/ui-settings-3.4.1.tgz#0a74f154b8173c449826bad9bfdafefcb30225cc"
+  integrity sha512-2ym8ipRl14dedExABx/+NBLxh/8W8yMukY72db+weguJBC8/AAgNAzSX4tub9IGivArSTgi2T2/zLNXEKYtA+Q==
   dependencies:
-    "@polkadot/networks" "^12.1.2"
-    "@polkadot/util" "^12.1.2"
+    "@polkadot/networks" "^12.2.1"
+    "@polkadot/util" "^12.2.1"
     eventemitter3 "^5.0.1"
     store "^2.0.12"
     tslib "^2.5.0"
 
-"@polkadot/ui-shared@3.3.1":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@polkadot/ui-shared/-/ui-shared-3.3.1.tgz#f85fe90d1d866956090d3b52b8cc906a17fb4c38"
-  integrity sha512-qT73rS8+Ja3UdEOVJ55Y9NZQkZSRBszHWE8miYm4zWBT5HYbWD2KWgCd9cjKVHmDk79MO1S81ULPwbD5qhgrEg==
+"@polkadot/ui-shared@3.4.1":
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/@polkadot/ui-shared/-/ui-shared-3.4.1.tgz#902e47f0d784a571a33bc235a40b2ef5598bf392"
+  integrity sha512-79nXPAxYuQOs4aEwLVrLzbX6syQyn765bdZRbJysudHr0o+UIVWmfHg2OPGp4Q2JlyvwuJ0ta9tJAGIZ4n/UsA==
   dependencies:
     colord "^2.9.3"
     tslib "^2.5.0"
@@ -1762,7 +1753,7 @@
     ed2curve "^0.3.0"
     tweetnacl "^1.0.3"
 
-"@polkadot/util-crypto@12.2.1", "@polkadot/util-crypto@^12.1.2", "@polkadot/util-crypto@^12.2.1":
+"@polkadot/util-crypto@12.2.1", "@polkadot/util-crypto@^12.2.1":
   version "12.2.1"
   resolved "https://registry.yarnpkg.com/@polkadot/util-crypto/-/util-crypto-12.2.1.tgz#cbb0d1535e187af43ddcbac4248298b134f2f3ee"
   integrity sha512-MFh7Sdm7/G9ot5eIBZGuQXTYP/EbOCh1+ODyygp9/TjWAmJZMq1J73Uqk4KmzkwpDBpNZO8TGjiYwL8lR6BnGg==
@@ -1804,7 +1795,7 @@
     bn.js "^5.2.1"
     tslib "^2.5.0"
 
-"@polkadot/util@12.2.1", "@polkadot/util@^12.1.2", "@polkadot/util@^12.2.1":
+"@polkadot/util@12.2.1", "@polkadot/util@^12.2.1":
   version "12.2.1"
   resolved "https://registry.yarnpkg.com/@polkadot/util/-/util-12.2.1.tgz#d6c692324890802bc3b2f15b213b7430bb26e8c8"
   integrity sha512-MQmPx9aCX4GTpDY/USUQywXRyaDbaibg4V1+c/CoRTsoDu+XHNM8G3lpabdNAYKZrtxg+3/1bTS0ojm6ANSQRw==
