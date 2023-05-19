@@ -12,7 +12,7 @@ Some data will be fetched to enhance the experience from `github.com` and `polka
 
 Anyone can register themselves as a delegate.
 
-To add a new delegate, edit [this file](assets/data/polkadot/delegates.json).
+To add a new delegate, edit [this file](assets/data/polkadot/delegates.json) and push a pull request. Once approved, changes will be transparently picked up and made available to anyone in the application.
 
 The following table outlines the structure of a `delegate` entry:
 
