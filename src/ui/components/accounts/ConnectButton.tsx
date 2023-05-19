@@ -29,12 +29,11 @@ const WalletView = ({
       <div className="flex flex-col items-start gap-4 border-b">
         <div className="font-brand font-semibold">Wallet</div>
 
-        <ConnectCard
-          className="my-2 flex w-full flex-row items-center justify-between p-2"
-          onClick={() => gotoAccountsView()}
-        >
+        <ConnectCard className="my-2 flex w-full flex-row items-center justify-between p-2">
           <div>{`${loadedAccountsCount} Imported Accounts`}</div>
-          <ChevronRightIcon />
+          <div onClick={gotoAccountsView}>
+            <ChevronRightIcon className="cursor-pointer" />
+          </div>
         </ConnectCard>
       </div>
       <WalletsList
