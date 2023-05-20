@@ -1407,10 +1407,10 @@
     "@polkadot-onboard/core" "0.0.9"
     "@polkadot/extension-inject" "0.44.8"
 
-"@polkadot-onboard/react@0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@polkadot-onboard/react/-/react-0.0.9.tgz#5a06291906ea6b705c75509bcdcb0c6cb52bb889"
-  integrity sha512-HexZFL0gkX8qNjd/t0IPHQhHhYEaLaMucbNoSQ5pEIFlSEdxylO1ApKMO1g9q4CgACW5Y21Lz//ql7r6u34oDw==
+"@polkadot-onboard/react@0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@polkadot-onboard/react/-/react-0.0.10.tgz#78768878edf56eddb3ea9d5ec72a140c0483b4c9"
+  integrity sha512-IjVMgWe4OiMrIhegs2uYKLwsBcyKpZnOWqpBkqGMLPN60Y0lMJzRRTMllWhnFzB2ziz0Izbe1QEvbzlSjjyHNA==
   dependencies:
     react "18.2.0"
     react-dom "18.2.0"
