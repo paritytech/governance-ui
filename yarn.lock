@@ -1394,6 +1394,11 @@
   optionalDependencies:
     fsevents "2.3.2"
 
+"@polkadot-onboard/core@0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@polkadot-onboard/core/-/core-0.0.10.tgz#cbb15d0d13eb014e3a5d516482058d7cdda6da47"
+  integrity sha512-oB0HcoAmFM6VnfRnR/TD7AptqctYQKYkMHGIZ70UbLggqCay1c4qB0T4q4uCsu9rFzaNNTZLUaWLX1PlXfGOrQ==
+
 "@polkadot-onboard/core@0.0.9":
   version "0.0.9"
   resolved "https://registry.yarnpkg.com/@polkadot-onboard/core/-/core-0.0.9.tgz#ad1b379cd4805f6b792d2e1fcd05fde2aae3c88c"
