@@ -45,7 +45,7 @@
     "@parcel/packager-raw-url": "2.8.3",
     "@parcel/transformer-svg-react": "2.8.3",
     "@parcel/transformer-webmanifest": "2.8.3",
-    "@playwright/test": "1.33.0",
+    "@playwright/test": "1.34.1",
     "@tailwindcss/typography": "0.5.9",
     "@testing-library/react": "14.0.0",
     "@types/bn.js": "5.1.1",
