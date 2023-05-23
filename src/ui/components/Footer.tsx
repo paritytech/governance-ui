@@ -7,7 +7,12 @@ export default function Footer() {
         <PolkadotCircleIcon />
         <span>© Web3 Foundation</span>
         <div className="h-3 w-[1px] bg-gray-500" />
-        <a href="" target="_blank" className=" underline">
+        <a
+          href="https://polkadot.network/privacy/"
+          target="_blank"
+          className=" underline"
+          rel="noreferrer"
+        >
           Privacy Policy
         </a>
       </div>
