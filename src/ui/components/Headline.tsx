@@ -15,7 +15,7 @@ export default function Headline() {
     >
       <div className="flex w-full flex-col items-center gap-3 px-8 lg:gap-0 lg:px-0">
         <span className="text-center font-unbounded text-h3 lg:text-h1">
-          Governance is now <span className="text-primary">open</span>
+          Delegate <span className="text-primary">now</span>
         </span>
         <span className="px-3 text-center text-body">
           No time to vote? Keep Polkadot running smoothly by delegating to an
