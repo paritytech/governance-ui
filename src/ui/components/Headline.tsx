@@ -11,7 +11,7 @@ const headline2Url = new URL(
 export default function Headline() {
   return (
     <div
-      className={`flex w-full flex-col items-center justify-center gap-12 pt-12 `}
+      className={`flex w-full flex-col items-center justify-center gap-12 pt-12`}
     >
       <div className="flex w-full flex-col items-center gap-3 px-8 lg:gap-0 lg:px-0">
         <span className="text-center font-unbounded text-h3 lg:text-h1">
@@ -22,6 +22,7 @@ export default function Headline() {
           expert instead.
         </span>
       </div>
+
       <div className="flex w-full gap-20  px-28">
         <div className="flex w-full items-center gap-2 px-4 lg:gap-4 lg:px-0">
           <img width={200} src={headline1Url} alt="Headline image 1" />

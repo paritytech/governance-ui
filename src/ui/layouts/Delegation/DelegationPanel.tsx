@@ -11,6 +11,28 @@ import Headline from '../../components/Headline.js';
 import { DelegatesBar } from '../../components/DelegatesBar.js';
 import { ActiveDelegates } from '../../components/ActiveDelegates.js';
 import { DelegateSection } from '../../components/delegation/DelegateSection.js';
+import { useState } from 'react';
+
+export function CloseIcon() {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 29 29"
+    >
+      <path
+        d="M4.893 4.231l19.799 19.8M24.692 4.231l-19.8 19.8"
+        data-nofill="true"
+      ></path>
+    </svg>
+  );
+}
 
 function exportReferenda(state: State): Map<number, ReferendumOngoing> {
   if (state.type === 'ConnectedState') {
@@ -31,6 +53,8 @@ export function DelegationPanel() {
   const { selectedTrackIndexes, sectionRefs, scrollToSection } =
     useDelegation();
 
+  const [headlineVisible, setHeadlineVisible] = useState(true);
+
   // If user has some active delegation,
   return (
     <>
@@ -40,10 +64,27 @@ export function DelegationPanel() {
           state={state}
         />
       ) : (
-        <>
-          <Headline />
+        <div className="flex w-full flex-col gap-12">
+          <div
+            className={`flex w-full justify-between px-6 ${
+              headlineVisible ? 'block' : 'hidden'
+            }`}
+          >
+            <div className="w-10" />
+            <Headline />
+            <div
+              className="mt-6 flex h-fit w-fit items-center justify-center rounded-full bg-white p-3"
+              onClick={() => {
+                setHeadlineVisible(false);
+                window.localStorage.setItem('headlineVisible', 'false');
+              }}
+            >
+              <CloseIcon />
+            </div>
+          </div>
+
           <DelegatesBar delegates={delegates} state={state} />
-        </>
+        </div>
       )}
       <TrackSelect
         network={network}
