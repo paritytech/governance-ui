@@ -1,7 +1,7 @@
 import { ConnectButton } from './accounts/ConnectButton.js';
 import { Navbar } from '../lib/index.js';
 import { Link } from 'react-router-dom';
-import { ArrowLeftIcon } from '../icons/index.js';
+import { ArrowLeftIcon, InformationalIcon } from '../icons/index.js';
 
 const tokenUrl = new URL(
   '../../../assets/images/polkadot-token.svg',
@@ -19,6 +19,8 @@ export function Header({
   activeDelegateCount: number;
   withBackArrow: boolean;
 }): JSX.Element {
+  const currentInfo = localStorage.getItem('headlineVisible');
+
   return (
     <Navbar>
       <Navbar.Brand>
@@ -58,7 +60,18 @@ export function Header({
       </Navbar.Brand>
       <Navbar.Content>
         <Navbar.Item>
-          <div className="flex justify-start gap-2 md:justify-end">
+          <div className="flex items-center justify-start gap-2 md:justify-end">
+            {currentInfo === 'true' && (
+              <button
+                className="flex h-fit w-fit cursor-pointer items-center justify-center rounded-full bg-white p-2"
+                onClick={() => {
+                  window.location.reload();
+                  window.localStorage.setItem('headlineVisible', 'false');
+                }}
+              >
+                <InformationalIcon size="20" />
+              </button>
+            )}
             <ConnectButton />
           </div>
         </Navbar.Item>

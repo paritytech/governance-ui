@@ -53,7 +53,10 @@ export function DelegationPanel() {
   const { selectedTrackIndexes, sectionRefs, scrollToSection } =
     useDelegation();
 
-  const [headlineVisible, setHeadlineVisible] = useState(true);
+  const currentlyVisible = localStorage.getItem('headlineVisible');
+  console.log('cv: ', currentlyVisible);
+
+  const [headlineVisible, setHeadlineVisible] = useState(currentlyVisible);
 
   // If user has some active delegation,
   return (
@@ -67,22 +70,22 @@ export function DelegationPanel() {
         <div className="flex w-full flex-col gap-12">
           <div
             className={`flex w-full justify-between px-6 ${
-              headlineVisible ? 'block' : 'hidden'
+              headlineVisible === 'false' || null ? 'block' : 'hidden'
             }`}
           >
             <div className="w-10" />
             <Headline />
             <div
-              className="mt-6 flex h-fit w-fit items-center justify-center rounded-full bg-white p-3"
+              className="mt-6 flex h-fit w-fit cursor-pointer items-center justify-center rounded-full bg-white p-3"
               onClick={() => {
-                setHeadlineVisible(false);
-                window.localStorage.setItem('headlineVisible', 'false');
+                setHeadlineVisible('true');
+                window.localStorage.setItem('headlineVisible', 'true');
+                console.log(localStorage.getItem('headlineVisible'));
               }}
             >
               <CloseIcon />
             </div>
           </div>
-
           <DelegatesBar delegates={delegates} state={state} />
         </div>
       )}

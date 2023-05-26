@@ -23,7 +23,7 @@ export default function Headline() {
         </span>
       </div>
 
-      <div className="flex w-full gap-20  px-28">
+      <div className="flex w-full gap-20 px-6 xl:px-28">
         <div className="flex w-full items-center gap-2 px-4 lg:gap-4 lg:px-0">
           <img width={200} src={headline1Url} alt="Headline image 1" />
           <div className="flex w-full flex-col gap-1">
