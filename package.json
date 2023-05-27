@@ -40,7 +40,7 @@
     "react-router-dom": "6.11.2"
   },
   "devDependencies": {
-    "@parcel/compressor-brotli": "2.8.3",
+    "@parcel/compressor-brotli": "2.9.0",
     "@parcel/compressor-gzip": "2.8.3",
     "@parcel/packager-raw-url": "2.8.3",
     "@parcel/transformer-svg-react": "2.8.3",
