@@ -25,7 +25,7 @@ import { TxnModal } from '../../components/delegation/delegateModal/TxnModal';
 import { Remark } from 'react-remark';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Button } from '../../lib/Button';
-import { ArrowRightIcon, CopyIcon } from '../../icons';
+import { ArrowRightIcon, CheckIcon, CopyIcon } from '../../icons';
 import { Card } from '../../lib';
 import {
   formatConviction,
@@ -269,6 +269,8 @@ export function SelectedDelegatePanel({
       ([delegate]) => delegate.address == selectedDelegate
     )?.[1] || [];
 
+  const [copied, setCopied] = useState(false);
+
   return (
     <div className="flex w-full max-w-[1280px] flex-row gap-32 p-8 pt-10">
       <div className="flex w-full flex-col gap-6">
@@ -283,9 +285,9 @@ export function SelectedDelegatePanel({
               })
             }
           >
-            <Button variant="ghost">
-              <CopyIcon />
-              <div>Copy profile link</div>
+            <Button variant="ghost" onClick={() => setCopied(true)}>
+              {copied ? <CheckIcon /> : <CopyIcon />}
+              <div>{copied ? 'Copied to clipboard' : 'Copy profile link'}</div>
             </Button>
           </CopyToClipboard>
         </div>
