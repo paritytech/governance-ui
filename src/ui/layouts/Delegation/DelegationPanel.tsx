@@ -54,7 +54,6 @@ export function DelegationPanel() {
     useDelegation();
 
   const currentlyVisible = localStorage.getItem('headlineVisible');
-  console.log('cv: ', currentlyVisible);
 
   const [headlineVisible, setHeadlineVisible] = useState(currentlyVisible);
 
@@ -80,7 +79,6 @@ export function DelegationPanel() {
               onClick={() => {
                 setHeadlineVisible('true');
                 window.localStorage.setItem('headlineVisible', 'true');
-                console.log(localStorage.getItem('headlineVisible'));
               }}
             >
               <CloseIcon />
