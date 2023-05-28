@@ -20,6 +20,7 @@ import { CloseIcon, ChevronRightIcon } from '../../../../ui/icons/index';
 import { Accounticon } from '../../accounts/Accounticon';
 import { Modal } from '../../../../ui/lib/Modal';
 import { Button } from '../../../../ui/lib/Button';
+import { ConnectButton } from '../../accounts/ConnectButton';
 
 export function TxnModal({
   delegate,
@@ -176,22 +177,26 @@ export function TxnModal({
             <div>Cancel</div>
           </Button>
 
-          <Button
-            variant="primary"
-            onClick={() =>
-              connectedAccount &&
-              usableBalance &&
-              delegateHandler(connectedAccount, usableBalance)
-            }
-            disabled={!connectedAccount || !usableBalance?.gtn(0)}
-          >
-            <div>
-              {!usableBalance?.gtn(0)
-                ? 'Insufficient tokens to delegate'
-                : 'Delegate Now'}
-            </div>
-            <ChevronRightIcon />
-          </Button>
+          {connectedAddress ? (
+            <Button
+              variant="primary"
+              onClick={() =>
+                connectedAccount &&
+                usableBalance &&
+                delegateHandler(connectedAccount, usableBalance)
+              }
+              disabled={!connectedAccount || !usableBalance?.gtn(0)}
+            >
+              <div>
+                {!usableBalance?.gtn(0)
+                  ? 'Insufficient tokens to delegate'
+                  : 'Delegate Now'}
+              </div>
+              <ChevronRightIcon />
+            </Button>
+          ) : (
+            <ConnectButton />
+          )}
         </div>
       </div>
     </Modal>

@@ -17,6 +17,7 @@ import { LabeledBox, TracksLabel } from '../common/LabeledBox';
 import { TxnModal } from './delegateModal/TxnModal';
 import { SimpleAnalytics } from '../../../analytics';
 import { useNavigate, Link } from 'react-router-dom';
+import { ConnectButton } from '../accounts/ConnectButton';
 
 function getSelectedTracks(
   indexes: number[],
@@ -177,16 +178,19 @@ export function DelegateCard({
             tracks={delegatedTracks}
           />
         )}
-        {variant === 'all' && (
-          <Button
-            variant="primary"
-            onClick={delegateHandler}
-            disabled={isProcessing || !connectedAddress}
-          >
-            <div>Delegate all tracks</div>
-            <DelegateIcon />
-          </Button>
-        )}
+        {variant === 'all' &&
+          (connectedAddress ? (
+            <Button
+              variant="primary"
+              onClick={delegateHandler}
+              disabled={isProcessing}
+            >
+              <div>Delegate all tracks</div>
+              <DelegateIcon />
+            </Button>
+          ) : (
+            <ConnectButton />
+          ))}
       </Card>
       {txVisible && (
         <TxnModal

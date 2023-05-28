@@ -14,16 +14,19 @@ import {
 } from '../../../lifecycle';
 
 import { useAccount } from '../../../contexts';
-import { LabeledBox } from '../../components/common/LabeledBox';
-import { TracksLabel } from '../../components/common/LabeledBox';
-import { BalanceLabel } from '../../components/common/LabeledBox';
+import { ConnectButton } from '../../components';
 import { Accounticon } from '../../components/accounts/Accounticon';
+import {
+  BalanceLabel,
+  LabeledBox,
+  TracksLabel,
+} from '../../components/common/LabeledBox';
+import { TxnModal } from '../../components/delegation/delegateModal/TxnModal';
 import { Remark } from 'react-remark';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { Button } from '../../lib/Button';
 import { ArrowRightIcon, CheckIcon, CopyIcon } from '../../icons';
 import { Card } from '../../lib';
-import { TxnModal } from '../../components/delegation/delegateModal/TxnModal';
 import {
   formatConviction,
   calcDelegatableBalance,
@@ -189,23 +192,27 @@ export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
               </div>
             </div>
             <div className="flex w-full flex-row justify-end gap-4">
-              <Button
-                className="w-full"
-                variant="primary"
-                onClick={(event) =>
-                  connectedAccount && usableBalance && delegateHandler(event)
-                }
-                disabled={
-                  isProcessing || !connectedAccount || !usableBalance?.gtn(0)
-                }
-              >
-                <div>
-                  {!usableBalance?.gtn(0)
-                    ? 'Insufficient tokens to delegate'
-                    : 'Delegate all undelegated tracks'}
-                </div>
-                <ArrowRightIcon />
-              </Button>
+              {connectedAddress ? (
+                <Button
+                  className="w-full"
+                  variant="primary"
+                  onClick={(event) =>
+                    connectedAccount && usableBalance && delegateHandler(event)
+                  }
+                  disabled={
+                    isProcessing || !connectedAccount || !usableBalance?.gtn(0)
+                  }
+                >
+                  <div>
+                    {!usableBalance?.gtn(0)
+                      ? 'Insufficient tokens to delegate'
+                      : 'Delegate all undelegated tracks'}
+                  </div>
+                  <ArrowRightIcon />
+                </Button>
+              ) : (
+                <ConnectButton />
+              )}
             </div>
             <hr />
             <div className="flex w-full flex-col gap-2 text-sm">
