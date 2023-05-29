@@ -104,7 +104,7 @@
     rxjs "^7.8.1"
     tslib "^2.5.2"
 
-"@polkadot/api@10.7.2", "@polkadot/api@^10.6.1":
+"@polkadot/api@10.7.2", "@polkadot/api@^10.7.2":
   version "10.7.2"
   resolved "https://registry.yarnpkg.com/@polkadot/api/-/api-10.7.2.tgz#e5e9667f6c048f24294992dc2f508047f42ac8ee"
   integrity sha512-w1d/P359xNAKyCm/uhVDW8pCVBGVVthLYJPjZBqXOQXdLF+0Kjsg6zwNbHlSVPf3zpX6AODUg4X+HpchGIZSpQ==
@@ -508,34 +508,34 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.2.5.tgz#26d295f3570323b2837d322180dfbf1ba156fefb"
   integrity sha512-JJulVEQXmiY9Px5axXHeYGLSjhkZEnD+MDPDGbCbIAbMslkKwmygtZFy1X6s/075Yo94sf8GuSlFfPzysQrWZQ==
 
-"@zombienet/cli@1.3.52":
-  version "1.3.52"
-  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.52.tgz#790e9925b287ea1c9f29075d87a20c6ca2ea4a0c"
-  integrity sha512-KJo6w6m/tpNtVAgsz999BYTm+jyDLDKsunhMJJJX9AxCqGwGJnRd5Je4ep4u7p8pxbYNhfQoGwIGzt50lk1VkQ==
+"@zombienet/cli@1.3.55":
+  version "1.3.55"
+  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.55.tgz#44da5adbc637df168c6fbc30ba27859a4ab99d0b"
+  integrity sha512-glyJoG0Q9Zy4NimH+UQBlgMp8jxauCx3yy3T/vHuFdrSn0cBZQXqR/8GuguxHNkoi5H70BnJPOnVDD63yRvbrQ==
   dependencies:
-    "@zombienet/dsl-parser-wrapper" "^0.1.7"
-    "@zombienet/orchestrator" "^0.0.41"
-    "@zombienet/utils" "^0.0.20"
+    "@zombienet/dsl-parser-wrapper" "^0.1.9"
+    "@zombienet/orchestrator" "^0.0.44"
+    "@zombienet/utils" "^0.0.21"
     cli-progress "^3.12.0"
     commander "^10.0.1"
     debug "^4.3.4"
     nunjucks "^3.2.4"
     typescript "^5.0.4"
 
-"@zombienet/dsl-parser-wrapper@^0.1.7":
+"@zombienet/dsl-parser-wrapper@^0.1.9":
   version "0.1.9"
   resolved "https://registry.yarnpkg.com/@zombienet/dsl-parser-wrapper/-/dsl-parser-wrapper-0.1.9.tgz#a1cfe01fbac8698b3a02eb8c0de56a7ccf4cea8e"
   integrity sha512-8Bdhuh2dM3XKBdqlYtocJN6+gACbTa+bSiiJ+HZuLbW495ZXcS/NJ1MHMlL/DtBu3zOcb82X8yG5fMtF+f4ZbQ==
 
-"@zombienet/orchestrator@^0.0.41":
-  version "0.0.41"
-  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.41.tgz#da8a47ca1b9c560e9dc44439224bd6cb1d2d1e63"
-  integrity sha512-wfuE9oK1GYBA/UK9tBbtdRQQhJ9WCZpU9MML4uAN0+jn1knaocNyaB+Wk2xqWp5ACb7Wz+75kxYZ08yzerizHw==
+"@zombienet/orchestrator@^0.0.44":
+  version "0.0.44"
+  resolved "https://registry.yarnpkg.com/@zombienet/orchestrator/-/orchestrator-0.0.44.tgz#fdfee6774821ff6c9436d1e93668d135e61131c0"
+  integrity sha512-IHbcoGn4ivFelyE1+HhjwcrKbeSL1w7Qm3/0IYIYH42Kk/H2cxcKK5Tjl2dH/XMr9nnKQXxV1D8KL3GBvHR3Zw==
   dependencies:
-    "@polkadot/api" "^10.6.1"
+    "@polkadot/api" "^10.7.2"
     "@polkadot/keyring" "^12.1.2"
     "@polkadot/util-crypto" "^12.1.2"
-    "@zombienet/utils" "^0.0.20"
+    "@zombienet/utils" "^0.0.21"
     JSONStream "^1.3.5"
     chai "^4.3.7"
     debug "^4.3.4"
@@ -552,10 +552,10 @@
     typescript "^5.0.4"
     yaml "^2.2.2"
 
-"@zombienet/utils@^0.0.20":
-  version "0.0.20"
-  resolved "https://registry.yarnpkg.com/@zombienet/utils/-/utils-0.0.20.tgz#7952c2a763d9ab8bffbd0c357d523381a42ac5ef"
-  integrity sha512-pW+iOVo49AYNuLnbXYlMCWQN/X1RadaF1gui1//qaF3B3eFe83n6DPq7qCKyEu3EoIoAvzEPubWGpxIBfKfGrw==
+"@zombienet/utils@^0.0.21":
+  version "0.0.21"
+  resolved "https://registry.yarnpkg.com/@zombienet/utils/-/utils-0.0.21.tgz#e345da982f520e4614391dd4e0a4dda48fa95374"
+  integrity sha512-31fMNlITzmj1gPha2CcihDE6nON94r8ixZTZbWa2g0nacS0nnoTKUNFukw9vg+aGF5QkwSevy+eobOQEb/jhjg==
   dependencies:
     cli-table3 "^0.6.2"
     debug "^4.3.4"
