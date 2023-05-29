@@ -101,15 +101,27 @@ export function TxnModal({
         conviction
       );
       if (tx.type === 'ok') {
-        await signAndSend(address, signer, tx.value, (result) => {
-          updater.handleCallResult(result);
-          // clear track selection when delegation tx is finalized.
-          if (result.status.isFinalized) {
-            clearTrackSelection();
-            scrollToSection('top');
+        await signAndSend(
+          address,
+          signer,
+          tx.value,
+          ({ status, dispatchError }) => {
+            updater.handleCallResult(status);
+            // clear track selection when delegation tx is finalized.
+            if (status.isFinalized) {
+              clearTrackSelection();
+              scrollToSection('top');
+
+              if (!dispatchError) {
+                SimpleAnalytics.track('Delegate', {
+                  address,
+                  amount: amount.toString(),
+                  tracks: trackIds.map(toString).join(','),
+                });
+              }
+            }
           }
-        });
-        SimpleAnalytics.track('Delegate');
+        );
       }
     } finally {
       // close modal
