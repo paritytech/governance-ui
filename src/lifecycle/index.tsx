@@ -7,8 +7,6 @@ import type {
   VotingCasting,
   VotingDelegating,
 } from '../types.js';
-import type { Registry } from '@polkadot/types-codec/types';
-
 import React, {
   Dispatch,
   useCallback,
@@ -19,6 +17,8 @@ import React, {
   createContext,
 } from 'react';
 import { ApiPromise, SubmittableResult } from '@polkadot/api';
+import type { ExtrinsicStatus } from '@polkadot/types/interfaces';
+import type { Registry } from '@polkadot/types-codec/types';
 import {
   QueryableConsts,
   QueryableStorage,
@@ -625,28 +625,7 @@ export class Updater {
     }
   }
 
-  async handleCallResult(callResult: SubmittableResult) {
-    const { status, dispatchError } = callResult;
-    const state = this.#stateAccessor();
-    const api = await this.getApi(state);
-
-    if (dispatchError) {
-      if (dispatchError.isModule) {
-        // for module errors, we have the section indexed, lookup
-        const decoded = api?.registry.findMetaError(dispatchError.asModule);
-        if (decoded) {
-          const { docs, name, section } = decoded;
-
-          console.log(`${section}.${name}: ${docs.join(' ')}`);
-        } else {
-          console.log('Failed to decode');
-        }
-      } else {
-        // Other, CannotLookup, BadOrigin, no extra info
-        console.log(dispatchError.toString());
-      }
-    }
-
+  handleCallResult(status: ExtrinsicStatus) {
     if (status.isBroadcast) {
       this.setProcessingReport({
         isTransient: false,

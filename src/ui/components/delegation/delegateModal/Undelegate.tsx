@@ -60,10 +60,20 @@ export function UndelegateModal({
       const trackIds = tracks.map((track) => track.id);
       const txs = await updater.undelegate(trackIds, address);
       if (txs.type == 'ok') {
-        await signAndSend(address, signer, txs.value, (result) =>
-          updater.handleCallResult(result)
+        await signAndSend(
+          address,
+          signer,
+          txs.value,
+          ({ status, dispatchError }) => {
+            updater.handleCallResult(status);
+            if (status.isFinalized && !dispatchError) {
+              SimpleAnalytics.track('Undelegate', {
+                address,
+                tracks: trackIds.map(toString).join(','),
+              });
+            }
+          }
         );
-        SimpleAnalytics.track('Undelegate');
       }
     } finally {
       // close modal
