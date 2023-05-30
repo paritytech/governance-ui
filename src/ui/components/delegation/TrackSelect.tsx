@@ -289,7 +289,7 @@ export function TrackSelect({
           <span className="px-3 font-unbounded text-h4">
             Set up your delegation preferences
           </span>
-          <p className="text-body">
+          <p className="px-4 text-body">
             First, select the tracks you would like to delegate, then pick the
             address you&apos;d like to delegate to.
           </p>
@@ -309,7 +309,7 @@ export function TrackSelect({
         <ProgressStepper step={0} />
       </SectionTitle>
       <div className="flex flex-col gap-2 lg:gap-4 ">
-        <div className="sticky top-44 mb-4 flex flex-row justify-between overflow-visible bg-bg-default/80 px-3 py-3 backdrop-blur-md lg:px-8">
+        <div className="sticky top-52 mb-4 flex flex-row justify-between overflow-visible bg-bg-default/80 px-3 py-3 backdrop-blur-md lg:top-44 lg:px-8">
           <CheckBox
             background
             title={allTrackCheckboxTitle}
