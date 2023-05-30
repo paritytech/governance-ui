@@ -1152,13 +1152,13 @@
     globals "^13.2.0"
     nullthrows "^1.1.1"
 
-"@parcel/packager-raw-url@2.9.0":
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/@parcel/packager-raw-url/-/packager-raw-url-2.9.0.tgz#e236d5ed2696c4f3f8fce676a9df12aa16a02cd3"
-  integrity sha512-IyEwfObmFGWhIeEJ/igW5dlK0QPsJtYyhpsar7YE+mtr+PmLjvuS/QVlPS0wrb3HTKhLVlhEFGokRjp012gFkw==
+"@parcel/packager-raw-url@2.9.1":
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/@parcel/packager-raw-url/-/packager-raw-url-2.9.1.tgz#932dc1a678974ebae75656960cc3c4d4b418f24d"
+  integrity sha512-sS9a9CsYaWtfqaRLLGceRhSVeytC5+4PR1ZrXG+5/wM5kRhBs8kj/jsCmbcc7QXaH7pMAAhg0ahMqX9zf1jXGQ==
   dependencies:
-    "@parcel/plugin" "2.9.0"
-    "@parcel/utils" "2.9.0"
+    "@parcel/plugin" "2.9.1"
+    "@parcel/utils" "2.9.1"
 
 "@parcel/packager-raw@2.9.1":
   version "2.9.1"
