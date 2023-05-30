@@ -1414,12 +1414,12 @@
     "@parcel/utils" "2.9.1"
     react-refresh "^0.9.0"
 
-"@parcel/transformer-svg-react@2.9.0":
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/@parcel/transformer-svg-react/-/transformer-svg-react-2.9.0.tgz#85baa957728c718a0fe9f785c764b610a926fee0"
-  integrity sha512-VEJJ+Zr9esdf8eqaL1r7B3c/msvgGKeWAnIKm5xX7tCT12Dm2gQKYQ1oEcMIvbCmHHFyd59srDabHngTzSZApQ==
+"@parcel/transformer-svg-react@2.9.1":
+  version "2.9.1"
+  resolved "https://registry.yarnpkg.com/@parcel/transformer-svg-react/-/transformer-svg-react-2.9.1.tgz#01293fed4d2395a6adabae9b0d886ea07c29d658"
+  integrity sha512-kUZ/T1QPc2XG7lqFcnMcgnLjNZkVOZb+33qIP/wSjhEJK3RwG1QOjt/GFwVImfWmi1xlbMSV4oc+07MZPKYPlw==
   dependencies:
-    "@parcel/plugin" "2.9.0"
+    "@parcel/plugin" "2.9.1"
     "@svgr/core" "^6.2.0"
     "@svgr/plugin-jsx" "^6.2.0"
     "@svgr/plugin-svgo" "^6.2.0"
