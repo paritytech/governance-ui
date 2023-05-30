@@ -65,7 +65,7 @@
     "husky": "8.0.3",
     "jest": "29.5.0",
     "jest-environment-jsdom": "29.5.0",
-    "parcel": "2.9.0",
+    "parcel": "2.9.1",
     "parcel-resolver-fix-ts-esm-shit": "0.0.1",
     "postcss": "8.4.24",
     "prettier": "2.8.8",
