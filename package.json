@@ -67,7 +67,7 @@
     "jest-environment-jsdom": "29.5.0",
     "parcel": "2.9.0",
     "parcel-resolver-fix-ts-esm-shit": "0.0.1",
-    "postcss": "8.4.23",
+    "postcss": "8.4.24",
     "prettier": "2.8.8",
     "prettier-plugin-tailwindcss": "0.3.0",
     "process": "0.11.10",
