@@ -26,7 +26,7 @@
     "last 2 versions"
   ],
   "dependencies": {
-    "@parcel/service-worker": "2.9.0",
+    "@parcel/service-worker": "2.9.1",
     "@polkadot-onboard/core": "0.0.10",
     "@polkadot-onboard/injected-wallets": "0.0.10",
     "@polkadot-onboard/react": "0.0.10",
