@@ -270,6 +270,7 @@ export function SelectedDelegatePanel({
     )?.[1] || [];
 
   const [copied, setCopied] = useState(false);
+  const allTracksCount = flattenAllTracks(state.tracks).size;
 
   return (
     <div className="flex w-full max-w-[1280px] flex-row gap-32 p-8 pt-10">
@@ -291,13 +292,15 @@ export function SelectedDelegatePanel({
             </Button>
           </CopyToClipboard>
         </div>
-        <LabeledBox title="Tracks delegated">
-          <TracksLabel
-            allTracksCount={flattenAllTracks(state.tracks).size}
-            tracks={tracks}
-            visibleCount={2}
-          />
-        </LabeledBox>
+        {tracks.length > 0 && (
+          <LabeledBox title="Tracks delegated">
+            <TracksLabel
+              allTracksCount={allTracksCount}
+              tracks={tracks}
+              visibleCount={2}
+            />
+          </LabeledBox>
+        )}
         <hr />
         <Remark>{delegate.manifesto || ''}</Remark>
       </div>

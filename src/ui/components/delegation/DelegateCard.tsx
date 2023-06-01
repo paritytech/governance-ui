@@ -47,13 +47,15 @@ function DelegatedTracks({
   return (
     <>
       <InnerCard className="gap-2 bg-[#FFE4F3]">
-        <LabeledBox title="Tracks delegated">
-          <TracksLabel
-            allTracksCount={allTracksCount}
-            tracks={tracks}
-            visibleCount={2}
-          />
-        </LabeledBox>
+        {tracks.length > 0 && (
+          <LabeledBox title="Tracks delegated">
+            <TracksLabel
+              allTracksCount={allTracksCount}
+              tracks={tracks}
+              visibleCount={2}
+            />
+          </LabeledBox>
+        )}
         <Button
           variant="ghost"
           disabled={disabled}
