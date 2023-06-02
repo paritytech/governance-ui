@@ -175,9 +175,9 @@ export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
                   title="Conviction"
                   tooltipContent={
                     <p>
-                      No conviction means your tokens will are only locked while
-                      they are delegated. <br /> Once you unlock them, you can
-                      use them again.{' '}
+                      No conviction means your tokens are only locked while they
+                      are delegated. <br /> Once you unlock them, you can use
+                      them again.{' '}
                     </p>
                   }
                 >
