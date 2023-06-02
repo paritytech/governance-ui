@@ -18,6 +18,9 @@ import {
   useAppLifeCycle,
   extractDelegatedTracks,
 } from '../../../lifecycle/index.js';
+import { Button } from '../../lib/Button.js';
+import { BlockIcon, CopyIcon } from '../../icons/index.js';
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 export function InnerLayout({
   selectedDelegate,
@@ -25,7 +28,7 @@ export function InnerLayout({
   selectedDelegate?: string;
 }) {
   const { sectionRefs } = useDelegation();
-  const { state } = useAppLifeCycle();
+  const { state, updater } = useAppLifeCycle();
   const delegatesWithTracks = useMemo(
     () => extractDelegatedTracks(state),
     [state]
@@ -34,6 +37,9 @@ export function InnerLayout({
     () => !!selectedDelegate && isValidAddress(selectedDelegate),
     [selectedDelegate]
   );
+  function generateShareLink() {
+    return location.href;
+  }
   return (
     <>
       <Header
@@ -46,11 +52,36 @@ export function InnerLayout({
         ref={sectionRefs.get('top')}
       >
         <ScrollRestoration />
-        {selectedDelegate && isValidAddress(selectedDelegate) ? (
-          <SelectedDelegatePanel selectedDelegate={selectedDelegate} />
-        ) : (
-          <DelegationPanel />
-        )}
+        <div className="mx-1 flex h-screen flex-col content-center justify-center space-y-12 text-center md:hidden">
+          <div className="flex content-center justify-center">
+            <BlockIcon size="60" />
+          </div>
+          <div>
+            Unfortunately, this app is{' '}
+            <strong>only available on desktop</strong> at the moment.
+          </div>
+          <CopyToClipboard
+            text={generateShareLink()}
+            onCopy={() =>
+              updater.addReport({
+                type: 'Info',
+                message: 'Page link copied to clipboard!',
+              })
+            }
+          >
+            <Button variant="outline" className="mx-auto">
+              <CopyIcon />
+              <div>Copy page link</div>
+            </Button>
+          </CopyToClipboard>
+        </div>
+        <div className="hidden md:block">
+          {selectedDelegate && isValidAddress(selectedDelegate) ? (
+            <SelectedDelegatePanel selectedDelegate={selectedDelegate} />
+          ) : (
+            <DelegationPanel />
+          )}
+        </div>
       </main>
       <Footer />
     </>
