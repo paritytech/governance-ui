@@ -1,3 +1,4 @@
+import party from 'party-js';
 import { useEffect, useState } from 'react';
 import BN from 'bn.js';
 import { Delegate, TrackMetaData } from '../../../../lifecycle/types';
@@ -117,6 +118,10 @@ export function TxnModal({
                   address,
                   amount: amount.toString(),
                   tracks: trackIds.map(toString).join(','),
+                });
+
+                party.confetti(document.body, {
+                  count: party.variation.range(20, 40),
                 });
               }
             }
