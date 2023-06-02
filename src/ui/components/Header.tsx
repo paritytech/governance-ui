@@ -3,10 +3,6 @@ import { Navbar } from '../lib/index.js';
 import { Link } from 'react-router-dom';
 import { ArrowLeftIcon, InformationalIcon } from '../icons/index.js';
 
-const tokenUrl = new URL(
-  '../../../assets/images/polkadot-token.svg',
-  import.meta.url
-).toString();
 const logoUrl = new URL(
   '../../../assets/images/polkadot-logo.svg',
   import.meta.url
@@ -27,14 +23,7 @@ export function Header({
         <Link to="/">
           <div className="cursor-pointer">
             <div className="sticky top-0 -z-10 w-full">
-              <div className="h-8 w-fit md:hidden">
-                <img
-                  className="inline h-full"
-                  src={tokenUrl}
-                  alt="polkadot logo"
-                />
-              </div>
-              <div className="hidden h-8 items-center gap-2 md:flex">
+              <div className="flex h-8 items-center gap-2">
                 {withBackArrow ? (
                   <ArrowLeftIcon className="stroke-[4px]" />
                 ) : (
@@ -47,7 +36,7 @@ export function Header({
                     <div className="h-6 w-[2px] bg-gray-400" />
                   </>
                 )}
-                <span className="font-unbounded text-h5">
+                <span className="hidden font-unbounded text-h5 md:block">
                   Delegation Dashboard
                 </span>
                 {!!activeDelegateCount && (
