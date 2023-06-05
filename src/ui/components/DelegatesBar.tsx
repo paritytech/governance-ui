@@ -37,8 +37,12 @@ export function DelegatesBar({
   );
 
   return (
-    <section className="flex w-full flex-col items-center justify-center gap-6 bg-gray-200 py-8 md:gap-12">
-      <div className="flex w-full justify-between gap-0  px-6">
+    <section
+      className={`flex w-full flex-col items-center justify-center gap-6 bg-gray-200 py-8 ${
+        visibleDelegates.length > 0 ? 'md:gap-12' : 'md:gap-6'
+      }`}
+    >
+      <div className="flex w-full justify-between gap-0 px-6">
         <div className="w-24" />
         <span className="px-3 font-unbounded text-h4">Volunteer Delegates</span>
         <Button
@@ -51,15 +55,21 @@ export function DelegatesBar({
         </Button>
       </div>
       <div className="flex max-w-full snap-x scroll-pl-6 gap-7 overflow-x-auto px-3 pb-1 lg:px-6	">
-        {visibleDelegates.map((delegate, idx) => (
-          <DelegateCard
-            className="snap-start"
-            key={idx}
-            delegate={delegate}
-            state={state}
-            variant="all"
-          />
-        ))}
+        {visibleDelegates.length > 0 ? (
+          visibleDelegates.map((delegate, idx) => (
+            <DelegateCard
+              className="snap-start"
+              key={idx}
+              delegate={delegate}
+              state={state}
+              variant="all"
+            />
+          ))
+        ) : (
+          <span className="text-body-2 text-fg-disabled">
+            Failed to fetch delegates.
+          </span>
+        )}
       </div>
       <AddDelegateModal
         open={addAddressVisible}
