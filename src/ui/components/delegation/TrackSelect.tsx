@@ -2,7 +2,7 @@ import type { Tally, VotingDelegating } from '../../../types';
 
 import { memo, useState } from 'react';
 import { useDelegation } from '../../../contexts/Delegation.js';
-import { Button } from '../../lib';
+import { Button, Card } from '../../lib';
 import { ChevronDownIcon } from '../../icons';
 import SectionTitle from '../SectionTitle';
 import ProgressStepper from '../ProgressStepper';
@@ -25,7 +25,6 @@ import {
 } from '../../../lifecycle';
 import { CheckBox } from '../CheckBox';
 import { SimpleAnalytics } from '../../../analytics';
-import Tooltip from '../Tooltip';
 
 interface ITrackCheckableCardProps {
   track: TrackMetaData;
@@ -102,7 +101,7 @@ function ReferendaDetails({
   network: Network;
 }) {
   return (
-    <InnerCard className="gap-2 border-[1px] border-solid border-gray-200 bg-white text-body-2 font-medium">
+    <InnerCard className="gap-2 border-2 border-solid border-gray-100 text-body-2 font-medium">
       <div className="flex flex-row gap-2">
         <div className="grow overflow-hidden text-ellipsis leading-tight">
           {referendaTitle(index, details)}
@@ -168,6 +167,12 @@ function TrackDelegation({
   );
 }
 
+function NoActiveReferendum() {
+  return (
+    <div className="text-body-2 text-fg-disabled">No active referendum</div>
+  );
+}
+
 export function TrackCheckableCard({
   track,
   referenda,
@@ -181,41 +186,41 @@ export function TrackCheckableCard({
   const isProcessing = extractIsProcessing(state);
   const disabled = !!delegation || isProcessing;
   return (
-    <div className="flex w-full flex-col gap-3">
-      <div className="mb-4 flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <div className="flex w-full items-center gap-1">
-            <CheckBox
-              title={track?.title}
-              checked={checked}
-              onChange={onChange}
-              disabled={disabled}
-            />
-            <span className="select-none overflow-hidden text-ellipsis whitespace-nowrap text-body-2 text-fg-dim">
-              {referenda.size}
-            </span>
-          </div>
-          <Tooltip
-            content={<span>{track?.description}</span>}
+    <Card>
+      <div className={`flex flex-col gap-2 p-2`}>
+        <div className="mb-4 flex flex-col gap-2">
+          <CheckBox
             title={track?.title}
+            checked={checked}
+            onChange={onChange}
+            disabled={disabled}
           />
+          <div
+            className={`${
+              disabled ? 'text-fg-disabled' : ''
+            } text-body-2 leading-tight`}
+          >
+            {track?.description}
+          </div>
+          {delegation && (
+            <TrackDelegation track={track} delegation={delegation} />
+          )}
         </div>
-
-        {delegation && (
-          <TrackDelegation track={track} delegation={delegation} />
+        {referenda.size ? (
+          Array.from(referenda.entries()).map(([index, referendum]) => (
+            <ReferendaDetails
+              key={index}
+              index={index}
+              details={details}
+              referendum={referendum}
+              network={network}
+            />
+          ))
+        ) : (
+          <NoActiveReferendum />
         )}
       </div>
-      {referenda.size > 0 &&
-        Array.from(referenda.entries()).map(([index, referendum]) => (
-          <ReferendaDetails
-            key={index}
-            index={index}
-            details={details}
-            referendum={referendum}
-            network={network}
-          />
-        ))}
-    </div>
+    </Card>
   );
 }
 
@@ -267,7 +272,7 @@ export function TrackSelect({
   const delegatesWithTracks = extractDelegatedTracks(state);
 
   return (
-    <div className="flex w-full flex-col gap-6 lg:gap-12">
+    <div className="flex w-full flex-col gap-6 lg:gap-6">
       {delegatesWithTracks.size ? (
         <div className="flex snap-start flex-col items-center">
           <span className="px-3 font-unbounded text-h4">
@@ -290,116 +295,108 @@ export function TrackSelect({
           </p>
         </div>
       )}
-      <div className="flex flex-col gap-2">
-        <SectionTitle
-          className=""
-          title="Select Tracks to Delegate"
-          description={
-            referendaByTrack.size > 0 ? (
-              <span>
-                There are currently <b>{activeReferendaCount}</b> active
-                proposals on <b>{referendaByTrack.size}</b> tracks.
-              </span>
-            ) : (
-              <span className="text-fg-disabled">
-                Failed to fetch proposals.
-              </span>
-            )
-          }
-          step={0}
-        >
-          <ProgressStepper step={0} />
-        </SectionTitle>
-        <div className="flex flex-col gap-2 lg:gap-4 ">
-          <div className="sticky top-52 mb-4 flex flex-row justify-between overflow-visible bg-bg-default/80 px-3 py-3 backdrop-blur-md lg:top-44 lg:px-8">
-            <CheckBox
-              background
-              title={allTrackCheckboxTitle}
-              checked={
-                !!undelegatedTracks.length &&
-                selectedTrackIndexes.size === undelegatedTracks.length
-              }
-              onChange={(e) => {
-                const isChecked = e.target.checked;
-                undelegatedTracks.map((track) => {
-                  setTrackSelection(track.id, isChecked);
-                });
-                SimpleAnalytics.track('Select', { target: 'AllTracks' });
-              }}
-              disabled={
-                isProcessing || (connectedAccount && !undelegatedTracks.length)
-              }
-            />
-            <div className="flex items-center gap-2">
-              <div className="mx-0 hidden text-body-2 text-fg-disabled lg:mx-4 lg:block">
-                {selectedTrackIndexes.size > 0
-                  ? selectedTrackIndexes.size == 1
-                    ? `1 track selected`
-                    : `${selectedTrackIndexes.size} tracks selected`
-                  : '0 tracks selected'}
-              </div>
-              <Button
-                disabled={selectedTrackIndexes.size == 0}
-                onClick={delegateHandler}
-              >
-                <div className="flex flex-row items-center justify-center gap-1 whitespace-nowrap">
-                  <div>Select delegate</div>
-                  <ChevronDownIcon />
-                </div>
-              </Button>
+      <SectionTitle
+        className=""
+        title="Select Tracks to Delegate"
+        description={
+          <span>
+            There are currently <b>{activeReferendaCount}</b> active proposals
+            on <b>{referendaByTrack.size}</b> tracks.
+          </span>
+        }
+        step={0}
+      >
+        <ProgressStepper step={0} />
+      </SectionTitle>
+      <div className="flex flex-col gap-2 lg:gap-4 ">
+        <div className="sticky top-52 mb-4 flex flex-row justify-between overflow-visible bg-bg-default/80 px-3 py-3 backdrop-blur-md lg:top-44 lg:px-8">
+          <CheckBox
+            background
+            title={allTrackCheckboxTitle}
+            checked={
+              !!undelegatedTracks.length &&
+              selectedTrackIndexes.size === undelegatedTracks.length
+            }
+            onChange={(e) => {
+              const isChecked = e.target.checked;
+              undelegatedTracks.map((track) => {
+                setTrackSelection(track.id, isChecked);
+              });
+              SimpleAnalytics.track('Select', { target: 'AllTracks' });
+            }}
+            disabled={
+              isProcessing || (connectedAccount && !undelegatedTracks.length)
+            }
+          />
+          <div className="flex items-center gap-2">
+            <div className="mx-0 hidden text-body-2 text-fg-disabled lg:mx-4 lg:block">
+              {selectedTrackIndexes.size > 0
+                ? selectedTrackIndexes.size == 1
+                  ? `1 track selected`
+                  : `${selectedTrackIndexes.size} tracks selected`
+                : '0 tracks selected'}
             </div>
+            <Button
+              disabled={selectedTrackIndexes.size == 0}
+              onClick={delegateHandler}
+            >
+              <div className="flex flex-row items-center justify-center gap-1 whitespace-nowrap">
+                <div>Select delegate</div>
+                <ChevronDownIcon />
+              </div>
+            </Button>
           </div>
-          <div
-            className={`mb-12 flex w-full flex-col justify-between px-3 md:flex-row md:gap-12 lg:px-8 ${className}`}
-          >
-            {tracks.map((category, idx) => (
-              <div key={idx} className="flex w-full flex-col gap-6 md:w-1/4">
-                <div className="border-b-[1px] pb-3">
-                  <CheckBox
-                    title={category.title}
-                    checked={category.tracks.every((elem) =>
-                      selectedTrackIndexes.has(elem.id)
-                    )}
+        </div>
+        <div
+          className={`mb-12 flex w-full flex-col justify-between px-3 md:flex-row md:gap-4 lg:px-8 ${className}`}
+        >
+          {tracks.map((category, idx) => (
+            <div key={idx} className="flex w-full flex-col gap-2 md:w-1/4">
+              <div className="px-4 pb-2">
+                <CheckBox
+                  title={category.title}
+                  checked={category.tracks.every((elem) =>
+                    selectedTrackIndexes.has(elem.id)
+                  )}
+                  onChange={(e) => {
+                    const isChecked = e.target.checked;
+                    category.tracks.map((track) => {
+                      setTrackSelection(track.id, isChecked);
+                    });
+                    SimpleAnalytics.track('Select', {
+                      target: 'Category',
+                      id: category.title,
+                    });
+                  }}
+                  disabled={
+                    isProcessing ||
+                    category.tracks.every((elem) => delegations.has(elem.id))
+                  }
+                />
+              </div>
+              <div className="flex flex-col gap-2 lg:gap-4">
+                {category.tracks.map((track, idx) => (
+                  <TrackCheckableCard
+                    key={idx}
+                    track={track}
+                    details={details}
+                    referenda={referendaByTrack.get(track.id) || new Map()}
+                    delegation={delegations.get(track.id)}
+                    checked={selectedTrackIndexes.has(track.id)}
                     onChange={(e) => {
                       const isChecked = e.target.checked;
-                      category.tracks.map((track) => {
-                        setTrackSelection(track.id, isChecked);
-                      });
+                      setTrackSelection(track.id, isChecked);
                       SimpleAnalytics.track('Select', {
-                        target: 'Category',
-                        id: category.title,
+                        target: 'Track',
+                        id: track.id.toString(),
                       });
                     }}
-                    disabled={
-                      isProcessing ||
-                      category.tracks.every((elem) => delegations.has(elem.id))
-                    }
+                    network={network}
                   />
-                </div>
-                <div className="flex w-full flex-col gap-6 lg:gap-4">
-                  {category.tracks.map((track, idx) => (
-                    <TrackCheckableCard
-                      key={idx}
-                      track={track}
-                      details={details}
-                      referenda={referendaByTrack.get(track.id) || new Map()}
-                      delegation={delegations.get(track.id)}
-                      checked={selectedTrackIndexes.has(track.id)}
-                      onChange={(e) => {
-                        const isChecked = e.target.checked;
-                        setTrackSelection(track.id, isChecked);
-                        SimpleAnalytics.track('Select', {
-                          target: 'Track',
-                          id: track.id.toString(),
-                        });
-                      }}
-                      network={network}
-                    />
-                  ))}
-                </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

@@ -31,19 +31,13 @@ export const DelegateSection = ({
 
   return (
     <>
-      <div className="flex w-full flex-col gap-2">
+      <div className="flex w-full flex-col gap-16">
         <SectionTitle
           title="Browse Delegates"
           description={
-            delegates.length > 0 ? (
-              <span>
-                There are currently <b>{delegates.length}</b> delegates.
-              </span>
-            ) : (
-              <span className="text-fg-disabled">
-                Failed to fetch delegates.
-              </span>
-            )
+            <span>
+              There are currently <b>{delegates.length}</b> delegates.
+            </span>
           }
         >
           <ProgressStepper step={1} />
