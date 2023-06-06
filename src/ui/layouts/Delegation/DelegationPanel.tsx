@@ -59,7 +59,7 @@ export function DelegationPanel() {
 
   // If user has some active delegation,
   return (
-    <>
+    <div className="flex w-full flex-col gap-12">
       {delegatesWithTracks.size ? (
         <ActiveDelegates
           delegatesWithTracks={delegatesWithTracks}
@@ -69,7 +69,7 @@ export function DelegationPanel() {
         <div className="flex w-full flex-col gap-12">
           <div
             className={`flex w-full justify-between px-6 ${
-              headlineVisible === 'false' || null ? 'block' : 'hidden'
+              headlineVisible === 'true' ? 'hidden' : 'block'
             }`}
           >
             <div className="w-10" />
@@ -99,6 +99,6 @@ export function DelegationPanel() {
           <DelegateSection state={state} delegates={delegates} />
         </div>
       )}
-    </>
+    </div>
   );
 }
