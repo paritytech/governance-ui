@@ -15,6 +15,15 @@ export default function Footer() {
         >
           Privacy Policy
         </a>
+        <div className="h-3 w-[1px] bg-gray-500" />
+        <a
+          href="https://polkadot.network/legal-disclosures/"
+          target="_blank"
+          className=" underline"
+          rel="noreferrer"
+        >
+          Legal Disclosures
+        </a>
       </div>
       <div className="flex items-center gap-2">
         <MessageIcon size="14" />
