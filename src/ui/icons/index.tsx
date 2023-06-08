@@ -128,42 +128,6 @@ export function DelegateIcon({ size, className }: IconProps) {
   );
 }
 
-export function MoreHorizontalIcon({ size, className }: IconProps) {
-  return (
-    <svg
-      className={className}
-      xmlns="http://www.w3.org/2000/svg"
-      width={size ? size : '16'}
-      height={size ? size : '16'}
-      fill="none"
-      stroke="currentColor"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      strokeWidth="2"
-      viewBox="0 0 28 28"
-    >
-      <circle
-        cx="4.33"
-        cy="14.33"
-        r="2.355"
-        transform="rotate(45 4.33 14.33)"
-      ></circle>
-      <circle
-        cx="14"
-        cy="14.33"
-        r="2.355"
-        transform="rotate(45 14 14.33)"
-      ></circle>
-      <circle
-        cx="23.67"
-        cy="14.33"
-        r="2.355"
-        transform="rotate(45 23.67 14.33)"
-      ></circle>
-    </svg>
-  );
-}
-
 export function CheckIcon({ size, className }: IconProps) {
   return (
     <svg

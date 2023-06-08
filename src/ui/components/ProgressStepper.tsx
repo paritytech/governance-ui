@@ -1,4 +1,4 @@
-import { CheckIcon, MoreHorizontalIcon } from '../icons';
+import { CheckIcon } from '../icons';
 
 interface ProgressStepperProps {
   step: number;
@@ -6,15 +6,17 @@ interface ProgressStepperProps {
 }
 
 export default function ProgressStepper({ step, steps }: ProgressStepperProps) {
-  let lefIcon = <MoreHorizontalIcon />;
+  let lefIcon = <div className="h-1 w-1 rounded-full bg-primary" />;
   if (step > 0) lefIcon = <CheckIcon />;
 
   let middleIcon = <div className="h-1 w-1 rounded-full bg-gray-400" />;
-  if (step === 1) middleIcon = <MoreHorizontalIcon />;
+  if (step === 1)
+    middleIcon = <div className="h-1 w-1 rounded-full bg-primary" />;
   if (step === 2) middleIcon = <CheckIcon />;
 
   let rightIcon = <div className="h-1 w-1 rounded-full bg-gray-400" />;
-  if (step === 2) rightIcon = <MoreHorizontalIcon />;
+  if (step === 2)
+    rightIcon = <div className="h-1 w-1 rounded-full bg-primary" />;
 
   return (
     <div className="flex w-full flex-col gap-2 font-medium lg:w-1/2">
