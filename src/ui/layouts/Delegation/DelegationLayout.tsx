@@ -54,8 +54,7 @@ export function InnerLayout({
             <BlockIcon size="60" />
           </div>
           <div>
-            Unfortunately, this app is{' '}
-            <strong>only available on desktop</strong> at the moment.
+            Please visit Delegation Dashboard from your Desktop computer.
           </div>
           <CopyToClipboard
             text={generateShareLink()}

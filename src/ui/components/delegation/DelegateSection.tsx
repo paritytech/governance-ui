@@ -57,7 +57,7 @@ export const DelegateSection = ({
                 onClick={() => setAddAddressVisible(true)}
               >
                 <AddIcon />
-                <div className="whitespace-nowrap">Add address</div>
+                <div className="whitespace-nowrap">Add a delegate</div>
               </Button>
               <input
                 placeholder="Search"

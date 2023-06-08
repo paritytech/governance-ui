@@ -22,10 +22,10 @@ export function AddDelegateModal({
       <div className="flex w-full flex-col gap-12 p-4 md:p-12">
         <div className="flex flex-col items-start justify-start gap-6">
           <div className="text-left">
-            <h2 className="mb-2 text-3xl font-medium">Add Address</h2>
+            <h2 className="mb-2 text-3xl font-medium">Add a delegate</h2>
             <p className="text-base">
               Don&apos;t see your delegate in the list? No problem, add them
-              bellow.
+              below.
             </p>
           </div>
           <div className="flex w-full flex-col">

@@ -44,14 +44,16 @@ export function DelegatesBar({
     >
       <div className="flex w-full justify-between gap-0 px-6">
         <div className="w-24" />
-        <span className="px-3 font-unbounded text-h4">Volunteer Delegates</span>
+        <span className="px-3 font-unbounded text-h4">
+          Delegate all votes to a Top Voter
+        </span>
         <Button
           variant="ghost"
           className="w-fit"
           onClick={() => setAddAddressVisible(true)}
         >
           <AddIcon />
-          <div className="whitespace-nowrap">Add address</div>
+          <div className="whitespace-nowrap">Add a delegate</div>
         </Button>
       </div>
       <div className="flex max-w-full snap-x scroll-pl-6 gap-7 overflow-x-auto px-3 pb-1 lg:px-6	">

@@ -282,7 +282,7 @@ export function TrackSelect({
       ) : (
         <div className="flex snap-start flex-col items-center">
           <span className="px-3 font-unbounded text-h4">
-            Set up your delegation preferences
+            - Or - Select tracks to delegate
           </span>
           <p className="px-4 text-body">
             First, select the tracks you would like to delegate, then pick the
@@ -293,7 +293,7 @@ export function TrackSelect({
       <div className="flex flex-col gap-2">
         <SectionTitle
           className=""
-          title="Select Tracks to Delegate"
+          title="Current activity"
           description={
             referendaByTrack.size > 0 ? (
               <span>
@@ -311,7 +311,7 @@ export function TrackSelect({
           <ProgressStepper step={0} />
         </SectionTitle>
         <div className="flex flex-col gap-2 lg:gap-4 ">
-          <div className="sticky top-52 mb-4 flex flex-row justify-between overflow-visible bg-bg-default/80 px-3 py-3 backdrop-blur-sd lg:top-44 lg:px-8">
+          <div className="backdrop-blur-sd sticky top-52 mb-4 flex flex-row justify-between overflow-visible bg-bg-default/80 px-3 py-3 lg:top-44 lg:px-8">
             <CheckBox
               background
               title={allTrackCheckboxTitle}

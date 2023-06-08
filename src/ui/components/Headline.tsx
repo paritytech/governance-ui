@@ -15,7 +15,7 @@ export default function Headline() {
     >
       <div className="flex w-full flex-col items-center gap-3 px-8 lg:gap-0 lg:px-0">
         <span className="text-center font-unbounded text-h3 lg:text-h1">
-          Delegate <span className="text-primary">now</span>
+          Delegate <span className="text-primary">your votes</span>
         </span>
         <span className="px-3 text-center text-body">
           No time to vote? Keep Polkadot running smoothly by delegating to an
@@ -29,9 +29,9 @@ export default function Headline() {
           <div className="flex w-full flex-col gap-1">
             <span className="text-h6 font-semibold">Make your vote count</span>
             <span className="text-body-2">
-              Through Polkadot OpenGov, all DOT holders can participate in
-              governance. You can also appoint a representative with advanced
-              expertise to delegate your votes to, as and when you please.
+              All DOT holders can participate in governance. You can also
+              appoint a representative with advanced expertise to delegate your
+              votes to, as and when you please.
             </span>
           </div>
         </div>
