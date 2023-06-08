@@ -139,7 +139,7 @@ export function DelegateCard({
         variant === 'all' ? 'w-[320px] md:w-[420px]' : 'w-full'
       }`}
     >
-      <Card className={` flex w-full flex-col gap-2 p-6 shadow-md md:gap-4`}>
+      <Card className={` shadow-sd flex w-full flex-col gap-2 p-6 md:gap-4`}>
         <Link to={navigationTarget}>
           <div className="flex cursor-pointer items-start justify-between">
             <div className="flex flex-col items-start">

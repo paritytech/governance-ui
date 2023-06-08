@@ -311,7 +311,7 @@ export function TrackSelect({
           <ProgressStepper step={0} />
         </SectionTitle>
         <div className="flex flex-col gap-2 lg:gap-4 ">
-          <div className="sticky top-52 mb-4 flex flex-row justify-between overflow-visible bg-bg-default/80 px-3 py-3 backdrop-blur-md lg:top-44 lg:px-8">
+          <div className="sticky top-52 mb-4 flex flex-row justify-between overflow-visible bg-bg-default/80 px-3 py-3 backdrop-blur-sd lg:top-44 lg:px-8">
             <CheckBox
               background
               title={allTrackCheckboxTitle}

@@ -49,7 +49,7 @@ export const DelegateSection = ({
           <ProgressStepper step={1} />
         </SectionTitle>
         <div className=" flex flex-col gap-4 ">
-          <div className="sticky top-52 flex w-full flex-col items-center justify-between gap-4 bg-bg-default/80 px-3 py-3 backdrop-blur-md md:flex-row lg:top-44 lg:px-8">
+          <div className="backdrop-blur-sd sticky top-52 flex w-full flex-col items-center justify-between gap-4 bg-bg-default/80 px-3 py-3 md:flex-row lg:top-44 lg:px-8">
             <div className="flex w-full flex-row items-center justify-between gap-4">
               <Button
                 variant="ghost"

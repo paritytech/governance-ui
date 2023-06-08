@@ -2,7 +2,7 @@ import { MessageIcon, PolkadotCircleIcon } from '../icons';
 
 export default function Footer() {
   return (
-    <div className="fixed bottom-0 flex h-fit w-full items-center justify-between bg-white/50 p-2 text-[0.625rem] backdrop-blur-md">
+    <div className="backdrop-blur-sd fixed bottom-0 flex h-fit w-full items-center justify-between bg-white/50 p-2 text-[0.625rem]">
       <div className="flex items-center gap-2">
         <PolkadotCircleIcon />
         <span>© Web3 Foundation</span>
