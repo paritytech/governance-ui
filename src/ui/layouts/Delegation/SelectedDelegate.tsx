@@ -46,6 +46,7 @@ export function DelegateInfo({ delegate }: { delegate: Delegate }) {
             address={address}
             size={24}
             textClassName="font-semibold my-2"
+            copy={true}
           />
         </div>
       </div>
@@ -153,6 +154,7 @@ export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
                     textClassName="font-medium"
                     address={delegate.address}
                     size={24}
+                    copy={true}
                   />
                 </div>
               </LabeledBox>

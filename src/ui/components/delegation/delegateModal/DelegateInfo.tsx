@@ -27,6 +27,7 @@ export function DelegateInfoModal({
                 address={address}
                 size={24}
                 textClassName="font-semibold my-2"
+                copy={true}
               />
             </div>
           </div>

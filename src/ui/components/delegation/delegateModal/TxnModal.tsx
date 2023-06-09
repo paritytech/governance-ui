@@ -165,6 +165,7 @@ export function TxnModal({
                   textClassName="font-medium"
                   address={delegateAddress}
                   size={24}
+                  copy={true}
                 />
               </div>
             </LabeledBox>

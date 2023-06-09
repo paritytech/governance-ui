@@ -129,6 +129,7 @@ function TrackDelegation({
             textClassName="font-semibold text-base"
             address={target}
             size={24}
+            copy={true}
           />
           <div
             className={`${
