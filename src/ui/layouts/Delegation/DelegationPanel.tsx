@@ -95,7 +95,7 @@ export function DelegationPanel() {
         delegateHandler={() => scrollToSection('delegation')}
       />
       {selectedTrackIndexes.size > 0 && (
-        <div ref={sectionRefs.get('delegation')}>
+        <div className="pt-12" ref={sectionRefs.get('delegation')}>
           <DelegateSection state={state} delegates={delegates} />
         </div>
       )}

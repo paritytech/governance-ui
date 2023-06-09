@@ -71,7 +71,7 @@ export function InnerLayout({
             </Button>
           </CopyToClipboard>
         </div>
-        <div className="flex hidden w-full flex-auto flex-col items-center justify-center gap-8 pb-48 pt-14 md:block md:pt-20 lg:gap-16">
+        <div className=" hidden w-full flex-auto flex-col items-center justify-center gap-8 pb-48 pt-14 md:flex md:pt-20 lg:gap-16">
           {selectedDelegate && isValidAddress(selectedDelegate) ? (
             <SelectedDelegatePanel selectedDelegate={selectedDelegate} />
           ) : (

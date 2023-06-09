@@ -48,8 +48,8 @@ export const DelegateSection = ({
         >
           <ProgressStepper step={1} />
         </SectionTitle>
-        <div className=" flex flex-col gap-4 ">
-          <div className="backdrop-blur-sd sticky top-52 flex w-full flex-col items-center justify-between gap-4 bg-bg-default/80 px-3 py-3 md:flex-row lg:top-44 lg:px-8">
+        <div className="flex flex-col gap-12">
+          <div className="sticky flex w-full flex-col items-center justify-between gap-4 bg-bg-default/80 px-3 py-3 backdrop-blur-sm md:flex-row lg:top-44 lg:px-8">
             <div className="flex w-full flex-row items-center justify-between gap-4">
               <Button
                 variant="ghost"
@@ -79,24 +79,30 @@ export const DelegateSection = ({
                   />
                 ))}
               </div>
-              <div className="text-sm">Public Delegates</div>
             </div>
           )}
-          <div className="grid grid-cols-1 place-items-center gap-2 px-3  md:grid-cols-2 lg:grid-cols-3 lg:gap-4 lg:px-8">
-            {delegates
-              .filter((delegate) =>
-                search
-                  ? delegate.name?.toLowerCase().includes(search.toLowerCase())
-                  : true
-              )
-              .map((delegate, idx) => (
-                <DelegateCard
-                  key={idx}
-                  delegate={delegate}
-                  state={state}
-                  variant="some"
-                />
-              ))}
+          <div className="flex flex-col gap-4">
+            {state.customDelegates?.length > 0 && (
+              <div className="px-3 text-sm lg:px-8">Public Delegates</div>
+            )}
+            <div className="grid grid-cols-1 place-items-center gap-2 px-3 md:grid-cols-2 lg:grid-cols-3 lg:gap-4 lg:px-8">
+              {delegates
+                .filter((delegate) =>
+                  search
+                    ? delegate.name
+                        ?.toLowerCase()
+                        .includes(search.toLowerCase())
+                    : true
+                )
+                .map((delegate, idx) => (
+                  <DelegateCard
+                    key={idx}
+                    delegate={delegate}
+                    state={state}
+                    variant="some"
+                  />
+                ))}
+            </div>
           </div>
         </div>
       </div>
