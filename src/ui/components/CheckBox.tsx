@@ -38,9 +38,7 @@ export function CheckBox({
   return (
     <div
       className={`rounded-sd flex h-fit w-fit items-center gap-3 ${
-        background
-          ? `border border-gray-300 bg-gray-200   px-2 py-2 lg:px-4`
-          : ''
+        background ? `rounded-md border bg-gray-200 px-2 py-2 lg:px-4` : ''
       } `}
     >
       <input
