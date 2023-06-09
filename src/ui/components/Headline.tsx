@@ -38,7 +38,7 @@ export default function Headline() {
         <div className="flex w-full items-center gap-2 px-4  lg:gap-4 lg:px-0">
           <img width={200} src={headline2Url} alt="Headline image 1" />
           <div className="flex w-full flex-col gap-1">
-            <span className="text-h6 font-semibold">Engage in governance,</span>
+            <span className="text-h6 font-semibold">Engage in governance</span>
             <span className="text-body-2">
               Even when delegating your vote, you remain in full control. At any
               time, you can change delegates or take back your voting power
