@@ -49,7 +49,7 @@ export function InnerLayout({
       <NotificationBox />
       <main ref={sectionRefs.get('top')}>
         <ScrollRestoration />
-        <div className="mx-1 flex h-screen flex-col content-center justify-center space-y-12 text-center md:hidden">
+        <div className="mx-1 flex h-screen flex-col content-center justify-center space-y-12 text-center sm:hidden">
           <div className="flex content-center justify-center">
             <SoftwareDevelopmentIcon size="60" />
           </div>
@@ -71,7 +71,7 @@ export function InnerLayout({
             </Button>
           </CopyToClipboard>
         </div>
-        <div className=" hidden w-full flex-auto flex-col items-center justify-center gap-8 pb-48 pt-14 md:flex md:pt-20 lg:gap-16">
+        <div className=" hidden w-full flex-auto flex-col items-center justify-center gap-8 pb-48 pt-14 sm:flex sm:pt-20 lg:gap-16">
           {selectedDelegate && isValidAddress(selectedDelegate) ? (
             <SelectedDelegatePanel selectedDelegate={selectedDelegate} />
           ) : (

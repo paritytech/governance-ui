@@ -36,7 +36,7 @@ export function Header({
                     <div className="h-6 w-[2px] bg-gray-400" />
                   </>
                 )}
-                <span className="text-h6 font-unbounded md:text-h5">
+                <span className="text-h6 font-unbounded sm:text-h5">
                   Delegation Dashboard
                 </span>
                 {!!activeDelegateCount && (
