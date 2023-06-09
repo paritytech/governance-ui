@@ -31,8 +31,8 @@ export function networkFor(api: ApiPromise): Network {
 export function endpointsFor(network: Network): string[] {
   switch (network) {
     case Network.Kusama:
-      return ['wss://kusama-rpc.polkadot.io'];
+      return ['wss://apps-kusama-rpc.polkadot.io'];
     case Network.Polkadot:
-      return ['wss://rpc.polkadot.io'];
+      return ['wss://apps-rpc.polkadot.io'];
   }
 }
