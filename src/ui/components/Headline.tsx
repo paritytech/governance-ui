@@ -23,24 +23,22 @@ export default function Headline() {
         </span>
       </div>
 
-      <div className="flex w-full gap-20 px-6 xl:px-28">
+      <div className="flex w-full gap-32 px-6 xl:px-28">
         <div className="flex w-full items-center gap-2 px-4 lg:gap-4 lg:px-0">
           <img width={200} src={headline1Url} alt="Headline image 1" />
           <div className="flex w-full flex-col gap-1">
             <span className="text-h6 font-semibold">Make your vote count</span>
             <span className="text-body-2">
               All DOT holders can participate in governance. You can also
-              appoint a representative with advanced expertise to delegate your
-              votes to, as and when you please.
+              appoint a representative with expertise to delegate your votes to,
+              as and when you please.
             </span>
           </div>
         </div>
         <div className="flex w-full items-center gap-2 px-4  lg:gap-4 lg:px-0">
           <img width={200} src={headline2Url} alt="Headline image 1" />
           <div className="flex w-full flex-col gap-1">
-            <span className="text-h6 font-semibold">
-              Engage in governance, when it suits you
-            </span>
+            <span className="text-h6 font-semibold">Engage in governance,</span>
             <span className="text-body-2">
               Even when delegating your vote, you remain in full control. At any
               time, you can change delegates or take back your voting power
