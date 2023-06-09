@@ -16,7 +16,10 @@ const Account = ({
 }) => {
   const { isConnected } = state || {};
   return (
-    <ConnectCard className="flex flex-nowrap p-1">
+    <ConnectCard
+      onClick={clickHandler}
+      className="flex cursor-pointer flex-nowrap p-1"
+    >
       <div className="m-1 flex items-center justify-center">
         <Identicon
           style={{ cursor: 'unset' }}
@@ -30,18 +33,12 @@ const Account = ({
         <div>{stringShorten(address, 10)}</div>
       </div>
       {isConnected ? (
-        <div
-          onClick={clickHandler}
-          className="nowrap m-1 flex cursor-pointer flex-row items-center justify-center gap-1 text-xs text-primary"
-        >
+        <div className="nowrap m-1 flex flex-row items-center justify-center gap-1 text-xs text-primary">
           <div>Disconnect</div>
           <DisconnectIcon />
         </div>
       ) : (
-        <div
-          onClick={clickHandler}
-          className="nowrap m-1 flex cursor-pointer flex-row items-center justify-center gap-1 text-xs text-secondary"
-        >
+        <div className="nowrap m-1 flex flex-row items-center justify-center gap-1 text-xs text-secondary">
           <div>Connect</div>
           <ConnectedIcon />
         </div>
