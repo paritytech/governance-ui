@@ -344,23 +344,28 @@ export function ArrowLeftIcon({ size, className }: IconProps) {
   );
 }
 
-export function BlockIcon({ size, className }: IconProps) {
+export function SoftwareDevelopmentIcon({ size, className }: IconProps) {
   return (
     <svg
       className={className}
+      xmlns="http://www.w3.org/2000/svg"
       width={size ? size : '16'}
       height={size ? size : '16'}
-      viewBox="0 0 28 28"
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      strokeWidth="2"
+      stroke="currentColor"
       strokeLinecap="round"
       strokeLinejoin="round"
-      stroke="#000000"
+      strokeWidth="2"
+      viewBox="0 0 28 29"
     >
       <g>
-        <path d="M26 14C26 20.6274 20.6274 26 14 26C7.37254 26 1.99996 20.6274 1.99996 14C1.99996 7.37258 7.37254 2 14 2C20.6274 2 26 7.37258 26 14Z"></path>
-        <path d="M5.75624 22.47L22.4838 5.74284"></path>
+        <path d="M1.99997 27L26.2441 27L26.2441 3L1.99997 3L1.99997 27Z"></path>
+        <path d="M26.2371 9.57935H2.00026"></path>
+        <path d="M9.32502 6.46778L9.30768 6.45044" strokeMiterlimit="10"></path>
+        <path d="M5.50117 6.46778L5.48383 6.45044" strokeMiterlimit="10"></path>
+        <path d="M10.2498 20.2866L7.39581 17.9107L10.2498 15.53"></path>
+        <path d="M18.2633 15.5205L21.1268 17.906L18.2633 20.2866"></path>
+        <path d="M15.8593 13.1421L12.6537 22.674"></path>
       </g>
     </svg>
   );

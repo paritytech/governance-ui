@@ -19,7 +19,7 @@ import {
   extractDelegatedTracks,
 } from '../../../lifecycle/index.js';
 import { Button } from '../../lib/Button.js';
-import { BlockIcon, CopyIcon } from '../../icons/index.js';
+import { SoftwareDevelopmentIcon, CopyIcon } from '../../icons/index.js';
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 export function InnerLayout({
@@ -51,7 +51,7 @@ export function InnerLayout({
         <ScrollRestoration />
         <div className="mx-1 flex h-screen flex-col content-center justify-center space-y-12 text-center md:hidden">
           <div className="flex content-center justify-center">
-            <BlockIcon size="60" />
+            <SoftwareDevelopmentIcon size="60" />
           </div>
           <div>
             Please visit Delegation Dashboard from your Desktop computer.
