@@ -9,7 +9,7 @@ test("has title", async ({ page }) => {
   await page.goto(url);
 
   // Expect a title "to contain" a substring.
-  await expect(page).toHaveTitle(/Governance UI/);
+  await expect(page).toHaveTitle(/Polkadot Delegation Dashboard/);
 });
 
 test("Is connected", async ({ page }) => {
