@@ -6,7 +6,7 @@ import {
   useWallets as _useWallets,
 } from '@polkadot-onboard/react';
 
-const APP_NAME = 'Governance UI';
+const APP_NAME = 'Polkadot Delegation Dashboard';
 
 export type WalletState = 'connected' | 'disconnected';
 export interface IWalletContext {

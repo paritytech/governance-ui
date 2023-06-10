@@ -1,7 +1,7 @@
 ![CI status](https://github.com/paritytech/governance-ui/actions/workflows/ci.yml/badge.svg)
 ![CT status](https://github.com/paritytech/governance-ui/actions/workflows/ct.yml/badge.svg)
 
-Governance UI is a [PWA](https://web.dev/learn/pwa/) - or Progressive Web App - with a focus on efficiency and offline support in the context of [Web3](https://polkadot.network/).
+Polkadot Delegation Dashboard is a [PWA](https://web.dev/learn/pwa/) - or Progressive Web App - with a focus on efficiency and offline support in the context of [Web3](https://polkadot.network/).
 
 As a pure web application, it doesn't depend on remote backend to operate but connects to [Polkadot](https://polkadot.network/) nodes.
 Some data will be fetched to enhance the experience from `github.com` and `polkassembly.io/`, although the plan short term is to become fully decentralized.

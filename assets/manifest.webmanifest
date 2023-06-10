@@ -1,10 +1,10 @@
 {
-  "id": "governance-ui",
-  "name": "Governance UI",
+  "id": "delegation-dashboard",
+  "name": "Polkadot Delegation Dashboard",
   "dir": "ltr",
   "lang": "en",
-  "short_name": "Governance UI",
-  "description": "An intuitive governance DApp for Polkadot.",
+  "short_name": "Polkadot Delegation Dashboard",
+  "description": "An intuitive governance dashboard for Polkadot.",
   "start_url": "/?utm_source=pwa",
   "display": "minimal-ui",
   "display_override": ["minimal-ui", "browser"],
@@ -38,9 +38,5 @@
   ],
   "theme_color": "#e6007a",
   "background_color": "#e6007a",
-  "categories": ["polkadot", "governance", "dapp", "social"],
-  "related_applications": [{
-    "platform": "webapp",
-    "url": "https://paritytech.github.io/governance-ui/manifest.webmanifest"
-  }]
+  "categories": ["polkadot", "delegation", "governance", "dapp", "social"]
 }
