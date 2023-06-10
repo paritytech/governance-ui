@@ -9,6 +9,8 @@ import * as ReactDOMClient from 'react-dom/client';
 import { App } from './App.js';
 import { registerServiceWorker } from './utils/service-worker.js';
 
+console.log(`Version ${process.env.VERSION}`);
+
 const container = document.createElement('div');
 document.body.appendChild(container);
 ReactDOMClient.createRoot(container).render(
