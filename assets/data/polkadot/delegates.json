@@ -108,5 +108,10 @@
         "name": "Abdulbee",
         "address": "15cZn8K1DaE7qiBWK6mGFJMKYKjFrALTVwe5urpD9PzKSsPY",
         "manifesto": "I currently contribute to Polkadot full-time. I'm dedicated to the relay-chain, and not to an individual, official or organization. Hence, the best interest of the network comes first, and my votes reflect this. Reputation and value-for-money are the two most important things I look at when reviewing and voting on referenda."
+    },
+    {
+        "name": "ChaosDAO",
+        "address": "13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K",
+        "manifesto": "Community org with a dedicated internal voting process and multisig for OpenGov referenda"
     }
 ]
