@@ -644,7 +644,7 @@ export class Updater {
     } else if (status.isInBlock) {
       this.setProcessingReport({
         isTransient: false,
-        message: 'The transaction is included in the block',
+        message: 'The transaction is included in a block',
       });
     } else if (status.isFinalized) {
       this.setProcessingReport({
