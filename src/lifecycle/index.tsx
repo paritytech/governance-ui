@@ -17,7 +17,10 @@ import React, {
   createContext,
 } from 'react';
 import { ApiPromise, SubmittableResult } from '@polkadot/api';
-import type { ExtrinsicStatus } from '@polkadot/types/interfaces';
+import type {
+  DispatchError,
+  ExtrinsicStatus,
+} from '@polkadot/types/interfaces';
 import type { Registry } from '@polkadot/types-codec/types';
 import {
   QueryableConsts,
@@ -49,6 +52,7 @@ import {
   addressEqual,
   batchAll,
   calcEstimatedFee,
+  extractErrorMessage,
   newApi,
 } from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
@@ -571,7 +575,7 @@ export class Updater {
         );
         return ok(batchAll(api, txs));
       } else {
-        const report = error('Must be connected to send votes');
+        const report = error('Must be connected to delegate');
         await this.addReport(report);
         return err(new Error(report.message));
       }
@@ -634,32 +638,46 @@ export class Updater {
     }
   }
 
-  handleCallResult(status: ExtrinsicStatus) {
-    if (status.isBroadcast || status.isReady) {
+  async handleCallResult(
+    unsub: () => void,
+    status: ExtrinsicStatus,
+    dispatchError?: DispatchError
+  ) {
+    if (dispatchError) {
+      const state = this.#stateAccessor();
+      const api = await this.getApi(state);
+      const message = api
+        ? extractErrorMessage(api, dispatchError)
+        : dispatchError.toString();
+      this.clearProcessingReport();
+      this.addReport({
+        type: 'Error',
+        message: `Failed to send the transaction: ${message}`,
+      });
+      unsub();
+    } else if (status.isBroadcast || status.isReady) {
       // Can happen multiple times
       this.setProcessingReport({
         isTransient: false,
-        message: 'The transaction is broadcasted.',
+        message: 'The transaction is broadcasted',
       });
     } else if (status.isInBlock) {
       this.setProcessingReport({
         isTransient: false,
         message: 'The transaction is included in a block',
       });
-    } else if (status.isFinalized) {
-      this.setProcessingReport({
-        isTransient: true,
-        message: 'The transaction is finalized.',
-      });
     } else if (status.isInvalid) {
       this.clearProcessingReport();
       this.addReport({
         type: 'Error',
-        message: 'The transaction failed.',
+        message: 'The transaction failed',
       });
+      unsub();
     } else {
-      console.debug('Unhandled status', status);
-      this.clearProcessingReport();
+      if (!status.isFinalized) {
+        console.debug('Unhandled status', status);
+      }
+      unsub();
     }
   }
 

@@ -60,21 +60,31 @@ export function UndelegateModal({
       const trackIds = tracks.map((track) => track.id);
       const txs = await updater.undelegate(trackIds, address);
       if (txs.type == 'ok') {
-        await signAndSend(
-          address,
-          signer,
-          txs.value,
-          ({ status, dispatchError }) => {
-            updater.handleCallResult(status);
-            if (status.isFinalized && !dispatchError) {
-              SimpleAnalytics.track('Undelegate', {
-                address,
-                tracks: trackIds.map(toString).join(','),
-              });
-            }
+        await signAndSend(address, signer, txs.value, (result, unsub) => {
+          console.debug(`Tx update: ${JSON.stringify(result)}`);
+
+          const { status, dispatchError } = result;
+          updater.handleCallResult(unsub, status, dispatchError);
+          if (status.isInBlock && !dispatchError) {
+            SimpleAnalytics.track('Undelegate', {
+              address,
+              tracks: trackIds.map(toString).join(','),
+            });
           }
-        );
+        });
+      } else {
+        updater.addReport({
+          type: 'Error',
+          message: txs.error.message,
+        });
       }
+    } catch (e) {
+      console.debug('Failed to send the transaction', e);
+
+      updater.addReport({
+        type: 'Error',
+        message: `Failed to send the transaction: ${e}`,
+      });
     } finally {
       // close modal
       onClose();

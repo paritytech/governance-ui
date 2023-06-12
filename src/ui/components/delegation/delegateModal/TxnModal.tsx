@@ -102,35 +102,37 @@ export function TxnModal({
         conviction
       );
       if (tx.type === 'ok') {
-        await signAndSend(
-          address,
-          signer,
-          tx.value,
-          ({ status, dispatchError }) => {
-            updater.handleCallResult(status);
-            // clear track selection when delegation tx is finalized.
-            if (status.isFinalized) {
-              clearTrackSelection();
-              scrollToSection('top');
+        await signAndSend(address, signer, tx.value, (result, unsub) => {
+          console.debug(`Tx update: ${JSON.stringify(result)}`);
 
-              if (!dispatchError) {
-                SimpleAnalytics.track('Delegate', {
-                  address,
-                  amount: amount.toString(),
-                  tracks: trackIds.map(toString).join(','),
-                });
+          const { status, dispatchError } = result;
+          updater.handleCallResult(unsub, status, dispatchError);
+          if (status.isInBlock) {
+            clearTrackSelection();
+            scrollToSection('top');
 
-                party.confetti(document.body, {
-                  count: party.variation.range(20, 40),
-                });
-              }
+            if (!dispatchError) {
+              SimpleAnalytics.track('Delegate', {
+                address,
+                amount: amount.toString(),
+                tracks: trackIds.map(toString).join(','),
+              });
+
+              party.confetti(document.body, {
+                count: party.variation.range(20, 40),
+              });
             }
           }
-        );
+        });
 
         updater.setProcessingReport({
           isTransient: false,
           message: 'The transaction has been sent',
+        });
+      } else {
+        updater.addReport({
+          type: 'Error',
+          message: tx.error.message,
         });
       }
     } catch (e) {
@@ -138,7 +140,7 @@ export function TxnModal({
 
       updater.addReport({
         type: 'Error',
-        message: 'Failed to send the transaction',
+        message: `Failed to send the transaction: ${e}`,
       });
     } finally {
       // close modal

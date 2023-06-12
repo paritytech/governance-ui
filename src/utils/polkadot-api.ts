@@ -17,6 +17,7 @@ import { decodeAddress, encodeAddress } from '@polkadot/keyring';
 import { addressEq } from '@polkadot/util-crypto';
 import BN from 'bn.js';
 import { Conviction } from '../types';
+import { DispatchError } from '@polkadot/types/interfaces';
 
 const DEFAULT_OPTIONS = {
   noInitWarn: true,
@@ -41,20 +42,31 @@ export async function signAndSend(
   address: string,
   signer: Signer,
   extrinsic: SubmittableExtrinsic<'promise', SubmittableResult>,
-  callback: ((result: SubmittableResult) => void) | undefined = undefined
-): Promise<() => void> {
+  callback: (result: SubmittableResult, unsub: () => void) => void
+): Promise<void> {
   const unsub = await extrinsic.signAndSend(
     address,
     { signer },
     (callResult) => {
-      const { status } = callResult;
-      if (status.isFinalized || status.isInvalid) {
-        unsub();
-      }
-      callback?.(callResult);
+      callback(callResult, unsub);
     }
   );
-  return unsub;
+}
+
+export function extractErrorMessage(
+  api: ApiPromise,
+  dispatchError: DispatchError
+): string {
+  if (dispatchError.isModule) {
+    // for module errors, we have the section indexed, lookup
+    const decoded = api.registry.findMetaError(dispatchError.asModule);
+    const { docs, name, section } = decoded;
+
+    return `${section}.${name}: ${docs.join(' ')}`;
+  } else {
+    // Other, CannotLookup, BadOrigin, no extra info
+    return dispatchError.toString();
+  }
 }
 
 export async function calcEstimatedFee(
