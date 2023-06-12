@@ -1,6 +1,7 @@
 import { BaseWallet } from '@polkadot-onboard/core';
 import { WalletState } from '../../../contexts/Wallets.js';
 import Wallet from './Wallet.js';
+import { capitalizeFirstLetter } from 'src/utils/string.js';
 
 interface IWalletsListProps {
   wallets: Array<BaseWallet>;
@@ -16,7 +17,7 @@ export const WalletsList = ({
   return (
     <div className="my-2 flex flex-col gap-2">
       {wallets?.map((wallet, index) => {
-        const name = wallet?.metadata.title;
+        const name = capitalizeFirstLetter(wallet?.metadata.title);
         const iconUrl = wallet?.metadata.iconUrl;
         const state = walletState.get(wallet?.metadata.title) || 'disconnected';
         return (
