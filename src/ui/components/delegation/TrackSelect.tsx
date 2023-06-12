@@ -91,6 +91,8 @@ function ReferendaDetails({
         <a
           className="grow overflow-hidden text-ellipsis leading-tight"
           href={`https://${network.toLowerCase()}.polkassembly.io/referenda/${index}`}
+          target="_blank"
+          rel="noreferrer"
         >
           {referendaTitle(index, details)}
         </a>
