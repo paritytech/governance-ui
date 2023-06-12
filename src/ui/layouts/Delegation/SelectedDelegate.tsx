@@ -146,7 +146,7 @@ export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
           <div className="flex w-full flex-col gap-8 p-4 md:p-6">
             <div className="flex flex-col items-start justify-start gap-6 ">
               <div className="text-left">
-                <h2 className="mb-2 text-3xl font-medium">Delegate now</h2>
+                <h2 className="mb-2 text-3xl font-medium">Delegate</h2>
               </div>
               <LabeledBox title="Your delegate">
                 <div className="flex gap-2">
@@ -208,7 +208,7 @@ export function SelectedDelegateCard({ delegate }: { delegate: Delegate }) {
                   <div>
                     {!usableBalance?.gtn(0)
                       ? 'Insufficient tokens to delegate'
-                      : 'Delegate all undelegated tracks'}
+                      : 'Delegate now'}
                   </div>
                   <ArrowRightIcon />
                 </Button>
