@@ -332,6 +332,12 @@ function reducer(previousState: State, action: Action): State {
         reports: [...previousReports],
       };
     }
+    case 'ClearProcessing': {
+      return {
+        ...previousState,
+        processingReport: undefined,
+      };
+    }
     case 'SetProcessing': {
       return {
         ...previousState,
@@ -643,11 +649,13 @@ export class Updater {
         message: 'The transaction is finalized.',
       });
     } else if (status.isInvalid) {
+      this.clearProcessingReport();
       this.addReport({
         type: 'Error',
         message: 'The transaction failed.',
       });
     } else {
+      this.clearProcessingReport();
       if (!status.isReady) {
         console.debug('Unhandled status', status);
       }
@@ -710,6 +718,12 @@ export class Updater {
     this.#dispatch({
       type: 'RemoveCustomDelegate',
       index,
+    });
+  }
+
+  async clearProcessingReport() {
+    this.#dispatch({
+      type: 'ClearProcessing',
     });
   }
 

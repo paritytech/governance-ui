@@ -140,6 +140,10 @@ export type SetProcessingReport = {
   report: Processing | undefined;
 };
 
+export type ClearProcessingReport = {
+  type: 'ClearProcessing';
+};
+
 export type SetRestored = PersistedDataContext & {
   type: 'SetRestored';
   network: Network;
@@ -235,6 +239,7 @@ export type RemoveCustomDelegate = {
 export type Action =
   | AddReport
   | RemoveReport
+  | ClearProcessingReport
   | SetProcessingReport
   | SetConnectedAddress
   | SetRestored
