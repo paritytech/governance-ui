@@ -11,6 +11,7 @@ export class WsReconnectProvider extends WsProvider {
   static RETRY_DELAY = 2_500;
   static CHECKER_INTERVAL_MS = 5_000;
   static PER_REQUEST_TIMEOUT_MS = 15_000;
+  static MAX_STALL_COUNT = 5;
   statsHistory = new Map<string, Stats>();
 
   #checkerId: ReturnType<typeof setTimeout> | undefined; // Workaround typescript limitation, see https://stackoverflow.com/a/56239226
@@ -64,8 +65,9 @@ export class WsReconnectProvider extends WsProvider {
       stallCount: newStallCount,
     });
 
-    if (newStallCount > 5) {
+    if (newStallCount > WsReconnectProvider.MAX_STALL_COUNT) {
       console.debug('No progress, connection is stalled. Disconnect');
+      this.statsHistory.delete(super.endpoint); // Clear existing stats
       super.disconnect();
     }
   }
