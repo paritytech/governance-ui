@@ -208,7 +208,7 @@ export function TxnModal({
               <div>
                 {!usableBalance?.gtn(0)
                   ? 'Insufficient tokens to delegate'
-                  : 'Delegate Now'}
+                  : 'Delegate now'}
               </div>
               <ChevronRightIcon />
             </Button>

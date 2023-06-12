@@ -54,7 +54,7 @@ export function AddDelegateModal({
             }}
             disabled={!(address && isValidAddress(address))}
           >
-            <div>Add Delegate</div>
+            <div>Add delegate</div>
             <ChevronRightIcon />
           </Button>
         </div>
