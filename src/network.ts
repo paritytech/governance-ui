@@ -1,5 +1,4 @@
 import { ApiPromise } from '@polkadot/api';
-import { supportsOpenGov } from './chain/index.js';
 import { err, ok, Result } from './utils/index.js';
 import { capitalizeFirstLetter } from './utils/string.js';
 
@@ -8,15 +7,12 @@ export enum Network {
   Polkadot = 'Polkadot',
 }
 
-export async function defaultNetwork(): Promise<Network> {
+export function defaultNetwork(): Network {
   const env = process.env.DEFAULT_NETWORK;
   if (env) {
     return capitalizeFirstLetter(env) as Network;
   }
-  // Remove in new release once polkdato supports OpenGov
-  return (await supportsOpenGov(Network.Polkadot))
-    ? Network.Polkadot
-    : Network.Kusama;
+  return Network.Polkadot;
 }
 
 export function parse(s: string): Result<Network> {
@@ -32,9 +28,13 @@ export function endpointsFor(network: Network): string[] {
   switch (network) {
     case Network.Kusama:
       return [
+        //'wss://1rpc.io/ksm'
+        //'wss://kusama-public-rpc.blockops.network/ws'
+        //'wss://kusama-rpc.dwellir.com'
+        //'wss://rpc-kusama.luckyfriday.io'
         //'wss://kusama-rpc.polkadot.io',
-        //'wss://apps-kusama-rpc.polkadot.io',
-        'wss://kusama.api.onfinality.io/public-ws',
+        'wss://apps-kusama-rpc.polkadot.io',
+        //'wss://kusama.api.onfinality.io/public-ws',
       ];
     case Network.Polkadot:
       return ['wss://apps-rpc.polkadot.io'];

@@ -32,6 +32,8 @@ import {
   removeVote,
 } from '../chain/conviction-voting.js';
 import { getAllReferenda, getAllTracks } from '../chain/referenda.js';
+import { tracks as kusamaTracks } from '../chain/tracks/kusama.js';
+import { tracks as polkadotTracks } from '../chain/tracks/polkadot.js';
 import { defaultNetwork, endpointsFor, Network, parse } from '../network.js';
 import { err, ok, Result } from '../utils/index.js';
 import { Cache, Destroyable, Readyable } from '../utils/cache.js';
@@ -50,7 +52,6 @@ import {
   newApi,
 } from '../utils/polkadot-api.js';
 import { extractSearchParams } from '../utils/search-params.js';
-import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
 import {
   AccountChainState,
   Action,
@@ -69,8 +70,7 @@ import {
 } from './types.js';
 import { fetchReferenda } from '../utils/polkassembly.js';
 import BN from 'bn.js';
-import { tracks as kusamaTracks } from '../chain/tracks/kusama.js';
-import { tracks as polkadotTracks } from '../chain/tracks/polkadot.js';
+import { WsReconnectProvider } from '../utils/ws-reconnect-provider.js';
 
 // Auto follow chain updates? Only if user settings? Show notif? Only if impacting change?
 // Revisit if/when ChainState is persisted
@@ -497,8 +497,11 @@ class ApiReady implements Readyable<ApiPromise>, Destroyable {
     this.ready = measured(
       'api',
       async () =>
-        (await newApi({ provider: new WsReconnectProvider(endpoints) }))
-          .isReadyOrError
+        (
+          await newApi({
+            provider: new WsReconnectProvider(endpoints),
+          })
+        ).isReadyOrError
     );
   }
   async destroy(): Promise<void> {
