@@ -103,5 +103,10 @@
         "name": "Eat Pray Validate 🍴🙏🖥",
         "address": "1BdoL1BP36SZGEKR4iX8ksou2GTnrDd5of99SWK82c3A4aB",
         "manifesto": "Sometimes i feel i've been chasing staking rewards my whole life."
+    },
+    {
+        "name": "ChaosDAO",
+        "address": "13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K",
+        "manifesto": "Community org with a dedicated internal voting process and multisig for OpenGov referenda"
     }
 ]
