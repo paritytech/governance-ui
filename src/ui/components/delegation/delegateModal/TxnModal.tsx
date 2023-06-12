@@ -127,7 +127,19 @@ export function TxnModal({
             }
           }
         );
+
+        updater.setProcessingReport({
+          isTransient: false,
+          message: 'The transaction has been sent',
+        });
       }
+    } catch (e) {
+      console.debug('Failed to send the transaction', e);
+
+      updater.addReport({
+        type: 'Error',
+        message: 'Failed to send the transaction',
+      });
     } finally {
       // close modal
       onClose();

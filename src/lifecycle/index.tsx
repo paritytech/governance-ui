@@ -635,11 +635,11 @@ export class Updater {
   }
 
   handleCallResult(status: ExtrinsicStatus) {
-    if (status.isBroadcast) {
+    if (status.isBroadcast || status.isReady) {
       // Can happen multiple times
       this.setProcessingReport({
         isTransient: false,
-        message: 'The transaction is submitted.',
+        message: 'The transaction is broadcasted.',
       });
     } else if (status.isInBlock) {
       this.setProcessingReport({
@@ -658,10 +658,8 @@ export class Updater {
         message: 'The transaction failed.',
       });
     } else {
+      console.debug('Unhandled status', status);
       this.clearProcessingReport();
-      if (!status.isReady) {
-        console.debug('Unhandled status', status);
-      }
     }
   }
 
