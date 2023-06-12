@@ -627,6 +627,7 @@ export class Updater {
 
   handleCallResult(status: ExtrinsicStatus) {
     if (status.isBroadcast) {
+      // Can happen multiple times
       this.setProcessingReport({
         isTransient: false,
         message: 'The transaction is submitted.',
@@ -641,6 +642,15 @@ export class Updater {
         isTransient: true,
         message: 'The transaction is finalized.',
       });
+    } else if (status.isInvalid) {
+      this.addReport({
+        type: 'Error',
+        message: 'The transaction failed.',
+      });
+    } else {
+      if (!status.isReady) {
+        console.debug('Unhandled status', status);
+      }
     }
   }
 

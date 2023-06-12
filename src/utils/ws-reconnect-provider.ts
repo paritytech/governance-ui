@@ -29,10 +29,29 @@ export class WsReconnectProvider extends WsProvider {
     );
 
     // Triggered by connect, disconnect or onSocketError
-    super.on('error', super.disconnect.bind(this));
+    super.on('error', (e) => {
+      console.debug(`Received error; disonnect from ${this.endpoint}`, e);
+
+      super.disconnect.apply(this);
+    });
+    super.on('connected', () => {
+      console.debug(`Connected to ${this.endpoint}`);
+    });
+    super.on('disconnected', () => {
+      console.debug(`Disonnected from  ${this.endpoint}`);
+    });
   }
 
   #checker() {
+    try {
+      if (!super.isConnected) {
+        console.debug(`Not connected, connect to ${this.endpoint}`);
+        super.connect();
+      }
+    } catch (e) {
+      console.debug('Failed to connect', e);
+    }
+
     const { bytesRecv, errors, timeout } = super.stats.total;
     const previousStats = this.statsHistory.get(super.endpoint);
     const stalled = previousStats?.bytesRecv == bytesRecv;
@@ -45,16 +64,8 @@ export class WsReconnectProvider extends WsProvider {
       stallCount: newStallCount,
     });
 
-    try {
-      if (!super.isConnected) {
-        super.connect();
-      }
-    } catch {
-      // Ignore
-    }
-
     if (newStallCount > 5) {
-      console.debug('No progress, connection is stalled. Force reconnection');
+      console.debug('No progress, connection is stalled. Disconnect');
       super.disconnect();
     }
   }
