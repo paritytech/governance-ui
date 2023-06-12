@@ -52,7 +52,7 @@ export function NotificationBox() {
       {current && current.type == 'Error' && (
         <Notification>
           <span className="w-full">{current.message}</span>
-          {!isTransientReport && (
+          {!isTransientReport(current) && (
             <div onClick={removeCurrent}>
               <CloseIcon />
             </div>
