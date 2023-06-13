@@ -52,7 +52,9 @@ export function CheckBox({
 
       <label
         htmlFor={checkboxId}
-        className="flex w-full cursor-pointer items-center justify-between gap-2"
+        className={`flex w-full ${
+          disabled ? '' : 'cursor-pointer'
+        } items-center justify-between gap-2`}
       >
         <div className={getCheckboxStyle(!!checked, !!disabled)}>
           <CheckIcon
