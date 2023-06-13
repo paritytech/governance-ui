@@ -344,13 +344,16 @@ export function TrackSelect({
                 <div className="border-b-[1px] pb-3">
                   <CheckBox
                     title={category.title}
-                    checked={category.tracks.every((elem) =>
-                      selectedTrackIndexes.has(elem.id)
+                    checked={category.tracks.every(
+                      ({ id }) =>
+                        selectedTrackIndexes.has(id) || delegations.has(id)
                     )}
                     onChange={(e) => {
                       const isChecked = e.target.checked;
-                      category.tracks.map((track) => {
-                        setTrackSelection(track.id, isChecked);
+                      category.tracks.map(({ id }) => {
+                        if (!delegations.has(id)) {
+                          setTrackSelection(id, isChecked);
+                        }
                       });
                       SimpleAnalytics.track('Select', {
                         target: 'Category',
