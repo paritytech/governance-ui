@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Route,
   createHashRouter,
@@ -12,6 +12,7 @@ import Footer from '../../components/Footer.js';
 import { Header, NotificationBox } from '../../components/index.js';
 import { DelegationPanel } from './DelegationPanel.js';
 import { SelectedDelegatePanel } from './SelectedDelegate.js';
+import { SimpleAnalytics } from '../../../analytics/index.js';
 import { useDelegation } from '../../../contexts/Delegation.js';
 import { isValidAddress } from '../../../utils/polkadot-api.js';
 import {
@@ -47,6 +48,15 @@ export function InnerLayout({
   function generateShareLink() {
     return location.href;
   }
+
+  useEffect(() => {
+    if (selectedDelegate) {
+      SimpleAnalytics.track('SelectedDelegateLanding', {
+        address: selectedDelegate,
+      });
+    }
+  }, [selectedDelegate]);
+
   return (
     <>
       <Header
