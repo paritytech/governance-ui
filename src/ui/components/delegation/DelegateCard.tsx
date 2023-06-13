@@ -19,11 +19,10 @@ import { SimpleAnalytics } from '../../../analytics';
 import { useNavigate, Link } from 'react-router-dom';
 import { ConnectButton } from '../accounts/ConnectButton';
 
-function getSelectedTracks(
-  indexes: number[],
-  allTracks: Map<number, TrackMetaData>
-): TrackMetaData[] {
-  return Array.from(indexes.values()).map((index) => allTracks.get(index)!);
+function retainByIndex(map: Map<number, TrackMetaData>, indexes: number[]) {
+  const newMap = new Map();
+  indexes.forEach((index) => newMap.set(index, map.get(index)));
+  return newMap;
 }
 
 function DelegatedTracks({
@@ -125,11 +124,16 @@ export function DelegateCard({
   // extract tracks yet to be delegated
   const { selectedTrackIndexes } = useDelegation();
   const allTracks = flattenAllTracks(state.tracks);
+  const allSelectedTracks = retainByIndex(
+    allTracks,
+    Array.from(selectedTrackIndexes.keys())
+  );
+  console.log('allSelectedTracks', selectedTrackIndexes);
   // If variant is 'all', select all not yet delegated tracks. If not, rely on current selection
-  const selectedTracks =
-    variant === 'all'
-      ? filterUndelegatedTracks(state, allTracks)
-      : getSelectedTracks(Array.from(selectedTrackIndexes.keys()), allTracks);
+  const selectedTracks = filterUndelegatedTracks(
+    state,
+    variant === 'all' ? allTracks : allSelectedTracks
+  );
 
   const navigationTarget = `/${address}`;
 
