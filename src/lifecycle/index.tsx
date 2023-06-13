@@ -655,7 +655,12 @@ export class Updater {
         message: `Failed to send the transaction: ${message}`,
       });
       unsub();
-    } else if (status.isBroadcast || status.isReady) {
+    } else if (status.isReady) {
+      this.setProcessingReport({
+        isTransient: false,
+        message: 'The transaction is ready',
+      });
+    } else if (status.isBroadcast) {
       // Can happen multiple times
       this.setProcessingReport({
         isTransient: false,
@@ -674,6 +679,7 @@ export class Updater {
       });
       unsub();
     } else {
+      this.clearProcessingReport();
       if (!status.isFinalized) {
         console.debug('Unhandled status', status);
       }
