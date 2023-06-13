@@ -3,7 +3,8 @@ export type AnalyticEvent =
   | 'Select'
   | 'Scroll'
   | 'Delegate'
-  | 'Undelegate';
+  | 'Undelegate'
+  | 'SelectedDelegateLanding';
 
 declare global {
   interface Window {

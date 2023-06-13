@@ -115,7 +115,21 @@ export function TxnModal({
           (result, unsub) => {
             console.debug(`Tx update: ${JSON.stringify(result)}`);
 
+            const rand = Math.floor(Math.random() * Date.now());
+            const id = `${address}-${rand}`;
             const { status, dispatchError } = result;
+
+            if (status.isReady) {
+              SimpleAnalytics.track('Delegate', {
+                id,
+                state: 'ready',
+                date: Date.now().toString(),
+                address,
+                amount: amount.toString(),
+                tracks: trackIds.map(toString).join(','),
+              });
+            }
+
             updater.handleCallResult(unsub, status, dispatchError);
             if (status.isInBlock) {
               clearTrackSelection();
@@ -123,6 +137,9 @@ export function TxnModal({
 
               if (!dispatchError) {
                 SimpleAnalytics.track('Delegate', {
+                  id,
+                  state: 'inBlock',
+                  date: Date.now().toString(),
                   address,
                   amount: amount.toString(),
                   tracks: trackIds.map(toString).join(','),
