@@ -1,6 +1,6 @@
 import type {
   ApiOptions,
-  Signer,
+  SignerOptions,
   SubmittableExtrinsic,
   SubmittableExtrinsics,
 } from '@polkadot/api/types';
@@ -40,17 +40,13 @@ export function batchAll(
 
 export async function signAndSend(
   address: string,
-  signer: Signer,
+  options: Partial<SignerOptions>,
   extrinsic: SubmittableExtrinsic<'promise', SubmittableResult>,
   callback: (result: SubmittableResult, unsub: () => void) => void
 ): Promise<void> {
-  const unsub = await extrinsic.signAndSend(
-    address,
-    { signer },
-    (callResult) => {
-      callback(callResult, unsub);
-    }
-  );
+  const unsub = await extrinsic.signAndSend(address, options, (callResult) => {
+    callback(callResult, unsub);
+  });
 }
 
 export function extractErrorMessage(

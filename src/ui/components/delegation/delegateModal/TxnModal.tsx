@@ -86,7 +86,13 @@ export function TxnModal({
         setUsableBalance(usableBalance);
       });
     }
-  }, [open, delegateAddress, connectedAddress, balance, selectedTracks]);
+  }, [
+    open,
+    delegateAddress,
+    connectedAddress,
+    JSON.stringify(balance),
+    JSON.stringify(selectedTracks),
+  ]);
 
   const cancelHandler = () => onClose();
   const delegateHandler = async (
@@ -102,28 +108,33 @@ export function TxnModal({
         conviction
       );
       if (tx.type === 'ok') {
-        await signAndSend(address, signer, tx.value, (result, unsub) => {
-          console.debug(`Tx update: ${JSON.stringify(result)}`);
+        await signAndSend(
+          address,
+          { signer, nonce: -1 },
+          tx.value,
+          (result, unsub) => {
+            console.debug(`Tx update: ${JSON.stringify(result)}`);
 
-          const { status, dispatchError } = result;
-          updater.handleCallResult(unsub, status, dispatchError);
-          if (status.isInBlock) {
-            clearTrackSelection();
-            scrollToSection('top');
+            const { status, dispatchError } = result;
+            updater.handleCallResult(unsub, status, dispatchError);
+            if (status.isInBlock) {
+              clearTrackSelection();
+              scrollToSection('top');
 
-            if (!dispatchError) {
-              SimpleAnalytics.track('Delegate', {
-                address,
-                amount: amount.toString(),
-                tracks: trackIds.map(toString).join(','),
-              });
+              if (!dispatchError) {
+                SimpleAnalytics.track('Delegate', {
+                  address,
+                  amount: amount.toString(),
+                  tracks: trackIds.map(toString).join(','),
+                });
 
-              party.confetti(document.body, {
-                count: party.variation.range(20, 40),
-              });
+                party.confetti(document.body, {
+                  count: party.variation.range(20, 40),
+                });
+              }
             }
           }
-        });
+        );
 
         updater.setProcessingReport({
           isTransient: false,
