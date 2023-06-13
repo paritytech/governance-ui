@@ -76,11 +76,14 @@ export function UndelegateModal({
 
             updater.handleCallResult(unsub, status, dispatchError);
             if (status.isInBlock && !dispatchError) {
+              const duration = (Date.now() - before).toString();
               SimpleAnalytics.track('Undelegate', {
-                duration: (Date.now() - before).toString(),
+                duration,
                 address,
                 tracks: trackIds.map(toString).join(','),
               });
+
+              console.debug(`Undelegation in block after ${duration} ms`);
             }
           }
         );

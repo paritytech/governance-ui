@@ -128,8 +128,9 @@ export function TxnModal({
               scrollToSection('top');
 
               if (!dispatchError) {
+                const duration = (Date.now() - before).toString();
                 SimpleAnalytics.track('Delegate', {
-                  duration: (Date.now() - before).toString(),
+                  duration,
                   address,
                   amount: amount.toString(),
                   tracks: trackIds.map(toString).join(','),
@@ -138,6 +139,8 @@ export function TxnModal({
                 party.confetti(document.body, {
                   count: party.variation.range(20, 40),
                 });
+
+                console.debug(`Delegation in block after ${duration} ms`);
               }
             }
           }
