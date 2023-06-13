@@ -128,7 +128,6 @@ export function DelegateCard({
     allTracks,
     Array.from(selectedTrackIndexes.keys())
   );
-  console.log('allSelectedTracks', selectedTrackIndexes);
   // If variant is 'all', select all not yet delegated tracks. If not, rely on current selection
   const selectedTracks = filterUndelegatedTracks(
     state,
