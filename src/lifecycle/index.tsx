@@ -939,6 +939,11 @@ async function loadAndDispatchReferendaMetaData(
       console.error(
         `Error while accessing referenda details: ${details.error.message}`
       );
+      // Store dummy data so that fetch is not retried in a loop
+      dispatch({
+        type: 'StoreReferendumDetails',
+        details: new Map([[index, { title: '', content: '' }]]),
+      });
     }
   });
 }
