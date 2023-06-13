@@ -498,15 +498,12 @@ class DBReady implements Readyable<IDBDatabase>, Destroyable {
 class ApiReady implements Readyable<ApiPromise>, Destroyable {
   ready: Promise<ApiPromise>;
   constructor(endpoints: string[]) {
-    this.ready = measured(
-      'api',
-      async () =>
-        (
-          await newApi({
-            provider: new WsReconnectProvider(endpoints),
-          })
-        ).isReadyOrError
-    );
+    this.ready = measured('api', async () => {
+      const api = await newApi({
+        provider: new WsReconnectProvider(endpoints),
+      });
+      return api.isReadyOrError;
+    });
   }
   async destroy(): Promise<void> {
     const api = await this.ready;
@@ -668,7 +665,7 @@ export class Updater {
       });
     } else if (status.isInBlock) {
       this.setProcessingReport({
-        isTransient: false,
+        isTransient: true,
         message: 'The transaction is included in a block',
       });
     } else if (status.isInvalid) {
@@ -698,7 +695,7 @@ export class Updater {
       const state = this.#stateAccessor();
       const api = await this.getApi(state);
       if (api) {
-        await updateChainDetails(api, this.#dispatch, connectedAddress);
+        await updateChainAccountDetails(api, this.#dispatch, connectedAddress);
       }
       // When restoring address during startup API won't be available; ignoring.
       // Will become irrelevant once this is persisted via the state.
@@ -944,7 +941,7 @@ async function loadAndDispatchReferendaMetaData(
   });
 }
 
-async function updateChainDetails(
+async function updateChainAccountDetails(
   api: {
     consts: QueryableConsts<'promise'>;
     query: QueryableStorage<'promise'>;
@@ -970,7 +967,6 @@ async function dispatchEndpointsChange(
 ): Promise<VoidFunction> {
   const api = await API_CACHE.getOrCreate(endpoints);
   // TODO listen for deconnection/stales and update accordingly
-
   // Connection has been established
   const lastHeader = await api.rpc.chain.getHeader();
   dispatch({
@@ -984,6 +980,7 @@ async function dispatchEndpointsChange(
 
   return await api.rpc.chain.subscribeFinalizedHeads(async (header) => {
     // New block has been received, we are up-to-date with the chain
+    // Refetch everything to ensure data freshness
     dispatch({
       type: 'UpdateConnectivity',
       connectivity: {
@@ -1008,7 +1005,7 @@ async function dispatchEndpointsChange(
 
       const connectedAddress = state.connectedAddress;
       if (connectedAddress) {
-        await updateChainDetails(apiAt, dispatch, connectedAddress);
+        await updateChainAccountDetails(apiAt, dispatch, connectedAddress);
       }
 
       // Trigger fetch of missing referenda metadata
