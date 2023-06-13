@@ -60,6 +60,7 @@ export function UndelegateModal({
       const trackIds = tracks.map((track) => track.id);
       const txs = await updater.undelegate(trackIds, address);
       if (txs.type == 'ok') {
+        let before = Date.now();
         await signAndSend(
           address,
           { signer, nonce: -1 },
@@ -67,26 +68,16 @@ export function UndelegateModal({
           (result, unsub) => {
             console.debug(`Tx update: ${JSON.stringify(result)}`);
 
-            const rand = Math.floor(Math.random() * Date.now());
-            const id = `${address}-${rand}`;
             const { status, dispatchError } = result;
 
             if (status.isReady) {
-              SimpleAnalytics.track('Delegate', {
-                id,
-                state: 'ready',
-                date: Date.now().toString(),
-                address,
-                tracks: trackIds.map(toString).join(','),
-              });
+              before = Date.now();
             }
 
             updater.handleCallResult(unsub, status, dispatchError);
             if (status.isInBlock && !dispatchError) {
               SimpleAnalytics.track('Undelegate', {
-                id,
-                state: 'inBlock',
-                date: Date.now().toString(),
+                duration: (Date.now() - before).toString(),
                 address,
                 tracks: trackIds.map(toString).join(','),
               });
