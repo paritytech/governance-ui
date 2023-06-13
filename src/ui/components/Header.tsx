@@ -11,12 +11,14 @@ const logoUrl = new URL(
 export function Header({
   activeDelegateCount,
   withBackArrow,
+  headlineVisible,
+  setHeadlineVisible,
 }: {
   activeDelegateCount: number;
   withBackArrow: boolean;
+  headlineVisible: string | null;
+  setHeadlineVisible: (visible: string) => void;
 }): JSX.Element {
-  const currentInfo = localStorage.getItem('headlineVisible');
-
   return (
     <Navbar>
       <Navbar.Brand>
@@ -50,13 +52,10 @@ export function Header({
       <Navbar.Content>
         <Navbar.Item>
           <div className="flex items-center justify-start gap-2 md:justify-end">
-            {currentInfo === 'true' && (
+            {headlineVisible === 'true' && (
               <button
                 className="flex h-fit w-fit cursor-pointer items-center justify-center rounded-full bg-white p-2"
-                onClick={() => {
-                  window.location.reload();
-                  window.localStorage.setItem('headlineVisible', 'false');
-                }}
+                onClick={() => setHeadlineVisible('false')}
               >
                 <InformationalIcon size="20" />
               </button>

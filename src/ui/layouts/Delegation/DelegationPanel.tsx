@@ -11,7 +11,6 @@ import Headline from '../../components/Headline.js';
 import { DelegatesBar } from '../../components/DelegatesBar.js';
 import { ActiveDelegates } from '../../components/ActiveDelegates.js';
 import { DelegateSection } from '../../components/delegation/DelegateSection.js';
-import { useState } from 'react';
 
 export function CloseIcon() {
   return (
@@ -41,7 +40,13 @@ function exportReferenda(state: State): Map<number, ReferendumOngoing> {
   return new Map();
 }
 
-export function DelegationPanel() {
+export function DelegationPanel({
+  headlineVisible,
+  setHeadlineVisible,
+}: {
+  headlineVisible: string | null;
+  setHeadlineVisible: (visible: string) => void;
+}) {
   const { state } = useAppLifeCycle();
   const { delegates } = state;
 
@@ -52,10 +57,6 @@ export function DelegationPanel() {
 
   const { selectedTrackIndexes, sectionRefs, scrollToSection } =
     useDelegation();
-
-  const currentlyVisible = localStorage.getItem('headlineVisible');
-
-  const [headlineVisible, setHeadlineVisible] = useState(currentlyVisible);
 
   // If user has some active delegation,
   return (
@@ -76,10 +77,7 @@ export function DelegationPanel() {
             <Headline />
             <div
               className="mt-6 flex h-fit w-fit cursor-pointer items-center justify-center rounded-full bg-white p-3"
-              onClick={() => {
-                setHeadlineVisible('true');
-                window.localStorage.setItem('headlineVisible', 'true');
-              }}
+              onClick={() => setHeadlineVisible('true')}
             >
               <CloseIcon />
             </div>

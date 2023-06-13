@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Route,
   createHashRouter,
@@ -27,6 +27,13 @@ export function InnerLayout({
 }: {
   selectedDelegate?: string;
 }) {
+  const [headlineVisible, setHeadlineVisible] = useState(
+    localStorage.getItem('headlineVisible')
+  );
+  function setHeadlineVisibleAndPersist(visible: string) {
+    setHeadlineVisible(visible);
+    localStorage.setItem('headlineVisible', visible);
+  }
   const { sectionRefs } = useDelegation();
   const { state, updater } = useAppLifeCycle();
   const delegatesWithTracks = useMemo(
@@ -45,6 +52,8 @@ export function InnerLayout({
       <Header
         activeDelegateCount={delegatesWithTracks.size}
         withBackArrow={withBackArrow}
+        headlineVisible={headlineVisible}
+        setHeadlineVisible={setHeadlineVisibleAndPersist}
       />
       <NotificationBox />
       <main ref={sectionRefs.get('top')}>
@@ -75,7 +84,10 @@ export function InnerLayout({
           {selectedDelegate && isValidAddress(selectedDelegate) ? (
             <SelectedDelegatePanel selectedDelegate={selectedDelegate} />
           ) : (
-            <DelegationPanel />
+            <DelegationPanel
+              headlineVisible={headlineVisible}
+              setHeadlineVisible={setHeadlineVisibleAndPersist}
+            />
           )}
         </div>
       </main>
