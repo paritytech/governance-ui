@@ -5819,7 +5819,7 @@ react-remark@2.1.0:
     remark-rehype "^8.0.0"
     unified "^9.0.0"
 
-react-router-dom@^6.12.1:
+react-router-dom@6.12.1:
   version "6.12.1"
   resolved "https://registry.yarnpkg.com/react-router-dom/-/react-router-dom-6.12.1.tgz#601fe7eb493071a33dc7573a20b920324a834606"
   integrity sha512-POIZN9UDKWwEDga054LvYr2KnK8V+0HR4Ny4Bwv8V7/FZCPxJgsCjYxXGxqxzHs7VBxMKZfgvtKhafuJkJSPGA==
