@@ -1,6 +1,6 @@
 import type { SigningAccount } from '../../../types';
 
-import { useEffect, useState } from 'react';
+import { SyntheticEvent, useEffect, useState } from 'react';
 import { BaseWallet } from '@polkadot-onboard/core';
 import Identicon from '@polkadot/react-identicon';
 import { Button, Modal } from '../../lib/index.js';
@@ -128,7 +128,11 @@ export const ConnectButton = () => {
     setCurrentView(initialView);
   }, [initialView]);
 
-  const btnClickHandler = () => openModal();
+  const btnClickHandler = (event: SyntheticEvent<Element, Event>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    openModal();
+  };
   const { name, address } = connectedAccount?.account || {};
   const btnTitle = connectedAccount?.account ? name || address : 'Connect';
 
