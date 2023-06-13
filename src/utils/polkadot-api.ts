@@ -83,7 +83,7 @@ export function calcDelegatableBalance(
   undelegateAllFee: BN
 ): BN {
   return BN.max(
-    balance.sub(delegateSelectedFee.add(undelegateAllFee.muln(130).divn(100))),
+    balance.sub(delegateSelectedFee.add(undelegateAllFee.muln(200).divn(100))),
     new BN(0)
   );
 }
