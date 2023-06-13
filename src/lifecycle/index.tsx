@@ -677,7 +677,9 @@ export class Updater {
       unsub();
     } else {
       this.clearProcessingReport();
-      if (!status.isFinalized) {
+
+      // `retracted` is harmless, ignoring
+      if (!(status.isFinalized || status.isRetracted)) {
         console.debug('Unhandled status', status);
       }
       unsub();
