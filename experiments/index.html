@@ -20,6 +20,9 @@
           ApiPromise
             .create({ provider })
             .then((api) => {
+              if (globalApi) {
+                globalApi.disconnect();
+              }
               globalApi = api;
             });
         }
