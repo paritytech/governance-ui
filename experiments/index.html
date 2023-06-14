@@ -77,8 +77,7 @@
         }
 
         async function undelegateAll(api, target) {
-          //const allTrackIds = api.consts.referenda.tracks.map(t => t[0].toNumber());
-          const allTrackIds = [0];
+          const allTrackIds = api.consts.referenda.tracks.map(t => t[0].toNumber());
           const unlockTxs = await Promise.all(allTrackIds.map(id => unlock(api, id, target)));
           const undelegateTxs = await Promise.all(allTrackIds.map(id => undelegate(api, id)));
           return api.tx.utility.batchAll([...unlockTxs, ...undelegateTxs]);
