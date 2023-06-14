@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8"/>
+    <title></title>
+    <script src="https://unpkg.com/@polkadot/util/bundle-polkadot-util.js"></script>
+    <script src="https://unpkg.com/@polkadot/util-crypto/bundle-polkadot-util-crypto.js"></script>
+    <script src="https://unpkg.com/@polkadot/types/bundle-polkadot-types.js"></script>
+    <script src="https://unpkg.com/@polkadot/api/bundle-polkadot-api.js"></script>
+    <script src="https://unpkg.com/@polkadot/extension-dapp/bundle-polkadot-extension-dapp.js"></script>
+    <script>
+        const { web3Accounts, web3Enable, web3FromAddress } = polkadotExtensionDapp;
+        const { ApiPromise, WsProvider } = polkadotApi;
+
+        let globalApi;
+        let previousDate;
+
+        function initializeApi(providerUrl) {
+          const provider = new WsProvider(providerUrl);
+          ApiPromise
+            .create({ provider })
+            .then((api) => {
+              globalApi = api;
+            });
+        }
+
+        function formatDuration(duration) {
+          if (duration < 1000) {
+            return `< 1ms`;
+          } else if (duration < 60000) {
+            return `${duration} ms`;
+          }
+          const mins = Math.floor(duration / 60000);
+          const s = Math.floor((duration - (60000*mins)) / 1000);
+          return `${mins} mn ${s} s`;
+        }
+
+        function formatStatus(status, o) {
+          if (status === 'finalized') {
+            const blockHash = Object.entries(o.status)[0][1];
+            const link = `https://polkadot.js.org/apps/#/explorer/query/${blockHash}`;
+            return `finalized in <a href='${link}'>block</>`;
+          }
+          return status;
+        }
+
+        function appendStatus(callResult, step) {
+          const o = JSON.parse(JSON.stringify(callResult));
+          console.log(o);
+          const status = Object.entries(o.status)[0][0];
+          const currentDate = Date.now();
+          const duration = step == 0 ? 0 : currentDate - previousDate;
+          const formattedDuration = formatDuration(duration);
+
+          const li = document.createElement('li');
+          li.innerHTML = `${formatStatus(status, o)} ${step > 0 ? ` after ${duration > 3000 ? `<span style="color: red">${formattedDuration}</span>` : formattedDuration}` : ''}`;
+
+          document.getElementById("status").appendChild(li);
+          previousDate = currentDate;
+        }
+
+        async function delegate(api, trackId, to, balance) {
+            return api.tx.convictionVoting.delegate(trackId, to, 0, balance);
+        }
+
+        async function delegateAll(api, address, balance) {
+          const allTrackIds = api.consts.referenda.tracks.map(t => t[0].toNumber());
+          return api.tx.utility.batchAll(await Promise.all(allTrackIds.map(id => delegate(api, id, address, balance))));
+        }
+
+        async function unlock(api, trackId, target) {
+            return api.tx.convictionVoting.unlock(trackId, target);
+        }
+
+        async function undelegate(api, trackId) {
+            return api.tx.convictionVoting.undelegate(trackId);
+        }
+
+        async function undelegateAll(api, target) {
+          const allTrackIds = api.consts.referenda.tracks.map(t => t[0].toNumber());
+          const unlockTxs = await Promise.all(allTrackIds.map(id => unlock(api, id, target)));
+          const undelegateTxs = await Promise.all(allTrackIds.map(id => undelegate(api, id)));
+          return api.tx.utility.batchAll([...unlockTxs, ...undelegateTxs]);
+        }
+
+        async function signAndSend(submittable, address) {
+          const injector = await web3FromAddress(address);
+          let step = 0;
+          await submittable.signAndSend(address, {signer: injector.signer, nonce: -1}, (callResult) => appendStatus(callResult, step++));
+        }
+
+        function clearStatus() {
+          document.getElementById("status").innerHTML = '';
+        }
+
+        async function go() {
+          clearStatus();
+          const address = document.getElementById("address").value;
+          await signAndSend(await delegateAll(globalApi, document.getElementById("target").value, 1000), address);
+        }
+
+        async function goUn() {
+          clearStatus();
+          const address = document.getElementById("address").value;
+          await signAndSend(await undelegateAll(globalApi, document.getElementById("target").value), address);
+        }
+
+        function appendOption(address) {
+          const option = document.createElement('option');
+          option.innerHTML = address;
+          option.setAttribute('value', address);
+
+          document.getElementById("address").appendChild(option);
+        }
+
+        addEventListener("load", (event) => {
+          const rpcEl = document.getElementById("rpc");
+          initializeApi(rpcEl.value);
+          rpcEl.addEventListener('change', (event) => {
+            const providerUrl = event.target.value;
+            initializeApi(providerUrl);
+          });
+
+          web3Enable('delegate-all')
+            .then(async () => {
+              const accounts = await web3Accounts();
+              accounts.forEach(account => appendOption(account.address));
+            });
+        });
+    </script>
+  </head>
+  <body>
+    <div>
+      Select the account address you want to delegate from, the target address and click (Un)delegate All<br />
+      1000 Units will be delegated to all tracks with Conviction.None
+    </div>
+    <br />
+    <select id="rpc">
+      <option value="wss://kusama-rpc.polkadot.io">wss://kusama-rpc.polkadot.io</option>
+      <option value="wss://kusama.api.onfinality.io/public-ws">wss://kusama.api.onfinality.io/public-ws</option>
+      <option value="ws://127.0.0.1:9944">ws://127.0.0.1:9944</option>
+    </select>
+    <br />
+    <select id="address"></select>
+    <br />
+    <form>
+      <input id="target" value="HqRyZijKQuosuAmhjSH54dheKa7mqyXQv4XK4JvtjaETGB9" />
+    </form>
+    <br />
+    <button onclick="go()">Delegate All</button>
+    <button onclick="goUn()">Undelegate All</button>
+    <br />
+    <ul id="status" />
+  </body>
+</html>
