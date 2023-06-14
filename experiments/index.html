@@ -20,6 +20,9 @@
           ApiPromise
             .create({ provider })
             .then((api) => {
+              if (globalApi) {
+                globalApi.disconnect();
+              }
               globalApi = api;
             });
         }
@@ -39,7 +42,7 @@
           if (status === 'finalized') {
             const blockHash = Object.entries(o.status)[0][1];
             const link = `https://polkadot.js.org/apps/#/explorer/query/${blockHash}`;
-            return `finalized in <a href='${link}'>block</>`;
+            return `finalized in <a href='${link}'>block</a>`;
           }
           return status;
         }
