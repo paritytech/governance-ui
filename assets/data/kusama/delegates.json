@@ -68,5 +68,10 @@
     "name": "TurboFlakes",
     "address": "H1tAQMm3eizGcmpAhL9aA9gR844kZpQfkU7pkmMiLx9jSzE",
     "manifesto": "## About us\n\nTurboFlakes builds end-user tooling and provides validators and collators for the Polkadot ecosystem since 2021. We also provide RPC infrastructure powered by 100% renewable energy for the common good.\n\nWe believe in the Web3 vision of a decentralized web. We love experimentation and ideation.\n\nIn Open Governance we participate and support proposals that overall would bring joy, evolution and success to the Polkadot ecosystem.\n\nRead more about us at https://turboflakes.io"
+  },
+  {
+    "name": "Polkadotters",
+    "address": "ESQzLXFRon3h5hUfNN9QTSQQTEzto5XNTGxF3g1myZELwX6",
+    "manifesto": "About us\n\nWe started in Polkadot ecosystem in 2020 by creating the first Czech & Slovak [Polkadot community](https://twitter.com/Polkadotters1), becoming ambassadors for Polkadot and various ecosystem projects and by educating the community about this wonderful ecosystem and its parachains. To this day, we have more than 200 articles and reviews published with more than 1500 followers on our [Medium](https://polkadotters.medium.com/)! But not only that, we are also one of the first community validators on both Polkadot and Kusama. Besides being active on the relay chain, we also run collators on most of the parachains, founded [DOT Validator Alliance](https://dotvalidators.org/) and recently became members of [United Bloc](https://unitedbloc.com/) and [IBP](https://dotters.network/).\n As we are quite active in the ecosystem, governance is our true passion and we take our job really seriously - and given our experience activities, we believe that we are quite suitable for the job."
   }
 ]
