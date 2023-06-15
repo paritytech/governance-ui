@@ -44,7 +44,7 @@ function referendaTitle(
   const detail = details.get(index);
   const base = `# ${index}`;
   if (detail) {
-    return `${base} - ${detail.title}`;
+    return `${base} - ${detail.title || 'Untitled'}`;
   } else {
     return base;
   }
