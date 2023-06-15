@@ -80,7 +80,7 @@ export function UndelegateModal({
               SimpleAnalytics.track('Undelegate', {
                 duration,
                 address,
-                tracks: trackIds.map(toString).join(','),
+                tracks: trackIds.map((i) => i.toString()).join(','),
               });
 
               console.debug(`Undelegation in block after ${duration} ms`);

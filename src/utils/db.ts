@@ -20,7 +20,7 @@ export async function networksFromPersistence(): Promise<Network[]> {
     .filter((database) => database.name?.startsWith(BASE_DB_NAME))
     .map((database) => database.name) as string[];
   return names
-    .map(parse)
+    .map((s) => parse(s))
     .filter(
       (network): network is { type: 'ok'; value: Network } =>
         network.type == 'ok'

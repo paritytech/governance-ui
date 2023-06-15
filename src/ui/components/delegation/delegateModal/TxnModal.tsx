@@ -133,7 +133,7 @@ export function TxnModal({
                   duration,
                   address,
                   amount: amount.toString(),
-                  tracks: trackIds.map(toString).join(','),
+                  tracks: trackIds.map((i) => i.toString()).join(','),
                 });
 
                 party.confetti(document.body, {
