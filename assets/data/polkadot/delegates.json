@@ -1,7 +1,9 @@
-[{
+[
+    {
         "name": "Polkadot BizDev",
         "address": "13zayGEv1goe6mPVNFtyyUFZTeL4QkZvE9aK1vJdLMRCMQRF",
-        "manifesto": "We are experienced Polkadot Business Development ('BizDev') executives that focus on driving forward the commercial growth of the Polkadot ecosystem."},
+        "manifesto": "We are experienced Polkadot Business Development ('BizDev') executives that focus on driving forward the commercial growth of the Polkadot ecosystem."
+    },
     {
         "name": "Pioneer",
         "address": "129LBt5T1eYtnGHbPYeiiMdmWfokCiiq7z6JBfjnYifiombz",
@@ -45,7 +47,7 @@
     {
         "name": "CoinStudio",
         "address": "14d2kv44xf9nFnYdms32dYPKQsr5C9urbDzTz7iwU8iHb9az",
-        "manifesto" : "Kusama and Polkadot Validator, Governance participant. Check our active attempts to improve the Governance process https://kusama.polkassembly.io/post/2431"
+        "manifesto": "Kusama and Polkadot Validator, Governance participant. Check our active attempts to improve the Governance process https://kusama.polkassembly.io/post/2431"
     },
     {
         "name": "michalis",
@@ -54,7 +56,7 @@
     },
     {
         "name": "Stake.Plus",
-        "address" : "152QidDC4QrtMCyRGiQmvrNyjntvMg2XouCSdoPSeqUNTvsq",
+        "address": "152QidDC4QrtMCyRGiQmvrNyjntvMg2XouCSdoPSeqUNTvsq",
         "manifesto": "Validation, Collation and Infrastructure Services. We are committed to providing quality infrastructure services for the Polkadot ecosystem on owned hardware powered by renewable energy."
     },
     {
@@ -118,18 +120,23 @@
         "manifesto": "## About us\nChaosDAO is a curated community of Polkadot & Kusama natives. Our members are involved with every aspect of the ecosystem as developers, community organizers, [Twitter](https://twitter.com/ChaosDAO) and YouTube educators, and as ordinary retail investors.\n\n## Voting Process\nAs part of our own organization’s evolution we have developed a robust [internal governance mechanism](https://github.com/ChaosDAO-org/ChaosDAO_docs/blob/main/governance/OpenGov.md) to determine how our community will publicly vote on referenda. By voting on behalf of the long-time Dotsama community we strive to ensure that all votes we cast reflect the true best interests of our native ecosystem.\n\n![ChaosDAO Manifesto image](https://raw.githubusercontent.com/ChaosDAO-org/ChaosDAO_docs/main/.gitbook/assets/ChaosDAO_Manifesto_600px.jpg)"
     },
     {
-      "name": "Polkadotters",
-      "address": "12s6UMSSfE2bNxtYrJc6eeuZ7UxQnRpUzaAh1gPQrGNFnE8h",
-      "manifesto": "## About us\n\nWe started in Polkadot ecosystem in 2020 by creating the first Czech & Slovak Polkadot community, becoming ambassadors for Polkadot and various ecosystem projects and by educating the community about this wonderful ecosystem and its parachains. To this day, we have more than 200 articles and reviews published with more than 1500 followers on our Medium!\n\nWe are also one of the first community validators on both Polkadot and Kusama. Besides being active on the relay chain, we also run collators on most of the parachains, founded DOT Validator Alliance and recently became members of United Bloc and IBP validator initiatives.\n\nAs we are quite active in the ecosystem, governance is our true passion and we take our job really seriously - and given our experience and activities, we believe that we are quite suitable for the job of the delegate. You can see what we do on\n\n### Twitter - https://twitter.com/Polkadotters1\n\n### Website - https://polkadotters.com\n\n### How we vote - https://polkadotters.com/governance\n\n### Medium - https://polkadotters.medium.com"
+        "name": "Polkadotters",
+        "address": "12s6UMSSfE2bNxtYrJc6eeuZ7UxQnRpUzaAh1gPQrGNFnE8h",
+        "manifesto": "## About us\n\nWe started in Polkadot ecosystem in 2020 by creating the first Czech & Slovak Polkadot community, becoming ambassadors for Polkadot and various ecosystem projects and by educating the community about this wonderful ecosystem and its parachains. To this day, we have more than 200 articles and reviews published with more than 1500 followers on our Medium!\n\nWe are also one of the first community validators on both Polkadot and Kusama. Besides being active on the relay chain, we also run collators on most of the parachains, founded DOT Validator Alliance and recently became members of United Bloc and IBP validator initiatives.\n\nAs we are quite active in the ecosystem, governance is our true passion and we take our job really seriously - and given our experience and activities, we believe that we are quite suitable for the job of the delegate. You can see what we do on\n\n### Twitter - https://twitter.com/Polkadotters1\n\n### Website - https://polkadotters.com\n\n### How we vote - https://polkadotters.com/governance\n\n### Medium - https://polkadotters.medium.com"
     },
     {
-      "name": "Math Crypto",
-      "address": "16CxXYoq9joofWE13zWuWBfd4tx3kQhXJECLLkhMLgWjYyHG",
-      "manifesto": "We run [validators for Kusama and Polkadot](https://www.math-crypto.com/) within the 1kv programme. From the beginning of OpenGov, we have contributed to governance by participating in discussions, diligently voting on each proposal, and making user-friendly tools for participating in OpenGov. \n Delegation to MathCrypto means that you care about proposals that focus on a decentralized but secure validator network, developing novel use-cases for Dotsama, and cost efficient education and media content."
+        "name": "Math Crypto",
+        "address": "16CxXYoq9joofWE13zWuWBfd4tx3kQhXJECLLkhMLgWjYyHG",
+        "manifesto": "We run [validators for Kusama and Polkadot](https://www.math-crypto.com/) within the 1kv programme. From the beginning of OpenGov, we have contributed to governance by participating in discussions, diligently voting on each proposal, and making user-friendly tools for participating in OpenGov. \n Delegation to MathCrypto means that you care about proposals that focus on a decentralized but secure validator network, developing novel use-cases for Dotsama, and cost efficient education and media content."
     },
     {
-      "name": "Sik | crifferent.de",
-      "address": "15wepZh1jWNqxBjsgErm8HmYiE21n79c5krQJeTsYAjHddeM",
-      "manifesto": "🥩Founder of [Crifferent.de](https://crifferent.de) \n\n🧑🏻‍💻Developer for [Staking Facilities](https://stakingfacilities.com) \n\n🌐Member of [DOTValidatorAlliance](https://dotvalidators.org) \n\n🫡Team member @[HydraDX](https://hydradx.io)\n\n⚙️RPC provider @[UnitedBloc](https://unitedbloc.com/) \n\n---\n\n**From within the ecosystem - for the ecosystem!** \n\nI'm evaluating proposals by taking different views into consideration. I'm not only looking at it from the perspective of a community member, but also as a developer/founder/infra-provider/human being. \n\n---\n## Contact me \n\n@dev0_sik @[Twitter](https://twitter.com/dev0_sik) \n\n@dev0_sik @[Telegram](https://t.me/dev0_sik) \n\nsik#3706 @[Discord](https://discord.com/) \n\n@dev0_sik:matrix.org @[Element](https://element.io/) \n\n[simon.kraus@crifferent.de](mailto:simon.kraus@crifferent.de) \n\nWhatsApp/Callboy +49 157 377 309 02"
+        "name": "Sik | crifferent.de",
+        "address": "15wepZh1jWNqxBjsgErm8HmYiE21n79c5krQJeTsYAjHddeM",
+        "manifesto": "🥩Founder of [Crifferent.de](https://crifferent.de) \n\n🧑🏻‍💻Developer for [Staking Facilities](https://stakingfacilities.com) \n\n🌐Member of [DOTValidatorAlliance](https://dotvalidators.org) \n\n🫡Team member @[HydraDX](https://hydradx.io)\n\n⚙️RPC provider @[UnitedBloc](https://unitedbloc.com/) \n\n---\n\n**From within the ecosystem - for the ecosystem!** \n\nI'm evaluating proposals by taking different views into consideration. I'm not only looking at it from the perspective of a community member, but also as a developer/founder/infra-provider/human being. \n\n---\n## Contact me \n\n@dev0_sik @[Twitter](https://twitter.com/dev0_sik) \n\n@dev0_sik @[Telegram](https://t.me/dev0_sik) \n\nsik#3706 @[Discord](https://discord.com/) \n\n@dev0_sik:matrix.org @[Element](https://element.io/) \n\n[simon.kraus@crifferent.de](mailto:simon.kraus@crifferent.de) \n\nWhatsApp/Callboy +49 157 377 309 02"
+    },
+    {
+        "name": "Amforc",
+        "address": "1eGtATyy4ayn77dsrhdW8N3Vs1yjqjzJcintksNmScqy31j",
+        "manifesto": "We are strong believers of a free market focusing on protection of privacy, political freedom, and economic freedom for the long term growth of the network.\n\n## About us\nAmforc is a bootstrapped company based in Switzerland, and is exclusively committed to the Polkadot ecosystem. We run a hybrid-cloud setup in combination with our own data center (colocation) in a former military bunker. Our expertise covers the areas of IT infrastructure and security, legal and regulatory matters, as well as tokenomics and game theory.\n\n## Contact\n[Twitter](twitter.com/amforcag) \n [Email](mailto:contact@amforc.com)"
     }
 ]
