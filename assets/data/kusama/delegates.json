@@ -78,5 +78,10 @@
       "name": "Math Crypto",
       "address": "GU77syTfPXdzKCuqASura9ZKgxmD2rEDhj89c9TGL6vc9Qw",
       "manifesto": "We run [validators for Kusama and Polkadot](https://www.math-crypto.com/) within the 1kv programme. From the beginning of OpenGov, we have contributed to governance by participating in discussions, diligently voting on each proposal, and making user-friendly tools for participating in OpenGov. \n Delegation to MathCrypto means that you care about proposals that focus on a decentralized but secure validator network, developing novel use-cases for Dotsama, and cost efficient education and media content."
-    }
+  },
+  {
+    "name": "Amforc",
+    "address": "DDbQ9YnjeLS6DvZgvTgFvttnqJZrD12gVq4889yh9opXVS6",
+    "manifesto": "We are strong believers of a free market focusing on protection of privacy, political freedom, and economic freedom for the long term growth of the network.\n\n## About us\nAmforc is a bootstrapped company based in Switzerland, and is exclusively committed to the Polkadot ecosystem. We run a hybrid-cloud setup in combination with our own data center (colocation) in a former military bunker. Our expertise covers the areas of IT infrastructure and security, legal and regulatory matters, as well as tokenomics and game theory.\n\n## Contact\n[Twitter](twitter.com/amforcag) \n [Email](mailto:contact@amforc.com)"
+  }
 ]
