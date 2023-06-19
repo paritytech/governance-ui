@@ -45,12 +45,12 @@
     {
         "name": "CoinStudio",
         "address": "14d2kv44xf9nFnYdms32dYPKQsr5C9urbDzTz7iwU8iHb9az",
-        "manifesto": "Kusama and Polkadot Validator, Governance participant. Check our active attempts to improve the Governance process https://kusama.polkassembly.io/post/2431"
+        "manifesto" : "Kusama and Polkadot Validator, Governance participant. Check our active attempts to improve the Governance process https://kusama.polkassembly.io/post/2431"
     },
     {
         "name": "michalis",
         "address": "14id3ENXVkJ34Q51AfWDGcMHA1EbGu8obF8QJLEUkzAB8KVh",
-        "manifesto" : "Support & Anti-Scam Lead at Web3 Foundation. I vote in all referenda, but I usually abstain from the ones seeking funding, unless the proposal brings clear value to the ecosystem (like infrastructure, tools, or very original ideas)."
+        "manifesto": "Support & Anti-Scam Lead at Web3 Foundation. I vote in all referenda, but I usually abstain from the ones seeking funding, unless the proposal brings clear value to the ecosystem (like infrastructure, tools, or very original ideas)."
     },
     {
         "name": "Stake.Plus",
