@@ -89,7 +89,7 @@ const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <PolkadotWalletsContextProvider
       walletAggregator={walletAggregator}
-      initialWaitMs={20}
+      initialWaitMs={1000}
     >
       <WalletProviderInner>{children}</WalletProviderInner>
     </PolkadotWalletsContextProvider>
