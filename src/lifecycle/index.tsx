@@ -131,19 +131,15 @@ function extractCastingVotes(
  * @returns a map of delegations by the account per each track
  */
 export function getAllDelegations(
-  address: Address,
-  allVotings: Map<Address, Map<number, Voting>>
+  allVotings: Map<TrackId, Voting>
 ): Map<number, VotingDelegating> {
   const delegates = new Map<number, VotingDelegating>();
-  const votings = allVotings.get(address);
-  if (votings) {
-    votings.forEach((voting, trackId) => {
-      // filter the delegatings.
-      if (voting.type === 'delegating') {
-        delegates.set(trackId, voting);
-      }
-    });
-  }
+  allVotings.forEach((voting, trackId) => {
+    // filter the delegatings.
+    if (voting.type === 'delegating') {
+      delegates.set(trackId, voting);
+    }
+  });
   return delegates;
 }
 
@@ -190,8 +186,8 @@ export function extractDelegations(
 ): Map<number, VotingDelegating> {
   const allVotings =
     state.type === 'ConnectedState' ? state.account?.allVotings : undefined;
-  if (allVotings && state.connectedAddress) {
-    return getAllDelegations(state.connectedAddress, allVotings);
+  if (allVotings) {
+    return getAllDelegations(allVotings);
   }
   return new Map();
 }
@@ -477,8 +473,7 @@ export async function fetchAccountChainState(
   },
   connectedAddress: Address
 ): Promise<AccountChainState> {
-  const allVotings = new Map<Address, Map<number, Voting>>();
-  allVotings.set(connectedAddress, await getVotingFor(api, connectedAddress));
+  const allVotings = await getVotingFor(api, connectedAddress);
   const account = await api.query.system.account(connectedAddress);
   const balance = account.data.free.toBn();
   return { allVotings, balance };
@@ -848,16 +843,28 @@ async function dispatchNetworkChange(
   network: Network,
   rpcParam: string | null
 ): Promise<VoidFunction | undefined> {
-  const db = await open(dbNameFor(network), STORES, DB_VERSION);
-  const restoredState = await measured('fetch-restored-state', () =>
-    restorePersisted(db)
-  );
-  dispatch({
-    type: 'SetRestored',
-    network,
-    tracks: tracksFor(network),
-    ...restoredState,
-  });
+  try {
+    const db = await open(dbNameFor(network), STORES, DB_VERSION);
+    const restoredState = await measured('fetch-restored-state', () =>
+      restorePersisted(db)
+    );
+
+    dispatch({
+      type: 'SetRestored',
+      network,
+      tracks: tracksFor(network),
+      ...restoredState,
+    });
+  } catch (e: any) {
+    console.warn(`${e.message}`);
+
+    dispatch({
+      type: 'SetRestored',
+      network,
+      tracks: tracksFor(network),
+      customDelegates: [],
+    });
+  }
 
   // Fetch delegates
   const delegates = await fetchDelegates(network);

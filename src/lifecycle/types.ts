@@ -28,7 +28,7 @@ export type Fellow = {
 };
 
 export type AccountChainState = {
-  allVotings: Map<Address, Map<number, Voting>>;
+  allVotings: Map<TrackId, Voting>;
   balance: BN;
 };
 
