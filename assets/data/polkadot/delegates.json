@@ -1,144 +1,147 @@
-[{
-        "name": "Alex PromoTeam",
-        "address": "15G4hfDNtNhRc82As8Ep2YfvpM5xVdX7De3P9qSdHerGA6wC",
-        "manifesto": "Polkadot Head Ambassador | PromoTeam Member | Validator. PromoTeam is a diverse team of specialists and blockchain activists with various skills that actively promotes the Polkadot ecosystem. Our main activity is content production, offline and online event organization, community management and creation, product marketing, development of ambassador programs, network validation."},
-        {        
-        "name": "Polkadot BizDev",
-        "address": "13zayGEv1goe6mPVNFtyyUFZTeL4QkZvE9aK1vJdLMRCMQRF",
-        "manifesto": "We are experienced Polkadot Business Development ('BizDev') executives that focus on driving forward the commercial growth of the Polkadot ecosystem."},
-    {
-        "name": "Pioneer",
-        "address": "129LBt5T1eYtnGHbPYeiiMdmWfokCiiq7z6JBfjnYifiombz",
-        "manifesto": "Supporting the network is the main incentive to work.Security in the guarantees and investment prospects of community members.  The service is powered by renewable energy."
-    },
-    {
-        "name": "TurboFlakes",
-        "address": "12gPFmRqnsDhc9C5DuXyXBFA23io5fSGtKTSAimQtAWgueD2",
-        "manifesto": "## About us\n\nTurboFlakes builds end-user tooling and provides validators and collators for the Polkadot ecosystem since 2021. We also provide RPC infrastructure powered by 100% renewable energy for the common good.\n\nWe believe in the Web3 vision of a decentralized web. We love experimentation and ideation.\n\nIn Open Governance we participate and support proposals that overall would bring joy, evolution and success to the Polkadot ecosystem.\n\nRead more about us at https://turboflakes.io"
-    },
-    {
-        "name": "NeNa 🌻",
-        "address": "131Y21vAVYxm7f5xtaV3NydJRpig3CqyvjTyFM8gMpRbFH1T",
-        "manifesto": "Flower🌻 power"
-    },
-    {
-        "name": "Swiss Bond",
-        "address": "13EEEhiXeCFpFjVQxmjJsHjr9LFvnAurcnwQ1FDgB5LmJwQp",
-        "manifesto": "Swiss Bond is a trusted Governance delegate, infrastructure provider, validator and operator of the Swiss Pool nomination pools"
-    },
-    {
-        "name": "RADIUMBLOCK.COM",
-        "address": "13GtCixw3EZARj52CVbKLrsAzyc7dmmYhDV6quS5yeVCfnh1",
-        "manifesto": "Radiumblock.com focuses on Web3 Infra for Designers, Developers, Dapps! Supporting a growing list of blockchains networks with world-class enterprise infrastructure! Read more at: https://radiumblock.com/"
-    },
-    {
-        "name": "Ruby-Node 💎",
-        "address": "13mjnUDrHwYGATFB1FkFkZ1U3kYFsAQfHYTdcc8p3HP1xzZA",
-        "manifesto": "As a delegate on Polkadot, my primary goal is to contribute to the development and growth of the network through active participation in governance and decision-making. I believe in the principles of decentralization and community-driven innovation, and I am committed to ensuring that the voice of the community is heard and represented in all aspects of governance. In addition to contributing to the overall growth and success of the Polkadot ecosystem, I am also interested in fostering collaboration and partnership between different projects and communities within the network. I believe that by working together and sharing resources and knowledge, we can create even greater value and opportunities for all participants. Overall, my goal as a delegate is to help build a strong and sustainable network that benefits all participants, and I am committed to working tirelessly towards this end."
-    },
-    {
-        "name": "Generic-chain",
-        "address": "13pZskDR7Pt67NtcChSr4uFRBf9ZS52nQeyrceSykq8MDrMe",
-        "manifesto": "Generic chain offers Non-custodial Validation Services for many chains in the Polkadot ecosystem. With a reasonable commission and an outstanding operations team, we are committed to ensure that these validators serve the network in the best possible way. Read more at https://www.generic-chain.io/"
-    },
-    {
-        "name": "AG",
-        "address": "13ujCsf3t2YAdAhcpcEFVoJAPRYzMLHUHEnLroQp41sJCSnm",
-        "manifesto": "AG staking provides high returns, low downtimes for many blockchain networks. Invested in increase decentralisation of young networks. Read more at : https://validator.ag/"
-    },
-    {
-        "name": "CoinStudio",
-        "address": "14d2kv44xf9nFnYdms32dYPKQsr5C9urbDzTz7iwU8iHb9az",
-        "manifesto" : "Kusama and Polkadot Validator, Governance participant. Check our active attempts to improve the Governance process https://kusama.polkassembly.io/post/2431"
-    },
-    {
-        "name": "michalis",
-        "address": "14id3ENXVkJ34Q51AfWDGcMHA1EbGu8obF8QJLEUkzAB8KVh",
-        "manifesto": "Support & Anti-Scam Lead at Web3 Foundation. I vote in all referenda, but I usually abstain from the ones seeking funding, unless the proposal brings clear value to the ecosystem (like infrastructure, tools, or very original ideas)."
-    },
-    {
-        "name": "Stake.Plus",
-        "address" : "152QidDC4QrtMCyRGiQmvrNyjntvMg2XouCSdoPSeqUNTvsq",
-        "manifesto": "Validation, Collation and Infrastructure Services. We are committed to providing quality infrastructure services for the Polkadot ecosystem on owned hardware powered by renewable energy."
-    },
-    {
-        "name": "SAXEMBERG",
-        "address": "153YD8ZHD9dRh82U419bSCB5SzWhbdAFzjj4NtA5pMazR2yC",
-        "manifesto": "We offer validation and collation services of our nominators on the Kusama and Polkadot ecosystem. In addition, we are currently developing dapps on the same ecosystem. We strive for a credible neutral ecosystem in fair terms for everybody. So we don't ever plan on exploiting consensus rules on blockchains or seek to exploit blockchains with misconfigured parameters. Read more at : https://saxemberg.com/about/."
-    },
-    {
-        "name": "Will | Paradox | ParaNodes.io",
-        "address": "15D2JM548bqRuE45aDmeF2WqiKC56WtNnRmCxVSree9YKwVb",
-        "manifesto": "Validator Operator at ParaNodes.io. I'm a member of Kusama's outgoing council.  My council experience allows me to better understand the technical aspects of governance and appreciate the general 'values' of the chain.\n\nI am also a well known within the validator community and operate validators under the moniker [ParaNodes.io](https://paranodes.io).\n\nIf you'll like to hear my thoughts on governance, please tune in to [AAG](https://www.youtube.com/playlist?list=PLtyd7v_I7PGkXbJmKojrZ1KXwspR1JkpV) I make live appearances on the first Monday of each month."
-    },
-    {
-        "name": "NEWDEAL",
-        "address": "16CdHjb4nxVwF6uwmPm6A29pc4ubnLiY7UqasMxt7cT9BcoK",
-        "manifesto": "Holder and then independent validator, enthusiastic supporter of the polkadot world and its revolutionary technology"
-    },
-    {
-        "name": "UBIK CAPITAL",
-        "address": "15iwm1HrcGiTZoZenijMTCayRD3hM2RpKde3LrrNxPKAMjTg",
-        "manifesto": "Ubik Capital is a Proof of Stake service provider, validator, and investor. Ubik Capital provides staking as a service and investments to various blockchain projects. Ubik Capital secures major networks and is a trusted staking provider with years of industry experience. Read more at : https://ubik.capital/"
-    },
-    {
-        "name": "CryptoLab 01",
-        "address": "16iiKwFsRKRsjAiEpD4zgNgEX84nzHtHHNFKXhz1sHtan3ne",
-        "manifesto": "Founder/Developer @ CryptoLab. hodler. validator. buidler, father! You can follow : https://twitter.com/iisaint"
-    },
-    {
-        "name": "Cypher Labs",
-        "address": "16Jh21ThTh2tW98NuN2gM7Q3KaYiuJLbxCNbuBkFpwcDkRqx",
-        "manifesto": "Cypher Labs is a trusted Proof-of-Stake infrastructure provider and validator to comfortably stake your coins and earn rewards with Kusama."
-    },
-    {
-        "name": "Staker Space",
-        "address": "16SpacegeUTft9v3ts27CEC3tJaxgvE4uZeCctThFH3Vb24p",
-        "manifesto": "We are an independent node-operator group called [Staker Space](https://staker.space). We have been a part of Polkadot since the early testnets. As a node operator we maintain highly available and reliable nodes that contributes to the overall health and stability of the network. Besides our specialisation we are committed to serving the community and contributing to the growth and success of the network on all fronts. Governance is the main front where decision making takes place. We care for protocol-security and enabling builders and users in the bigger Polkadot ecosystem."
-    },
-    {
-        "name": "Polkadot.pro - Realgar",
-        "address": "1LUckyocmz9YzeQZHVpBvYYRGXb3rnSm2tvfz79h3G3JDgP",
-        "manifesto": "Governance experimenter, validator, researcher. United Networks of State Machines. You can follow https://twitter.com/propolkadot"
-    },
-    {
-        "name": "Gontajones",
-        "address": "1UQC7Vs4zbywp8CbxcCCRUyyRqeUZxq9aXeD8UZ3MpLUy12",
-        "manifesto": "Polkadot Application Engineer at Parity. Help build an ecosystem of lighthouse projects, tutorials, documentation, and an open-source culture around Substrate. Provide technical support to Polkadot ecosystem teams. You can follow https://twitter.com/arturgontijo."
-    },
-    {
-        "name": "Eat Pray Validate 🍴🙏🖥",
-        "address": "1BdoL1BP36SZGEKR4iX8ksou2GTnrDd5of99SWK82c3A4aB",
-        "manifesto": "Sometimes i feel i've been chasing staking rewards my whole life."
-    },
-    {
-        "name": "Abdulbee",
-        "address": "15cZn8K1DaE7qiBWK6mGFJMKYKjFrALTVwe5urpD9PzKSsPY",
-        "manifesto": "I currently contribute to Polkadot full-time. I'm dedicated to the relay-chain, and not to an individual, official or organization. Hence, the best interest of the network comes first, and my votes reflect this. Reputation and value-for-money are the two most important things I look at when reviewing and voting on referenda."
-    },
-    {
-        "name": "ChaosDAO",
-        "address": "13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K",
-        "manifesto": "## About us\nChaosDAO is a curated community of Polkadot & Kusama natives. Our members are involved with every aspect of the ecosystem as developers, community organizers, [Twitter](https://twitter.com/ChaosDAO) and YouTube educators, and as ordinary retail investors.\n\n## Voting Process\nAs part of our own organization’s evolution we have developed a robust [internal governance mechanism](https://github.com/ChaosDAO-org/ChaosDAO_docs/blob/main/governance/OpenGov.md) to determine how our community will publicly vote on referenda. By voting on behalf of the long-time Dotsama community we strive to ensure that all votes we cast reflect the true best interests of our native ecosystem.\n\n![ChaosDAO Manifesto image](https://raw.githubusercontent.com/ChaosDAO-org/ChaosDAO_docs/main/.gitbook/assets/ChaosDAO_Manifesto_600px.jpg)"
-    },
-    {
-      "name": "Polkadotters",
-      "address": "12s6UMSSfE2bNxtYrJc6eeuZ7UxQnRpUzaAh1gPQrGNFnE8h",
-      "manifesto": "## About us\n\nWe started in Polkadot ecosystem in 2020 by creating the first Czech & Slovak Polkadot community, becoming ambassadors for Polkadot and various ecosystem projects and by educating the community about this wonderful ecosystem and its parachains. To this day, we have more than 200 articles and reviews published with more than 1500 followers on our Medium!\n\nWe are also one of the first community validators on both Polkadot and Kusama. Besides being active on the relay chain, we also run collators on most of the parachains, founded DOT Validator Alliance and recently became members of United Bloc and IBP validator initiatives.\n\nAs we are quite active in the ecosystem, governance is our true passion and we take our job really seriously - and given our experience and activities, we believe that we are quite suitable for the job of the delegate. You can see what we do on\n\n### Twitter - https://twitter.com/Polkadotters1\n\n### Website - https://polkadotters.com\n\n### How we vote - https://polkadotters.com/governance\n\n### Medium - https://polkadotters.medium.com"
-    },
-    {
-      "name": "Math Crypto",
-      "address": "16CxXYoq9joofWE13zWuWBfd4tx3kQhXJECLLkhMLgWjYyHG",
-      "manifesto": "We run [validators for Kusama and Polkadot](https://www.math-crypto.com/) within the 1kv programme. From the beginning of OpenGov, we have contributed to governance by participating in discussions, diligently voting on each proposal, and making user-friendly tools for participating in OpenGov. \n Delegation to MathCrypto means that you care about proposals that focus on a decentralized but secure validator network, developing novel use-cases for Dotsama, and cost efficient education and media content."
-    },
-    {
-      "name": "Sik | crifferent.de",
-      "address": "15wepZh1jWNqxBjsgErm8HmYiE21n79c5krQJeTsYAjHddeM",
-      "manifesto": "🥩Founder of [Crifferent.de](https://crifferent.de) \n\n🧑🏻‍💻Developer for [Staking Facilities](https://stakingfacilities.com) \n\n🌐Member of [DOTValidatorAlliance](https://dotvalidators.org) \n\n🫡Team member @[HydraDX](https://hydradx.io)\n\n⚙️RPC provider @[UnitedBloc](https://unitedbloc.com/) \n\n---\n\n**From within the ecosystem - for the ecosystem!** \n\nI'm evaluating proposals by taking different views into consideration. I'm not only looking at it from the perspective of a community member, but also as a developer/founder/infra-provider/human being. \n\n---\n## Contact me \n\n@dev0_sik @[Twitter](https://twitter.com/dev0_sik) \n\n@dev0_sik @[Telegram](https://t.me/dev0_sik) \n\nsik#3706 @[Discord](https://discord.com/) \n\n@dev0_sik:matrix.org @[Element](https://element.io/) \n\n[simon.kraus@crifferent.de](mailto:simon.kraus@crifferent.de) \n\nWhatsApp/Callboy +49 157 377 309 02"
-    },
-    {
-        "name": "Amforc",
-        "address": "1eGtATyy4ayn77dsrhdW8N3Vs1yjqjzJcintksNmScqy31j",
-        "manifesto": "We are strong believers of a free market focusing on protection of privacy, political freedom, and economic freedom for the long term growth of the network.\n\n## About us\nAmforc is a bootstrapped company based in Switzerland, and is exclusively committed to the Polkadot ecosystem. We run a hybrid-cloud setup in combination with our own data center (colocation) in a former military bunker. Our expertise covers the areas of IT infrastructure and security, legal and regulatory matters, as well as tokenomics and game theory.\n\n## Contact\n[Twitter](twitter.com/amforcag) \n [Email](mailto:contact@amforc.com)"
-    }
+[
+  {
+    "name": "Alex PromoTeam",
+    "address": "15G4hfDNtNhRc82As8Ep2YfvpM5xVdX7De3P9qSdHerGA6wC",
+    "manifesto": "Polkadot Head Ambassador | PromoTeam Member | Validator. PromoTeam is a diverse team of specialists and blockchain activists with various skills that actively promotes the Polkadot ecosystem. Our main activity is content production, offline and online event organization, community management and creation, product marketing, development of ambassador programs, network validation."
+  },
+  {
+    "name": "Polkadot BizDev",
+    "address": "13zayGEv1goe6mPVNFtyyUFZTeL4QkZvE9aK1vJdLMRCMQRF",
+    "manifesto": "We are experienced Polkadot Business Development ('BizDev') executives that focus on driving forward the commercial growth of the Polkadot ecosystem."
+  },
+  {
+    "name": "Pioneer",
+    "address": "129LBt5T1eYtnGHbPYeiiMdmWfokCiiq7z6JBfjnYifiombz",
+    "manifesto": "Supporting the network is the main incentive to work.Security in the guarantees and investment prospects of community members.  The service is powered by renewable energy."
+  },
+  {
+    "name": "TurboFlakes",
+    "address": "12gPFmRqnsDhc9C5DuXyXBFA23io5fSGtKTSAimQtAWgueD2",
+    "manifesto": "## About us\n\nTurboFlakes builds end-user tooling and provides validators and collators for the Polkadot ecosystem since 2021. We also provide RPC infrastructure powered by 100% renewable energy for the common good.\n\nWe believe in the Web3 vision of a decentralized web. We love experimentation and ideation.\n\nIn Open Governance we participate and support proposals that overall would bring joy, evolution and success to the Polkadot ecosystem.\n\nRead more about us at https://turboflakes.io"
+  },
+  {
+    "name": "NeNa 🌻",
+    "address": "131Y21vAVYxm7f5xtaV3NydJRpig3CqyvjTyFM8gMpRbFH1T",
+    "manifesto": "Flower🌻 power"
+  },
+  {
+    "name": "Swiss Bond",
+    "address": "13EEEhiXeCFpFjVQxmjJsHjr9LFvnAurcnwQ1FDgB5LmJwQp",
+    "manifesto": "Swiss Bond is a trusted Governance delegate, infrastructure provider, validator and operator of the Swiss Pool nomination pools"
+  },
+  {
+    "name": "RADIUMBLOCK.COM",
+    "address": "13GtCixw3EZARj52CVbKLrsAzyc7dmmYhDV6quS5yeVCfnh1",
+    "manifesto": "Radiumblock.com focuses on Web3 Infra for Designers, Developers, Dapps! Supporting a growing list of blockchains networks with world-class enterprise infrastructure! Read more at: https://radiumblock.com/"
+  },
+  {
+    "name": "Ruby-Node 💎",
+    "address": "13mjnUDrHwYGATFB1FkFkZ1U3kYFsAQfHYTdcc8p3HP1xzZA",
+    "manifesto": "As a delegate on Polkadot, my primary goal is to contribute to the development and growth of the network through active participation in governance and decision-making. I believe in the principles of decentralization and community-driven innovation, and I am committed to ensuring that the voice of the community is heard and represented in all aspects of governance. In addition to contributing to the overall growth and success of the Polkadot ecosystem, I am also interested in fostering collaboration and partnership between different projects and communities within the network. I believe that by working together and sharing resources and knowledge, we can create even greater value and opportunities for all participants. Overall, my goal as a delegate is to help build a strong and sustainable network that benefits all participants, and I am committed to working tirelessly towards this end."
+  },
+  {
+    "name": "Generic-chain",
+    "address": "13pZskDR7Pt67NtcChSr4uFRBf9ZS52nQeyrceSykq8MDrMe",
+    "manifesto": "Generic chain offers Non-custodial Validation Services for many chains in the Polkadot ecosystem. With a reasonable commission and an outstanding operations team, we are committed to ensure that these validators serve the network in the best possible way. Read more at https://www.generic-chain.io/"
+  },
+  {
+    "name": "AG",
+    "address": "13ujCsf3t2YAdAhcpcEFVoJAPRYzMLHUHEnLroQp41sJCSnm",
+    "manifesto": "AG staking provides high returns, low downtimes for many blockchain networks. Invested in increase decentralisation of young networks. Read more at : https://validator.ag/"
+  },
+  {
+    "name": "CoinStudio",
+    "address": "14d2kv44xf9nFnYdms32dYPKQsr5C9urbDzTz7iwU8iHb9az",
+    "manifesto": "Kusama and Polkadot Validator, Governance participant. Check our active attempts to improve the Governance process https://kusama.polkassembly.io/post/2431"
+  },
+  {
+    "name": "michalis",
+    "address": "14id3ENXVkJ34Q51AfWDGcMHA1EbGu8obF8QJLEUkzAB8KVh",
+    "manifesto": "Support & Anti-Scam Lead at Web3 Foundation. I vote in all referenda, but I usually abstain from the ones seeking funding, unless the proposal brings clear value to the ecosystem (like infrastructure, tools, or very original ideas)."
+  },
+  {
+    "name": "Stake.Plus",
+    "address": "152QidDC4QrtMCyRGiQmvrNyjntvMg2XouCSdoPSeqUNTvsq",
+    "manifesto": "Validation, Collation and Infrastructure Services. We are committed to providing quality infrastructure services for the Polkadot ecosystem on owned hardware powered by renewable energy."
+  },
+  {
+    "name": "SAXEMBERG",
+    "address": "153YD8ZHD9dRh82U419bSCB5SzWhbdAFzjj4NtA5pMazR2yC",
+    "manifesto": "We offer validation and collation services of our nominators on the Kusama and Polkadot ecosystem. In addition, we are currently developing dapps on the same ecosystem. We strive for a credible neutral ecosystem in fair terms for everybody. So we don't ever plan on exploiting consensus rules on blockchains or seek to exploit blockchains with misconfigured parameters. Read more at : https://saxemberg.com/about/."
+  },
+  {
+    "name": "Will | Paradox | ParaNodes.io",
+    "address": "15D2JM548bqRuE45aDmeF2WqiKC56WtNnRmCxVSree9YKwVb",
+    "manifesto": "Validator Operator at ParaNodes.io. I'm a member of Kusama's outgoing council.  My council experience allows me to better understand the technical aspects of governance and appreciate the general 'values' of the chain.\n\nI am also a well known within the validator community and operate validators under the moniker [ParaNodes.io](https://paranodes.io).\n\nIf you'll like to hear my thoughts on governance, please tune in to [AAG](https://www.youtube.com/playlist?list=PLtyd7v_I7PGkXbJmKojrZ1KXwspR1JkpV) I make live appearances on the first Monday of each month."
+  },
+  {
+    "name": "NEWDEAL",
+    "address": "16CdHjb4nxVwF6uwmPm6A29pc4ubnLiY7UqasMxt7cT9BcoK",
+    "manifesto": "Holder and then independent validator, enthusiastic supporter of the polkadot world and its revolutionary technology"
+  },
+  {
+    "name": "UBIK CAPITAL",
+    "address": "15iwm1HrcGiTZoZenijMTCayRD3hM2RpKde3LrrNxPKAMjTg",
+    "manifesto": "Ubik Capital is a Proof of Stake service provider, validator, and investor. Ubik Capital provides staking as a service and investments to various blockchain projects. Ubik Capital secures major networks and is a trusted staking provider with years of industry experience. Read more at : https://ubik.capital/"
+  },
+  {
+    "name": "CryptoLab 01",
+    "address": "16iiKwFsRKRsjAiEpD4zgNgEX84nzHtHHNFKXhz1sHtan3ne",
+    "manifesto": "Founder/Developer @ CryptoLab. hodler. validator. buidler, father! You can follow : https://twitter.com/iisaint"
+  },
+  {
+    "name": "Cypher Labs",
+    "address": "16Jh21ThTh2tW98NuN2gM7Q3KaYiuJLbxCNbuBkFpwcDkRqx",
+    "manifesto": "Cypher Labs is a trusted Proof-of-Stake infrastructure provider and validator to comfortably stake your coins and earn rewards with Kusama."
+  },
+  {
+    "name": "Staker Space",
+    "address": "16SpacegeUTft9v3ts27CEC3tJaxgvE4uZeCctThFH3Vb24p",
+    "manifesto": "We are an independent node-operator group called [Staker Space](https://staker.space). We have been a part of Polkadot since the early testnets. As a node operator we maintain highly available and reliable nodes that contributes to the overall health and stability of the network. Besides our specialisation we are committed to serving the community and contributing to the growth and success of the network on all fronts. Governance is the main front where decision making takes place. We care for protocol-security and enabling builders and users in the bigger Polkadot ecosystem."
+  },
+  {
+    "name": "Polkadot.pro - Realgar",
+    "address": "1LUckyocmz9YzeQZHVpBvYYRGXb3rnSm2tvfz79h3G3JDgP",
+    "manifesto": "Governance experimenter, validator, researcher. United Networks of State Machines. You can follow https://twitter.com/propolkadot"
+  },
+  {
+    "name": "Gontajones",
+    "address": "1UQC7Vs4zbywp8CbxcCCRUyyRqeUZxq9aXeD8UZ3MpLUy12",
+    "manifesto": "Polkadot Application Engineer at Parity. Help build an ecosystem of lighthouse projects, tutorials, documentation, and an open-source culture around Substrate. Provide technical support to Polkadot ecosystem teams. You can follow https://twitter.com/arturgontijo."
+  },
+  {
+    "name": "Eat Pray Validate 🍴🙏🖥",
+    "address": "1BdoL1BP36SZGEKR4iX8ksou2GTnrDd5of99SWK82c3A4aB",
+    "manifesto": "Sometimes i feel i've been chasing staking rewards my whole life."
+  },
+  {
+    "name": "Abdulbee",
+    "address": "15cZn8K1DaE7qiBWK6mGFJMKYKjFrALTVwe5urpD9PzKSsPY",
+    "manifesto": "I currently contribute to Polkadot full-time. I'm dedicated to the relay-chain, and not to an individual, official or organization. Hence, the best interest of the network comes first, and my votes reflect this. Reputation and value-for-money are the two most important things I look at when reviewing and voting on referenda."
+  },
+  {
+    "name": "ChaosDAO",
+    "address": "13EyMuuDHwtq5RD6w3psCJ9WvJFZzDDion6Fd2FVAqxz1g7K",
+    "manifesto": "## About us\nChaosDAO is a curated community of Polkadot & Kusama natives. Our members are involved with every aspect of the ecosystem as developers, community organizers, [Twitter](https://twitter.com/ChaosDAO) and YouTube educators, and as ordinary retail investors.\n\n## Voting Process\nAs part of our own organization’s evolution we have developed a robust [internal governance mechanism](https://github.com/ChaosDAO-org/ChaosDAO_docs/blob/main/governance/OpenGov.md) to determine how our community will publicly vote on referenda. By voting on behalf of the long-time Dotsama community we strive to ensure that all votes we cast reflect the true best interests of our native ecosystem.\n\n![ChaosDAO Manifesto image](https://raw.githubusercontent.com/ChaosDAO-org/ChaosDAO_docs/main/.gitbook/assets/ChaosDAO_Manifesto_600px.jpg)"
+  },
+  {
+    "name": "Polkadotters",
+    "address": "12s6UMSSfE2bNxtYrJc6eeuZ7UxQnRpUzaAh1gPQrGNFnE8h",
+    "manifesto": "## About us\n\nWe started in Polkadot ecosystem in 2020 by creating the first Czech & Slovak Polkadot community, becoming ambassadors for Polkadot and various ecosystem projects and by educating the community about this wonderful ecosystem and its parachains. To this day, we have more than 200 articles and reviews published with more than 1500 followers on our Medium!\n\nWe are also one of the first community validators on both Polkadot and Kusama. Besides being active on the relay chain, we also run collators on most of the parachains, founded DOT Validator Alliance and recently became members of United Bloc and IBP validator initiatives.\n\nAs we are quite active in the ecosystem, governance is our true passion and we take our job really seriously - and given our experience and activities, we believe that we are quite suitable for the job of the delegate. You can see what we do on\n\n### Twitter - https://twitter.com/Polkadotters1\n\n### Website - https://polkadotters.com\n\n### How we vote - https://polkadotters.com/governance\n\n### Medium - https://polkadotters.medium.com"
+  },
+  {
+    "name": "Math Crypto",
+    "address": "16CxXYoq9joofWE13zWuWBfd4tx3kQhXJECLLkhMLgWjYyHG",
+    "manifesto": "We run [validators for Kusama and Polkadot](https://www.math-crypto.com/) within the 1kv programme. From the beginning of OpenGov, we have contributed to governance by participating in discussions, diligently voting on each proposal, and making user-friendly tools for participating in OpenGov. \n Delegation to MathCrypto means that you care about proposals that focus on a decentralized but secure validator network, developing novel use-cases for Dotsama, and cost efficient education and media content."
+  },
+  {
+    "name": "Sik | crifferent.de",
+    "address": "15wepZh1jWNqxBjsgErm8HmYiE21n79c5krQJeTsYAjHddeM",
+    "manifesto": "🥩Founder of [Crifferent.de](https://crifferent.de) \n\n🧑🏻‍💻Developer for [Staking Facilities](https://stakingfacilities.com) \n\n🌐Member of [DOTValidatorAlliance](https://dotvalidators.org) \n\n🫡Team member @[HydraDX](https://hydradx.io)\n\n⚙️RPC provider @[UnitedBloc](https://unitedbloc.com/) \n\n---\n\n**From within the ecosystem - for the ecosystem!** \n\nI'm evaluating proposals by taking different views into consideration. I'm not only looking at it from the perspective of a community member, but also as a developer/founder/infra-provider/human being. \n\n---\n## Contact me \n\n@dev0_sik @[Twitter](https://twitter.com/dev0_sik) \n\n@dev0_sik @[Telegram](https://t.me/dev0_sik) \n\nsik#3706 @[Discord](https://discord.com/) \n\n@dev0_sik:matrix.org @[Element](https://element.io/) \n\n[simon.kraus@crifferent.de](mailto:simon.kraus@crifferent.de) \n\nWhatsApp/Callboy +49 157 377 309 02"
+  },
+  {
+    "name": "Amforc",
+    "address": "1eGtATyy4ayn77dsrhdW8N3Vs1yjqjzJcintksNmScqy31j",
+    "manifesto": "We are strong believers of a free market focusing on protection of privacy, political freedom, and economic freedom for the long term growth of the network.\n\n## About us\nAmforc is a bootstrapped company based in Switzerland, and is exclusively committed to the Polkadot ecosystem. We run a hybrid-cloud setup in combination with our own data center (colocation) in a former military bunker. Our expertise covers the areas of IT infrastructure and security, legal and regulatory matters, as well as tokenomics and game theory.\n\n## Contact\n[Twitter](twitter.com/amforcag) \n [Email](mailto:contact@amforc.com)"
+  }
 ]
