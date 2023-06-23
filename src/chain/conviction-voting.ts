@@ -9,7 +9,14 @@ import type {
 } from '@polkadot/types/lookup';
 import { BN } from '@polkadot/util';
 import { Address, TrackId } from '../lifecycle/types.js';
-import { AccountVote, Conviction, Voting } from '../types.js';
+import {
+  AccountVote,
+  Conviction,
+  Delegations,
+  PriorLock,
+  Voting,
+  VotingDelegating,
+} from '../types.js';
 import { batchAll } from '../utils/polkadot-api.js';
 
 export function createStandardAccountVote(
@@ -24,6 +31,23 @@ export function createStandardAccountVote(
       conviction: conviction,
     },
     balance: balance,
+  };
+}
+
+export function createDelegatingVoting(
+  balance: BN,
+  target: string,
+  conviction: Conviction,
+  delegations: Delegations = { votes: new BN(0), capital: new BN(0) },
+  prior: PriorLock = { balance: new BN(0), block: 0 }
+): VotingDelegating {
+  return {
+    type: 'delegating',
+    balance,
+    target,
+    conviction,
+    delegations,
+    prior,
   };
 }
 

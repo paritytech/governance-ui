@@ -1,8 +1,8 @@
 import party from 'party-js';
 import { useEffect, useState } from 'react';
 import BN from 'bn.js';
-import { Delegate, TrackMetaData } from '../../../../lifecycle/types';
-import { Conviction, SigningAccount } from '../../../../types';
+import { Delegate, TrackId, TrackMetaData } from '../../../../lifecycle/types';
+import { Conviction, SigningAccount, Voting } from '../../../../types';
 import {
   useAppLifeCycle,
   extractBalance,
@@ -22,6 +22,7 @@ import { Accounticon } from '../../accounts/Accounticon';
 import { Modal } from '../../../../ui/lib/Modal';
 import { Button } from '../../../../ui/lib/Button';
 import { ConnectButton } from '../../accounts/ConnectButton';
+import { createDelegatingVoting } from 'src/chain/conviction-voting';
 
 export function TxnModal({
   delegate,
@@ -69,7 +70,6 @@ export function TxnModal({
           ),
           updater.undelegateFee(connectedAddress, allTrackIds),
         ]);
-
         const usableBalance =
           delegateSelectedFee &&
           undelegateAllFee &&
@@ -113,7 +113,7 @@ export function TxnModal({
           address,
           { signer, nonce: -1 },
           tx.value,
-          (result, unsub) => {
+          async (result, unsub) => {
             console.debug(`Tx update: ${JSON.stringify(result)}`);
 
             const { status, dispatchError } = result;
@@ -141,6 +141,15 @@ export function TxnModal({
                 });
 
                 console.debug(`Delegation in block after ${duration} ms`);
+
+                const votings = new Map<TrackId, Voting>();
+                trackIds.forEach((trackId) =>
+                  votings.set(
+                    trackId,
+                    createDelegatingVoting(amount, delegateAddress, conviction)
+                  )
+                );
+                await updater.addVotings(votings);
               }
             }
           }

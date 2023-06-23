@@ -65,7 +65,7 @@ export function UndelegateModal({
           address,
           { signer, nonce: -1 },
           txs.value,
-          (result, unsub) => {
+          async (result, unsub) => {
             console.debug(`Tx update: ${JSON.stringify(result)}`);
 
             const { status, dispatchError } = result;
@@ -84,6 +84,8 @@ export function UndelegateModal({
               });
 
               console.debug(`Undelegation in block after ${duration} ms`);
+
+              await updater.removeVotings(new Set(trackIds));
             }
           }
         );

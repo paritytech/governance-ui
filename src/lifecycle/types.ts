@@ -125,6 +125,16 @@ export type State = InitialState | RestoredState | ConnectedState;
 
 // Actions
 
+export type AddVotings = {
+  type: 'AddVotings';
+  votings: Map<TrackId, Voting>;
+};
+
+export type RemoveVotings = {
+  type: 'RemoveVotings';
+  trackIds: Set<TrackId>;
+};
+
 export type AddReport = {
   type: 'AddReport';
   report: Report;
@@ -237,6 +247,8 @@ export type RemoveCustomDelegate = {
 };
 
 export type Action =
+  | AddVotings
+  | RemoveVotings
   | AddReport
   | RemoveReport
   | ClearProcessingReport

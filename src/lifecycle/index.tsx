@@ -321,6 +321,38 @@ function reducer(previousState: State, action: Action): State {
         );
       }
     }
+    case 'AddVotings': {
+      if (previousState.type == 'ConnectedState') {
+        const { balance, allVotings } = previousState.account!;
+        return {
+          ...previousState,
+          account: {
+            balance,
+            allVotings: new Map([...allVotings, ...action.votings]),
+          },
+        };
+      } else {
+        return withNewReport(
+          previousState,
+          incorrectTransitionError(previousState, action)
+        );
+      }
+    }
+    case 'RemoveVotings': {
+      if (previousState.type == 'ConnectedState') {
+        const { balance, allVotings } = previousState.account!;
+        action.trackIds.forEach((trackId) => allVotings.delete(trackId));
+        return {
+          ...previousState,
+          account: { balance, allVotings },
+        };
+      } else {
+        return withNewReport(
+          previousState,
+          incorrectTransitionError(previousState, action)
+        );
+      }
+    }
     case 'AddReport': {
       return withNewReport(previousState, action.report);
     }
@@ -697,6 +729,20 @@ export class Updater {
       // When restoring address during startup API won't be available; ignoring.
       // Will become irrelevant once this is persisted via the state.
     }
+  }
+
+  async addVotings(votings: Map<TrackId, Voting>) {
+    this.#dispatch({
+      type: 'AddVotings',
+      votings,
+    });
+  }
+
+  async removeVotings(trackIds: Set<TrackId>) {
+    this.#dispatch({
+      type: 'RemoveVotings',
+      trackIds,
+    });
   }
 
   async addReport(report: Report) {
