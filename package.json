@@ -48,7 +48,7 @@
     "@parcel/packager-raw-url": "2.9.3",
     "@parcel/transformer-svg-react": "2.9.3",
     "@parcel/transformer-webmanifest": "2.9.3",
-    "@playwright/test": "1.35.0",
+    "@playwright/test": "1.35.1",
     "@prantlf/jsonlint": "^14.0.3",
     "@tailwindcss/typography": "0.5.9",
     "@testing-library/react": "14.0.0",
