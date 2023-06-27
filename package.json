@@ -54,7 +54,7 @@
     "@testing-library/react": "14.0.0",
     "@types/bn.js": "5.1.1",
     "@types/jest": "29.5.2",
-    "@types/react": "18.2.13",
+    "@types/react": "18.2.14",
     "@types/react-copy-to-clipboard": "5.0.4",
     "@types/react-dom": "18.2.6",
     "@types/serviceworker": "0.0.68",
