@@ -508,24 +508,24 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.2.5.tgz#26d295f3570323b2837d322180dfbf1ba156fefb"
   integrity sha512-JJulVEQXmiY9Px5axXHeYGLSjhkZEnD+MDPDGbCbIAbMslkKwmygtZFy1X6s/075Yo94sf8GuSlFfPzysQrWZQ==
 
-"@zombienet/cli@1.3.58":
-  version "1.3.58"
-  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.58.tgz#4cfdee15db9babaa3132905bb5be3f193d50b7c2"
-  integrity sha512-bGPcqz4+bUaPIZJPZU7BOXT9iuFIXITJK32+rPtINN3CS3xJIj9kwJb6R+qBtu6BUcktLWgFzSAYKhyybzTuWA==
+"@zombienet/cli@1.3.59":
+  version "1.3.59"
+  resolved "https://registry.yarnpkg.com/@zombienet/cli/-/cli-1.3.59.tgz#6f55ebde2000a315ad714d39a67e0f4595d93e74"
+  integrity sha512-2GV79ZmJQdt1xoILdNcVnLzi6XV+oZsv9WVRSIxZGoPrWnY+kPlHE8Vi0rWhgJvmB4jlXSaUy6YOIpPxNJ8KhA==
   dependencies:
-    "@zombienet/dsl-parser-wrapper" "^0.1.9"
+    "@zombienet/dsl-parser-wrapper" "^0.1.10"
     "@zombienet/orchestrator" "^0.0.47"
     "@zombienet/utils" "^0.0.21"
     cli-progress "^3.12.0"
     commander "^11.0.0"
     debug "^4.3.4"
     nunjucks "^3.2.4"
-    typescript "^5.1.3"
+    typescript "^5.1.6"
 
-"@zombienet/dsl-parser-wrapper@^0.1.9":
-  version "0.1.9"
-  resolved "https://registry.yarnpkg.com/@zombienet/dsl-parser-wrapper/-/dsl-parser-wrapper-0.1.9.tgz#a1cfe01fbac8698b3a02eb8c0de56a7ccf4cea8e"
-  integrity sha512-8Bdhuh2dM3XKBdqlYtocJN6+gACbTa+bSiiJ+HZuLbW495ZXcS/NJ1MHMlL/DtBu3zOcb82X8yG5fMtF+f4ZbQ==
+"@zombienet/dsl-parser-wrapper@^0.1.10":
+  version "0.1.10"
+  resolved "https://registry.yarnpkg.com/@zombienet/dsl-parser-wrapper/-/dsl-parser-wrapper-0.1.10.tgz#f003bd7add76e87cb9c6464a135905d9c9c57184"
+  integrity sha512-2r2SjanMcNTQiiwTtj/TRO89ek4KoIKGKhgcdHm8+uXPVWuU3tIh/unN8+m51Jnm2jhCLkQQwa5aidvSC02wOg==
 
 "@zombienet/orchestrator@^0.0.47":
   version "0.0.47"
@@ -1825,10 +1825,10 @@ type-detect@^4.0.0, type-detect@^4.0.5:
   resolved "https://registry.yarnpkg.com/type-detect/-/type-detect-4.0.8.tgz#7646fb5f18871cfbb7749e69bd39a6388eb7450c"
   integrity sha512-0fr/mIH1dlO+x7TlcMy+bIDqKPsw/70tVyeHW787goQjhmqaZe10uwLujubK9q9Lg6Fiho1KUKDYz0Z7k7g5/g==
 
-typescript@^5.1.3:
-  version "5.1.3"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.1.3.tgz#8d84219244a6b40b6fb2b33cc1c062f715b9e826"
-  integrity sha512-XH627E9vkeqhlZFQuL+UsyAXEnibT0kWR2FWONlr4sTjvxyJYnyefgrkyECLzM5NenmKzRAy2rR/OlYLA1HkZw==
+typescript@^5.1.3, typescript@^5.1.6:
+  version "5.1.6"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.1.6.tgz#02f8ac202b6dad2c0dd5e0913745b47a37998274"
+  integrity sha512-zaWCozRZ6DLEWAWFrVDz1H6FVXzUSfTy5FUMWsQlU8Ym5JP9eO4xkTIROFCQvhQf61z6O/G6ugw3SgAnvvm+HA==
 
 uint8arrays@^3.0.0:
   version "3.1.1"
