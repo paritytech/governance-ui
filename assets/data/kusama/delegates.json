@@ -87,5 +87,10 @@
     "name": "PolkaGate",
     "address": "Cgp9bcq1dGP1Z9B6F2ccTSTHNez9jq2iUX993ZbDVByPSU2",
     "manifesto": "Your wallet for the Polkadot ecosystem. Take an active role in shaping the future of Polkadot by delegating your votes to us. Join today and contribute to a decentralized future."
+  },
+  {
+    "name": "Staker Space",
+    "address": "FcjmeNzPk3vgdENm1rHeiMCxFK96beUoi2kb59FmCoZtkGF",
+    "manifesto": "## About Staker Space\nWe are an independent node-operator group called [Staker Space](https://staker.space). We have been a part of Polkadot since the early testnets. As a node operator we maintain highly available and reliable nodes that contribute to the overall health and stability of the network. Besides our specialization we are committed to serving the community and contributing to the growth and success of the network on all fronts.\n\n## Our Strategy\nWith referenda we care for protocol-security and enabling builders and users in the bigger Polkadot ecosystem. We support open networks in order to secure the future of the decentralized systems.\n\n## Contact us\nPlease feel free to contact us.\n\n[Staker Space Discord](https://discord.gg/9AREXj8ESr)\n\n[Staker Space Twitter](https://twitter.com/stakerspace)\n\n[Staker Space Telegram](https://t.me/staker_space)\n\n[Staker Space Email](mailto:hello@staker.space)"
   }
 ]
