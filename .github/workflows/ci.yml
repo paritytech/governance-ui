@@ -22,7 +22,7 @@ jobs:
         run: yarn check:all
 
       - name: Audit
-        run: yarn 
+        run: yarn
         continue-on-error: true
 
       - name: Test
@@ -56,7 +56,7 @@ jobs:
         run: yarn build
         env:
           PUBLIC_URL: ${{ steps.pages.outputs.base_url }}
-      
+
       - name: Upload artifact
         # Automatically uploads an artifact from the './_site' directory by default
         uses: actions/upload-pages-artifact@v1
