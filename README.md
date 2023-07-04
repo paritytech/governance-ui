@@ -20,7 +20,7 @@ The following table outlines the structure of a `delegate` entry:
 | ---------------- | ------------ | -------- | ------------------------------------------------------------------------------------------- |
 | Delegate Name    | `name`       | Yes      | The chosen name of the delegate.                                                            |
 | Delegate Address | `address`    | Yes      | The chain address of the delegate.                                                          |
-| Manifesto        | `manifesto`  | Yes      | A description of your goals as a delegate. Supports markdown.                               | 
+| Manifesto        | `manifesto`  | Yes      | A description of your goals as a delegate. Supports markdown.                               |
 
 # Build
 
@@ -51,4 +51,18 @@ yarn zombienet:native
 
 # Launch tests
 URL=http://127.0.0.1:1234/?rpc=ws://127.0.0.1:9984 yarn test:e2e
-``` 
+```
+
+## Using containers
+You may build a container using:
+
+```
+./scripts/build-container.sh
+```
+then run your container with:
+
+```
+podman run --d -p 8080:80 localhost/polkadot-delegation-dashboard
+```
+
+and access the Delegation Dashboard at http://localhost:8080/
