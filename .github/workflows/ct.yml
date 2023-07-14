@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '*/30 * * * *' # Every 30 minutes
+    - cron:  '0 0 * * *' # Every day at midnight
 
 jobs:
   tests:
@@ -17,10 +17,6 @@ jobs:
       image: mcr.microsoft.com/playwright:v1.35.1-focal
     strategy:
       fail-fast: false
-      matrix:
-        project: [chromium, webkit]
-        shardIndex: [1, 2, 3]
-        shardTotal: [3]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -30,7 +26,7 @@ jobs:
         run: yarn install --immutable --immutable-cache --check-cache
         working-directory: test
       - name: Run tests
-        run: npx playwright test --project=${{ matrix.project }} --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: npx playwright test
         working-directory: test
         env:
           # TODO extract this URL from context
