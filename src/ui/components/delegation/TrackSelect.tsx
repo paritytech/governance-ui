@@ -246,10 +246,6 @@ export function TrackSelect({
     undelegatedTracks.length !== allTracks.size ? 'undelegated' : ''
   } tracks`;
   const referendaByTrack = partitionReferendaByTrack(referenda);
-  const activeReferendaCount = Array.from(referendaByTrack.entries()).reduce(
-    (acc, [, track]) => acc + track.size,
-    0
-  );
 
   const delegatesWithTracks = extractDelegatedTracks(state);
 
