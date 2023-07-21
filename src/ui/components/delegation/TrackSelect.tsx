@@ -269,7 +269,7 @@ export function TrackSelect({
       ) : (
         <div className="flex snap-start flex-col items-center">
           <span className="px-3 font-unbounded text-h4">
-            - Or - Select tracks to delegate
+            Or Select tracks to delegate
           </span>
           <p className="px-4 text-body">
             First, select the tracks you would like to delegate, then pick the
@@ -280,12 +280,12 @@ export function TrackSelect({
       <div className="flex flex-col gap-2">
         <SectionTitle
           className=""
-          title="Current activity"
+          title="Select a track"
           description={
             referendaByTrack.size > 0 ? (
               <span>
-                There are currently <b>{activeReferendaCount}</b> active
-                proposals on <b>{referendaByTrack.size}</b> tracks.
+                There are currently <b>{referendaByTrack.size}</b> active
+                tracks.
               </span>
             ) : (
               <span className="text-fg-disabled">

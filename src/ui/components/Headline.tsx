@@ -19,7 +19,8 @@ export default function Headline() {
         </span>
         <span className="px-3 text-center text-body">
           No time to vote? Keep Polkadot running smoothly by delegating to an
-          expert.
+          expert.{' '}
+          <a href="https://www.youtube.com/watch?v=RapBYZc5ZPo">Watch video</a>
         </span>
       </div>
 

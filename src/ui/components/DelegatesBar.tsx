@@ -45,7 +45,7 @@ export function DelegatesBar({
       <div className="flex w-full justify-between gap-0 px-6">
         <div className="w-24" />
         <span className="px-3 font-unbounded text-h4">
-          Delegate all votes to a top voter
+          Delegate all votes to an expert
         </span>
         <Button
           variant="ghost"
