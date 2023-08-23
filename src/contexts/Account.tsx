@@ -6,7 +6,7 @@ import { useWallets } from './Wallets.js';
 import {
   isSubstrateAccount,
   isAccountAllowedOnChain,
-} from 'src/utils/polkadot-api';
+} from '../utils/polkadot-api.js';
 
 export interface IAccountContext {
   connectedAccount: SigningAccount | undefined;
