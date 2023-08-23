@@ -18,6 +18,7 @@ import { addressEq } from '@polkadot/util-crypto';
 import BN from 'bn.js';
 import { Conviction } from '../types';
 import { DispatchError } from '@polkadot/types/interfaces';
+import { Account } from '@polkadot-onboard/core';
 
 const DEFAULT_OPTIONS = {
   noInitWarn: true,
@@ -108,6 +109,21 @@ export function formatConviction(conviction: Conviction): string {
     default:
       return conviction.toString();
   }
+}
+
+export function isSubstrateAccount(account: Account) {
+  return !!account?.type && ['ed25519', 'sr25519'].includes(account.type);
+}
+
+export function isAccountAllowedOnChain(
+  account: Account,
+  chainGenesisHash: string | undefined | null
+) {
+  return (
+    !account.genesisHash ||
+    !chainGenesisHash ||
+    account.genesisHash === chainGenesisHash
+  );
 }
 
 export function isValidAddress(address: string): boolean {

@@ -3,6 +3,10 @@ import type { SigningAccount } from '../types';
 import React, { useContext, createContext, useState, useEffect } from 'react';
 import { extractChainInfo, useAppLifeCycle } from '../lifecycle/index.js';
 import { useWallets } from './Wallets.js';
+import {
+  isSubstrateAccount,
+  isAccountAllowedOnChain,
+} from 'src/utils/polkadot-api';
 
 export interface IAccountContext {
   connectedAccount: SigningAccount | undefined;
@@ -58,9 +62,8 @@ const AccountProvider = ({ children }: { children: React.ReactNode }) => {
         // filter accounts that match the genesis hash.
         const accounts = (await wallet.getAccounts()).filter(
           (account) =>
-            !account.genesisHash ||
-            !genesisHash ||
-            account.genesisHash === genesisHash
+            isSubstrateAccount(account) &&
+            isAccountAllowedOnChain(account, genesisHash)
         );
 
         if (accounts.length > 0) {
