@@ -163,5 +163,10 @@
     "name": "Birdo",
     "address": "12s37eSMQPEN5cuVyBxk2UypUHntwumqBHy7sJkoKpZ1v3HV",
     "manifesto": "💫 Macrodata Refiner @paritytech building @polkadot"
+  },
+    {
+    "name": "Blockseeker.io",
+    "address": "131Qzz7SvHUn7zdDAt2jFZmzVsP2KkoiDWLZa9N7FivGTXpB",
+    "manifesto": "We support the network by reviewing proposals that aims to improve and enrich the Polkadot/Kusama ecosystem"
   }
 ]
