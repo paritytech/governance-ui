@@ -168,5 +168,10 @@
     "name": "Blockseeker.io",
     "address": "131Qzz7SvHUn7zdDAt2jFZmzVsP2KkoiDWLZa9N7FivGTXpB",
     "manifesto": "We support the network by reviewing proposals that aims to improve and enrich the Polkadot/Kusama ecosystem"
+  },
+  {
+    "name": "Ivy",
+    "address": "16Zw7drubm8LkaoNSPtNBAaoq2bQAL4m7oySPp4RuXvmETDG",
+    "manifesto": "Ivy is a high-impact governance collective on Polkadot with a single goal: sustainably increase DOT's value.\n\nOur mission is to build a prosperous token economy and create more harmony among all Polkadot-based actors.\n\nRead more about Ivy's approach to governance here: https://ivy-gov.github.io/pink-paradigm/"
   }
 ]
