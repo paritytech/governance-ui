@@ -188,5 +188,10 @@
     "name": "Inform Systems Group",
     "address": "13YJ7PrjwAhKHP9m99APDSuvLwWKSQSmKABfJY3H2Cepk2CA",
     "manifesto": "About us:\nInform Systems Group is company that has been developing technology and innovation. Based on UNIX, we create hardware and software that are used to build smart cities and countries. Our motto is Innovations for Life. We want to bring the future, in which technologies will improve people's lives, make it easy, beautiful and long, and countries - comfortable and safe, remove queues, traffic jams, complexity of identification and financial settlements, erase borders for freedom, travel, creativity.\n\nOur strategy:\nWe have built a fast and fault-tolerant Polkadot validator infrastructure. We use FreeBSD as OS, ZFS as file system with speed optimisation, all services run in JAIL and are synchronised in master-master mode using SYNCTHING. In case of failure or technical works for each validator node we have a backup node in synchronisation mode on a separate server. This approach ensures 99.9% availability of our nodes. In addition, we use systems of automatic Polkadot application updates from source code, monitoring and automatic reward payment.\n\nOur company is transparent and open, reputation and the trust of our partners is of main value to us. We ask you to support us by delegating the right to vote to our validator."
-  } 
+  },
+  {
+    "name": "COSMOTRON",
+    "address": "16KjnbCmBXqT3R956sHak7THsgQZ9Ek8ibnG1sFyCNtfJ8y",
+    "manifesto": "COSMOTRON is a group of freethinkers and techno enthusiasts. We believe in creativity, exploration, community, and enterprise. We operate validators, review governance proposals, and engage in discussions. Our mission is to support projects that, to the best of our knowledge, bring long-term value to Polkadot & Kusama."
+  }
 ]
