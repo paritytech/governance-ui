@@ -198,5 +198,10 @@
     "name": "COSMOTRON",
     "address": "16KjnbCmBXqT3R956sHak7THsgQZ9Ek8ibnG1sFyCNtfJ8y",
     "manifesto": "COSMOTRON is a group of freethinkers and techno enthusiasts. We believe in creativity, exploration, community, and enterprise. We operate validators, review governance proposals, and engage in discussions. Our mission is to support projects that, to the best of our knowledge, bring long-term value to Polkadot & Kusama."
+  },
+  {
+    "name": "BladeRunner",
+    "address": "13J6LkvsEtdZpvRwUMVNbag26md9ycmGe5PM8UnEokhL6Tgk",
+    "manifesto": "As a dedicated member of the Polkadot ecosystem since its inception, we are committed to pushing the boundaries of innovation and technology. Our mission revolves around the continuous development and maintenance of a robust infrastructure that contributes to the security and scalability of the network. We proudly engage in open governance, advocating for proposals that drive forward innovation, accessibility, and the overall growth of the Polkadot ecosystem. We believe in the principles of decentralization and community-driven innovation, actively participating in shaping the future of a decentralized world. Join us on our journey as we strive to create a strong and sustainable network."
   }
 ]
