@@ -3,9 +3,9 @@ name: Continuous Testing
 
 on:
   workflow_dispatch:
-  schedule:
+#  schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '0 0 * * *' # Every day at midnight
+#    - cron:  '0 0 * * *' # Every day at midnight
 
 jobs:
   tests:
