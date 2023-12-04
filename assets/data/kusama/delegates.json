@@ -103,5 +103,10 @@
     "name": "NLZ",
     "address": "GPcV2soyyrNMy5GhE6Dkmdy4DwccrmTQENfGXtJ59y5hWtf",
     "manifesto": "Reliable and stable validator. Contribute to the development of decentralization by supporting us"
+  },
+  {
+    "name": "BladeRunner",
+    "address": "F54TRnxNpfyQqdEBfuzzNcSf6rJTimLVdxxNF973QGC9xEx",
+    "manifesto": "We are a dedicated participant in the Kusama network since its inception. Remarkably, one of our nodes proudly holds the first position on the Kusama Thousand Validators program (https://thousand-validators.kusama.network/#/leaderboard). Our focus is on operating nodes, contributing to the network's stability, and fostering a decentralized ecosystem. Our passion for Kusama drives our continuous involvement. Join us in supporting Kusama's journey towards a decentralized future."
   }
 ]
