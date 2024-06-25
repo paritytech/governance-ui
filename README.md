@@ -1,3 +1,10 @@
+
+# Archive
+This repo is no longer maintained. Please have a look at its new home
+https://github.com/polkassembly/governance-ui for updates and contributions.
+
+
+
 ![CI status](https://github.com/paritytech/governance-ui/actions/workflows/ci.yml/badge.svg)
 ![CT status](https://github.com/paritytech/governance-ui/actions/workflows/ct.yml/badge.svg)
 
