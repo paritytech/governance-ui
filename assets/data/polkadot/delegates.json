@@ -1,5 +1,10 @@
 [
   {
+    "name": "🍇 DIONYSUS 🍇",
+    "address": "12CJw9KNkC7FzVVg3dvny4PWHjjkvdyM17mmNfXyfucp8JfM",
+    "manifesto": "![dionysus.png](https://dionysus.network/wp-content/uploads/2024/05/dionysus.png) \n\n At Dionysus, we are a group of Web3 researchers, engineers and decentralization enthusiasts. Dionysus embraces disturbing the centralized status quo by supporting and investing in the Polkadot Network. We do this by running an independent secure validation service for Polkadot and Kusama Networks and actively participating in Polkadot fellowship, the on-chain governance and referenda. We diligently and responsibly vote in every referendum, having the improvement of the Polkadot network in sight. We actively engage with proposal authors to improve their submissions. With this in mind, we hope that our proven track record allows you to confidently delegate your voice in all tracks to the Dionysus experts."
+  },
+  {
     "name": "🛸 Zooper Corp 🛸",
     "address": "1557x4U7JTAcso9AHpiVfrEsadABQ2swNWhDeh5WvUn9Zdog",
     "manifesto": "Zooper Corp mission is to push the frontiers of the Polkadot ecosystem with groundbreaking technologies. We focus on developing and maintaining a robust infrastructure, contributing to network security and scalability. Our team proudly develops a Node-RED and Python client for Substrate, check our github. We are dedicated to sustainability, ensuring that our operations are eco-friendly. We actively engage in Polkadot's open governance, advocating for proposals that advance innovation, accessibility, and the overall growth of the network."
