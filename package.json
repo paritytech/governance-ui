@@ -57,7 +57,7 @@
     "@types/react": "18.2.14",
     "@types/react-copy-to-clipboard": "5.0.4",
     "@types/react-dom": "18.2.6",
-    "@types/serviceworker": "0.0.68",
+    "@types/serviceworker": "0.0.74",
     "@typescript-eslint/eslint-plugin": "5.60.1",
     "@typescript-eslint/parser": "5.60.1",
     "buffer": "6.0.0",
